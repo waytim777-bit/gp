@@ -39,6 +39,30 @@ class _DummyBoardFetcher:
         return self._boards
 
 
+class _DummyTushareFundamentalFetcher:
+    name = "TushareFetcher"
+    priority = -1
+
+    def __init__(self, frames):
+        self._frames = frames
+
+    def is_available(self):
+        return True
+
+    def _convert_stock_code(self, stock_code: str) -> str:
+        code = stock_code.strip().split(".")[0]
+        suffix = "SH" if code.startswith("6") else "SZ"
+        return f"{code}.{suffix}"
+
+    def _call_api_with_rate_limit(self, method_name: str, **kwargs):
+        value = self._frames.get(method_name)
+        if isinstance(value, Exception):
+            raise value
+        if callable(value):
+            return value(**kwargs)
+        return value
+
+
 class TestFundamentalContext(unittest.TestCase):
     def test_non_cn_market_returns_not_supported(self) -> None:
         manager = DataFetcherManager(fetchers=[])
@@ -299,6 +323,122 @@ class TestFundamentalContext(unittest.TestCase):
         self.assertEqual(block["data"]["control_type"], "实际控制人")
         self.assertEqual(block["data"]["total_share_capital"], 1256197800)
         self.assertEqual(block["data"]["float_share_capital"], 1256197800)
+
+    def test_cn_company_profile_prefers_tushare_when_available(self) -> None:
+        fetcher = _DummyTushareFundamentalFetcher({
+            "stock_basic": pd.DataFrame([{
+                "ts_code": "600519.SH",
+                "name": "贵州茅台",
+                "fullname": "贵州茅台酒股份有限公司",
+                "area": "贵州",
+                "industry": "白酒",
+                "market": "主板",
+                "exchange": "SSE",
+                "list_date": "20010827",
+            }]),
+            "stock_company": pd.DataFrame([{
+                "ts_code": "600519.SH",
+                "chairman": "张德芹",
+                "manager": "王莉",
+                "secretary": "蒋焰",
+                "reg_capital": 125619.78,
+                "setup_date": "19991120",
+                "province": "贵州",
+                "city": "遵义",
+                "introduction": "公司主要从事茅台酒及系列酒的生产和销售。",
+                "website": "www.moutaichina.com",
+                "email": "ir@moutaichina.com",
+                "office": "贵州省仁怀市",
+                "employees": 30000,
+                "main_business": "茅台酒及系列酒的生产与销售",
+                "business_scope": "酒类产品生产销售",
+            }]),
+            "daily_basic": pd.DataFrame([{
+                "ts_code": "600519.SH",
+                "trade_date": "20260616",
+                "total_share": 125619.78,
+                "float_share": 125619.78,
+            }]),
+        })
+        manager = DataFetcherManager(fetchers=[fetcher])
+        cfg = SimpleNamespace(
+            enable_fundamental_pipeline=True,
+            fundamental_cache_ttl_seconds=120,
+            fundamental_stage_timeout_seconds=1.5,
+            fundamental_fetch_timeout_seconds=0.8,
+            fundamental_retry_max=1,
+        )
+
+        with patch("src.config.get_config", return_value=cfg), \
+                patch.object(manager, "_get_cn_company_profile", side_effect=AssertionError("akshare should not run")):
+            block = manager.get_company_profile_context("600519", budget_seconds=1.0)
+
+        self.assertEqual(block["status"], "ok")
+        self.assertEqual(block["source_chain"][0]["provider"], "tushare_stock_basic")
+        self.assertEqual(block["data"]["full_name"], "贵州茅台酒股份有限公司")
+        self.assertEqual(block["data"]["industry"], "白酒")
+        self.assertEqual(block["data"]["listing_date"], "2001-08-27")
+        self.assertEqual(block["data"]["legal_representative"], "张德芹")
+        self.assertEqual(block["data"]["chairman"], "张德芹")
+        self.assertEqual(block["data"]["manager"], "王莉")
+        self.assertEqual(block["data"]["board_secretary"], "蒋焰")
+        self.assertEqual(block["data"]["main_business"], "茅台酒及系列酒的生产与销售")
+        self.assertEqual(block["data"]["business_scope"], "酒类产品生产销售")
+        self.assertEqual(block["data"]["total_share_capital"], 1256197800.0)
+        self.assertEqual(block["data"]["float_share_capital"], 1256197800.0)
+
+    def test_fundamental_context_uses_tushare_financial_report_first(self) -> None:
+        fetcher = _DummyTushareFundamentalFetcher({
+            "daily_basic": pd.DataFrame([{
+                "ts_code": "600519.SH",
+                "trade_date": "20260616",
+                "pe_ttm": 22.5,
+                "pb": 8.1,
+                "total_mv": 18000000.0,
+                "circ_mv": 17900000.0,
+            }]),
+            "income": pd.DataFrame([
+                {"ts_code": "600519.SH", "ann_date": "20260330", "end_date": "20251231", "revenue": 1500.0},
+                {"ts_code": "600519.SH", "ann_date": "20250330", "end_date": "20241231", "revenue": 1200.0},
+            ]),
+            "fina_indicator": pd.DataFrame([{
+                "ts_code": "600519.SH",
+                "ann_date": "20260330",
+                "end_date": "20251231",
+                "grossprofit_margin": 91.5,
+                "netprofit_margin": 48.2,
+                "roe_dt": 35.6,
+                "roe": 34.9,
+            }]),
+        })
+        manager = DataFetcherManager(fetchers=[fetcher])
+        cfg = SimpleNamespace(
+            enable_fundamental_pipeline=True,
+            fundamental_cache_ttl_seconds=0,
+            fundamental_stage_timeout_seconds=2.0,
+            fundamental_fetch_timeout_seconds=0.8,
+            fundamental_retry_max=1,
+        )
+
+        with patch("src.config.get_config", return_value=cfg), \
+                patch.object(manager, "get_company_profile_context", return_value={"status": "not_supported", "source_chain": [], "errors": [], "data": {}}), \
+                patch.object(manager, "get_realtime_quote", return_value=None), \
+                patch("data_provider.fundamental_adapter.AkshareFundamentalAdapter.get_fundamental_bundle", side_effect=AssertionError("akshare should not run")), \
+                patch.object(manager, "get_capital_flow_context", return_value={"status": "not_supported", "source_chain": [], "errors": [], "data": {}}), \
+                patch.object(manager, "get_dragon_tiger_context", return_value={"status": "not_supported", "source_chain": [], "errors": [], "data": {}}), \
+                patch.object(manager, "get_board_context", return_value={"status": "not_supported", "source_chain": [], "errors": [], "data": {}}):
+            ctx = manager.get_fundamental_context("600519", budget_seconds=2.0)
+
+        financial_report = ctx["earnings"]["data"]["financial_report"]
+        self.assertEqual(financial_report["revenue_growth"]["source"], "tushare_income")
+        self.assertEqual(financial_report["revenue_growth"]["rows"][0]["revenue_yoy"], 25.0)
+        self.assertEqual(financial_report["profitability"]["source"], "tushare_fina_indicator")
+        self.assertEqual(financial_report["profitability"]["rows"][0]["gross_margin"], 91.5)
+        self.assertEqual(ctx["valuation"]["data"]["total_mv"], 180000000000.0)
+        providers = [item["provider"] for item in ctx["source_chain"] if isinstance(item, dict)]
+        self.assertIn("tushare_daily_basic", providers)
+        self.assertIn("revenue_growth:tushare_income", providers)
+        self.assertIn("profitability:tushare_fina_indicator", providers)
 
     def test_cn_company_profile_keeps_cninfo_when_supplemental_source_fails(self) -> None:
         manager = DataFetcherManager(fetchers=[])

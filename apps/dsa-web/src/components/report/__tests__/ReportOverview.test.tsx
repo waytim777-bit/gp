@@ -29,6 +29,8 @@ describe('ReportOverview', () => {
             fullName: 'Apple Inc.',
             industry: 'Consumer Electronics',
             legalRepresentative: 'Tim Cook',
+            manager: 'Jeff Williams',
+            boardSecretary: 'Katherine Adams',
             listingDate: '1980-12-12',
             totalShareCapital: 15000000000,
             floatShareCapital: 14900000000,
@@ -52,7 +54,13 @@ describe('ReportOverview', () => {
     expect(screen.getByText('Apple designs consumer technology products and services.')).toBeInTheDocument();
     expect(screen.getByText('Core Management')).toBeInTheDocument();
     expect(screen.getByText('Tim Cook')).toBeInTheDocument();
-    expect(screen.getByText('Public shareholders (Holding approx. 12.25%)')).toBeInTheDocument();
+    expect(screen.getByText('General Manager')).toBeInTheDocument();
+    expect(screen.getByText('Jeff Williams')).toBeInTheDocument();
+    expect(screen.getByText('Board Secretary')).toBeInTheDocument();
+    expect(screen.getByText('Katherine Adams')).toBeInTheDocument();
+    expect(screen.queryByText('Public shareholders (Holding approx. 12.25%)')).not.toBeInTheDocument();
+    expect(screen.queryByText('Board of Directors')).not.toBeInTheDocument();
+    expect(screen.queryByText('Public company')).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: /www\.apple\.com/i })).toHaveAttribute(
       'href',
       'https://www.apple.com',

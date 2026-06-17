@@ -615,15 +615,11 @@ def get_analysis_status(
         if records:
             record = records[0]
             raw_result = parse_json_field(record.raw_result)
-            model_used = normalize_model_used(
-                (raw_result or {}).get("model_used") if isinstance(raw_result, dict) else None
-            )
             report_language = normalize_report_language(
                 (raw_result or {}).get("report_language") if isinstance(raw_result, dict) else None
             )
             stock_name = get_localized_stock_name(record.name, record.code, report_language)
 
-            # Extract current_price / change_pct from context_snapshot
             current_price = None
             change_pct = None
             context_snapshot = parse_json_field(getattr(record, 'context_snapshot', None))
@@ -640,33 +636,50 @@ def get_analysis_status(
                 if change_pct is None:
                     change_pct = realtime_quote_raw.get('pct_chg')
 
-            # Build report from DB record so completed tasks return real data
-            report_dict = AnalysisReport(
-                meta=ReportMeta(
-                    id=record.id,
-                    query_id=task_id,
-                    stock_code=record.code,
-                    stock_name=stock_name,
-                    report_type=getattr(record, 'report_type', None),
-                    report_language=report_language,
-                    created_at=record.created_at.isoformat() if record.created_at else None,
-                    model_used=model_used,
-                    current_price=current_price,
-                    change_pct=change_pct,
-                ),
-                summary=ReportSummary(
-                    sentiment_score=record.sentiment_score,
-                    operation_advice=record.operation_advice,
-                    trend_prediction=record.trend_prediction,
-                    analysis_summary=record.analysis_summary,
-                ),
-                strategy=ReportStrategy(
-                    ideal_buy=str(getattr(record, 'ideal_buy', None)) if getattr(record, 'ideal_buy', None) is not None else None,
-                    secondary_buy=str(getattr(record, 'secondary_buy', None)) if getattr(record, 'secondary_buy', None) is not None else None,
-                    stop_loss=str(getattr(record, 'stop_loss', None)) if getattr(record, 'stop_loss', None) is not None else None,
-                    take_profit=str(getattr(record, 'take_profit', None)) if getattr(record, 'take_profit', None) is not None else None,
-                ),
-            ).model_dump()
+            fallback_fundamental = db.get_latest_fundamental_snapshot(
+                query_id=task_id,
+                code=record.code,
+            )
+            report_data = {
+                "meta": {
+                    "id": record.id,
+                    "query_id": task_id,
+                    "stock_code": record.code,
+                    "stock_name": stock_name,
+                    "report_type": getattr(record, 'report_type', None),
+                    "report_language": report_language,
+                    "created_at": record.created_at.isoformat() if record.created_at else None,
+                    "current_price": current_price,
+                    "change_pct": change_pct,
+                    "model_used": (
+                        (raw_result or {}).get("model_used")
+                        if isinstance(raw_result, dict)
+                        else None
+                    ),
+                },
+                "summary": {
+                    "sentiment_score": record.sentiment_score,
+                    "operation_advice": record.operation_advice,
+                    "trend_prediction": record.trend_prediction,
+                    "analysis_summary": record.analysis_summary,
+                },
+                "strategy": {
+                    "ideal_buy": str(getattr(record, 'ideal_buy', None)) if getattr(record, 'ideal_buy', None) is not None else None,
+                    "secondary_buy": str(getattr(record, 'secondary_buy', None)) if getattr(record, 'secondary_buy', None) is not None else None,
+                    "stop_loss": str(getattr(record, 'stop_loss', None)) if getattr(record, 'stop_loss', None) is not None else None,
+                    "take_profit": str(getattr(record, 'take_profit', None)) if getattr(record, 'take_profit', None) is not None else None,
+                },
+                "details": raw_result if isinstance(raw_result, dict) else {},
+            }
+            report = _build_analysis_report(
+                report_data,
+                task_id,
+                record.code,
+                stock_name,
+                context_snapshot=context_snapshot,
+                fallback_fundamental_payload=fallback_fundamental,
+            )
+            report_dict = report.model_dump() if report else None
             return TaskStatus(
                 task_id=task_id,
                 status="completed",

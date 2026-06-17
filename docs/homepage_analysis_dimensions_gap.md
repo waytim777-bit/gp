@@ -79,16 +79,17 @@
 | 员工规模 | ✅ 已有 | `details.companyProfile.employeeCount` |
 | 公司官网 | ✅ 已有 | `details.companyProfile.website` |
 | 公司基本介绍 | ✅ 已有 | `details.companyProfile.companyIntro`，缺失时回退 `mainBusiness` / `businessScope` |
-| 核心管理层 | ✅ 已有 | 法定代表人来自 `details.companyProfile.legalRepresentative`；实际控制人来自 `details.companyProfile.actualController` / `actualControllerHoldRatio` |
+| 核心管理层 | ✅ 已有 | 法定代表人来自 `details.companyProfile.legalRepresentative`（Tushare 缺严格法人字段时回退 `chairman`）；总经理来自 `details.companyProfile.manager`；董秘来自 `details.companyProfile.boardSecretary` |
 
 **现有组件：** `ReportOverview.tsx` 股票头部卡片与基本信息区。公司资料为数据源 best-effort 获取，单个字段不可得时前端显示 `--`，不阻塞分析主流程。
 
 **数据来源与调试方式：**
 
-- A 股公司资料主源来自 AkShare `stock_profile_cninfo`（巨潮资讯公司概况），并 best-effort 使用 `stock_value_em` 补充总股本 / 流通股本字段；美股来自 yfinance `Ticker.info`。
+- A 股公司资料主源来自 Tushare：`stock_basic` 补充简称、全称、行业、上市日期等基础字段；`stock_company` 补充法人代表展示 fallback（`chairman`）、总经理（`manager`）、董秘（`secretary`）、官网、员工数、主营业务、经营范围、公司介绍等字段；`daily_basic` 补充总股本 / 流通股本字段。Tushare 不可用、无权限、超时或空返回时，fail-open 回退 AkShare `stock_profile_cninfo`（巨潮资讯公司概况）与 `stock_value_em`。
 - 港股公司资料来自 AkShare `stock_hk_company_profile_em`，员工人数、公司网址、公司介绍等字段取自该接口；总股本 / 流通股本 best-effort 来自 `stock_hk_financial_indicator_em`。
-- A 股实际控制人 best-effort 来自 AkShare `stock_hold_control_cninfo`，按股票代码筛选最新记录；若数据源无返回，前端显示 `--`。
+- 前端核心管理层仅展示法人代表、总经理、董秘；旧报告中的实际控制人、直接控制人、控制类型字段不再渲染在该区域。
 - 后端聚合字段位置：`fundamental_context.company_profile`；API 返回字段位置：`report.details.company_profile`；前端 camelCase 后读取 `details.companyProfile`。
+- 异步完成状态接口 `/api/v1/analysis/status/{task_id}` 已与历史详情共用 `_build_analysis_report(...)`，会从 `context_snapshot` / 最新 `fundamental_snapshot` 回填 `report.details.company_profile`，避免 status 与 history 返回不一致。
 - 后端日志关键字：`[company_profile]`。CLI 分析默认查看 `stock_analysis_YYYYMMDD.log` / `stock_analysis_debug_YYYYMMDD.log`；API 服务默认查看 `api_server_YYYYMMDD.log` / `api_server_debug_YYYYMMDD.log`，实际目录以启动时“日志目录”输出或 `LOG_DIR` 配置为准。
 - 异步分析完成后可在浏览器 Network 查看 `/api/v1/analysis/status/{task_id}` 响应中的 `result.report.details.company_profile`。
 - 历史详情可在浏览器 Network 查看 `/api/v1/history/{record_id}` 响应中的 `details.company_profile`。
@@ -127,7 +128,7 @@
 | 2.3 资产负债结构 | ❌ 无 | ❌ 无 |
 | 2.4 现金流状况 | ❌ 无 | ❌ 无 |
 
-> **注：** `details.financialReport.revenueGrowth.rows` 已用于 2.1 营收增长展示，数据来自 AkShare `stock_lrb_em` 年度利润表；`details.financialReport.profitability.rows` 已用于 2.2 盈利能力展示，数据来自 AkShare `stock_financial_analysis_indicator_em`。资产负债结构、现金流状况仍待补齐。
+> **注：** `details.financialReport.revenueGrowth.rows` 已用于 2.1 营收增长展示，数据主源来自 Tushare `income`，AkShare / 东方财富年度利润表为 fallback；`details.financialReport.profitability.rows` 已用于 2.2 盈利能力展示，数据主源来自 Tushare `fina_indicator`，AkShare `stock_financial_analysis_indicator_em` 为 fallback。资产负债结构、现金流状况仍待补齐。
 
 **TypeScript 类型定义（`analysis.ts`）：**
 ```typescript
@@ -167,14 +168,14 @@ export interface FinancialReport {
 
 **2.1 已实现展示：**
 
-- 后端：`data_provider/fundamental_adapter.py` 使用 AkShare `stock_lrb_em` 对应的东方财富年度利润表接口，按 `SECURITY_CODE` + `REPORT_DATE` 定向查询后规范为 `financial_report.revenue_growth.rows[]`，避免全市场分页拉取超时。
+- 后端：`data_provider/fundamental_adapter.py` 优先使用 Tushare `income` 读取近年年度利润表，筛选 `end_date=*1231` 后规范为 `financial_report.revenue_growth.rows[]`，并按相邻年度营收计算 `revenue_yoy`；若 Tushare 不可用、无权限、超时或空返回，再回退 AkShare / 东方财富年度利润表定向查询。
 - API：`report.details.financial_report.revenue_growth.rows[]`，前端 camelCase 后为 `details.financialReport.revenueGrowth.rows[]`。
 - 前端：`FinancialRevenueGrowthSection` 在首页报告和完整报告抽屉展示表格与柱状图，表格列为 `年度 / 营业收入（亿） / 同比增长率`，图表展示年度营业收入（亿）并在 tooltip 中补充同比增长率。
 - 完整报告：抽屉工具栏支持通过浏览器打印流程保存为 PDF，打印内容包含公司基本信息、营收增长表格/图表、盈利能力文字分析/图表和 Markdown 正文。
 
 **2.2 已实现展示：**
 
-- 后端：`data_provider/fundamental_adapter.py` 使用 AkShare `stock_financial_analysis_indicator_em` 获取财务分析指标，规范为 `financial_report.profitability.rows[]`，字段包括 `period / report_date / gross_margin / net_margin / roe`；`src/analyzer.py` 将这些指标交给 LLM，要求输出动态 `profitability_analysis`。
+- 后端：`data_provider/fundamental_adapter.py` 优先使用 Tushare `fina_indicator` 获取财务分析指标，规范为 `financial_report.profitability.rows[]`，字段包括 `period / report_date / gross_margin / net_margin / roe`；Tushare 字段映射为 `grossprofit_margin` → 毛利率、`netprofit_margin` → 净利率、`roe_dt` / `roe` → ROE；若 Tushare 不可用、无权限、超时或空返回，再回退 AkShare `stock_financial_analysis_indicator_em`。`src/analyzer.py` 将这些指标交给 LLM，要求输出动态 `profitability_analysis`。
 - API：结构化指标为 `report.details.financial_report.profitability.rows[]`，LLM 文字为 `report.details.profitability_analysis`；前端 camelCase 后分别为 `details.financialReport.profitability.rows[]` 与 `details.profitabilityAnalysis`。
 - 前端：`FinancialProfitabilitySection` 在首页报告和完整报告抽屉优先展示 LLM 生成的 summary/items 文字分析，并保留“盈利能力趋势（毛利率）”图表；不再展示盈利能力表格。
 - 兜底展示：如果 LLM 没有返回 `profitability_analysis`，但 `financial_report.profitability.rows[]` 或财报顶层盈利指标存在有效毛利率/净利率/ROE，则显示一条由结构化指标生成的盈利能力摘要并继续展示图表。
@@ -184,7 +185,7 @@ export interface FinancialReport {
 
 - 新报告完成后先看 Network 中 `/api/v1/analysis/status/{task_id}` 的 `result.report.details.financial_report`。
 - 2.1 成功时应存在 `financial_report.revenue_growth.rows[]`；2.2 图表成功时应存在 `financial_report.profitability.rows[]`，LLM 文字成功时应存在 `profitability_analysis.summary` 或 `profitability_analysis.items[]`；若 LLM 文字缺失但结构化指标存在，前端会显示兜底指标摘要。
-- 2.2 数据源使用 AkShare `stock_financial_analysis_indicator_em(symbol="300308.SZ", indicator="按报告期")`，字段按东财文档映射：`XSMLL` → 毛利率、`XSJLL` → 净利率、`ROEJQ` → ROE。
+- 2.1 / 2.2 数据源优先看 Tushare source chain：`revenue_growth:tushare_income`、`profitability:tushare_fina_indicator`；若出现权限、配额、超时或空返回，再看 AkShare fallback：`revenue_growth:stock_lrb_em`、`profitability:stock_financial_analysis_indicator_em`。
 - Agent 模式保存的上下文快照为顶层 `fundamental_context`，API 详情提取已兼容该结构；标准模式仍使用 `enhanced_context.fundamental_context`。
 - 任务完成后首页会刷新历史并自动打开最新完成报告，避免仍停留在旧历史报告导致看不到新字段。
 - 基础面缓存 key 已带 `fin-report-v2` schema 版本，避免旧缓存继续返回缺少 2.1 / 2.2 的结果；若服务未重启，仍可能使用旧进程代码和内存缓存。

@@ -942,3 +942,305 @@ class AkshareFundamentalAdapter:
         result["status"] = "ok"
         result["source_chain"].append(f"dragon_tiger:{source}")
         return result
+
+
+class TushareFundamentalAdapter:
+    """Tushare adapter for stable A-share company and financial fundamentals."""
+
+    def __init__(self, fetcher: Any):
+        self._fetcher = fetcher
+
+    def _call_api(self, api_name: str, **kwargs: Any) -> pd.DataFrame:
+        return self._fetcher._call_api_with_rate_limit(api_name, **kwargs)
+
+    def _to_ts_code(self, stock_code: str) -> str:
+        return self._fetcher._convert_stock_code(stock_code)
+
+    @staticmethod
+    def _exchange_from_ts_code(ts_code: str) -> str:
+        upper = _safe_str(ts_code).upper()
+        if upper.endswith(".SH"):
+            return "SSE"
+        if upper.endswith(".SZ"):
+            return "SZSE"
+        if upper.endswith(".BJ"):
+            return "BSE"
+        return ""
+
+    @staticmethod
+    def _first_row(df: Optional[pd.DataFrame]) -> Optional[pd.Series]:
+        if isinstance(df, pd.DataFrame) and not df.empty:
+            return df.iloc[0]
+        return None
+
+    @staticmethod
+    def _safe_date(value: Any) -> Optional[str]:
+        text = _safe_str(value)
+        if re.fullmatch(r"\d{8}", text):
+            return f"{text[:4]}-{text[4:6]}-{text[6:8]}"
+        return _normalize_report_date(value)
+
+    @staticmethod
+    def _merge_non_empty(*payloads: Dict[str, Any]) -> Dict[str, Any]:
+        merged: Dict[str, Any] = {}
+        for payload in payloads:
+            if not isinstance(payload, dict):
+                continue
+            for key, value in payload.items():
+                if value is not None and value != "":
+                    merged[key] = value
+        return merged
+
+    def get_company_profile(self, stock_code: str) -> Dict[str, Any]:
+        ts_code = self._to_ts_code(stock_code)
+        stock_basic_row: Optional[pd.Series] = None
+        stock_company_row: Optional[pd.Series] = None
+
+        basic_df = self._call_api(
+            "stock_basic",
+            ts_code=ts_code,
+            fields="ts_code,symbol,name,fullname,area,industry,market,exchange,list_date",
+        )
+        stock_basic_row = self._first_row(basic_df)
+
+        company_df = self._call_api(
+            "stock_company",
+            exchange=self._exchange_from_ts_code(ts_code),
+            fields=(
+                "ts_code,chairman,manager,secretary,reg_capital,setup_date,province,city,"
+                "introduction,website,email,office,employees,main_business,business_scope"
+            ),
+        )
+        if isinstance(company_df, pd.DataFrame) and not company_df.empty and "ts_code" in company_df.columns:
+            matched = company_df[company_df["ts_code"].astype(str).str.upper() == ts_code.upper()]
+            stock_company_row = self._first_row(matched)
+        if stock_company_row is None:
+            stock_company_row = self._first_row(company_df)
+
+        share_payload: Dict[str, Any] = {}
+        try:
+            daily_basic_df = self._call_api(
+                "daily_basic",
+                ts_code=ts_code,
+                start_date=(datetime.now() - timedelta(days=14)).strftime("%Y%m%d"),
+                end_date=datetime.now().strftime("%Y%m%d"),
+                fields="ts_code,trade_date,total_share,float_share",
+            )
+            daily_basic_row = self._first_row(daily_basic_df)
+            if daily_basic_row is not None:
+                total_share = _safe_float(daily_basic_row.get("total_share"))
+                float_share = _safe_float(daily_basic_row.get("float_share"))
+                # Tushare daily_basic share fields are in 10k shares; normalize to shares.
+                share_payload = {
+                    "total_share_capital": total_share * 10000.0 if total_share is not None else None,
+                    "float_share_capital": float_share * 10000.0 if float_share is not None else None,
+                }
+        except Exception:
+            share_payload = {}
+
+        basic_payload: Dict[str, Any] = {}
+        if stock_basic_row is not None:
+            basic_payload = {
+                "full_name": _safe_str(stock_basic_row.get("fullname")) or _safe_str(stock_basic_row.get("name")),
+                "short_name": _safe_str(stock_basic_row.get("name")),
+                "industry": _safe_str(stock_basic_row.get("industry")),
+                "area": _safe_str(stock_basic_row.get("area")),
+                "market": _safe_str(stock_basic_row.get("market")),
+                "exchange": _safe_str(stock_basic_row.get("exchange")),
+                "listing_date": self._safe_date(stock_basic_row.get("list_date")),
+            }
+
+        company_payload: Dict[str, Any] = {}
+        if stock_company_row is not None:
+            chairman = _safe_str(stock_company_row.get("chairman"))
+            company_payload = {
+                "chairman": chairman,
+                "legal_representative": chairman,
+                "manager": _safe_str(stock_company_row.get("manager")),
+                "board_secretary": _safe_str(stock_company_row.get("secretary")),
+                "registered_capital": _safe_float(stock_company_row.get("reg_capital")),
+                "setup_date": self._safe_date(stock_company_row.get("setup_date")),
+                "province": _safe_str(stock_company_row.get("province")),
+                "city": _safe_str(stock_company_row.get("city")),
+                "company_intro": _safe_str(stock_company_row.get("introduction")),
+                "website": _safe_str(stock_company_row.get("website")),
+                "email": _safe_str(stock_company_row.get("email")),
+                "office_address": _safe_str(stock_company_row.get("office")),
+                "employee_count": _safe_float(stock_company_row.get("employees")),
+                "main_business": _safe_str(stock_company_row.get("main_business")),
+                "business_scope": _safe_str(stock_company_row.get("business_scope")),
+            }
+
+        return self._merge_non_empty(basic_payload, company_payload, share_payload)
+
+    def get_daily_basic_valuation(self, stock_code: str) -> Dict[str, Any]:
+        ts_code = self._to_ts_code(stock_code)
+        end_date = datetime.now().strftime("%Y%m%d")
+        start_date = (datetime.now() - timedelta(days=14)).strftime("%Y%m%d")
+        df = self._call_api(
+            "daily_basic",
+            ts_code=ts_code,
+            start_date=start_date,
+            end_date=end_date,
+            fields="ts_code,trade_date,pe_ttm,pb,total_mv,circ_mv",
+        )
+        row = self._first_row(df)
+        if row is None:
+            return {}
+        # Tushare market value fields are in 10k CNY; normalize to yuan.
+        total_mv = _safe_float(row.get("total_mv"))
+        circ_mv = _safe_float(row.get("circ_mv"))
+        return self._merge_non_empty({
+            "pe_ratio": _safe_float(row.get("pe_ttm")),
+            "pb_ratio": _safe_float(row.get("pb")),
+            "total_mv": total_mv * 10000.0 if total_mv is not None else None,
+            "circ_mv": circ_mv * 10000.0 if circ_mv is not None else None,
+            "trade_date": self._safe_date(row.get("trade_date")),
+        })
+
+    def _fetch_annual_revenue_growth(self, stock_code: str, max_rows: int = 5) -> Tuple[Dict[str, Any], List[str]]:
+        ts_code = self._to_ts_code(stock_code)
+        end_date = datetime.now().strftime("%Y%m%d")
+        start_date = f"{datetime.now().year - max_rows - 3}0101"
+        errors: List[str] = []
+        try:
+            df = self._call_api(
+                "income",
+                ts_code=ts_code,
+                start_date=start_date,
+                end_date=end_date,
+                fields="ts_code,ann_date,f_ann_date,end_date,report_type,total_revenue,revenue",
+            )
+        except Exception as exc:
+            return {}, [f"income:{type(exc).__name__}"]
+
+        if not isinstance(df, pd.DataFrame) or df.empty:
+            return {}, errors
+
+        work_df = df.copy()
+        if "end_date" not in work_df.columns:
+            return {}, ["income:end_date_missing"]
+        work_df["end_date"] = work_df["end_date"].astype(str)
+        work_df = work_df[work_df["end_date"].str.endswith("1231")]
+        if work_df.empty:
+            return {}, errors
+        work_df = work_df.sort_values(["end_date", "ann_date"], ascending=[False, False])
+        work_df = work_df.drop_duplicates(subset=["end_date"], keep="first")
+
+        rows: List[Dict[str, Any]] = []
+        year_to_revenue: Dict[int, float] = {}
+        for _, row in work_df.iterrows():
+            fiscal_year = _extract_year_from_report_date(row.get("end_date"))
+            revenue = _safe_float(row.get("revenue"))
+            if revenue is None:
+                revenue = _safe_float(row.get("total_revenue"))
+            if fiscal_year is None or revenue is None:
+                continue
+            year_to_revenue[int(fiscal_year)] = revenue
+
+        for _, row in work_df.iterrows():
+            fiscal_year = _extract_year_from_report_date(row.get("end_date"))
+            revenue = _safe_float(row.get("revenue"))
+            if revenue is None:
+                revenue = _safe_float(row.get("total_revenue"))
+            if fiscal_year is None or revenue is None:
+                continue
+            previous_revenue = year_to_revenue.get(int(fiscal_year) - 1)
+            revenue_yoy = None
+            if previous_revenue is not None and previous_revenue != 0:
+                revenue_yoy = round((revenue - previous_revenue) / abs(previous_revenue) * 100.0, 4)
+            rows.append({
+                "fiscal_year": int(fiscal_year),
+                "report_date": self._safe_date(row.get("end_date")),
+                "revenue": revenue,
+                "revenue_yoy": revenue_yoy,
+                "announcement_date": self._safe_date(row.get("f_ann_date") or row.get("ann_date")),
+            })
+
+        payload = _build_revenue_growth_payload(rows, max_rows=max_rows)
+        if payload:
+            payload["source"] = "tushare_income"
+        return payload, errors
+
+    def _fetch_profitability_indicators(self, stock_code: str, max_rows: int = 5) -> Tuple[Dict[str, Any], List[str]]:
+        ts_code = self._to_ts_code(stock_code)
+        end_date = datetime.now().strftime("%Y%m%d")
+        start_date = f"{datetime.now().year - max_rows - 2}0101"
+        errors: List[str] = []
+        try:
+            df = self._call_api(
+                "fina_indicator",
+                ts_code=ts_code,
+                start_date=start_date,
+                end_date=end_date,
+                fields="ts_code,ann_date,end_date,grossprofit_margin,netprofit_margin,roe,roe_dt",
+            )
+        except Exception as exc:
+            return {}, [f"fina_indicator:{type(exc).__name__}"]
+
+        if not isinstance(df, pd.DataFrame) or df.empty:
+            return {}, errors
+
+        work_df = df.copy()
+        if "end_date" in work_df.columns:
+            work_df = work_df.sort_values(["end_date", "ann_date"], ascending=[False, False])
+            work_df = work_df.drop_duplicates(subset=["end_date"], keep="first")
+
+        rows: List[Dict[str, Any]] = []
+        for _, row in work_df.iterrows():
+            report_date = self._safe_date(row.get("end_date"))
+            rows.append({
+                "period": report_date or _safe_str(row.get("end_date")),
+                "report_date": report_date,
+                "gross_margin": _safe_float(row.get("grossprofit_margin")),
+                "net_margin": _safe_float(row.get("netprofit_margin")),
+                "roe": _safe_float(row.get("roe_dt")) or _safe_float(row.get("roe")),
+            })
+
+        payload = _build_profitability_payload(rows, max_rows=max_rows)
+        if payload:
+            payload["source"] = "tushare_fina_indicator"
+        return payload, errors
+
+    def get_fundamental_bundle(self, stock_code: str) -> Dict[str, Any]:
+        result: Dict[str, Any] = {
+            "status": "not_supported",
+            "growth": {},
+            "earnings": {},
+            "institution": {},
+            "source_chain": [],
+            "errors": [],
+        }
+
+        revenue_growth_payload, revenue_growth_errors = self._fetch_annual_revenue_growth(stock_code, max_rows=5)
+        result["errors"].extend(revenue_growth_errors)
+        if revenue_growth_payload:
+            financial_report_payload = result["earnings"].get("financial_report")
+            if not isinstance(financial_report_payload, dict):
+                financial_report_payload = {}
+            financial_report_payload["revenue_growth"] = revenue_growth_payload
+            latest_row = revenue_growth_payload.get("rows", [{}])[0]
+            financial_report_payload.setdefault("report_date", latest_row.get("report_date"))
+            financial_report_payload.setdefault("revenue", latest_row.get("revenue"))
+            result["growth"]["revenue_yoy"] = latest_row.get("revenue_yoy")
+            result["earnings"]["financial_report"] = financial_report_payload
+            result["source_chain"].append("revenue_growth:tushare_income")
+
+        profitability_payload, profitability_errors = self._fetch_profitability_indicators(stock_code, max_rows=5)
+        result["errors"].extend(profitability_errors)
+        if profitability_payload:
+            financial_report_payload = result["earnings"].get("financial_report")
+            if not isinstance(financial_report_payload, dict):
+                financial_report_payload = {}
+            financial_report_payload["profitability"] = profitability_payload
+            latest_row = profitability_payload.get("rows", [{}])[0]
+            financial_report_payload.setdefault("report_date", latest_row.get("report_date"))
+            financial_report_payload.setdefault("roe", latest_row.get("roe"))
+            result["growth"]["roe"] = latest_row.get("roe")
+            result["growth"]["gross_margin"] = latest_row.get("gross_margin")
+            result["earnings"]["financial_report"] = financial_report_payload
+            result["source_chain"].append("profitability:tushare_fina_indicator")
+
+        has_content = bool(result["growth"] or result["earnings"] or result["institution"])
+        result["status"] = "partial" if has_content else "not_supported"
+        return result

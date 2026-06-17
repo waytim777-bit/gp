@@ -85,6 +85,9 @@ export interface CompanyProfile {
   fullName?: string;
   industry?: string;
   legalRepresentative?: string;
+  chairman?: string;
+  manager?: string;
+  boardSecretary?: string;
   listingDate?: string;
   totalShareCapital?: number;
   floatShareCapital?: number;

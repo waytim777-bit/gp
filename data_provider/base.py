@@ -26,7 +26,7 @@ import pandas as pd
 import numpy as np
 from src.data.stock_index_loader import get_index_stock_name
 from src.data.stock_mapping import STOCK_NAME_MAP, is_meaningful_stock_name
-from .fundamental_adapter import AkshareFundamentalAdapter
+from .fundamental_adapter import AkshareFundamentalAdapter, TushareFundamentalAdapter
 
 # 配置日志
 logger = logging.getLogger(__name__)
@@ -504,6 +504,8 @@ class DataFetcherManager:
             # 默认数据源将在首次使用时延迟加载
             self._init_default_fetchers()
         self._fundamental_adapter = AkshareFundamentalAdapter()
+        self._tushare_fundamental_adapter = None
+        self._tushare_fundamental_fetcher_id: Optional[int] = None
         self._tickflow_fetcher = None
         self._tickflow_api_key: Optional[str] = None
         self._tickflow_lock = RLock()
@@ -529,6 +531,25 @@ class DataFetcherManager:
         self._ensure_concurrency_guards()
         with self._fetchers_lock:
             return list(getattr(self, "_fetchers", []))
+
+    def _get_tushare_fetcher(self) -> Optional[BaseFetcher]:
+        for fetcher in self._get_fetchers_snapshot():
+            if getattr(fetcher, "name", "") == "TushareFetcher" and getattr(fetcher, "is_available", lambda: False)():
+                return fetcher
+        return None
+
+    def _get_tushare_fundamental_adapter(self) -> Optional[TushareFundamentalAdapter]:
+        fetcher = self._get_tushare_fetcher()
+        if fetcher is None:
+            return None
+        fetcher_id = id(fetcher)
+        if (
+            getattr(self, "_tushare_fundamental_adapter", None) is None
+            or getattr(self, "_tushare_fundamental_fetcher_id", None) != fetcher_id
+        ):
+            self._tushare_fundamental_adapter = TushareFundamentalAdapter(fetcher)
+            self._tushare_fundamental_fetcher_id = fetcher_id
+        return self._tushare_fundamental_adapter
 
     def _get_fetcher_call_lock(self, fetcher: BaseFetcher) -> RLock:
         self._ensure_concurrency_guards()
@@ -2206,6 +2227,54 @@ class DataFetcherManager:
             )
 
         if market == "cn":
+            tushare_adapter = self._get_tushare_fundamental_adapter()
+            if tushare_adapter is not None:
+                logger.info(
+                    "[company_profile] start stock_code=%s market=%s provider=%s timeout_seconds=%.3f",
+                    stock_code,
+                    market,
+                    "tushare_stock_company",
+                    timeout,
+                )
+                profile, err, cost_ms = self._run_with_retry(
+                    lambda: tushare_adapter.get_company_profile(stock_code),
+                    timeout,
+                    "company_profile_tushare",
+                )
+                payload = self._compact_company_profile(profile if isinstance(profile, dict) else {})
+                status = self._infer_block_status(payload, "partial" if profile is not None else "failed")
+                source_chain = self._normalize_source_chain(
+                    ["tushare_stock_basic", "tushare_stock_company"],
+                    "company_profile_tushare",
+                    status,
+                    cost_ms,
+                )
+                if payload:
+                    logger.info(
+                        "[company_profile] finished stock_code=%s market=%s provider=%s status=%s duration_ms=%s fields=%s",
+                        stock_code,
+                        market,
+                        "tushare_stock_company",
+                        status,
+                        cost_ms,
+                        sorted(payload.keys()),
+                    )
+                    return self._build_fundamental_block(
+                        status,
+                        payload,
+                        source_chain,
+                        [err] if err else [],
+                    )
+                if err:
+                    logger.warning(
+                        "[company_profile] fallback stock_code=%s market=%s provider=%s status=%s duration_ms=%s error=%s",
+                        stock_code,
+                        market,
+                        "tushare_stock_company",
+                        status,
+                        cost_ms,
+                        err,
+                    )
             task = lambda: self._get_cn_company_profile(stock_code)
             provider = "akshare_stock_profile_cninfo"
         elif market == "hk":
@@ -2435,6 +2504,34 @@ class DataFetcherManager:
             "total_mv": getattr(quote_payload, "total_mv", None) if quote_payload else None,
             "circ_mv": getattr(quote_payload, "circ_mv", None) if quote_payload else None,
         }
+        valuation_source_chain_seed = [
+            {"provider": "realtime_quote", "result": "partial", "duration_ms": valuation_ms}
+        ]
+        if market == "cn" and not is_etf and remaining_seconds > 0:
+            tushare_adapter = self._get_tushare_fundamental_adapter()
+            if tushare_adapter is not None:
+                tushare_valuation, tushare_valuation_err, tushare_valuation_ms = self._run_with_retry(
+                    lambda: tushare_adapter.get_daily_basic_valuation(stock_code),
+                    min(fetch_timeout, remaining_seconds),
+                    "fundamental_tushare_daily_basic",
+                )
+                _consume_budget(tushare_valuation_ms)
+                if isinstance(tushare_valuation, dict) and tushare_valuation:
+                    for key in ("pe_ratio", "pb_ratio", "total_mv", "circ_mv"):
+                        if valuation_payload.get(key) is None and tushare_valuation.get(key) is not None:
+                            valuation_payload[key] = tushare_valuation.get(key)
+                    valuation_payload["trade_date"] = tushare_valuation.get("trade_date")
+                    valuation_source_chain_seed.append({
+                        "provider": "tushare_daily_basic",
+                        "result": "ok",
+                        "duration_ms": tushare_valuation_ms,
+                    })
+                elif tushare_valuation_err:
+                    valuation_source_chain_seed.append({
+                        "provider": "tushare_daily_basic",
+                        "result": "failed",
+                        "duration_ms": tushare_valuation_ms,
+                    })
         valuation_status = self._infer_block_status(
             valuation_payload,
             "partial" if quote_payload is not None else "not_supported",
@@ -2445,7 +2542,7 @@ class DataFetcherManager:
             valuation_status,
             valuation_payload,
             self._normalize_source_chain(
-                [{"provider": "realtime_quote", "result": valuation_status, "duration_ms": valuation_ms}],
+                valuation_source_chain_seed,
                 "realtime_quote",
                 valuation_status,
                 valuation_ms,
@@ -2461,11 +2558,54 @@ class DataFetcherManager:
             bundle_ms = 0
         else:
             bundle_timeout = remaining_seconds  # bundle 内部有多个串行 API 调用，不应用 fetch_timeout 单次上限
-            bundle_payload, bundle_err_msg, bundle_ms = self._run_with_retry(
-                lambda: self._fundamental_adapter.get_fundamental_bundle(stock_code),
-                bundle_timeout,
-                "fundamental_bundle",
-            )
+            tushare_adapter = self._get_tushare_fundamental_adapter() if market == "cn" and not is_etf else None
+            if tushare_adapter is not None:
+                bundle_payload, bundle_err_msg, bundle_ms = self._run_with_retry(
+                    lambda: tushare_adapter.get_fundamental_bundle(stock_code),
+                    bundle_timeout,
+                    "fundamental_bundle_tushare",
+                )
+            else:
+                bundle_payload, bundle_err_msg, bundle_ms = None, None, 0
+
+            should_fallback_to_akshare = True
+            if isinstance(bundle_payload, dict):
+                earnings_candidate = bundle_payload.get("earnings")
+                financial_candidate = (
+                    earnings_candidate.get("financial_report")
+                    if isinstance(earnings_candidate, dict)
+                    else None
+                )
+                should_fallback_to_akshare = not (
+                    isinstance(financial_candidate, dict)
+                    and (
+                        financial_candidate.get("revenue_growth")
+                        or financial_candidate.get("profitability")
+                    )
+                )
+            if should_fallback_to_akshare:
+                akshare_bundle_payload, akshare_bundle_err, akshare_bundle_ms = self._run_with_retry(
+                    lambda: self._fundamental_adapter.get_fundamental_bundle(stock_code),
+                    max(0.0, bundle_timeout - bundle_ms / 1000.0),
+                    "fundamental_bundle",
+                )
+                if isinstance(bundle_payload, dict) and isinstance(akshare_bundle_payload, dict):
+                    merged_bundle = dict(akshare_bundle_payload)
+                    merged_bundle_errors = list(bundle_payload.get("errors", [])) + list(akshare_bundle_payload.get("errors", []))
+                    merged_bundle_chain = list(bundle_payload.get("source_chain", [])) + list(akshare_bundle_payload.get("source_chain", []))
+                    for key in ("growth", "earnings", "institution", "valuation"):
+                        if bundle_payload.get(key):
+                            merged_bundle[key] = bundle_payload.get(key)
+                    merged_bundle["errors"] = merged_bundle_errors
+                    merged_bundle["source_chain"] = merged_bundle_chain
+                    merged_bundle["status"] = "partial" if any(merged_bundle.get(k) for k in ("growth", "earnings", "institution", "valuation")) else str(akshare_bundle_payload.get("status", "not_supported"))
+                    bundle_payload = merged_bundle
+                    bundle_err_msg = bundle_err_msg or akshare_bundle_err
+                    bundle_ms += akshare_bundle_ms
+                else:
+                    bundle_payload = akshare_bundle_payload
+                    bundle_err_msg = bundle_err_msg or akshare_bundle_err
+                    bundle_ms += akshare_bundle_ms
             _consume_budget(bundle_ms)
             if not isinstance(bundle_payload, dict):
                 bundle_status = "failed"

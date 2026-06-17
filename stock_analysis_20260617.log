@@ -1,0 +1,1204 @@
+2026-06-17 14:33:52 | INFO     | src/logging_config.py:153 | 日志系统初始化完成，日志目录: .
+2026-06-17 14:33:52 | INFO     | src/logging_config.py:154 | 常规日志: stock_analysis_20260617.log
+2026-06-17 14:33:52 | INFO     | src/logging_config.py:155 | 调试日志: stock_analysis_debug_20260617.log
+2026-06-17 14:33:52 | INFO     | main.py:757 | ============================================================
+2026-06-17 14:33:52 | INFO     | main.py:758 | A股自选股智能分析系统 启动
+2026-06-17 14:33:52 | INFO     | main.py:759 | 运行时间: 2026-06-17 14:33:52
+2026-06-17 14:33:52 | INFO     | main.py:760 | ============================================================
+2026-06-17 14:33:52 | INFO     | src/webui_frontend.py:230 | 前端构建检查结果: needs_install=True, needs_build=True, artifact=/Users/taurus/developer/outlets/gp/static/index.html
+2026-06-17 14:33:52 | INFO     | src/webui_frontend.py:111 | 执行前端命令: /Users/taurus/.nvm/versions/node/v24.13.1/bin/npm ci
+2026-06-17 14:34:00 | INFO     | src/webui_frontend.py:111 | 执行前端命令: /Users/taurus/.nvm/versions/node/v24.13.1/bin/npm run build
+2026-06-17 14:34:10 | INFO     | src/webui_frontend.py:113 | 前端静态资源构建完成
+2026-06-17 14:34:10 | INFO     | main.py:623 | FastAPI 服务已启动: http://0.0.0.0:8000
+2026-06-17 14:34:10 | INFO     | main.py:808 | 模式: 仅 Web 服务
+2026-06-17 14:34:10 | INFO     | main.py:809 | Web 服务运行中: http://0.0.0.0:8000
+2026-06-17 14:34:10 | INFO     | main.py:810 | 通过 /api/v1/analysis/analyze 接口触发分析
+2026-06-17 14:34:10 | INFO     | main.py:811 | API 文档: http://0.0.0.0:8000/docs
+2026-06-17 14:34:10 | INFO     | main.py:812 | 按 Ctrl+C 退出...
+2026-06-17 14:34:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:92 | Started server process [90914]
+2026-06-17 14:34:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:48 | Waiting for application startup.
+2026-06-17 14:34:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:62 | Application startup complete.
+2026-06-17 14:34:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:224 | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-06-17 14:34:20 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56911 - "GET / HTTP/1.1" 200
+2026-06-17 14:34:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56913 - "GET /assets/index-BdLb4--Z.css HTTP/1.1" 200
+2026-06-17 14:34:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56911 - "GET /assets/index-2Cbf1akC.js HTTP/1.1" 200
+2026-06-17 14:34:21 | INFO     | src/storage.py:916 | 数据库初始化完成: postgresql+psycopg://dsa:dsa123@localhost:5435/daily_stock_analysis
+2026-06-17 14:34:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56911 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-17 14:34:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56913 - "GET /vite.svg HTTP/1.1" 200
+2026-06-17 14:34:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56911 - "GET /vite.svg HTTP/1.1" 200
+2026-06-17 14:34:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56959 - "POST /api/v1/auth/register HTTP/1.1" 200
+2026-06-17 14:34:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56959 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-17 14:34:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56967 - "GET /stocks.index.json?_t=494910 HTTP/1.1" 200
+2026-06-17 14:34:33 | INFO     | src/services/task_queue.py:178 | [TaskQueue] 初始化完成，最大并发: 3
+2026-06-17 14:34:33 | INFO     | src/config.py:1604 | LLM channel 'comet': 3 model(s), 1 key(s)
+2026-06-17 14:34:33 | INFO     | src/config.py:1970 | TUSHARE_TOKEN detected, auto-injecting tushare into realtime priority: tushare,tencent,akshare_sina,efinance,akshare_em
+2026-06-17 14:34:33 | WARNING  | src/config.py:792 | Invalid AGENT_ARCH='', falling back to 'single'. Valid: {'multi', 'single'}
+2026-06-17 14:34:33 | WARNING  | src/config.py:804 | Invalid AGENT_ORCHESTRATOR_MODE='', falling back to 'standard'. Valid: {'standard', 'full', 'specialist', 'quick'}
+2026-06-17 14:34:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56971 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-17 14:34:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56966 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-17 14:34:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56969 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:34:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56959 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-17 14:34:58 | INFO     | src/services/task_queue.py:413 | [TaskQueue] 任务已提交: 000012.SZ -> c9046059712442e2b1a74ee65d803c62
+2026-06-17 14:34:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56994 - "POST /api/v1/analysis/analyze HTTP/1.1" 202
+2026-06-17 14:35:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56994 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:35:03 | INFO     | data_provider/tushare_fetcher.py:169 | Tushare API 初始化成功
+2026-06-17 14:35:03 | INFO     | data_provider/tushare_fetcher.py:200 | ✅ 检测到 TUSHARE_TOKEN 且 API 初始化成功，Tushare 数据源优先级提升为最高 (Priority -1)
+2026-06-17 14:35:03 | INFO     | data_provider/base.py:894 | 已初始化 7 个数据源（按优先级）: TushareFetcher(P-1), EfinanceFetcher(P0), AkshareFetcher(P1), PytdxFetcher(P2), BaostockFetcher(P3), YfinanceFetcher(P4), LongbridgeFetcher(P5)
+2026-06-17 14:35:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:784 | Routing strategy: simple-shuffle
+2026-06-17 14:35:03 | INFO     | src/analyzer.py:960 | Analyzer LLM: Router initialized from channels/YAML — 3 deployment(s), models: ['openai/gpt-5.4-nano', 'openai/deepseek-v3.2', 'openai/qwen3-max-2026-01-23']
+2026-06-17 14:35:03 | WARNING  | src/notification.py:169 | 未配置有效的通知渠道，将不发送推送通知
+2026-06-17 14:35:03 | INFO     | src/search_service.py:2200 | 已配置 SearXNG 搜索，共 1 个自建实例
+2026-06-17 14:35:03 | INFO     | src/search_service.py:2218 | 新闻时效策略已启用: profile=short, profile_days=3, NEWS_MAX_AGE_DAYS=3, effective_window=3
+2026-06-17 14:35:03 | INFO     | src/core/pipeline.py:123 | 调度器初始化完成，最大并发数: 3
+2026-06-17 14:35:03 | INFO     | src/core/pipeline.py:124 | 已启用技术分析引擎（均线/趋势/量价指标）
+2026-06-17 14:35:03 | INFO     | src/core/pipeline.py:129 | 实时行情已禁用，将使用历史收盘价
+2026-06-17 14:35:03 | INFO     | src/core/pipeline.py:133 | 筹码分布分析已禁用
+2026-06-17 14:35:03 | INFO     | src/core/pipeline.py:137 | 搜索服务已启用
+2026-06-17 14:35:03 | INFO     | src/core/pipeline.py:1208 | ========== 开始处理 000012.SZ ==========
+2026-06-17 14:35:04 | INFO     | src/core/pipeline.py:218 | 南玻Ａ(000012.SZ) 开始从数据源获取数据...
+2026-06-17 14:35:04 | INFO     | data_provider/base.py:1002 | [数据源尝试 1/7] [TushareFetcher] 获取 000012...
+2026-06-17 14:35:04 | INFO     | data_provider/base.py:364 | [TushareFetcher] 开始获取 000012 日线数据: 范围=2026-04-18 ~ 2026-06-17
+2026-06-17 14:35:04 | INFO     | data_provider/base.py:383 | [TushareFetcher] 000012 获取成功: 范围=2026-04-18 ~ 2026-06-17, rows=39, elapsed=0.13s
+2026-06-17 14:35:04 | INFO     | data_provider/base.py:1014 | [数据源完成] 000012 使用 [TushareFetcher] 获取成功: rows=39, elapsed=0.13s
+2026-06-17 14:35:04 | INFO     | src/storage.py:2753 | 保存 000012.SZ 数据成功，新增 39 条
+2026-06-17 14:35:04 | INFO     | src/core/pipeline.py:226 | 南玻Ａ(000012.SZ) 数据保存成功（来源: TushareFetcher，新增 39 条）
+2026-06-17 14:35:04 | INFO     | src/core/pipeline.py:279 | 南玻Ａ(000012.SZ) 实时行情已禁用，使用历史收盘价继续分析
+2026-06-17 14:35:04 | INFO     | data_provider/base.py:2230 | [company_profile] start stock_code=000012 market=cn provider=akshare_stock_profile_cninfo timeout_seconds=0.800
+2026-06-17 14:35:05 | WARNING  | data_provider/base.py:2270 | [company_profile] finished stock_code=000012 market=cn provider=akshare_stock_profile_cninfo status=failed duration_ms=800 error=company_profile timeout
+2026-06-17 14:35:12 | INFO     | data_provider/efinance_fetcher.py:1109 | [API调用] ef.stock.get_belong_board(stock_code=000012) 获取所属板块...
+2026-06-17 14:35:12 | INFO     | data_provider/efinance_fetcher.py:1118 | [API返回] ef.stock.get_belong_board 成功: 返回 30 个板块, 耗时 0.20s
+2026-06-17 14:35:12 | INFO     | data_provider/base.py:1528 | [EfinanceFetcher] 获取所属板块成功: 000012, count=30
+2026-06-17 14:35:12 | INFO     | src/core/pipeline.py:357 | 南玻Ａ(000012.SZ) 趋势分析: 弱势空头, 买入信号=持有, 评分=45
+2026-06-17 14:35:12 | INFO     | src/core/pipeline.py:380 | 南玻Ａ(000012.SZ) 开始多维度情报搜索...
+2026-06-17 14:35:12 | INFO     | src/search_service.py:3093 | 开始多维度情报搜索: 南玻Ａ(000012.SZ), 时间范围: 近3天 (profile=short, NEWS_MAX_AGE_DAYS=3), 目标条数=3, provider请求条数=6
+2026-06-17 14:35:12 | INFO     | src/search_service.py:3122 | [情报搜索] 最新消息: 使用 SearXNG
+2026-06-17 14:35:14 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 14:35:14 | WARNING  | src/search_service.py:3160 | [情报搜索] 最新消息: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 14:35:15 | INFO     | src/search_service.py:3122 | [情报搜索] 机构分析: 使用 SearXNG
+2026-06-17 14:35:15 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 14:35:15 | WARNING  | src/search_service.py:3160 | [情报搜索] 机构分析: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 14:35:16 | INFO     | src/search_service.py:3122 | [情报搜索] 风险排查: 使用 SearXNG
+2026-06-17 14:35:17 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 14:35:17 | WARNING  | src/search_service.py:3160 | [情报搜索] 风险排查: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 14:35:17 | INFO     | src/search_service.py:3122 | [情报搜索] 公司公告: 使用 SearXNG
+2026-06-17 14:35:18 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 14:35:18 | WARNING  | src/search_service.py:3160 | [情报搜索] 公司公告: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 14:35:18 | INFO     | src/search_service.py:3122 | [情报搜索] 业绩预期: 使用 SearXNG
+2026-06-17 14:35:19 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 14:35:19 | WARNING  | src/search_service.py:3160 | [情报搜索] 业绩预期: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 14:35:20 | INFO     | src/core/pipeline.py:395 | 南玻Ａ(000012.SZ) 情报搜索完成: 共 0 条结果
+2026-06-17 14:35:20 | INFO     | src/agent/skills/base.py:360 | Loaded 11 built-in skills from /Users/taurus/developer/outlets/gp/strategies
+2026-06-17 14:35:20 | INFO     | src/agent/factory.py:213 | [AgentFactory] SkillManager prototype cached (11 skills)
+2026-06-17 14:35:20 | INFO     | src/agent/skills/base.py:431 | Activated skills: ['bull_trend']
+2026-06-17 14:35:20 | INFO     | src/agent/factory.py:257 | [AgentFactory] Activated skills: ['bull_trend']
+2026-06-17 14:35:22 | INFO     | src/analyzer.py:1348 | ========== AI 分析 南玻Ａ(000012.SZ) ==========
+2026-06-17 14:35:22 | INFO     | src/analyzer.py:1349 | [LLM配置] 模型: openai/gpt-5.4-nano
+2026-06-17 14:35:22 | INFO     | src/analyzer.py:1350 | [LLM配置] Prompt 长度: 2889 字符
+2026-06-17 14:35:22 | INFO     | src/analyzer.py:1351 | [LLM配置] 是否包含新闻: 是
+2026-06-17 14:35:22 | INFO     | src/analyzer.py:1355 | [LLM Prompt 预览]
+# 决策仪表盘分析请求
+
+## 📊 股票基础信息
+| 项目 | 数据 |
+|------|------|
+| 股票代码 | **000012.SZ** |
+| 股票名称 | **南玻Ａ** |
+| 分析日期 | 2026-06-16 |
+
+---
+
+## 📈 技术面数据
+
+### 今日行情
+| 指标 | 数值 |
+|------|------|
+| 收盘价 | 4.52 元 |
+| 开盘价 | 4.1 元 |
+| 最高价 | 4.52 元 |
+| 最低价 | 4.05 元 |
+| 涨跌幅 | 9.9757% |
+| 成交量 | 4284.70 万股 |
+| 成交额 | 1.90 亿元 |
+
+### 均线系统（关键判断指标）
+| 均线 | 数值 | 说明 |
+|------|------|------|
+| MA5 | 4.19 | 短期趋势线 |
+| MA10 | 4.23 | 中短期趋势线 |
+| MA20 | 4.23 | 中期趋势线 |
+| 均线形态 | 震荡整理 ↔️ | 多头/空头/缠绕 |
+
+### 业务模式输出要求
+请在最终 JSON 顶层新增 `business_mod...
+2026-06-17 14:35:22 | INFO     | src/analyzer.py:1364 | [LLM调用] 开始调用 openai/gpt-5.4-nano...
+2026-06-17 14:35:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-17 14:35:24 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-17 14:35:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57214 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:35:43 | INFO     | src/analyzer.py:1384 | [LLM返回] openai/gpt-5.4-nano 响应成功, 耗时 21.47s, 响应长度 4464 字符
+2026-06-17 14:35:43 | INFO     | src/analyzer.py:1388 | [LLM返回 预览]
+```json
+{
+  "stock_name": "南玻Ａ（000012）",
+  "sentiment_score": 38,
+  "trend_prediction": "震荡",
+  "operation_advice": "观望",
+  "decision_type": "hold",
+  "confidence_level": "中",
+
+  "business_model": {
+    "summary": "南玻Ａ以光伏玻璃与节能玻璃等材料为核心，面向下游光伏组件与建筑幕墙提供规模化玻璃产品与配套服务。",
+    "items": [
+      {
+        "ti...
+2026-06-17 14:35:43 | INFO     | src/analyzer.py:1438 | [LLM解析] 南玻Ａ(000012.SZ) 分析完成: 震荡, 评分 38
+2026-06-17 14:35:43 | INFO     | src/core/pipeline.py:1232 | [000012.SZ] 分析完成: 观望, 评分 38
+2026-06-17 14:35:43 | INFO     | src/services/task_queue.py:631 | [TaskQueue] 任务完成: c9046059712442e2b1a74ee65d803c62 (000012.SZ)
+2026-06-17 14:35:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57224 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:35:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57224 - "GET /api/v1/history/1 HTTP/1.1" 200
+2026-06-17 14:35:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57224 - "GET /api/v1/history/1/news?limit=8 HTTP/1.1" 200
+2026-06-17 14:36:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57243 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:36:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57276 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:37:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57308 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:37:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57349 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:38:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57445 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:38:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57468 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:39:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57496 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:39:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57547 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:40:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57588 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:40:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57637 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:41:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57666 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:41:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57707 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:42:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57775 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:42:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57940 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:43:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58000 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:43:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58039 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:44:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58077 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:44:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58097 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:45:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58129 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:45:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58153 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:46:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58201 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:46:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58235 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:47:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58267 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:47:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58316 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:48:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58337 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:48:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58420 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:49:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58444 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:49:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58471 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:50:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58478 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:50:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58497 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:51:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58659 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:51:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58700 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:52:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58774 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:52:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58868 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:53:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58908 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:53:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58962 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:54:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59017 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:54:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59058 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:55:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59082 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:55:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59117 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:56:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59139 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:56:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59167 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:57:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59191 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:57:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59229 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:58:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59243 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:58:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59274 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:59:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59290 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 14:59:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59302 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:00:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59315 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:00:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59334 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:01:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59379 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:01:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59379 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-17 15:01:34 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59430 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:03:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59477 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:03:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59477 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:04:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59789 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:04:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60059 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:04:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60059 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:05:01 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60247 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:05:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60424 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:05:24 | INFO     | src/services/task_queue.py:413 | [TaskQueue] 任务已提交: 600410.SH -> 5507663fe94b4e8982f29752249d2088
+2026-06-17 15:05:24 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60532 - "POST /api/v1/analysis/analyze HTTP/1.1" 202
+2026-06-17 15:05:24 | INFO     | data_provider/tushare_fetcher.py:169 | Tushare API 初始化成功
+2026-06-17 15:05:24 | INFO     | data_provider/tushare_fetcher.py:200 | ✅ 检测到 TUSHARE_TOKEN 且 API 初始化成功，Tushare 数据源优先级提升为最高 (Priority -1)
+2026-06-17 15:05:24 | INFO     | data_provider/base.py:894 | 已初始化 7 个数据源（按优先级）: TushareFetcher(P-1), EfinanceFetcher(P0), AkshareFetcher(P1), PytdxFetcher(P2), BaostockFetcher(P3), YfinanceFetcher(P4), LongbridgeFetcher(P5)
+2026-06-17 15:05:24 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:784 | Routing strategy: simple-shuffle
+2026-06-17 15:05:24 | INFO     | src/analyzer.py:960 | Analyzer LLM: Router initialized from channels/YAML — 3 deployment(s), models: ['openai/gpt-5.4-nano', 'openai/deepseek-v3.2', 'openai/qwen3-max-2026-01-23']
+2026-06-17 15:05:24 | WARNING  | src/notification.py:169 | 未配置有效的通知渠道，将不发送推送通知
+2026-06-17 15:05:24 | INFO     | src/search_service.py:2200 | 已配置 SearXNG 搜索，共 1 个自建实例
+2026-06-17 15:05:24 | INFO     | src/search_service.py:2218 | 新闻时效策略已启用: profile=short, profile_days=3, NEWS_MAX_AGE_DAYS=3, effective_window=3
+2026-06-17 15:05:24 | INFO     | src/core/pipeline.py:123 | 调度器初始化完成，最大并发数: 3
+2026-06-17 15:05:24 | INFO     | src/core/pipeline.py:124 | 已启用技术分析引擎（均线/趋势/量价指标）
+2026-06-17 15:05:24 | INFO     | src/core/pipeline.py:129 | 实时行情已禁用，将使用历史收盘价
+2026-06-17 15:05:24 | INFO     | src/core/pipeline.py:133 | 筹码分布分析已禁用
+2026-06-17 15:05:24 | INFO     | src/core/pipeline.py:137 | 搜索服务已启用
+2026-06-17 15:05:24 | INFO     | src/core/pipeline.py:1208 | ========== 开始处理 600410.SH ==========
+2026-06-17 15:05:24 | INFO     | src/core/pipeline.py:218 | 华胜天成(600410.SH) 开始从数据源获取数据...
+2026-06-17 15:05:24 | INFO     | data_provider/base.py:1002 | [数据源尝试 1/7] [TushareFetcher] 获取 600410...
+2026-06-17 15:05:24 | INFO     | data_provider/base.py:364 | [TushareFetcher] 开始获取 600410 日线数据: 范围=2026-04-18 ~ 2026-06-17
+2026-06-17 15:05:24 | INFO     | data_provider/base.py:383 | [TushareFetcher] 600410 获取成功: 范围=2026-04-18 ~ 2026-06-17, rows=39, elapsed=0.21s
+2026-06-17 15:05:24 | INFO     | data_provider/base.py:1014 | [数据源完成] 600410 使用 [TushareFetcher] 获取成功: rows=39, elapsed=0.21s
+2026-06-17 15:05:24 | INFO     | src/storage.py:2753 | 保存 600410.SH 数据成功，新增 39 条
+2026-06-17 15:05:24 | INFO     | src/core/pipeline.py:226 | 华胜天成(600410.SH) 数据保存成功（来源: TushareFetcher，新增 39 条）
+2026-06-17 15:05:24 | INFO     | src/core/pipeline.py:279 | 华胜天成(600410.SH) 实时行情已禁用，使用历史收盘价继续分析
+2026-06-17 15:05:24 | INFO     | data_provider/base.py:2230 | [company_profile] start stock_code=600410 market=cn provider=akshare_stock_profile_cninfo timeout_seconds=0.800
+2026-06-17 15:05:25 | WARNING  | data_provider/base.py:2270 | [company_profile] finished stock_code=600410 market=cn provider=akshare_stock_profile_cninfo status=failed duration_ms=800 error=company_profile timeout
+2026-06-17 15:05:32 | INFO     | data_provider/efinance_fetcher.py:1109 | [API调用] ef.stock.get_belong_board(stock_code=600410) 获取所属板块...
+2026-06-17 15:05:32 | INFO     | data_provider/efinance_fetcher.py:1118 | [API返回] ef.stock.get_belong_board 成功: 返回 35 个板块, 耗时 0.45s
+2026-06-17 15:05:32 | INFO     | data_provider/base.py:1528 | [EfinanceFetcher] 获取所属板块成功: 600410, count=35
+2026-06-17 15:05:32 | INFO     | src/core/pipeline.py:357 | 华胜天成(600410.SH) 趋势分析: 空头排列, 买入信号=持有, 评分=49
+2026-06-17 15:05:32 | INFO     | src/core/pipeline.py:380 | 华胜天成(600410.SH) 开始多维度情报搜索...
+2026-06-17 15:05:32 | INFO     | src/search_service.py:3093 | 开始多维度情报搜索: 华胜天成(600410.SH), 时间范围: 近3天 (profile=short, NEWS_MAX_AGE_DAYS=3), 目标条数=3, provider请求条数=6
+2026-06-17 15:05:32 | INFO     | src/search_service.py:3122 | [情报搜索] 最新消息: 使用 SearXNG
+2026-06-17 15:05:34 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:05:34 | WARNING  | src/search_service.py:3160 | [情报搜索] 最新消息: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:05:34 | INFO     | src/search_service.py:3122 | [情报搜索] 机构分析: 使用 SearXNG
+2026-06-17 15:05:35 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:05:35 | WARNING  | src/search_service.py:3160 | [情报搜索] 机构分析: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:05:36 | INFO     | src/search_service.py:3122 | [情报搜索] 风险排查: 使用 SearXNG
+2026-06-17 15:05:36 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:05:36 | WARNING  | src/search_service.py:3160 | [情报搜索] 风险排查: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:05:37 | INFO     | src/search_service.py:3122 | [情报搜索] 公司公告: 使用 SearXNG
+2026-06-17 15:05:38 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:05:38 | WARNING  | src/search_service.py:3160 | [情报搜索] 公司公告: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:05:38 | INFO     | src/search_service.py:3122 | [情报搜索] 业绩预期: 使用 SearXNG
+2026-06-17 15:05:39 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:05:39 | WARNING  | src/search_service.py:3160 | [情报搜索] 业绩预期: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:05:40 | INFO     | src/core/pipeline.py:395 | 华胜天成(600410.SH) 情报搜索完成: 共 0 条结果
+2026-06-17 15:05:40 | INFO     | src/agent/skills/base.py:431 | Activated skills: ['bull_trend']
+2026-06-17 15:05:40 | INFO     | src/agent/factory.py:257 | [AgentFactory] Activated skills: ['bull_trend']
+2026-06-17 15:05:42 | INFO     | src/analyzer.py:1348 | ========== AI 分析 华胜天成(600410.SH) ==========
+2026-06-17 15:05:42 | INFO     | src/analyzer.py:1349 | [LLM配置] 模型: openai/gpt-5.4-nano
+2026-06-17 15:05:42 | INFO     | src/analyzer.py:1350 | [LLM配置] Prompt 长度: 3635 字符
+2026-06-17 15:05:42 | INFO     | src/analyzer.py:1351 | [LLM配置] 是否包含新闻: 是
+2026-06-17 15:05:42 | INFO     | src/analyzer.py:1355 | [LLM Prompt 预览]
+# 决策仪表盘分析请求
+
+## 📊 股票基础信息
+| 项目 | 数据 |
+|------|------|
+| 股票代码 | **600410.SH** |
+| 股票名称 | **华胜天成** |
+| 分析日期 | 2026-06-16 |
+
+---
+
+## 📈 技术面数据
+
+### 今日行情
+| 指标 | 数值 |
+|------|------|
+| 收盘价 | 18.03 元 |
+| 开盘价 | 17.75 元 |
+| 最高价 | 18.15 元 |
+| 最低价 | 17.44 元 |
+| 涨跌幅 | 0.8954% |
+| 成交量 | 5778.40 万股 |
+| 成交额 | 10.33 亿元 |
+
+### 均线系统（关键判断指标）
+| 均线 | 数值 | 说明 |
+|------|------|------|
+| MA5 | 17.78 | 短期趋势线 |
+| MA10 | 17.84 | 中短期趋势线 |
+| MA20 | 19.01 | 中期趋势线 |
+| 均线形态 | 震荡整理 ↔️ | 多头/空头/缠绕 |
+
+### 财报与分红（价值投资口径）
+| 指标 | 数值 | 说...
+2026-06-17 15:05:42 | INFO     | src/analyzer.py:1364 | [LLM调用] 开始调用 openai/gpt-5.4-nano...
+2026-06-17 15:05:42 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-17 15:05:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-17 15:05:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60933 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:06:02 | INFO     | src/analyzer.py:1384 | [LLM返回] openai/gpt-5.4-nano 响应成功, 耗时 20.10s, 响应长度 4716 字符
+2026-06-17 15:06:02 | INFO     | src/analyzer.py:1388 | [LLM返回 预览]
+```json
+{
+  "stock_name": "华胜天成（600410）",
+  "sentiment_score": 49,
+  "trend_prediction": "震荡",
+  "operation_advice": "观望",
+  "decision_type": "hold",
+  "confidence_level": "中",
+
+  "business_model": null,
+
+  "profitability_analysis": {
+    "summary": "盈利能力呈“先修复后分化”：毛利率整体在11.35%-12.13%区间波动，净利率曾于2025-0...
+2026-06-17 15:06:02 | INFO     | src/analyzer.py:1438 | [LLM解析] 华胜天成(600410.SH) 分析完成: 震荡, 评分 49
+2026-06-17 15:06:02 | INFO     | src/core/pipeline.py:1232 | [600410.SH] 分析完成: 观望, 评分 49
+2026-06-17 15:06:02 | INFO     | src/services/task_queue.py:631 | [TaskQueue] 任务完成: 5507663fe94b4e8982f29752249d2088 (600410.SH)
+2026-06-17 15:06:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61057 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:06:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61057 - "GET /api/v1/history/2 HTTP/1.1" 200
+2026-06-17 15:06:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61057 - "GET /api/v1/history/2/news?limit=8 HTTP/1.1" 200
+2026-06-17 15:06:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61118 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:06:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61208 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:07:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61342 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:07:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61457 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:07:56 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61487 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:08:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61497 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:08:12 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61507 - "GET /api/v1/history/1 HTTP/1.1" 200
+2026-06-17 15:08:12 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61507 - "GET /api/v1/history/1/news?limit=8 HTTP/1.1" 200
+2026-06-17 15:08:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61507 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:08:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61507 - "GET /api/v1/history/2 HTTP/1.1" 200
+2026-06-17 15:08:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61507 - "GET /api/v1/history/2/news?limit=8 HTTP/1.1" 200
+2026-06-17 15:08:18 | INFO     | src/services/task_queue.py:413 | [TaskQueue] 任务已提交: 000002.SZ -> 74224b99459d4004a4ae9e14a14b2368
+2026-06-17 15:08:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61507 - "POST /api/v1/analysis/analyze HTTP/1.1" 202
+2026-06-17 15:08:18 | INFO     | data_provider/tushare_fetcher.py:169 | Tushare API 初始化成功
+2026-06-17 15:08:18 | INFO     | data_provider/tushare_fetcher.py:200 | ✅ 检测到 TUSHARE_TOKEN 且 API 初始化成功，Tushare 数据源优先级提升为最高 (Priority -1)
+2026-06-17 15:08:18 | INFO     | data_provider/base.py:894 | 已初始化 7 个数据源（按优先级）: TushareFetcher(P-1), EfinanceFetcher(P0), AkshareFetcher(P1), PytdxFetcher(P2), BaostockFetcher(P3), YfinanceFetcher(P4), LongbridgeFetcher(P5)
+2026-06-17 15:08:19 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:784 | Routing strategy: simple-shuffle
+2026-06-17 15:08:19 | INFO     | src/analyzer.py:960 | Analyzer LLM: Router initialized from channels/YAML — 3 deployment(s), models: ['openai/gpt-5.4-nano', 'openai/deepseek-v3.2', 'openai/qwen3-max-2026-01-23']
+2026-06-17 15:08:19 | WARNING  | src/notification.py:169 | 未配置有效的通知渠道，将不发送推送通知
+2026-06-17 15:08:19 | INFO     | src/search_service.py:2200 | 已配置 SearXNG 搜索，共 1 个自建实例
+2026-06-17 15:08:19 | INFO     | src/search_service.py:2218 | 新闻时效策略已启用: profile=short, profile_days=3, NEWS_MAX_AGE_DAYS=3, effective_window=3
+2026-06-17 15:08:19 | INFO     | src/core/pipeline.py:123 | 调度器初始化完成，最大并发数: 3
+2026-06-17 15:08:19 | INFO     | src/core/pipeline.py:124 | 已启用技术分析引擎（均线/趋势/量价指标）
+2026-06-17 15:08:19 | INFO     | src/core/pipeline.py:129 | 实时行情已禁用，将使用历史收盘价
+2026-06-17 15:08:19 | INFO     | src/core/pipeline.py:133 | 筹码分布分析已禁用
+2026-06-17 15:08:19 | INFO     | src/core/pipeline.py:137 | 搜索服务已启用
+2026-06-17 15:08:19 | INFO     | src/core/pipeline.py:1208 | ========== 开始处理 000002.SZ ==========
+2026-06-17 15:08:19 | INFO     | src/core/pipeline.py:218 | 万科Ａ(000002.SZ) 开始从数据源获取数据...
+2026-06-17 15:08:19 | INFO     | data_provider/base.py:1002 | [数据源尝试 1/7] [TushareFetcher] 获取 000002...
+2026-06-17 15:08:19 | INFO     | data_provider/base.py:364 | [TushareFetcher] 开始获取 000002 日线数据: 范围=2026-04-18 ~ 2026-06-17
+2026-06-17 15:08:19 | INFO     | data_provider/base.py:383 | [TushareFetcher] 000002 获取成功: 范围=2026-04-18 ~ 2026-06-17, rows=39, elapsed=0.11s
+2026-06-17 15:08:19 | INFO     | data_provider/base.py:1014 | [数据源完成] 000002 使用 [TushareFetcher] 获取成功: rows=39, elapsed=0.12s
+2026-06-17 15:08:19 | INFO     | src/storage.py:2753 | 保存 000002.SZ 数据成功，新增 39 条
+2026-06-17 15:08:19 | INFO     | src/core/pipeline.py:226 | 万科Ａ(000002.SZ) 数据保存成功（来源: TushareFetcher，新增 39 条）
+2026-06-17 15:08:19 | INFO     | src/core/pipeline.py:279 | 万科Ａ(000002.SZ) 实时行情已禁用，使用历史收盘价继续分析
+2026-06-17 15:08:19 | INFO     | data_provider/base.py:2230 | [company_profile] start stock_code=000002 market=cn provider=akshare_stock_profile_cninfo timeout_seconds=0.800
+2026-06-17 15:08:19 | WARNING  | data_provider/base.py:2270 | [company_profile] finished stock_code=000002 market=cn provider=akshare_stock_profile_cninfo status=failed duration_ms=800 error=company_profile timeout
+2026-06-17 15:08:26 | INFO     | data_provider/efinance_fetcher.py:1109 | [API调用] ef.stock.get_belong_board(stock_code=000002) 获取所属板块...
+2026-06-17 15:08:26 | INFO     | data_provider/efinance_fetcher.py:1118 | [API返回] ef.stock.get_belong_board 成功: 返回 28 个板块, 耗时 0.32s
+2026-06-17 15:08:26 | INFO     | data_provider/base.py:1528 | [EfinanceFetcher] 获取所属板块成功: 000002, count=28
+2026-06-17 15:08:26 | INFO     | src/core/pipeline.py:357 | 万科Ａ(000002.SZ) 趋势分析: 空头排列, 买入信号=持有, 评分=46
+2026-06-17 15:08:26 | INFO     | src/core/pipeline.py:380 | 万科Ａ(000002.SZ) 开始多维度情报搜索...
+2026-06-17 15:08:26 | INFO     | src/search_service.py:3093 | 开始多维度情报搜索: 万科Ａ(000002.SZ), 时间范围: 近3天 (profile=short, NEWS_MAX_AGE_DAYS=3), 目标条数=3, provider请求条数=6
+2026-06-17 15:08:26 | INFO     | src/search_service.py:3122 | [情报搜索] 最新消息: 使用 SearXNG
+2026-06-17 15:08:27 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:08:27 | WARNING  | src/search_service.py:3160 | [情报搜索] 最新消息: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:08:28 | INFO     | src/search_service.py:3122 | [情报搜索] 机构分析: 使用 SearXNG
+2026-06-17 15:08:28 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:08:28 | WARNING  | src/search_service.py:3160 | [情报搜索] 机构分析: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:08:28 | INFO     | src/search_service.py:3122 | [情报搜索] 风险排查: 使用 SearXNG
+2026-06-17 15:08:29 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:08:29 | WARNING  | src/search_service.py:3160 | [情报搜索] 风险排查: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:08:29 | INFO     | src/search_service.py:3122 | [情报搜索] 公司公告: 使用 SearXNG
+2026-06-17 15:08:29 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:08:29 | WARNING  | src/search_service.py:3160 | [情报搜索] 公司公告: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:08:30 | INFO     | src/search_service.py:3122 | [情报搜索] 业绩预期: 使用 SearXNG
+2026-06-17 15:08:30 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:08:30 | WARNING  | src/search_service.py:3160 | [情报搜索] 业绩预期: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:08:30 | INFO     | src/core/pipeline.py:395 | 万科Ａ(000002.SZ) 情报搜索完成: 共 0 条结果
+2026-06-17 15:08:30 | INFO     | src/agent/skills/base.py:431 | Activated skills: ['bull_trend']
+2026-06-17 15:08:30 | INFO     | src/agent/factory.py:257 | [AgentFactory] Activated skills: ['bull_trend']
+2026-06-17 15:08:32 | INFO     | src/analyzer.py:1348 | ========== AI 分析 万科Ａ(000002.SZ) ==========
+2026-06-17 15:08:32 | INFO     | src/analyzer.py:1349 | [LLM配置] 模型: openai/gpt-5.4-nano
+2026-06-17 15:08:32 | INFO     | src/analyzer.py:1350 | [LLM配置] Prompt 长度: 3610 字符
+2026-06-17 15:08:32 | INFO     | src/analyzer.py:1351 | [LLM配置] 是否包含新闻: 是
+2026-06-17 15:08:32 | INFO     | src/analyzer.py:1355 | [LLM Prompt 预览]
+# 决策仪表盘分析请求
+
+## 📊 股票基础信息
+| 项目 | 数据 |
+|------|------|
+| 股票代码 | **000002.SZ** |
+| 股票名称 | **万科Ａ** |
+| 分析日期 | 2026-06-16 |
+
+---
+
+## 📈 技术面数据
+
+### 今日行情
+| 指标 | 数值 |
+|------|------|
+| 收盘价 | 3.07 元 |
+| 开盘价 | 3.12 元 |
+| 最高价 | 3.13 元 |
+| 最低价 | 3.06 元 |
+| 涨跌幅 | -1.9169% |
+| 成交量 | 1.14 亿股 |
+| 成交额 | 3.50 亿元 |
+
+### 均线系统（关键判断指标）
+| 均线 | 数值 | 说明 |
+|------|------|------|
+| MA5 | 3.13 | 短期趋势线 |
+| MA10 | 3.16 | 中短期趋势线 |
+| MA20 | 3.3 | 中期趋势线 |
+| 均线形态 | 空头排列 📉 | 多头/空头/缠绕 |
+
+### 财报与分红（价值投资口径）
+| 指标 | 数值 | 说明 |
+|------|-...
+2026-06-17 15:08:32 | INFO     | src/analyzer.py:1364 | [LLM调用] 开始调用 openai/gpt-5.4-nano...
+2026-06-17 15:08:32 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-17 15:08:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-17 15:08:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61746 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:08:53 | INFO     | src/analyzer.py:1384 | [LLM返回] openai/gpt-5.4-nano 响应成功, 耗时 20.30s, 响应长度 5224 字符
+2026-06-17 15:08:53 | INFO     | src/analyzer.py:1388 | [LLM返回 预览]
+```json
+{
+  "stock_name": "万科Ａ（000002）",
+  "sentiment_score": 46,
+  "trend_prediction": "震荡",
+  "operation_advice": "观望",
+  "decision_type": "hold",
+  "confidence_level": "中",
+
+  "dashboard": {
+    "core_conclusion": {
+      "one_sentence": "乖离率在安全区但均线空头，等回踩MA10企稳再做。",
+      "signal_type": "🟡持有观望",
+...
+2026-06-17 15:08:53 | INFO     | src/analyzer.py:1438 | [LLM解析] 万科Ａ(000002.SZ) 分析完成: 震荡, 评分 46
+2026-06-17 15:08:53 | INFO     | src/core/pipeline.py:1232 | [000002.SZ] 分析完成: 观望, 评分 46
+2026-06-17 15:08:53 | INFO     | src/services/task_queue.py:631 | [TaskQueue] 任务完成: 74224b99459d4004a4ae9e14a14b2368 (000002.SZ)
+2026-06-17 15:08:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61768 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:08:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61768 - "GET /api/v1/history/3 HTTP/1.1" 200
+2026-06-17 15:08:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61768 - "GET /api/v1/history/3/news?limit=8 HTTP/1.1" 200
+2026-06-17 15:09:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61825 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:09:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61877 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:11:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62091 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:11:27 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62113 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:11:27 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62115 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:11:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62134 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:11:58 | INFO     | src/services/task_queue.py:413 | [TaskQueue] 任务已提交: 001872.SZ -> e5123613a4ff4b648a8258d7c850ae4d
+2026-06-17 15:11:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62152 - "POST /api/v1/analysis/analyze HTTP/1.1" 202
+2026-06-17 15:11:58 | INFO     | data_provider/tushare_fetcher.py:169 | Tushare API 初始化成功
+2026-06-17 15:11:58 | INFO     | data_provider/tushare_fetcher.py:200 | ✅ 检测到 TUSHARE_TOKEN 且 API 初始化成功，Tushare 数据源优先级提升为最高 (Priority -1)
+2026-06-17 15:11:58 | INFO     | data_provider/base.py:894 | 已初始化 7 个数据源（按优先级）: TushareFetcher(P-1), EfinanceFetcher(P0), AkshareFetcher(P1), PytdxFetcher(P2), BaostockFetcher(P3), YfinanceFetcher(P4), LongbridgeFetcher(P5)
+2026-06-17 15:11:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:784 | Routing strategy: simple-shuffle
+2026-06-17 15:11:58 | INFO     | src/analyzer.py:960 | Analyzer LLM: Router initialized from channels/YAML — 3 deployment(s), models: ['openai/gpt-5.4-nano', 'openai/deepseek-v3.2', 'openai/qwen3-max-2026-01-23']
+2026-06-17 15:11:58 | WARNING  | src/notification.py:169 | 未配置有效的通知渠道，将不发送推送通知
+2026-06-17 15:11:58 | INFO     | src/search_service.py:2200 | 已配置 SearXNG 搜索，共 1 个自建实例
+2026-06-17 15:11:58 | INFO     | src/search_service.py:2218 | 新闻时效策略已启用: profile=short, profile_days=3, NEWS_MAX_AGE_DAYS=3, effective_window=3
+2026-06-17 15:11:58 | INFO     | src/core/pipeline.py:123 | 调度器初始化完成，最大并发数: 3
+2026-06-17 15:11:58 | INFO     | src/core/pipeline.py:124 | 已启用技术分析引擎（均线/趋势/量价指标）
+2026-06-17 15:11:58 | INFO     | src/core/pipeline.py:129 | 实时行情已禁用，将使用历史收盘价
+2026-06-17 15:11:58 | INFO     | src/core/pipeline.py:133 | 筹码分布分析已禁用
+2026-06-17 15:11:58 | INFO     | src/core/pipeline.py:137 | 搜索服务已启用
+2026-06-17 15:11:58 | INFO     | src/core/pipeline.py:1208 | ========== 开始处理 001872.SZ ==========
+2026-06-17 15:11:58 | INFO     | src/core/pipeline.py:218 | 招商港口(001872.SZ) 开始从数据源获取数据...
+2026-06-17 15:11:58 | INFO     | data_provider/base.py:1002 | [数据源尝试 1/7] [TushareFetcher] 获取 001872...
+2026-06-17 15:11:58 | INFO     | data_provider/base.py:364 | [TushareFetcher] 开始获取 001872 日线数据: 范围=2026-04-18 ~ 2026-06-17
+2026-06-17 15:11:58 | WARNING  | data_provider/tushare_fetcher.py:402 | 无法确定股票 001872 的市场，默认使用深市
+2026-06-17 15:11:58 | INFO     | data_provider/base.py:383 | [TushareFetcher] 001872 获取成功: 范围=2026-04-18 ~ 2026-06-17, rows=39, elapsed=0.14s
+2026-06-17 15:11:58 | INFO     | data_provider/base.py:1014 | [数据源完成] 001872 使用 [TushareFetcher] 获取成功: rows=39, elapsed=0.14s
+2026-06-17 15:11:58 | INFO     | src/storage.py:2753 | 保存 001872.SZ 数据成功，新增 39 条
+2026-06-17 15:11:58 | INFO     | src/core/pipeline.py:226 | 招商港口(001872.SZ) 数据保存成功（来源: TushareFetcher，新增 39 条）
+2026-06-17 15:11:58 | INFO     | src/core/pipeline.py:279 | 招商港口(001872.SZ) 实时行情已禁用，使用历史收盘价继续分析
+2026-06-17 15:11:58 | INFO     | data_provider/base.py:2230 | [company_profile] start stock_code=001872 market=cn provider=akshare_stock_profile_cninfo timeout_seconds=0.800
+2026-06-17 15:11:59 | WARNING  | data_provider/base.py:2270 | [company_profile] finished stock_code=001872 market=cn provider=akshare_stock_profile_cninfo status=failed duration_ms=800 error=company_profile timeout
+2026-06-17 15:12:06 | INFO     | data_provider/efinance_fetcher.py:1109 | [API调用] ef.stock.get_belong_board(stock_code=001872) 获取所属板块...
+2026-06-17 15:12:06 | INFO     | data_provider/efinance_fetcher.py:1118 | [API返回] ef.stock.get_belong_board 成功: 返回 20 个板块, 耗时 0.31s
+2026-06-17 15:12:06 | INFO     | data_provider/base.py:1528 | [EfinanceFetcher] 获取所属板块成功: 001872, count=20
+2026-06-17 15:12:06 | INFO     | src/core/pipeline.py:357 | 招商港口(001872.SZ) 趋势分析: 强势空头, 买入信号=观望, 评分=42
+2026-06-17 15:12:06 | INFO     | src/core/pipeline.py:380 | 招商港口(001872.SZ) 开始多维度情报搜索...
+2026-06-17 15:12:06 | INFO     | src/search_service.py:3093 | 开始多维度情报搜索: 招商港口(001872.SZ), 时间范围: 近3天 (profile=short, NEWS_MAX_AGE_DAYS=3), 目标条数=3, provider请求条数=6
+2026-06-17 15:12:06 | INFO     | src/search_service.py:3122 | [情报搜索] 最新消息: 使用 SearXNG
+2026-06-17 15:12:06 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:12:06 | WARNING  | src/search_service.py:3160 | [情报搜索] 最新消息: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:12:07 | INFO     | src/search_service.py:3122 | [情报搜索] 机构分析: 使用 SearXNG
+2026-06-17 15:12:07 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:12:07 | WARNING  | src/search_service.py:3160 | [情报搜索] 机构分析: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:12:08 | INFO     | src/search_service.py:3122 | [情报搜索] 风险排查: 使用 SearXNG
+2026-06-17 15:12:08 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:12:08 | WARNING  | src/search_service.py:3160 | [情报搜索] 风险排查: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:12:09 | INFO     | src/search_service.py:3122 | [情报搜索] 公司公告: 使用 SearXNG
+2026-06-17 15:12:09 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:12:09 | WARNING  | src/search_service.py:3160 | [情报搜索] 公司公告: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:12:09 | INFO     | src/search_service.py:3122 | [情报搜索] 业绩预期: 使用 SearXNG
+2026-06-17 15:12:10 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:12:10 | WARNING  | src/search_service.py:3160 | [情报搜索] 业绩预期: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:12:10 | INFO     | src/core/pipeline.py:395 | 招商港口(001872.SZ) 情报搜索完成: 共 0 条结果
+2026-06-17 15:12:10 | INFO     | src/agent/skills/base.py:431 | Activated skills: ['bull_trend']
+2026-06-17 15:12:10 | INFO     | src/agent/factory.py:257 | [AgentFactory] Activated skills: ['bull_trend']
+2026-06-17 15:12:12 | INFO     | src/analyzer.py:1348 | ========== AI 分析 招商港口(001872.SZ) ==========
+2026-06-17 15:12:12 | INFO     | src/analyzer.py:1349 | [LLM配置] 模型: openai/gpt-5.4-nano
+2026-06-17 15:12:12 | INFO     | src/analyzer.py:1350 | [LLM配置] Prompt 长度: 2894 字符
+2026-06-17 15:12:12 | INFO     | src/analyzer.py:1351 | [LLM配置] 是否包含新闻: 是
+2026-06-17 15:12:12 | INFO     | src/analyzer.py:1355 | [LLM Prompt 预览]
+# 决策仪表盘分析请求
+
+## 📊 股票基础信息
+| 项目 | 数据 |
+|------|------|
+| 股票代码 | **001872.SZ** |
+| 股票名称 | **招商港口** |
+| 分析日期 | 2026-06-16 |
+
+---
+
+## 📈 技术面数据
+
+### 今日行情
+| 指标 | 数值 |
+|------|------|
+| 收盘价 | 19.85 元 |
+| 开盘价 | 20.58 元 |
+| 最高价 | 20.59 元 |
+| 最低价 | 19.8 元 |
+| 涨跌幅 | -4.0599% |
+| 成交量 | 386.85 万股 |
+| 成交额 | 7749.59 万元 |
+
+### 均线系统（关键判断指标）
+| 均线 | 数值 | 说明 |
+|------|------|------|
+| MA5 | 20.35 | 短期趋势线 |
+| MA10 | 20.98 | 中短期趋势线 |
+| MA20 | 21.69 | 中期趋势线 |
+| 均线形态 | 空头排列 📉 | 多头/空头/缠绕 |
+
+### 业务模式输出要求
+请在最终 JSON 顶层新增 `bu...
+2026-06-17 15:12:12 | INFO     | src/analyzer.py:1364 | [LLM调用] 开始调用 openai/gpt-5.4-nano...
+2026-06-17 15:12:12 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-17 15:12:14 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-17 15:12:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62337 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:12:33 | INFO     | src/analyzer.py:1384 | [LLM返回] openai/gpt-5.4-nano 响应成功, 耗时 21.29s, 响应长度 4742 字符
+2026-06-17 15:12:33 | INFO     | src/analyzer.py:1388 | [LLM返回 预览]
+```json
+{
+  "stock_name": "招商港口（001872.SZ）",
+  "business_model": {
+    "summary": "以港口运营与综合航运服务为核心，通过港口装卸、航运配套及区域航运资源提升吞吐与综合收益。",
+    "items": [
+      {
+        "title": "港口运营为主：以吞吐量驱动收入",
+        "content": "公司主营业务围绕港口装卸、港口运营管理与航运服务展开，收入主要随区域航线与货物流转需求变化而波动。"
+      },
+      {
+        "title": "综合航运配...
+2026-06-17 15:12:33 | INFO     | src/analyzer.py:1438 | [LLM解析] 招商港口(001872.SZ) 分析完成: 震荡, 评分 42
+2026-06-17 15:12:33 | INFO     | src/core/pipeline.py:1232 | [001872.SZ] 分析完成: 观望, 评分 42
+2026-06-17 15:12:33 | INFO     | src/services/task_queue.py:631 | [TaskQueue] 任务完成: e5123613a4ff4b648a8258d7c850ae4d (001872.SZ)
+2026-06-17 15:12:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62384 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:12:34 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62384 - "GET /api/v1/history/4 HTTP/1.1" 200
+2026-06-17 15:12:34 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62384 - "GET /api/v1/history/4/news?limit=8 HTTP/1.1" 200
+2026-06-17 15:12:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62402 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:12:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62409 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:13:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62511 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:13:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62920 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:14:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63127 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:14:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63161 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:15:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63176 - "GET /api/v1/history/4/markdown HTTP/1.1" 200
+2026-06-17 15:15:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63186 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:15:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63215 - "GET /api/v1/history/3 HTTP/1.1" 200
+2026-06-17 15:15:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63215 - "GET /api/v1/history/3/news?limit=8 HTTP/1.1" 200
+2026-06-17 15:15:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63215 - "GET /api/v1/history/2 HTTP/1.1" 200
+2026-06-17 15:15:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63215 - "GET /api/v1/history/2/news?limit=8 HTTP/1.1" 200
+2026-06-17 15:15:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63215 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:15:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63215 - "GET /api/v1/history/1 HTTP/1.1" 200
+2026-06-17 15:15:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63215 - "GET /api/v1/history/1/news?limit=8 HTTP/1.1" 200
+2026-06-17 15:15:46 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63215 - "GET /api/v1/history/2 HTTP/1.1" 200
+2026-06-17 15:15:46 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63215 - "GET /api/v1/history/2/news?limit=8 HTTP/1.1" 200
+2026-06-17 15:16:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63258 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:16:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63320 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:16:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63382 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:17:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63421 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:17:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63476 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:18:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63532 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:19:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63606 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:20:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63697 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:21:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63836 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:22:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64008 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:23:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64153 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:24:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64309 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:25:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64400 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:26:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64527 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:27:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64640 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:28:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64763 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:29:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64907 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:30:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64978 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:31:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65263 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:32:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65459 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:33:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49161 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:34:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49314 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:35:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49417 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:36:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49752 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:37:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49922 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:38:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50182 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:39:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50408 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:40:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50705 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:41:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50869 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:42:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51034 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:43:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51102 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:44:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51221 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:44:28 | INFO     | main.py:817 | 
+用户中断，程序退出
+2026-06-17 15:44:32 | INFO     | src/logging_config.py:153 | 日志系统初始化完成，日志目录: .
+2026-06-17 15:44:32 | INFO     | src/logging_config.py:154 | 常规日志: stock_analysis_20260617.log
+2026-06-17 15:44:32 | INFO     | src/logging_config.py:155 | 调试日志: stock_analysis_debug_20260617.log
+2026-06-17 15:44:32 | INFO     | main.py:757 | ============================================================
+2026-06-17 15:44:32 | INFO     | main.py:758 | A股自选股智能分析系统 启动
+2026-06-17 15:44:32 | INFO     | main.py:759 | 运行时间: 2026-06-17 15:44:32
+2026-06-17 15:44:32 | INFO     | main.py:760 | ============================================================
+2026-06-17 15:44:32 | INFO     | src/webui_frontend.py:199 | 检测到可直接复用的前端静态产物，跳过运行时自动构建: /Users/taurus/developer/outlets/gp/static/index.html
+2026-06-17 15:44:32 | INFO     | main.py:623 | FastAPI 服务已启动: http://0.0.0.0:8000
+2026-06-17 15:44:32 | INFO     | main.py:808 | 模式: 仅 Web 服务
+2026-06-17 15:44:32 | INFO     | main.py:809 | Web 服务运行中: http://0.0.0.0:8000
+2026-06-17 15:44:32 | INFO     | main.py:810 | 通过 /api/v1/analysis/analyze 接口触发分析
+2026-06-17 15:44:32 | INFO     | main.py:811 | API 文档: http://0.0.0.0:8000/docs
+2026-06-17 15:44:32 | INFO     | main.py:812 | 按 Ctrl+C 退出...
+2026-06-17 15:44:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:92 | Started server process [21802]
+2026-06-17 15:44:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:48 | Waiting for application startup.
+2026-06-17 15:44:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:62 | Application startup complete.
+2026-06-17 15:44:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:224 | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-06-17 15:44:36 | INFO     | src/storage.py:916 | 数据库初始化完成: postgresql+psycopg://dsa:dsa123@localhost:5435/daily_stock_analysis
+2026-06-17 15:44:36 | INFO     | src/services/task_queue.py:178 | [TaskQueue] 初始化完成，最大并发: 3
+2026-06-17 15:44:36 | INFO     | src/config.py:1604 | LLM channel 'comet': 3 model(s), 1 key(s)
+2026-06-17 15:44:36 | INFO     | src/config.py:1970 | TUSHARE_TOKEN detected, auto-injecting tushare into realtime priority: tushare,tencent,akshare_sina,efinance,akshare_em
+2026-06-17 15:44:36 | WARNING  | src/config.py:792 | Invalid AGENT_ARCH='', falling back to 'single'. Valid: {'multi', 'single'}
+2026-06-17 15:44:36 | WARNING  | src/config.py:804 | Invalid AGENT_ORCHESTRATOR_MODE='', falling back to 'standard'. Valid: {'specialist', 'standard', 'full', 'quick'}
+2026-06-17 15:44:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51363 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-17 15:44:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51451 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:44:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51451 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:44:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51451 - "GET / HTTP/1.1" 200
+2026-06-17 15:44:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51451 - "GET /assets/index-BdLb4--Z.css HTTP/1.1" 304
+2026-06-17 15:44:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51453 - "GET /assets/index-2Cbf1akC.js HTTP/1.1" 304
+2026-06-17 15:44:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51453 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-17 15:44:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51458 - "GET /stocks.index.json?_t=494911 HTTP/1.1" 200
+2026-06-17 15:44:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51464 - "GET /vite.svg HTTP/1.1" 200
+2026-06-17 15:44:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51462 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-17 15:44:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51451 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-17 15:44:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51460 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:44:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51453 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-17 15:44:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51460 - "GET /api/v1/history/4 HTTP/1.1" 200
+2026-06-17 15:44:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51460 - "GET /api/v1/history/4/news?limit=8 HTTP/1.1" 200
+2026-06-17 15:44:55 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51460 - "DELETE /api/v1/history HTTP/1.1" 200
+2026-06-17 15:44:55 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51460 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:45:02 | INFO     | src/services/task_queue.py:413 | [TaskQueue] 任务已提交: 600410.SH -> 45c6f955a7154e41b2ab39b9b44eeb18
+2026-06-17 15:45:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51478 - "POST /api/v1/analysis/analyze HTTP/1.1" 202
+2026-06-17 15:45:03 | INFO     | data_provider/tushare_fetcher.py:169 | Tushare API 初始化成功
+2026-06-17 15:45:03 | INFO     | data_provider/tushare_fetcher.py:200 | ✅ 检测到 TUSHARE_TOKEN 且 API 初始化成功，Tushare 数据源优先级提升为最高 (Priority -1)
+2026-06-17 15:45:03 | INFO     | data_provider/base.py:915 | 已初始化 7 个数据源（按优先级）: TushareFetcher(P-1), EfinanceFetcher(P0), AkshareFetcher(P1), PytdxFetcher(P2), BaostockFetcher(P3), YfinanceFetcher(P4), LongbridgeFetcher(P5)
+2026-06-17 15:45:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:784 | Routing strategy: simple-shuffle
+2026-06-17 15:45:03 | INFO     | src/analyzer.py:960 | Analyzer LLM: Router initialized from channels/YAML — 3 deployment(s), models: ['openai/gpt-5.4-nano', 'openai/deepseek-v3.2', 'openai/qwen3-max-2026-01-23']
+2026-06-17 15:45:03 | WARNING  | src/notification.py:169 | 未配置有效的通知渠道，将不发送推送通知
+2026-06-17 15:45:03 | INFO     | src/search_service.py:2200 | 已配置 SearXNG 搜索，共 1 个自建实例
+2026-06-17 15:45:03 | INFO     | src/search_service.py:2218 | 新闻时效策略已启用: profile=short, profile_days=3, NEWS_MAX_AGE_DAYS=3, effective_window=3
+2026-06-17 15:45:03 | INFO     | src/core/pipeline.py:123 | 调度器初始化完成，最大并发数: 3
+2026-06-17 15:45:03 | INFO     | src/core/pipeline.py:124 | 已启用技术分析引擎（均线/趋势/量价指标）
+2026-06-17 15:45:03 | INFO     | src/core/pipeline.py:129 | 实时行情已禁用，将使用历史收盘价
+2026-06-17 15:45:03 | INFO     | src/core/pipeline.py:133 | 筹码分布分析已禁用
+2026-06-17 15:45:03 | INFO     | src/core/pipeline.py:137 | 搜索服务已启用
+2026-06-17 15:45:03 | INFO     | src/core/pipeline.py:1208 | ========== 开始处理 600410.SH ==========
+2026-06-17 15:45:03 | INFO     | src/core/pipeline.py:218 | 华胜天成(600410.SH) 开始从数据源获取数据...
+2026-06-17 15:45:03 | INFO     | data_provider/base.py:1023 | [数据源尝试 1/7] [TushareFetcher] 获取 600410...
+2026-06-17 15:45:03 | INFO     | data_provider/base.py:364 | [TushareFetcher] 开始获取 600410 日线数据: 范围=2026-04-18 ~ 2026-06-17
+2026-06-17 15:45:03 | INFO     | data_provider/base.py:383 | [TushareFetcher] 600410 获取成功: 范围=2026-04-18 ~ 2026-06-17, rows=40, elapsed=0.11s
+2026-06-17 15:45:03 | INFO     | data_provider/base.py:1035 | [数据源完成] 600410 使用 [TushareFetcher] 获取成功: rows=40, elapsed=0.11s
+2026-06-17 15:45:03 | INFO     | src/storage.py:2753 | 保存 600410.SH 数据成功，新增 1 条
+2026-06-17 15:45:03 | INFO     | src/core/pipeline.py:226 | 华胜天成(600410.SH) 数据保存成功（来源: TushareFetcher，新增 1 条）
+2026-06-17 15:45:03 | INFO     | src/core/pipeline.py:279 | 华胜天成(600410.SH) 实时行情已禁用，使用历史收盘价继续分析
+2026-06-17 15:45:03 | INFO     | data_provider/base.py:2232 | [company_profile] start stock_code=600410 market=cn provider=tushare_stock_company timeout_seconds=0.800
+2026-06-17 15:45:04 | INFO     | data_provider/base.py:2253 | [company_profile] finished stock_code=600410 market=cn provider=tushare_stock_company status=ok duration_ms=639 fields=['area', 'board_secretary', 'business_scope', 'chairman', 'city', 'company_intro', 'email', 'employee_count', 'exchange', 'full_name', 'industry', 'listing_date', 'main_business', 'manager', 'market', 'office_address', 'province', 'registered_capital', 'setup_date', 'short_name', 'website']
+2026-06-17 15:45:05 | INFO     | data_provider/tushare_fetcher.py:1083 | [Tushare] ts.pro_api().moneyflow_ind_ths 获取板块排行(同花顺)...
+2026-06-17 15:45:05 | INFO     | data_provider/base.py:3088 | [TushareFetcher] 获取板块排行成功
+2026-06-17 15:45:07 | INFO     | data_provider/efinance_fetcher.py:1109 | [API调用] ef.stock.get_belong_board(stock_code=600410) 获取所属板块...
+2026-06-17 15:45:07 | INFO     | data_provider/efinance_fetcher.py:1118 | [API返回] ef.stock.get_belong_board 成功: 返回 35 个板块, 耗时 0.06s
+2026-06-17 15:45:07 | INFO     | data_provider/base.py:1549 | [EfinanceFetcher] 获取所属板块成功: 600410, count=35
+2026-06-17 15:45:07 | INFO     | src/core/pipeline.py:357 | 华胜天成(600410.SH) 趋势分析: 空头排列, 买入信号=持有, 评分=47
+2026-06-17 15:45:07 | INFO     | src/core/pipeline.py:380 | 华胜天成(600410.SH) 开始多维度情报搜索...
+2026-06-17 15:45:07 | INFO     | src/search_service.py:3093 | 开始多维度情报搜索: 华胜天成(600410.SH), 时间范围: 近3天 (profile=short, NEWS_MAX_AGE_DAYS=3), 目标条数=3, provider请求条数=6
+2026-06-17 15:45:07 | INFO     | src/search_service.py:3122 | [情报搜索] 最新消息: 使用 SearXNG
+2026-06-17 15:45:09 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:45:09 | WARNING  | src/search_service.py:3160 | [情报搜索] 最新消息: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:45:10 | INFO     | src/search_service.py:3122 | [情报搜索] 机构分析: 使用 SearXNG
+2026-06-17 15:45:10 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:45:10 | WARNING  | src/search_service.py:3160 | [情报搜索] 机构分析: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:45:11 | INFO     | src/search_service.py:3122 | [情报搜索] 风险排查: 使用 SearXNG
+2026-06-17 15:45:11 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:45:11 | WARNING  | src/search_service.py:3160 | [情报搜索] 风险排查: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:45:12 | INFO     | src/search_service.py:3122 | [情报搜索] 公司公告: 使用 SearXNG
+2026-06-17 15:45:12 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:45:12 | WARNING  | src/search_service.py:3160 | [情报搜索] 公司公告: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:45:12 | INFO     | src/search_service.py:3122 | [情报搜索] 业绩预期: 使用 SearXNG
+2026-06-17 15:45:12 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 15:45:12 | WARNING  | src/search_service.py:3160 | [情报搜索] 业绩预期: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 15:45:13 | INFO     | src/core/pipeline.py:395 | 华胜天成(600410.SH) 情报搜索完成: 共 0 条结果
+2026-06-17 15:45:13 | INFO     | src/agent/skills/base.py:360 | Loaded 11 built-in skills from /Users/taurus/developer/outlets/gp/strategies
+2026-06-17 15:45:13 | INFO     | src/agent/factory.py:213 | [AgentFactory] SkillManager prototype cached (11 skills)
+2026-06-17 15:45:13 | INFO     | src/agent/skills/base.py:431 | Activated skills: ['bull_trend']
+2026-06-17 15:45:13 | INFO     | src/agent/factory.py:257 | [AgentFactory] Activated skills: ['bull_trend']
+2026-06-17 15:45:15 | INFO     | src/analyzer.py:1348 | ========== AI 分析 华胜天成(600410.SH) ==========
+2026-06-17 15:45:15 | INFO     | src/analyzer.py:1349 | [LLM配置] 模型: openai/gpt-5.4-nano
+2026-06-17 15:45:15 | INFO     | src/analyzer.py:1350 | [LLM配置] Prompt 长度: 4996 字符
+2026-06-17 15:45:15 | INFO     | src/analyzer.py:1351 | [LLM配置] 是否包含新闻: 是
+2026-06-17 15:45:15 | INFO     | src/analyzer.py:1355 | [LLM Prompt 预览]
+# 决策仪表盘分析请求
+
+## 📊 股票基础信息
+| 项目 | 数据 |
+|------|------|
+| 股票代码 | **600410.SH** |
+| 股票名称 | **华胜天成** |
+| 分析日期 | 2026-06-17 |
+
+---
+
+## 📈 技术面数据
+
+### 今日行情
+| 指标 | 数值 |
+|------|------|
+| 收盘价 | 17.74 元 |
+| 开盘价 | 17.8 元 |
+| 最高价 | 17.98 元 |
+| 最低价 | 17.6 元 |
+| 涨跌幅 | -1.6084% |
+| 成交量 | 4641.24 万股 |
+| 成交额 | 8.24 亿元 |
+
+### 均线系统（关键判断指标）
+| 均线 | 数值 | 说明 |
+|------|------|------|
+| MA5 | 17.66 | 短期趋势线 |
+| MA10 | 17.76 | 中短期趋势线 |
+| MA20 | 18.78 | 中期趋势线 |
+| 均线形态 | 震荡整理 ↔️ | 多头/空头/缠绕 |
+
+### 财报与分红（价值投资口径）
+| 指标 | 数值 | 说明 ...
+2026-06-17 15:45:15 | INFO     | src/analyzer.py:1364 | [LLM调用] 开始调用 openai/gpt-5.4-nano...
+2026-06-17 15:45:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-17 15:45:17 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-17 15:45:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51595 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:45:42 | INFO     | src/analyzer.py:1384 | [LLM返回] openai/gpt-5.4-nano 响应成功, 耗时 26.50s, 响应长度 6464 字符
+2026-06-17 15:45:42 | INFO     | src/analyzer.py:1388 | [LLM返回 预览]
+```json
+{
+  "stock_name": "华胜天成（600410）",
+  "sentiment_score": 47,
+  "trend_prediction": "震荡",
+  "operation_advice": "观望",
+  "decision_type": "hold",
+  "confidence_level": "中",
+
+  "dashboard": {
+    "core_conclusion": {
+      "one_sentence": "股价贴近MA5但仍空头排列，优先等回踩MA5并确认止跌再操作。",
+      "signal_type": "🟡...
+2026-06-17 15:45:42 | INFO     | src/analyzer.py:1438 | [LLM解析] 华胜天成(600410.SH) 分析完成: 震荡, 评分 47
+2026-06-17 15:45:42 | INFO     | src/core/pipeline.py:1232 | [600410.SH] 分析完成: 观望, 评分 47
+2026-06-17 15:45:42 | INFO     | src/services/task_queue.py:631 | [TaskQueue] 任务完成: 45c6f955a7154e41b2ab39b9b44eeb18 (600410.SH)
+2026-06-17 15:45:42 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51631 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:45:42 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51631 - "GET /api/v1/history/5 HTTP/1.1" 200
+2026-06-17 15:45:42 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51631 - "GET /api/v1/history/5/news?limit=8 HTTP/1.1" 200
+2026-06-17 15:45:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51663 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:46:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51700 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:46:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51727 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:47:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51795 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:47:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51851 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:48:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51911 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:48:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51967 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:49:32 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52053 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:49:32 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52053 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:49:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52055 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:50:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52184 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:50:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52233 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:51:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52274 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:51:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52324 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:52:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52372 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:52:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52449 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:52:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52449 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:53:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52451 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:53:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52551 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:53:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52569 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:54:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52598 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:54:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52636 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:55:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52792 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:55:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52792 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:56:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52794 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:56:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52833 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:57:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52873 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:57:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52873 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:57:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52878 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:58:12 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52941 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:58:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52954 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:58:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53007 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:58:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53007 - "GET /api/v1/agent/chat/sessions?limit=50 HTTP/1.1" 200
+2026-06-17 15:58:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53025 - "GET /api/v1/agent/skills HTTP/1.1" 200
+2026-06-17 15:58:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53026 - "GET /api/v1/history/5 HTTP/1.1" 200
+2026-06-17 15:58:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53026 - "GET /stocks.index.json?_t=494911 HTTP/1.1" 200
+2026-06-17 15:58:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53040 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-17 15:58:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53007 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:58:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53025 - "GET /api/v1/history/5/news?limit=8 HTTP/1.1" 200
+2026-06-17 15:59:28 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53087 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 15:59:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53141 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:00:28 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53177 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:00:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53254 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:01:28 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53303 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:01:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53357 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:02:28 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53398 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:02:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53414 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:02:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53425 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:03:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53463 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:03:28 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53470 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:03:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53470 - "GET /api/v1/history/4 HTTP/1.1" 200
+2026-06-17 16:03:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53470 - "GET /api/v1/history/4/news?limit=8 HTTP/1.1" 200
+2026-06-17 16:03:34 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53470 - "GET /api/v1/history/5 HTTP/1.1" 200
+2026-06-17 16:03:34 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53470 - "GET /api/v1/history/5/news?limit=8 HTTP/1.1" 200
+2026-06-17 16:03:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53746 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:04:28 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53828 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:04:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54007 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:05:28 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54094 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:05:40 | INFO     | main.py:817 | 
+用户中断，程序退出
+2026-06-17 16:05:47 | INFO     | src/logging_config.py:153 | 日志系统初始化完成，日志目录: .
+2026-06-17 16:05:47 | INFO     | src/logging_config.py:154 | 常规日志: stock_analysis_20260617.log
+2026-06-17 16:05:47 | INFO     | src/logging_config.py:155 | 调试日志: stock_analysis_debug_20260617.log
+2026-06-17 16:05:47 | INFO     | main.py:757 | ============================================================
+2026-06-17 16:05:47 | INFO     | main.py:758 | A股自选股智能分析系统 启动
+2026-06-17 16:05:47 | INFO     | main.py:759 | 运行时间: 2026-06-17 16:05:47
+2026-06-17 16:05:47 | INFO     | main.py:760 | ============================================================
+2026-06-17 16:05:47 | INFO     | src/webui_frontend.py:230 | 前端构建检查结果: needs_install=False, needs_build=True, artifact=/Users/taurus/developer/outlets/gp/static/index.html
+2026-06-17 16:05:47 | INFO     | src/webui_frontend.py:111 | 执行前端命令: /Users/taurus/.nvm/versions/node/v24.13.1/bin/npm run build
+2026-06-17 16:05:56 | INFO     | src/webui_frontend.py:113 | 前端静态资源构建完成
+2026-06-17 16:05:56 | INFO     | main.py:623 | FastAPI 服务已启动: http://0.0.0.0:8000
+2026-06-17 16:05:56 | INFO     | main.py:808 | 模式: 仅 Web 服务
+2026-06-17 16:05:56 | INFO     | main.py:809 | Web 服务运行中: http://0.0.0.0:8000
+2026-06-17 16:05:56 | INFO     | main.py:810 | 通过 /api/v1/analysis/analyze 接口触发分析
+2026-06-17 16:05:56 | INFO     | main.py:811 | API 文档: http://0.0.0.0:8000/docs
+2026-06-17 16:05:56 | INFO     | main.py:812 | 按 Ctrl+C 退出...
+2026-06-17 16:05:57 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:92 | Started server process [31089]
+2026-06-17 16:05:57 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:48 | Waiting for application startup.
+2026-06-17 16:05:57 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:62 | Application startup complete.
+2026-06-17 16:05:57 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:224 | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-06-17 16:05:58 | INFO     | src/storage.py:916 | 数据库初始化完成: postgresql+psycopg://dsa:dsa123@localhost:5435/daily_stock_analysis
+2026-06-17 16:05:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54195 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:05:59 | INFO     | src/services/task_queue.py:178 | [TaskQueue] 初始化完成，最大并发: 3
+2026-06-17 16:05:59 | INFO     | src/config.py:1604 | LLM channel 'comet': 3 model(s), 1 key(s)
+2026-06-17 16:05:59 | INFO     | src/config.py:1970 | TUSHARE_TOKEN detected, auto-injecting tushare into realtime priority: tushare,tencent,akshare_sina,efinance,akshare_em
+2026-06-17 16:05:59 | WARNING  | src/config.py:792 | Invalid AGENT_ARCH='', falling back to 'single'. Valid: {'single', 'multi'}
+2026-06-17 16:05:59 | WARNING  | src/config.py:804 | Invalid AGENT_ORCHESTRATOR_MODE='', falling back to 'standard'. Valid: {'specialist', 'quick', 'standard', 'full'}
+2026-06-17 16:05:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54195 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-17 16:06:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54215 - "GET / HTTP/1.1" 200
+2026-06-17 16:06:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54217 - "GET /assets/index-Damsm92q.css HTTP/1.1" 200
+2026-06-17 16:06:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54215 - "GET /assets/index-ZjNHiIUo.js HTTP/1.1" 200
+2026-06-17 16:06:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54215 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-17 16:06:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54219 - "GET /stocks.index.json?_t=494912 HTTP/1.1" 200
+2026-06-17 16:06:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54223 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-17 16:06:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54217 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-17 16:06:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54221 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:06:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54215 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-17 16:06:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54215 - "GET /api/v1/history/5 HTTP/1.1" 200
+2026-06-17 16:06:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54215 - "GET /api/v1/history/5/news?limit=8 HTTP/1.1" 200
+2026-06-17 16:06:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54215 - "GET /vite.svg HTTP/1.1" 200
+2026-06-17 16:06:17 | INFO     | src/services/task_queue.py:413 | [TaskQueue] 任务已提交: 000007.SZ -> 8a386e0fb4ce46f6b16ebcb0ecd19e3f
+2026-06-17 16:06:17 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54243 - "POST /api/v1/analysis/analyze HTTP/1.1" 202
+2026-06-17 16:06:18 | INFO     | data_provider/tushare_fetcher.py:169 | Tushare API 初始化成功
+2026-06-17 16:06:18 | INFO     | data_provider/tushare_fetcher.py:200 | ✅ 检测到 TUSHARE_TOKEN 且 API 初始化成功，Tushare 数据源优先级提升为最高 (Priority -1)
+2026-06-17 16:06:18 | INFO     | data_provider/base.py:915 | 已初始化 7 个数据源（按优先级）: TushareFetcher(P-1), EfinanceFetcher(P0), AkshareFetcher(P1), PytdxFetcher(P2), BaostockFetcher(P3), YfinanceFetcher(P4), LongbridgeFetcher(P5)
+2026-06-17 16:06:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:784 | Routing strategy: simple-shuffle
+2026-06-17 16:06:18 | INFO     | src/analyzer.py:960 | Analyzer LLM: Router initialized from channels/YAML — 3 deployment(s), models: ['openai/gpt-5.4-nano', 'openai/deepseek-v3.2', 'openai/qwen3-max-2026-01-23']
+2026-06-17 16:06:18 | WARNING  | src/notification.py:169 | 未配置有效的通知渠道，将不发送推送通知
+2026-06-17 16:06:18 | INFO     | src/search_service.py:2200 | 已配置 SearXNG 搜索，共 1 个自建实例
+2026-06-17 16:06:18 | INFO     | src/search_service.py:2218 | 新闻时效策略已启用: profile=short, profile_days=3, NEWS_MAX_AGE_DAYS=3, effective_window=3
+2026-06-17 16:06:18 | INFO     | src/core/pipeline.py:123 | 调度器初始化完成，最大并发数: 3
+2026-06-17 16:06:18 | INFO     | src/core/pipeline.py:124 | 已启用技术分析引擎（均线/趋势/量价指标）
+2026-06-17 16:06:18 | INFO     | src/core/pipeline.py:129 | 实时行情已禁用，将使用历史收盘价
+2026-06-17 16:06:18 | INFO     | src/core/pipeline.py:133 | 筹码分布分析已禁用
+2026-06-17 16:06:18 | INFO     | src/core/pipeline.py:137 | 搜索服务已启用
+2026-06-17 16:06:18 | INFO     | src/core/pipeline.py:1208 | ========== 开始处理 000007.SZ ==========
+2026-06-17 16:06:18 | INFO     | src/core/pipeline.py:218 | 全新好(000007.SZ) 开始从数据源获取数据...
+2026-06-17 16:06:18 | INFO     | data_provider/base.py:1023 | [数据源尝试 1/7] [TushareFetcher] 获取 000007...
+2026-06-17 16:06:18 | INFO     | data_provider/base.py:364 | [TushareFetcher] 开始获取 000007 日线数据: 范围=2026-04-18 ~ 2026-06-17
+2026-06-17 16:06:19 | INFO     | data_provider/base.py:383 | [TushareFetcher] 000007 获取成功: 范围=2026-04-18 ~ 2026-06-17, rows=40, elapsed=0.12s
+2026-06-17 16:06:19 | INFO     | data_provider/base.py:1035 | [数据源完成] 000007 使用 [TushareFetcher] 获取成功: rows=40, elapsed=0.12s
+2026-06-17 16:06:19 | INFO     | src/storage.py:2753 | 保存 000007.SZ 数据成功，新增 40 条
+2026-06-17 16:06:19 | INFO     | src/core/pipeline.py:226 | 全新好(000007.SZ) 数据保存成功（来源: TushareFetcher，新增 40 条）
+2026-06-17 16:06:19 | INFO     | src/core/pipeline.py:279 | 全新好(000007.SZ) 实时行情已禁用，使用历史收盘价继续分析
+2026-06-17 16:06:19 | INFO     | data_provider/base.py:2232 | [company_profile] start stock_code=000007 market=cn provider=tushare_stock_company timeout_seconds=0.800
+2026-06-17 16:06:19 | WARNING  | data_provider/base.py:2269 | [company_profile] fallback stock_code=000007 market=cn provider=tushare_stock_company status=failed duration_ms=800 error=company_profile_tushare timeout
+2026-06-17 16:06:19 | INFO     | data_provider/base.py:2299 | [company_profile] start stock_code=000007 market=cn provider=akshare_stock_profile_cninfo timeout_seconds=0.800
+2026-06-17 16:06:20 | INFO     | data_provider/base.py:2349 | [company_profile] finished stock_code=000007 market=cn provider=akshare_stock_profile_cninfo status=ok duration_ms=420 fields=['business_scope', 'company_intro', 'float_share_capital', 'full_name', 'industry', 'legal_representative', 'listing_date', 'main_business', 'total_share_capital', 'website']
+2026-06-17 16:06:22 | INFO     | data_provider/tushare_fetcher.py:1083 | [Tushare] ts.pro_api().moneyflow_ind_ths 获取板块排行(同花顺)...
+2026-06-17 16:06:22 | INFO     | data_provider/base.py:3088 | [TushareFetcher] 获取板块排行成功
+2026-06-17 16:06:24 | INFO     | data_provider/efinance_fetcher.py:1109 | [API调用] ef.stock.get_belong_board(stock_code=000007) 获取所属板块...
+2026-06-17 16:06:24 | INFO     | data_provider/efinance_fetcher.py:1118 | [API返回] ef.stock.get_belong_board 成功: 返回 7 个板块, 耗时 0.21s
+2026-06-17 16:06:24 | INFO     | data_provider/base.py:1549 | [EfinanceFetcher] 获取所属板块成功: 000007, count=7
+2026-06-17 16:06:24 | INFO     | src/core/pipeline.py:357 | 全新好(000007.SZ) 趋势分析: 强势多头, 买入信号=买入, 评分=73
+2026-06-17 16:06:24 | INFO     | src/core/pipeline.py:380 | 全新好(000007.SZ) 开始多维度情报搜索...
+2026-06-17 16:06:24 | INFO     | src/search_service.py:3093 | 开始多维度情报搜索: 全新好(000007.SZ), 时间范围: 近3天 (profile=short, NEWS_MAX_AGE_DAYS=3), 目标条数=3, provider请求条数=6
+2026-06-17 16:06:24 | INFO     | src/search_service.py:3122 | [情报搜索] 最新消息: 使用 SearXNG
+2026-06-17 16:06:26 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 16:06:26 | WARNING  | src/search_service.py:3160 | [情报搜索] 最新消息: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 16:06:26 | INFO     | src/search_service.py:3122 | [情报搜索] 机构分析: 使用 SearXNG
+2026-06-17 16:06:27 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 16:06:27 | WARNING  | src/search_service.py:3160 | [情报搜索] 机构分析: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 16:06:28 | INFO     | src/search_service.py:3122 | [情报搜索] 风险排查: 使用 SearXNG
+2026-06-17 16:06:28 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 16:06:28 | WARNING  | src/search_service.py:3160 | [情报搜索] 风险排查: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 16:06:29 | INFO     | src/search_service.py:3122 | [情报搜索] 公司公告: 使用 SearXNG
+2026-06-17 16:06:30 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 16:06:30 | WARNING  | src/search_service.py:3160 | [情报搜索] 公司公告: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 16:06:30 | INFO     | src/search_service.py:3122 | [情报搜索] 业绩预期: 使用 SearXNG
+2026-06-17 16:06:31 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 16:06:31 | WARNING  | src/search_service.py:3160 | [情报搜索] 业绩预期: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 16:06:31 | INFO     | src/core/pipeline.py:395 | 全新好(000007.SZ) 情报搜索完成: 共 0 条结果
+2026-06-17 16:06:31 | INFO     | src/agent/skills/base.py:360 | Loaded 11 built-in skills from /Users/taurus/developer/outlets/gp/strategies
+2026-06-17 16:06:31 | INFO     | src/agent/factory.py:213 | [AgentFactory] SkillManager prototype cached (11 skills)
+2026-06-17 16:06:31 | INFO     | src/agent/skills/base.py:431 | Activated skills: ['bull_trend']
+2026-06-17 16:06:31 | INFO     | src/agent/factory.py:257 | [AgentFactory] Activated skills: ['bull_trend']
+2026-06-17 16:06:33 | INFO     | src/analyzer.py:1348 | ========== AI 分析 全新好(000007.SZ) ==========
+2026-06-17 16:06:33 | INFO     | src/analyzer.py:1349 | [LLM配置] 模型: openai/gpt-5.4-nano
+2026-06-17 16:06:33 | INFO     | src/analyzer.py:1350 | [LLM配置] Prompt 长度: 3977 字符
+2026-06-17 16:06:33 | INFO     | src/analyzer.py:1351 | [LLM配置] 是否包含新闻: 是
+2026-06-17 16:06:33 | INFO     | src/analyzer.py:1355 | [LLM Prompt 预览]
+# 决策仪表盘分析请求
+
+## 📊 股票基础信息
+| 项目 | 数据 |
+|------|------|
+| 股票代码 | **000007.SZ** |
+| 股票名称 | **全新好** |
+| 分析日期 | 2026-06-17 |
+
+---
+
+## 📈 技术面数据
+
+### 今日行情
+| 指标 | 数值 |
+|------|------|
+| 收盘价 | 13.64 元 |
+| 开盘价 | 14.26 元 |
+| 最高价 | 14.3 元 |
+| 最低价 | 13.29 元 |
+| 涨跌幅 | -4.8815% |
+| 成交量 | 1285.30 万股 |
+| 成交额 | 1.76 亿元 |
+
+### 均线系统（关键判断指标）
+| 均线 | 数值 | 说明 |
+|------|------|------|
+| MA5 | 14.02 | 短期趋势线 |
+| MA10 | 13.4 | 中短期趋势线 |
+| MA20 | 12.69 | 中期趋势线 |
+| 均线形态 | 震荡整理 ↔️ | 多头/空头/缠绕 |
+
+### 财报与分红（价值投资口径）
+| 指标 | 数值 | 说明 |...
+2026-06-17 16:06:33 | INFO     | src/analyzer.py:1364 | [LLM调用] 开始调用 openai/gpt-5.4-nano...
+2026-06-17 16:06:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-17 16:06:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-17 16:06:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54343 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:06:55 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54372 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:07:00 | INFO     | src/analyzer.py:1384 | [LLM返回] openai/gpt-5.4-nano 响应成功, 耗时 27.05s, 响应长度 6505 字符
+2026-06-17 16:07:00 | INFO     | src/analyzer.py:1388 | [LLM返回 预览]
+```json
+{
+  "stock_name": "全新好（000007.SZ）",
+  "sentiment_score": 66,
+  "trend_prediction": "看多",
+  "operation_advice": "持有",
+  "decision_type": "hold",
+  "confidence_level": "中",
+
+  "dashboard": {
+    "core_conclusion": {
+      "one_sentence": "多头排列仍在，回踩MA5后偏稳，逢回踩低吸不追高。",
+      "signal_type": "🟡持有观望...
+2026-06-17 16:07:00 | INFO     | src/analyzer.py:1438 | [LLM解析] 全新好(000007.SZ) 分析完成: 看多, 评分 66
+2026-06-17 16:07:00 | INFO     | src/core/pipeline.py:1232 | [000007.SZ] 分析完成: 持有, 评分 66
+2026-06-17 16:07:00 | INFO     | src/services/task_queue.py:631 | [TaskQueue] 任务完成: 8a386e0fb4ce46f6b16ebcb0ecd19e3f (000007.SZ)
+2026-06-17 16:07:00 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54376 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:07:00 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54376 - "GET /api/v1/history/6 HTTP/1.1" 200
+2026-06-17 16:07:00 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54376 - "GET /api/v1/history/6/news?limit=8 HTTP/1.1" 200
+2026-06-17 16:07:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54386 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:07:38 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54413 - "GET /api/v1/history/5 HTTP/1.1" 200
+2026-06-17 16:07:38 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54413 - "GET /api/v1/history/5/news?limit=8 HTTP/1.1" 200
+2026-06-17 16:07:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54413 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:08:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54457 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:08:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54483 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:09:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54534 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:09:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54605 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:10:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54647 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:10:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54665 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:10:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54678 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:10:56 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54712 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:11:04 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54727 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-17 16:11:04 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54730 - "GET /api/v1/payment/history HTTP/1.1" 200
+2026-06-17 16:11:04 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54724 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-17 16:11:06 | INFO     | src/services/credit_service.py:126 | Credits added: user=2 amount=1000 operator=2 reason=daily_claim
+2026-06-17 16:11:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54724 - "POST /api/v1/payment/claim HTTP/1.1" 200
+2026-06-17 16:11:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54724 - "GET /api/v1/payment/history HTTP/1.1" 200
+2026-06-17 16:11:08 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54724 - "GET /stocks.index.json?_t=494912 HTTP/1.1" 200
+2026-06-17 16:11:08 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54727 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:11:08 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54730 - "GET /api/v1/history/5/news?limit=8 HTTP/1.1" 200
+2026-06-17 16:11:08 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54733 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-17 16:11:08 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54724 - "GET /api/v1/agent/chat/sessions?limit=50 HTTP/1.1" 200
+2026-06-17 16:11:08 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54730 - "GET /api/v1/agent/skills HTTP/1.1" 200
+2026-06-17 16:11:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54727 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-17 16:11:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54724 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:11:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54730 - "GET /api/v1/history/5/news?limit=8 HTTP/1.1" 200
+2026-06-17 16:11:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54761 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:11:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54775 - "GET /api/v1/history/4 HTTP/1.1" 200
+2026-06-17 16:11:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54775 - "GET /api/v1/history/4/news?limit=8 HTTP/1.1" 200
+2026-06-17 16:12:01 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54795 - "DELETE /api/v1/history HTTP/1.1" 200
+2026-06-17 16:12:01 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54795 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:12:01 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54795 - "GET /api/v1/history/6 HTTP/1.1" 200
+2026-06-17 16:12:01 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54795 - "GET /api/v1/history/6/news?limit=8 HTTP/1.1" 200
+2026-06-17 16:12:04 | INFO     | src/services/task_queue.py:413 | [TaskQueue] 任务已提交: 001872 -> 63cbf884689e46b299132116298e9407
+2026-06-17 16:12:04 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54795 - "POST /api/v1/analysis/analyze HTTP/1.1" 202
+2026-06-17 16:12:04 | INFO     | data_provider/tushare_fetcher.py:169 | Tushare API 初始化成功
+2026-06-17 16:12:04 | INFO     | data_provider/tushare_fetcher.py:200 | ✅ 检测到 TUSHARE_TOKEN 且 API 初始化成功，Tushare 数据源优先级提升为最高 (Priority -1)
+2026-06-17 16:12:04 | INFO     | data_provider/base.py:915 | 已初始化 7 个数据源（按优先级）: TushareFetcher(P-1), EfinanceFetcher(P0), AkshareFetcher(P1), PytdxFetcher(P2), BaostockFetcher(P3), YfinanceFetcher(P4), LongbridgeFetcher(P5)
+2026-06-17 16:12:04 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:784 | Routing strategy: simple-shuffle
+2026-06-17 16:12:04 | INFO     | src/analyzer.py:960 | Analyzer LLM: Router initialized from channels/YAML — 3 deployment(s), models: ['openai/gpt-5.4-nano', 'openai/deepseek-v3.2', 'openai/qwen3-max-2026-01-23']
+2026-06-17 16:12:04 | WARNING  | src/notification.py:169 | 未配置有效的通知渠道，将不发送推送通知
+2026-06-17 16:12:04 | INFO     | src/search_service.py:2200 | 已配置 SearXNG 搜索，共 1 个自建实例
+2026-06-17 16:12:04 | INFO     | src/search_service.py:2218 | 新闻时效策略已启用: profile=short, profile_days=3, NEWS_MAX_AGE_DAYS=3, effective_window=3
+2026-06-17 16:12:04 | INFO     | src/core/pipeline.py:123 | 调度器初始化完成，最大并发数: 3
+2026-06-17 16:12:04 | INFO     | src/core/pipeline.py:124 | 已启用技术分析引擎（均线/趋势/量价指标）
+2026-06-17 16:12:04 | INFO     | src/core/pipeline.py:129 | 实时行情已禁用，将使用历史收盘价
+2026-06-17 16:12:04 | INFO     | src/core/pipeline.py:133 | 筹码分布分析已禁用
+2026-06-17 16:12:04 | INFO     | src/core/pipeline.py:137 | 搜索服务已启用
+2026-06-17 16:12:04 | INFO     | src/core/pipeline.py:1208 | ========== 开始处理 001872 ==========
+2026-06-17 16:12:04 | INFO     | src/core/pipeline.py:218 | 招商港口(001872) 开始从数据源获取数据...
+2026-06-17 16:12:04 | INFO     | data_provider/base.py:1023 | [数据源尝试 1/7] [TushareFetcher] 获取 001872...
+2026-06-17 16:12:04 | INFO     | data_provider/base.py:364 | [TushareFetcher] 开始获取 001872 日线数据: 范围=2026-04-18 ~ 2026-06-17
+2026-06-17 16:12:04 | WARNING  | data_provider/tushare_fetcher.py:402 | 无法确定股票 001872 的市场，默认使用深市
+2026-06-17 16:12:04 | INFO     | data_provider/base.py:383 | [TushareFetcher] 001872 获取成功: 范围=2026-04-18 ~ 2026-06-17, rows=40, elapsed=0.11s
+2026-06-17 16:12:04 | INFO     | data_provider/base.py:1035 | [数据源完成] 001872 使用 [TushareFetcher] 获取成功: rows=40, elapsed=0.11s
+2026-06-17 16:12:04 | INFO     | src/storage.py:2753 | 保存 001872 数据成功，新增 40 条
+2026-06-17 16:12:04 | INFO     | src/core/pipeline.py:226 | 招商港口(001872) 数据保存成功（来源: TushareFetcher，新增 40 条）
+2026-06-17 16:12:04 | INFO     | src/core/pipeline.py:279 | 招商港口(001872) 实时行情已禁用，使用历史收盘价继续分析
+2026-06-17 16:12:04 | INFO     | data_provider/base.py:2232 | [company_profile] start stock_code=001872 market=cn provider=tushare_stock_company timeout_seconds=0.800
+2026-06-17 16:12:04 | WARNING  | data_provider/tushare_fetcher.py:402 | 无法确定股票 001872 的市场，默认使用深市
+2026-06-17 16:12:05 | WARNING  | data_provider/base.py:2269 | [company_profile] fallback stock_code=001872 market=cn provider=tushare_stock_company status=failed duration_ms=800 error=company_profile_tushare timeout
+2026-06-17 16:12:05 | INFO     | data_provider/base.py:2299 | [company_profile] start stock_code=001872 market=cn provider=akshare_stock_profile_cninfo timeout_seconds=0.800
+2026-06-17 16:12:05 | INFO     | data_provider/base.py:2349 | [company_profile] finished stock_code=001872 market=cn provider=akshare_stock_profile_cninfo status=ok duration_ms=377 fields=['actual_controller', 'actual_controller_hold_ratio', 'business_scope', 'company_intro', 'control_type', 'direct_controller', 'float_share_capital', 'full_name', 'industry', 'legal_representative', 'listing_date', 'main_business', 'total_share_capital', 'website']
+2026-06-17 16:12:05 | WARNING  | data_provider/tushare_fetcher.py:402 | 无法确定股票 001872 的市场，默认使用深市
+2026-06-17 16:12:06 | WARNING  | data_provider/tushare_fetcher.py:402 | 无法确定股票 001872 的市场，默认使用深市
+2026-06-17 16:12:06 | WARNING  | data_provider/tushare_fetcher.py:402 | 无法确定股票 001872 的市场，默认使用深市
+2026-06-17 16:12:08 | INFO     | data_provider/tushare_fetcher.py:1083 | [Tushare] ts.pro_api().moneyflow_ind_ths 获取板块排行(同花顺)...
+2026-06-17 16:12:08 | INFO     | data_provider/base.py:3088 | [TushareFetcher] 获取板块排行成功
+2026-06-17 16:12:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54846 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:12:10 | INFO     | data_provider/efinance_fetcher.py:1109 | [API调用] ef.stock.get_belong_board(stock_code=001872) 获取所属板块...
+2026-06-17 16:12:10 | INFO     | data_provider/efinance_fetcher.py:1118 | [API返回] ef.stock.get_belong_board 成功: 返回 20 个板块, 耗时 0.06s
+2026-06-17 16:12:10 | INFO     | data_provider/base.py:1549 | [EfinanceFetcher] 获取所属板块成功: 001872, count=20
+2026-06-17 16:12:10 | INFO     | src/core/pipeline.py:357 | 招商港口(001872) 趋势分析: 强势空头, 买入信号=观望, 评分=38
+2026-06-17 16:12:10 | INFO     | src/core/pipeline.py:380 | 招商港口(001872) 开始多维度情报搜索...
+2026-06-17 16:12:10 | INFO     | src/search_service.py:3093 | 开始多维度情报搜索: 招商港口(001872), 时间范围: 近3天 (profile=short, NEWS_MAX_AGE_DAYS=3), 目标条数=3, provider请求条数=6
+2026-06-17 16:12:10 | INFO     | src/search_service.py:3122 | [情报搜索] 最新消息: 使用 SearXNG
+2026-06-17 16:12:11 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 16:12:11 | WARNING  | src/search_service.py:3160 | [情报搜索] 最新消息: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 16:12:12 | INFO     | src/search_service.py:3122 | [情报搜索] 机构分析: 使用 SearXNG
+2026-06-17 16:12:12 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 16:12:12 | WARNING  | src/search_service.py:3160 | [情报搜索] 机构分析: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 16:12:13 | INFO     | src/search_service.py:3122 | [情报搜索] 风险排查: 使用 SearXNG
+2026-06-17 16:12:13 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 16:12:13 | WARNING  | src/search_service.py:3160 | [情报搜索] 风险排查: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 16:12:13 | INFO     | src/search_service.py:3122 | [情报搜索] 公司公告: 使用 SearXNG
+2026-06-17 16:12:14 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 16:12:14 | WARNING  | src/search_service.py:3160 | [情报搜索] 公司公告: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 16:12:14 | INFO     | src/search_service.py:3122 | [情报搜索] 业绩预期: 使用 SearXNG
+2026-06-17 16:12:14 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-17 16:12:14 | WARNING  | src/search_service.py:3160 | [情报搜索] 业绩预期: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-17 16:12:15 | INFO     | src/core/pipeline.py:395 | 招商港口(001872) 情报搜索完成: 共 0 条结果
+2026-06-17 16:12:15 | INFO     | src/agent/skills/base.py:431 | Activated skills: ['bull_trend']
+2026-06-17 16:12:15 | INFO     | src/agent/factory.py:257 | [AgentFactory] Activated skills: ['bull_trend']
+2026-06-17 16:12:17 | INFO     | src/analyzer.py:1348 | ========== AI 分析 招商港口(001872) ==========
+2026-06-17 16:12:17 | INFO     | src/analyzer.py:1349 | [LLM配置] 模型: openai/gpt-5.4-nano
+2026-06-17 16:12:17 | INFO     | src/analyzer.py:1350 | [LLM配置] Prompt 长度: 4094 字符
+2026-06-17 16:12:17 | INFO     | src/analyzer.py:1351 | [LLM配置] 是否包含新闻: 是
+2026-06-17 16:12:17 | INFO     | src/analyzer.py:1355 | [LLM Prompt 预览]
+# 决策仪表盘分析请求
+
+## 📊 股票基础信息
+| 项目 | 数据 |
+|------|------|
+| 股票代码 | **001872** |
+| 股票名称 | **招商港口** |
+| 分析日期 | 2026-06-17 |
+
+---
+
+## 📈 技术面数据
+
+### 今日行情
+| 指标 | 数值 |
+|------|------|
+| 收盘价 | 19.96 元 |
+| 开盘价 | 19.85 元 |
+| 最高价 | 20.05 元 |
+| 最低价 | 19.76 元 |
+| 涨跌幅 | 0.5542% |
+| 成交量 | 220.90 万股 |
+| 成交额 | 4399.32 万元 |
+
+### 均线系统（关键判断指标）
+| 均线 | 数值 | 说明 |
+|------|------|------|
+| MA5 | 20.19 | 短期趋势线 |
+| MA10 | 20.75 | 中短期趋势线 |
+| MA20 | 21.56 | 中期趋势线 |
+| 均线形态 | 空头排列 📉 | 多头/空头/缠绕 |
+
+### 财报与分红（价值投资口径）
+| 指标 | 数值 | 说明 |...
+2026-06-17 16:12:17 | INFO     | src/analyzer.py:1364 | [LLM调用] 开始调用 openai/gpt-5.4-nano...
+2026-06-17 16:12:17 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-17 16:12:19 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-17 16:12:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54956 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:12:41 | INFO     | src/analyzer.py:1384 | [LLM返回] openai/gpt-5.4-nano 响应成功, 耗时 24.30s, 响应长度 5382 字符
+2026-06-17 16:12:41 | INFO     | src/analyzer.py:1388 | [LLM返回 预览]
+```json
+{
+  "stock_name": "招商港口（001872）",
+  "sentiment_score": 38,
+  "trend_prediction": "观望",
+  "operation_advice": "观望",
+  "decision_type": "hold",
+  "confidence_level": "中",
+
+  "dashboard": {
+    "core_conclusion": {
+      "one_sentence": "均线空头未转多，乖离安全但不追高，等回踩MA10/MA5企稳再说。",
+      "signal_type": ...
+2026-06-17 16:12:41 | INFO     | src/analyzer.py:1438 | [LLM解析] 招商港口(001872) 分析完成: 观望, 评分 38
+2026-06-17 16:12:41 | INFO     | src/core/pipeline.py:1232 | [001872] 分析完成: 观望, 评分 38
+2026-06-17 16:12:41 | INFO     | src/services/task_queue.py:631 | [TaskQueue] 任务完成: 63cbf884689e46b299132116298e9407 (001872)
+2026-06-17 16:12:41 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54956 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:12:41 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54956 - "GET /api/v1/history/7 HTTP/1.1" 200
+2026-06-17 16:12:41 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54956 - "GET /api/v1/history/7/news?limit=8 HTTP/1.1" 200
+2026-06-17 16:13:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54994 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:13:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55040 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:13:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55154 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:14:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55330 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:14:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55358 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:14:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55456 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:15:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55641 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:15:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55767 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:15:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55807 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:15:42 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55807 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:16:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55939 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:16:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56052 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:17:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56140 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:17:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56222 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:18:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56258 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:18:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56373 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:19:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56510 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:19:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56552 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:20:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56575 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:20:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56599 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:21:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56636 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:21:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56750 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:22:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56826 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:22:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56900 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:23:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56918 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:23:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56957 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:24:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57036 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:24:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57066 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200
+2026-06-17 16:25:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57143 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-18&end_date=2026-06-17 HTTP/1.1" 200

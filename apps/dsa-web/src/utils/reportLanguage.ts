@@ -59,10 +59,8 @@ const REPORT_TEXT = {
     companyIntro: '公司基本介绍',
     coreManagement: '核心管理层',
     legalRepresentative: '法定代表人',
-    actualController: '实际控制人',
-    holdRatioApprox: '持股比例约',
-    directController: '直接控制人',
-    controlType: '控制类型',
+    generalManager: '总经理',
+    boardSecretary: '董秘',
   },
   en: {
     keyInsights: 'KEY INSIGHTS',
@@ -119,10 +117,8 @@ const REPORT_TEXT = {
     companyIntro: 'Company Introduction',
     coreManagement: 'Core Management',
     legalRepresentative: 'Legal Representative',
-    actualController: 'Actual Controller',
-    holdRatioApprox: 'Holding approx. ',
-    directController: 'Direct Controller',
-    controlType: 'Control Type',
+    generalManager: 'General Manager',
+    boardSecretary: 'Board Secretary',
   },
 } as const;
 

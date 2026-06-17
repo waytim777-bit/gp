@@ -44,8 +44,9 @@ class AnalysisApiContractTestCase(unittest.TestCase):
             self.skipTest("analysis endpoint helpers unavailable in this environment")
 
         mock_queue = MagicMock()
-        mock_queue.get_task.return_value = None
+        mock_queue.get_task_for_user.return_value = None
         mock_db = MagicMock()
+        mock_db.get_latest_fundamental_snapshot.return_value = None
         mock_db.get_analysis_history.return_value = [
             SimpleNamespace(
                 id=1,
@@ -77,7 +78,7 @@ class AnalysisApiContractTestCase(unittest.TestCase):
 
         with patch("api.v1.endpoints.analysis.get_task_queue", return_value=mock_queue), \
              patch("src.storage.DatabaseManager.get_instance", return_value=mock_db):
-            result = get_analysis_status("task-1")
+            result = get_analysis_status("task-1", current_user=SimpleNamespace(id=1))
 
         self.assertEqual(result.status, "completed")
         self.assertEqual(result.result.report["meta"]["current_price"], 1234.5)
@@ -88,8 +89,9 @@ class AnalysisApiContractTestCase(unittest.TestCase):
             self.skipTest("analysis endpoint helpers unavailable in this environment")
 
         mock_queue = MagicMock()
-        mock_queue.get_task.return_value = None
+        mock_queue.get_task_for_user.return_value = None
         mock_db = MagicMock()
+        mock_db.get_latest_fundamental_snapshot.return_value = None
         mock_db.get_analysis_history.return_value = [
             SimpleNamespace(
                 id=2,
@@ -121,19 +123,82 @@ class AnalysisApiContractTestCase(unittest.TestCase):
 
         with patch("api.v1.endpoints.analysis.get_task_queue", return_value=mock_queue), \
              patch("src.storage.DatabaseManager.get_instance", return_value=mock_db):
-            result = get_analysis_status("task-2")
+            result = get_analysis_status("task-2", current_user=SimpleNamespace(id=1))
 
         self.assertEqual(result.status, "completed")
         self.assertEqual(result.result.report["meta"]["current_price"], 180.35)
         self.assertEqual(result.result.report["meta"]["change_pct"], -1.25)
+
+    def test_get_analysis_status_completed_includes_fundamental_details(self) -> None:
+        if get_analysis_status is None:
+            self.skipTest("analysis endpoint helpers unavailable in this environment")
+
+        mock_queue = MagicMock()
+        mock_queue.get_task_for_user.return_value = None
+        mock_db = MagicMock()
+        profitability = {
+            "rows": [{"period": "2025-12-31", "gross_margin": 91.5, "net_margin": 48.2, "roe": 35.6}],
+            "unit": "percent",
+            "source": "tushare_fina_indicator",
+        }
+        mock_db.get_latest_fundamental_snapshot.return_value = {
+            "earnings": {
+                "data": {
+                    "financial_report": {
+                        "report_date": "2025-12-31",
+                        "revenue": 1500.0,
+                        "profitability": profitability,
+                    }
+                }
+            },
+            "company_profile": {
+                "data": {
+                    "full_name": "贵州茅台酒股份有限公司",
+                    "main_business": "茅台酒及系列酒的生产与销售",
+                }
+            },
+        }
+        mock_db.get_analysis_history.return_value = [
+            SimpleNamespace(
+                id=4,
+                code="600519",
+                name="贵州茅台",
+                report_type="detailed",
+                raw_result={
+                    "report_language": "zh",
+                    "model_used": "test-model",
+                    "business_model": {"summary": "高端白酒直营与经销并行"},
+                },
+                context_snapshot={},
+                sentiment_score=80,
+                operation_advice="持有",
+                trend_prediction="看多",
+                analysis_summary="summary",
+                ideal_buy=None,
+                secondary_buy=None,
+                stop_loss=None,
+                take_profit=None,
+                created_at=None,
+            )
+        ]
+
+        with patch("api.v1.endpoints.analysis.get_task_queue", return_value=mock_queue), \
+             patch("src.storage.DatabaseManager.get_instance", return_value=mock_db):
+            result = get_analysis_status("task-4", current_user=SimpleNamespace(id=1))
+
+        details = result.result.report["details"]
+        self.assertEqual(details["financial_report"]["profitability"], profitability)
+        self.assertEqual(details["company_profile"]["full_name"], "贵州茅台酒股份有限公司")
+        self.assertEqual(details["business_model"]["summary"], "高端白酒直营与经销并行")
 
     def test_get_analysis_status_completed_db_snapshot_does_not_use_change_60d_as_intraday_change(self) -> None:
         if get_analysis_status is None:
             self.skipTest("analysis endpoint helpers unavailable in this environment")
 
         mock_queue = MagicMock()
-        mock_queue.get_task.return_value = None
+        mock_queue.get_task_for_user.return_value = None
         mock_db = MagicMock()
+        mock_db.get_latest_fundamental_snapshot.return_value = None
         mock_db.get_analysis_history.return_value = [
             SimpleNamespace(
                 id=3,
@@ -165,7 +230,7 @@ class AnalysisApiContractTestCase(unittest.TestCase):
 
         with patch("api.v1.endpoints.analysis.get_task_queue", return_value=mock_queue), \
              patch("src.storage.DatabaseManager.get_instance", return_value=mock_db):
-            result = get_analysis_status("task-3")
+            result = get_analysis_status("task-3", current_user=SimpleNamespace(id=1))
 
         self.assertEqual(result.status, "completed")
         self.assertEqual(result.result.report["meta"]["current_price"], 412.6)

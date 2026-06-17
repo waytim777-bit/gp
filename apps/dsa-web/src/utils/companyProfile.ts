@@ -29,9 +29,9 @@ export const hasCompanyProfileValue = (details?: ReportDetails): boolean => {
     profile.businessScope ||
     profile.companyIntro ||
     profile.legalRepresentative ||
-    profile.actualController ||
-    profile.directController ||
-    profile.controlType ||
+    profile.chairman ||
+    profile.manager ||
+    profile.boardSecretary ||
     getIndustryFromBoards(details),
   );
 };

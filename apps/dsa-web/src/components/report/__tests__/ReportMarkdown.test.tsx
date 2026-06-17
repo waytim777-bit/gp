@@ -58,6 +58,8 @@ describe('ReportMarkdown', () => {
             fullName: 'Apple Inc.',
             industry: 'Consumer Electronics',
             legalRepresentative: 'Tim Cook',
+            manager: 'Jeff Williams',
+            boardSecretary: 'Katherine Adams',
             companyIntro: 'Apple designs consumer technology products and services.',
             actualController: 'Public shareholders',
           },
@@ -72,6 +74,9 @@ describe('ReportMarkdown', () => {
     expect(screen.getByText('Apple designs consumer technology products and services.')).toBeInTheDocument();
     expect(screen.getByText('Core Management')).toBeInTheDocument();
     expect(screen.getByText('Tim Cook')).toBeInTheDocument();
+    expect(screen.getByText('Jeff Williams')).toBeInTheDocument();
+    expect(screen.getByText('Katherine Adams')).toBeInTheDocument();
+    expect(screen.queryByText('Public shareholders')).not.toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Full report' })).toBeInTheDocument();
   });
 

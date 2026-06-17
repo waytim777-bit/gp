@@ -46,13 +46,6 @@ export const CompanyProfileSection: React.FC<CompanyProfileSectionProps> = ({
     }).format(value);
   };
 
-  const formatRatio = (value: number | undefined): string | undefined => {
-    if (value === undefined || value === null || !Number.isFinite(value)) {
-      return undefined;
-    }
-    return `${value.toFixed(2).replace(/\.?0+$/, '')}%`;
-  };
-
   const companyIntro = profile?.companyIntro || profile?.mainBusiness || profile?.businessScope;
   const companyBasics = [
     { label: text.fullName, value: profile?.fullName || '--' },
@@ -62,19 +55,10 @@ export const CompanyProfileSection: React.FC<CompanyProfileSectionProps> = ({
     { label: text.floatShareCapital, value: formatCount(profile?.floatShareCapital) },
     { label: text.employeeCount, value: formatCount(profile?.employeeCount) },
   ];
-  const actualControllerText = profile?.actualController
-    ? [
-      profile.actualController,
-      formatRatio(profile.actualControllerHoldRatio)
-        ? `(${text.holdRatioApprox}${formatRatio(profile.actualControllerHoldRatio)})`
-        : undefined,
-    ].filter(Boolean).join(' ')
-    : '--';
   const coreManagement = [
-    { label: text.legalRepresentative, value: profile?.legalRepresentative || '--' },
-    { label: text.actualController, value: actualControllerText },
-    { label: text.directController, value: profile?.directController || '--' },
-    { label: text.controlType, value: profile?.controlType || '--' },
+    { label: text.legalRepresentative, value: profile?.legalRepresentative || profile?.chairman || '--' },
+    { label: text.generalManager, value: profile?.manager || '--' },
+    { label: text.boardSecretary, value: profile?.boardSecretary || '--' },
   ];
 
   return (
@@ -135,7 +119,7 @@ export const CompanyProfileSection: React.FC<CompanyProfileSectionProps> = ({
           <UsersRound className="h-3.5 w-3.5" aria-hidden="true" />
           {text.coreManagement}
         </div>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {coreManagement.map((item) => (
             <div
               key={item.label}
