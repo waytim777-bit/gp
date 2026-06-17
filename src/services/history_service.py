@@ -28,6 +28,7 @@ from src.report_language import (
     normalize_report_language,
 )
 from src.storage import DatabaseManager
+from src.services.prediction_cycle_meta import prediction_cycle_meta_for_history_record
 from src.utils.data_processing import normalize_model_used, parse_json_field
 
 if TYPE_CHECKING:
@@ -282,7 +283,9 @@ class HistoryService:
             except json.JSONDecodeError:
                 context_snapshot = record.context_snapshot
 
-        return {
+        prediction_cycle = prediction_cycle_meta_for_history_record(self.db, record)
+
+        result = {
             "id": record.id,
             "query_id": record.query_id,
             "stock_code": record.code,
@@ -303,6 +306,9 @@ class HistoryService:
             "raw_result": raw_result,
             "context_snapshot": context_snapshot,
         }
+        if prediction_cycle:
+            result["prediction_cycle"] = prediction_cycle
+        return result
 
     def delete_history_records(
         self,

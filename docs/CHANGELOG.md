@@ -8,7 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 > For user-friendly release highlights, see the [GitHub Releases](https://github.com/ZhuLinsen/daily_stock_analysis/releases) page.
 
 ## [Unreleased]
-- [修复] 修复 PostgreSQL 回测结果写入长 `operation_advice` 建议文本时因字段长度不足导致回测执行失败的问题。
+- [改进] Agent 多阶段分析改为单次数据采集：Pipeline 预采集行情/K线/筹码/多维度情报，工具层按 run 级缓存复用，避免 Technical/Intel/Risk 重复搜索与重复拉数。
+- [新功能] 预测报告市场（Phase 5）：首页历史记录可分享当前周期报告；侧边栏新增「预测报告」页展示当日周期上架报告；他人可花积分购买查看完整报告，分享者获得收益积分。
+- [新功能] 管理后台新增「预测报告定价」页面，可配置购买价格与分享者收益积分（`PREDICTION_REPORT_PURCHASE_CREDITS` / `PREDICTION_REPORT_SELLER_CREDITS`）。
+- [新功能] 预测周期架构：新增 `resolve_prediction_cycle`、canonical 共享分析服务与 `stock_data_snapshots`；首页/API/订阅推送统一按 `(code, cycle_anchor_date, report_type)` 去重，周期内支持 SearXNG 情报探测与探测积分（`CREDITS_ANALYSIS_PROBE`）。
+- [改进] 首页报告顶部展示预测周期信息（锚点日、目标日、数据截至、缓存复用/探测积分提示）。
+- [修复] 首页分析勾选「推送通知」时改为使用「我的订阅」中的用户邮箱/Webhook 推送，不再依赖 `.env` 的 `EMAIL_RECEIVERS`。
+- [改进] 首页「推送通知」勾选需先在「我的订阅」配置接收邮箱或 Webhook 后才可启用，未配置时引导前往订阅页。
+- [新功能] 管理后台新增「积分管理」页面与管理员接口：支持按用户手工增加/减少积分并记录调整原因（余额不允许扣为负数）。
+- [改进] C 端与普通用户运行时统一使用 `.env` 平台配置，不再叠加 `user_configs` 覆盖；订阅邮箱/Webhook 等个性化能力仍走业务表。
+- [修复] 修复 C 端用户（含超管角色）在首页触发分析时，因未填写的个人配置权限项被当作空值覆盖 `.env`，导致 LLM/Tushare 等平台配置失效的问题。
+- [改进] 平台运行配置改为仅以 `.env`/进程环境变量为准，不再从 PostgreSQL `system_configs` 合并覆盖；个人 `user_configs` 覆盖逻辑保持不变。
+- [新功能] 管理后台（`dsa-admin`）新增「推送管理」页面与 `/api/v1/admin/subscription-push` API：可查看全员订阅/积分/推送记录，并分三步手动执行「扫描到期 → 分析 → 推送」；移除订阅后台自动轮询调度。
+- [新功能] 订阅推送调度（阶段 B）：到期订阅按股票合并分析后分别推送至用户邮箱/Webhook，推送成功按次扣积分；新增 `GET /api/v1/subscriptions/push-logs` 与「最近推送记录」展示。
+- [新功能] 新增 Web「我的订阅」页面与 `/api/v1/subscriptions` API：支持配置收件邮箱/Webhook、按 1/3/5 个交易日间隔订阅股票；SMTP 发件仍由平台配置。
+- [改进] Web 工作台隐藏「持仓」菜单入口，`/portfolio` 访问将重定向至首页；后端 API 仍保留供后续启用。
 - [修复] 修复 PostgreSQL 回测结果写入 `insufficient_data` 状态时因 `eval_status` 字段长度不足导致回测执行失败的问题。
 - [修复] 修复多 Agent 模式未把基本面上下文传入报告生成链路导致首页 2.1/2.2 财报区块缺失的问题，并避免空财报数据生成全 N/A 提示。
 - [修复] 修复 C 端用户已获得配置权限但未填写企业微信 Webhook 时仍回退到平台 Webhook 的问题，授权字段现在以个人配置为空值为准，未授权字段才继承平台配置。

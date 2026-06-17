@@ -33,6 +33,7 @@ logger = logging.getLogger(__name__)
 _THINKING_TOOL_LABELS: Dict[str, str] = {
     "get_realtime_quote": "行情获取",
     "get_daily_history": "K线数据获取",
+    "get_report_context": "复用历史报告上下文",
     "analyze_trend": "技术指标分析",
     "get_chip_distribution": "筹码分布分析",
     "search_stock_news": "新闻搜索",

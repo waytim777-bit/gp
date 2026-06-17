@@ -8,8 +8,10 @@ import { StockAutocomplete } from '../components/StockAutocomplete';
 import { HistoryList } from '../components/history';
 import { ReportMarkdown, ReportSummary } from '../components/report';
 import { TaskPanel } from '../components/tasks';
+import { subscriptionsApi } from '../api/subscriptions';
 import { useDashboardLifecycle, useHomeDashboardState } from '../hooks';
 import { getReportText, normalizeReportLanguage } from '../utils/reportLanguage';
+import { hasSubscriptionPushDestination } from '../utils/subscriptionPush';
 
 /** 推送通知引导对话框是否已展示过的 localStorage 标记 */
 const NOTIFY_GUIDE_DISMISSED_KEY = 'dsa_notify_guide_dismissed';
@@ -19,6 +21,7 @@ const HomePage: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showNotifyGuide, setShowNotifyGuide] = useState(false);
+  const [hasPushDestination, setHasPushDestination] = useState(false);
 
   const {
     query,
@@ -29,6 +32,7 @@ const HomePage: React.FC = () => {
     historyItems,
     selectedHistoryIds,
     isDeletingHistory,
+    isSharingHistory,
     isLoadingHistory,
     isLoadingMore,
     hasMore,
@@ -46,6 +50,7 @@ const HomePage: React.FC = () => {
     toggleHistorySelection,
     toggleSelectAllVisible,
     deleteSelectedHistory,
+    shareSelectedHistory,
     submitAnalysis,
     notify,
     setNotify,
@@ -61,6 +66,30 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     document.title = '每日选股分析 - DSA';
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    void subscriptionsApi.getProfile()
+      .then((profile) => {
+        if (!cancelled) {
+          setHasPushDestination(hasSubscriptionPushDestination(profile));
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setHasPushDestination(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hasPushDestination && notify) {
+      setNotify(false);
+    }
+  }, [hasPushDestination, notify, setNotify]);
   const reportLanguage = normalizeReportLanguage(selectedReport?.meta.reportLanguage);
   const reportText = getReportText(reportLanguage);
 
@@ -119,8 +148,32 @@ const HomePage: React.FC = () => {
   const handleGoToNotifySettings = useCallback(() => {
     localStorage.setItem(NOTIFY_GUIDE_DISMISSED_KEY, '1');
     setShowNotifyGuide(false);
-    navigate('/settings');
+    navigate('/subscriptions');
   }, [navigate]);
+
+  const handleNotifyCheckboxChange = useCallback((checked: boolean) => {
+    if (!hasPushDestination) {
+      setShowNotifyGuide(true);
+      return;
+    }
+    setNotify(checked);
+  }, [hasPushDestination, setNotify]);
+
+  const handleNotifyLabelClick = useCallback((event: React.MouseEvent<HTMLLabelElement>) => {
+    if (hasPushDestination || isAnalyzing) {
+      return;
+    }
+    event.preventDefault();
+    setShowNotifyGuide(true);
+  }, [hasPushDestination, isAnalyzing]);
+
+  const handleShareSelected = useCallback(() => {
+    void shareSelectedHistory().then((listingId) => {
+      if (listingId != null) {
+        navigate('/prediction-reports');
+      }
+    });
+  }, [navigate, shareSelectedHistory]);
 
   const sidebarContent = useMemo(
     () => (
@@ -134,6 +187,8 @@ const HomePage: React.FC = () => {
           selectedId={selectedReport?.meta.id}
           selectedIds={selectedIds}
           isDeleting={isDeletingHistory}
+          isSharing={isSharingHistory}
+          onShareSelected={handleShareSelected}
           onItemClick={handleHistoryItemClick}
           onLoadMore={() => void loadMoreHistory()}
           onToggleItemSelection={toggleHistorySelection}
@@ -148,6 +203,8 @@ const HomePage: React.FC = () => {
       hasMore,
       historyItems,
       isDeletingHistory,
+      isSharingHistory,
+      handleShareSelected,
       isLoadingHistory,
       isLoadingMore,
       handleHistoryItemClick,
@@ -188,18 +245,20 @@ const HomePage: React.FC = () => {
                 className={inputError ? 'border-danger/50' : undefined}
               />
             </div>
-            <label className="flex h-10 flex-shrink-0 cursor-pointer items-center gap-1.5 rounded-xl border border-subtle bg-surface/60 px-3 text-xs text-secondary-text select-none transition-colors hover:border-subtle-hover hover:text-foreground">
+            <label
+              className={`flex h-10 flex-shrink-0 items-center gap-1.5 rounded-xl border border-subtle bg-surface/60 px-3 text-xs text-secondary-text select-none transition-colors ${
+                hasPushDestination && !isAnalyzing
+                  ? 'cursor-pointer hover:border-subtle-hover hover:text-foreground'
+                  : 'cursor-not-allowed opacity-60'
+              }`}
+              onClick={handleNotifyLabelClick}
+            >
               <input
                 type="checkbox"
                 checked={notify}
-                onChange={(e) => {
-                  const checked = e.target.checked;
-                  setNotify(checked);
-                  if (checked && !localStorage.getItem(NOTIFY_GUIDE_DISMISSED_KEY)) {
-                    setShowNotifyGuide(true);
-                  }
-                }}
-                className="h-3.5 w-3.5 rounded border-border accent-primary"
+                disabled={!hasPushDestination || isAnalyzing}
+                onChange={(e) => handleNotifyCheckboxChange(e.target.checked)}
+                className="h-3.5 w-3.5 rounded border-border accent-primary disabled:cursor-not-allowed"
               />
               推送通知
             </label>
@@ -357,11 +416,11 @@ const HomePage: React.FC = () => {
               <Modal.Body>
                 <div className="space-y-3 text-sm leading-6 text-secondary-text">
                   <p>
-                    推送通知需要先在设置中配置通知渠道（企业微信、飞书、钉钉、PushPlus 等），否则无法发送推送。
+                    推送通知需要先在「我的订阅」中配置接收邮箱或 Webhook，否则无法发送推送。
                   </p>
                   <p>
                     请前往{' '}
-                    <span className="font-semibold text-primary">设置 → 通知渠道</span>
+                    <span className="font-semibold text-primary">我的订阅 → 推送方式</span>
                     {' '}完成配置后再开启推送。
                   </p>
                 </div>
@@ -379,7 +438,7 @@ const HomePage: React.FC = () => {
                   size="sm"
                   onClick={handleGoToNotifySettings}
                 >
-                  去设置
+                  去我的订阅
                 </Button>
               </Modal.Footer>
             </Modal.Dialog>

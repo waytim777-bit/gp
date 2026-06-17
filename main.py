@@ -693,19 +693,7 @@ def _build_schedule_time_provider(default_schedule_time: str):
     manager = ConfigManager()
 
     def _provider() -> str:
-        # 优先从数据库读取（WebUI 保存的权威值，与其他配置项一致）
-        try:
-            from src.storage import DatabaseManager
-            db_instance = getattr(DatabaseManager, "_instance", None)
-            if db_instance is not None and getattr(db_instance, "_initialized", False):
-                db_map = DatabaseManager.get_instance().get_system_config_map()
-                db_time = (db_map.get("SCHEDULE_TIME", "") or "").strip()
-                if db_time:
-                    return db_time
-        except Exception:
-            pass
-
-        # 兜底：从 .env 文件读取（DB 未初始化时）
+        # 平台调度时间以 .env 为权威（与运行时 Config 一致）
         config_map = manager.read_config_map()
         schedule_time = (config_map.get("SCHEDULE_TIME", "") or "").strip()
         if schedule_time:

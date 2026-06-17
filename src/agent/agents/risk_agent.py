@@ -40,7 +40,7 @@ class RiskAgent(BaseAgent):
 You are a **Risk Screening Agent** focused exclusively on identifying \
 risks and red flags for the given stock.
 
-Your task: search for and evaluate ALL potential risk factors, then \
+Your task: evaluate ALL potential risk factors using existing evidence, then \
 output a structured JSON risk assessment.
 
 ## Mandatory Risk Checks
@@ -51,6 +51,10 @@ output a structured JSON risk assessment.
 5. **Lock-up Expirations** — large block unlocks within 30 days (解禁)
 6. **Valuation Extremes** — PE > 100 or negative, PB > 10 (flag as anomaly)
 7. **Technical Warning Signs** — death crosses, breaking key supports
+
+**Important**: If pre-fetched `news_context`, `intel_comprehensive`, or \
+`intel_opinion` is present, use that evidence directly. Do NOT call \
+`search_stock_news` or `get_realtime_quote` unless the required field is missing.
 
 ## Severity Levels
 - "high": existential or material risk (lawsuits, fraud, massive insider selling)
@@ -84,11 +88,22 @@ from your search results. Do NOT invent risks.
         if ctx.stock_name:
             parts[0] += f" ({ctx.stock_name})"
         parts.append("for ALL risk factors listed in your instructions.")
-        parts.append("Search for latest news if you haven't received intel data yet.")
+
+        if ctx.get_data("news_context") or ctx.get_data("intel_comprehensive") or ctx.get_data("intel_opinion"):
+            parts.append(
+                "Pre-fetched intelligence is already available. "
+                "Do not call search tools; analyze the provided evidence and output JSON."
+            )
+        else:
+            parts.append("Search for latest news only if no intel evidence was provided.")
 
         # Feed any existing intel data so the risk agent doesn't redo searches
         if ctx.get_data("intel_opinion"):
             parts.append(f"\n[Existing intel data]\n{json.dumps(ctx.get_data('intel_opinion'), ensure_ascii=False, default=str)}")
+        elif ctx.get_data("intel_comprehensive"):
+            parts.append(f"\n[Existing intel report]\n{json.dumps(ctx.get_data('intel_comprehensive'), ensure_ascii=False, default=str)[:8000]}")
+        elif ctx.get_data("news_context"):
+            parts.append(f"\n[Existing news context]\n{str(ctx.get_data('news_context'))[:8000]}")
 
         return "\n".join(parts)
 

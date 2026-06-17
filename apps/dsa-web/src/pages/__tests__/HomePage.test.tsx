@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { analysisApi, DuplicateTaskError } from '../../api/analysis';
 import { historyApi } from '../../api/history';
+import { subscriptionsApi } from '../../api/subscriptions';
 import { useStockPoolStore } from '../../stores';
 import { getReportText, normalizeReportLanguage } from '../../utils/reportLanguage';
 import HomePage from '../HomePage';
@@ -36,6 +37,16 @@ vi.mock('../../api/analysis', async () => {
     },
   };
 });
+
+vi.mock('../../api/subscriptions', () => ({
+  subscriptionsApi: {
+    getProfile: vi.fn().mockResolvedValue({
+      notificationEmail: '',
+      webhookUrls: '',
+      hasWebhookBearerToken: false,
+    }),
+  },
+}));
 
 vi.mock('../../hooks/useTaskStream', () => ({
   useTaskStream: vi.fn(),
@@ -273,5 +284,53 @@ describe('HomePage', () => {
 
     expect(await screen.findByText('分析任务')).toBeInTheDocument();
     expect(screen.getByText('正在抓取最新行情')).toBeInTheDocument();
+  });
+
+  it('disables notify checkbox until subscription push destination is configured', async () => {
+    vi.mocked(historyApi.getList).mockResolvedValue({
+      total: 0,
+      page: 1,
+      limit: 20,
+      items: [],
+    });
+    vi.mocked(subscriptionsApi.getProfile).mockResolvedValue({
+      notificationEmail: '',
+      webhookUrls: '',
+      hasWebhookBearerToken: false,
+    });
+
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>,
+    );
+
+    const notifyCheckbox = await screen.findByRole('checkbox', { name: /推送通知/ });
+    expect(notifyCheckbox).toBeDisabled();
+  });
+
+  it('enables notify checkbox when subscription push destination exists', async () => {
+    vi.mocked(historyApi.getList).mockResolvedValue({
+      total: 0,
+      page: 1,
+      limit: 20,
+      items: [],
+    });
+    vi.mocked(subscriptionsApi.getProfile).mockResolvedValue({
+      notificationEmail: 'user@example.com',
+      webhookUrls: '',
+      hasWebhookBearerToken: false,
+    });
+
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>,
+    );
+
+    const notifyCheckbox = await screen.findByRole('checkbox', { name: /推送通知/ });
+    await waitFor(() => {
+      expect(notifyCheckbox).not.toBeDisabled();
+    });
   });
 });

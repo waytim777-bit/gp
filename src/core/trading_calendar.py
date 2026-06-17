@@ -13,7 +13,7 @@
 """
 
 import logging
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import Optional, Set
 from zoneinfo import ZoneInfo
 
@@ -216,3 +216,46 @@ def compute_effective_region(
     if not parts:
         return ""
     return "both" if len(parts) == 2 else parts[0]
+
+
+def add_trading_days(market: Optional[str], start_date: date, trading_day_count: int) -> date:
+    """
+    Advance `trading_day_count` trading sessions forward from `start_date`.
+
+    When exchange-calendars is unavailable, falls back to calendar days.
+    """
+    if trading_day_count <= 0:
+        return start_date
+
+    if not _XCALS_AVAILABLE:
+        return start_date + timedelta(days=trading_day_count)
+
+    ex = MARKET_EXCHANGE.get(market or "")
+    if not ex:
+        return start_date + timedelta(days=trading_day_count)
+
+    try:
+        import pandas as pd
+
+        cal = xcals.get_calendar(ex)
+        horizon = max(trading_day_count * 4, 30)
+        sessions = cal.sessions_in_range(
+            pd.Timestamp(start_date),
+            pd.Timestamp(start_date) + pd.Timedelta(days=horizon),
+        )
+        session_dates = [ts.date() for ts in sessions]
+        if not session_dates:
+            return start_date + timedelta(days=trading_day_count)
+
+        try:
+            start_idx = session_dates.index(start_date)
+        except ValueError:
+            start_idx = -1
+
+        target_idx = start_idx + trading_day_count
+        if 0 <= target_idx < len(session_dates):
+            return session_dates[target_idx]
+        return session_dates[-1]
+    except Exception as exc:
+        logger.warning("trading_calendar.add_trading_days fail-open: %s", exc)
+        return start_date + timedelta(days=trading_day_count)

@@ -19,14 +19,15 @@ DEFAULT_USER_ROLE_KEY = "user"
 MENU_ITEMS: List[Dict[str, str]] = [
     {"key": "home", "label": "首页", "path": "/"},
     {"key": "chat", "label": "问股", "path": "/chat"},
-    {"key": "portfolio", "label": "持仓", "path": "/portfolio"},
     {"key": "backtest", "label": "回测", "path": "/backtest"},
+    {"key": "subscriptions", "label": "我的订阅", "path": "/subscriptions"},
+    {"key": "prediction_reports", "label": "预测报告", "path": "/prediction-reports"},
     {"key": "payment", "label": "积分", "path": "/payment"},
     {"key": "settings", "label": "设置", "path": "/settings"},
 ]
 
 ALL_MENU_KEYS = [item["key"] for item in MENU_ITEMS]
-DEFAULT_USER_MENU_KEYS = ["home", "chat", "portfolio", "backtest", "payment", "settings"]
+DEFAULT_USER_MENU_KEYS = ["home", "chat", "backtest", "subscriptions", "prediction_reports", "payment"]
 ADMIN_MENU_KEYS = ALL_MENU_KEYS
 
 def _build_setting_items() -> List[Dict[str, Any]]:

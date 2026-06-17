@@ -306,7 +306,14 @@ def _user_to_dict(row) -> dict:
         )
     except Exception:
         role_payload = {}
-    menu_permissions = tuple(role_payload.get("menuKeys") or ())
+    from src.permissions import DEFAULT_USER_MENU_KEYS, DEFAULT_USER_ROLE_KEY, normalize_menu_keys
+
+    raw_menu_permissions = list(role_payload.get("menuKeys") or ())
+    # Backward compatibility: older DBs may have default roles without newly added menu keys.
+    # For the built-in default user role, always include the latest DEFAULT_USER_MENU_KEYS.
+    if role_payload.get("key") == DEFAULT_USER_ROLE_KEY:
+        raw_menu_permissions = list(set(raw_menu_permissions) | set(DEFAULT_USER_MENU_KEYS))
+    menu_permissions = tuple(normalize_menu_keys(raw_menu_permissions))
     setting_permissions = tuple(role_payload.get("settingKeys") or ())
     return {
         "id": int(row.id),

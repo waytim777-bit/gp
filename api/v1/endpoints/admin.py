@@ -10,11 +10,16 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy.exc import IntegrityError
 
-from api.deps import get_database_manager, require_admin
+from api.deps import get_database_manager, require_admin, get_current_user
+from api.v1.endpoints import admin_subscription_push, admin_prediction_reports
 from src.permissions import get_menu_items, get_setting_items
 from src.storage import DatabaseManager
+from src.user_context import CurrentUser
 
 router = APIRouter()
+
+router.include_router(admin_subscription_push.router)
+router.include_router(admin_prediction_reports.router)
 
 ROLE_KEY_RE = re.compile(r"^[a-z][a-z0-9_-]{1,31}$")
 
@@ -94,6 +99,23 @@ class UpdateUserStatusRequest(BaseModel):
 
     model_config = {"populate_by_name": True}
 
+
+class AdjustUserCreditsRequest(BaseModel):
+    """Admin credit adjustment request."""
+
+    delta: int = Field(..., description="积分增减值，可为负数")
+    reason: str = Field(default="", max_length=200, description="调整原因（可选）")
+
+    model_config = {"populate_by_name": True}
+
+
+class AdjustUserCreditsResponse(BaseModel):
+    user_id: int = Field(alias="userId")
+    applied_delta: int = Field(alias="appliedDelta")
+    balance: int
+    lifetime_credits: int = Field(alias="lifetimeCredits")
+
+    model_config = {"populate_by_name": True}
 
 @router.get("/menus", response_model=list[MenuItemPayload])
 def list_menus(_admin: None = Depends(require_admin())):
@@ -229,3 +251,29 @@ def update_user_status(
     if user is None:
         raise HTTPException(status_code=404, detail={"error": "user_not_found", "message": "用户不存在"})
     return user
+
+
+@router.post("/users/{user_id}/credits:adjust", response_model=AdjustUserCreditsResponse)
+def adjust_user_credits(
+    user_id: int,
+    request: AdjustUserCreditsRequest,
+    db: DatabaseManager = Depends(get_database_manager),
+    current_user: CurrentUser = Depends(get_current_user),
+    _admin: None = Depends(require_admin()),
+):
+    """Admin: adjust user's credit balance by delta."""
+    delta = int(request.delta)
+    if delta == 0:
+        raise HTTPException(status_code=400, detail={"error": "invalid_delta", "message": "delta 不能为 0"})
+    payload = db.adjust_user_credits(
+        user_id=int(user_id),
+        delta=delta,
+        operator_user_id=int(current_user.id),
+        reason=(request.reason or "").strip() or None,
+    )
+    return AdjustUserCreditsResponse(
+        userId=int(user_id),
+        appliedDelta=int(payload.get("applied_delta", 0)),
+        balance=int(payload.get("balance", 0)),
+        lifetimeCredits=int(payload.get("lifetime_credits", 0)),
+    )

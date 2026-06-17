@@ -6,4 +6,4 @@ export * from './ReportDetails';
 export * from './ReportMarkdown';
 export * from './FinancialRevenueGrowthSection';
 export * from './FinancialProfitabilitySection';
-export * from './BusinessModelSection';
+export * from './PredictionCycleBanner';

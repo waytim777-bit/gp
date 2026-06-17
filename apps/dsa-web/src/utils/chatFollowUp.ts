@@ -5,6 +5,7 @@ import { validateStockCode } from './validation';
 export interface ChatFollowUpContext {
   stock_code: string;
   stock_name: string | null;
+  record_id?: number;
   previous_analysis_summary?: unknown;
   previous_strategy?: unknown;
   previous_price?: number;
@@ -72,11 +73,13 @@ export function buildFollowUpPrompt(stockCode: string, stockName: string | null)
 export function buildChatFollowUpContext(
   stockCode: string,
   stockName: string | null,
+  recordId?: number,
   report?: AnalysisReport | null,
 ): ChatFollowUpContext {
   const context: ChatFollowUpContext = {
     stock_code: stockCode,
     stock_name: stockName,
+    record_id: recordId,
   };
 
   if (!report) {
@@ -110,8 +113,8 @@ export async function resolveChatFollowUpContext({
 
   try {
     const report = await historyApi.getDetail(recordId);
-    return buildChatFollowUpContext(stockCode, stockName, report);
+    return buildChatFollowUpContext(stockCode, stockName, recordId, report);
   } catch {
-    return buildChatFollowUpContext(stockCode, stockName);
+    return buildChatFollowUpContext(stockCode, stockName, recordId);
   }
 }

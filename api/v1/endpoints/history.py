@@ -28,6 +28,7 @@ from api.v1.schemas.history import (
     ReportSummary,
     ReportStrategy,
     ReportDetails,
+    PredictionCycleMeta,
     MarkdownReportResponse,
 )
 from api.v1.schemas.common import ErrorResponse
@@ -273,6 +274,8 @@ def get_history_detail(
         )
 
         # 构建响应模型
+        cycle_raw = result.get("prediction_cycle")
+        cycle_meta = PredictionCycleMeta(**cycle_raw) if isinstance(cycle_raw, dict) else None
         meta = ReportMeta(
             id=result.get("id"),
             query_id=result.get("query_id", ""),
@@ -283,7 +286,8 @@ def get_history_detail(
             created_at=result.get("created_at"),
             current_price=current_price,
             change_pct=change_pct,
-            model_used=normalize_model_used(result.get("model_used"))
+            model_used=normalize_model_used(result.get("model_used")),
+            prediction_cycle=cycle_meta,
         )
         
         summary = ReportSummary(

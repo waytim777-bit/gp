@@ -19,6 +19,7 @@ export type AdminDataContextValue = {
   handleLogout: () => Promise<void>
   assignUserRole: (user: User, roleId: number) => Promise<void>
   updateUserStatus: (user: User, isActive: boolean) => Promise<void>
+  adjustUserCredits: (user: User, delta: number, reason?: string) => Promise<void>
 }
 
 export const AdminDataContext = createContext<AdminDataContextValue | null>(null)

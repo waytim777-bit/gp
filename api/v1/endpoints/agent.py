@@ -4,6 +4,7 @@ Agent API endpoints.
 """
 
 import asyncio
+import functools
 import json
 import logging
 import uuid
@@ -23,6 +24,7 @@ TOOL_DISPLAY_NAMES: Dict[str, str] = {
     "get_realtime_quote":         "获取实时行情",
     "get_daily_history":          "获取历史K线",
     "get_chip_distribution":      "分析筹码分布",
+    "get_report_context":         "复用历史报告上下文",
     "get_analysis_context":       "获取分析上下文",
     "get_stock_info":             "获取股票基本面",
     "search_stock_news":          "搜索股票新闻",
@@ -182,11 +184,15 @@ async def agent_chat(
 
         # Offload the blocking call to a thread to avoid blocking the event loop.
         loop = asyncio.get_running_loop()
-        result = await loop.run_in_executor(
-            None,
+        fn = functools.partial(
             _exec_chat_with_user,
-            current_user, executor, request.message, session_id, ctx,
+            current_user,
+            executor,
+            request.message,
+            session_id,
+            ctx,
         )
+        result = await loop.run_in_executor(None, fn)
 
         return ChatResponse(
             success=result.success,

@@ -6,6 +6,7 @@ import { ReportNews } from './ReportNews';
 import { ReportDetails } from './ReportDetails';
 import { FinancialRevenueGrowthSection } from './FinancialRevenueGrowthSection';
 import { FinancialProfitabilitySection } from './FinancialProfitabilitySection';
+import { PredictionCycleBanner } from './PredictionCycleBanner';
 import { getReportText, normalizeReportLanguage } from '../../utils/reportLanguage';
 
 interface ReportSummaryProps {
@@ -36,6 +37,11 @@ export const ReportSummary: React.FC<ReportSummaryProps> = ({
 
   return (
     <div className="space-y-5 pb-8 animate-fade-in">
+      <PredictionCycleBanner
+        cycle={meta.predictionCycle}
+        language={reportLanguage}
+      />
+
       {/* 概览区（首屏） */}
       <ReportOverview
         meta={meta}

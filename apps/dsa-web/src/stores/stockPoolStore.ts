@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { analysisApi, DuplicateTaskError } from '../api/analysis';
+import { predictionReportsApi } from '../api/predictionReports';
 import type { ParsedApiError } from '../api/error';
 import { getParsedApiError } from '../api/error';
 import { historyApi } from '../api/history';
@@ -41,6 +42,7 @@ export interface StockPoolState {
   historyItems: HistoryItem[];
   selectedHistoryIds: number[];
   isDeletingHistory: boolean;
+  isSharingHistory: boolean;
   isLoadingHistory: boolean;
   isLoadingMore: boolean;
   hasMore: boolean;
@@ -62,6 +64,7 @@ export interface StockPoolState {
   toggleHistorySelection: (recordId: number) => void;
   toggleSelectAllVisible: () => void;
   deleteSelectedHistory: () => Promise<void>;
+  shareSelectedHistory: () => Promise<number | null>;
   submitAnalysis: (options?: SubmitAnalysisOptions) => Promise<void>;
   setNotify: (notify: boolean) => void;
   syncTaskCreated: (task: TaskInfo) => void;
@@ -82,6 +85,7 @@ const initialState = {
   historyItems: [] as HistoryItem[],
   selectedHistoryIds: [] as number[],
   isDeletingHistory: false,
+  isSharingHistory: false,
   isLoadingHistory: false,
   isLoadingMore: false,
   hasMore: true,
@@ -306,6 +310,27 @@ export const useStockPoolStore = create<StockPoolState>((set, get) => ({
       set({ error: getParsedApiError(error) });
     } finally {
       set({ isDeletingHistory: false });
+    }
+  },
+
+  shareSelectedHistory: async () => {
+    const state = get();
+    const selected = Array.from(new Set(state.selectedHistoryIds));
+    if (selected.length !== 1 || state.isSharingHistory) {
+      return null;
+    }
+
+    const recordId = selected[0];
+    set({ isSharingHistory: true, error: null });
+    try {
+      const listing = await predictionReportsApi.share(recordId);
+      set({ selectedHistoryIds: [] });
+      return listing.id;
+    } catch (error) {
+      set({ error: getParsedApiError(error) });
+      return null;
+    } finally {
+      set({ isSharingHistory: false });
     }
   },
 

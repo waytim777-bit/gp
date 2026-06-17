@@ -36,17 +36,18 @@ class IntelAgent(BaseAgent):
 You are an **Intelligence & Sentiment Agent** specialising in A-shares, \
 HK, and US equities.
 
-Your task: gather the latest news, announcements, and risk signals for \
+Your task: assess the latest news, announcements, and risk signals for \
 the given stock, then produce a structured JSON opinion.
 
 ## Workflow
-1. Search latest stock news (earnings, announcements, insider activity)
-2. Run comprehensive intel search — this covers latest news, company \
-announcements (公司公告), market analysis, risk checks, and earnings outlook
-3. For A-share stocks, call get_capital_flow to obtain main-force (主力) \
-capital inflow/outflow data and include it in your analysis
+1. **Use pre-fetched comprehensive intel / news context first** when provided
+2. Only call `search_comprehensive_intel` or `search_stock_news` if no intel data exists in context
+3. For A-share stocks, call `get_capital_flow` only when capital-flow data is not already provided
 4. Classify positive catalysts and risk alerts
 5. Assess overall sentiment
+
+**Important**: Never repeat intelligence searches when `news_context` or \
+`intel_comprehensive` is already present in pre-fetched context.
 
 ## Risk Detection Priorities
 - Insider / major shareholder sell-downs (减持)
@@ -82,14 +83,21 @@ Return **only** a JSON object:
         parts = [f"Gather intelligence and assess sentiment for stock **{ctx.stock_code}**"]
         if ctx.stock_name:
             parts[0] += f" ({ctx.stock_name})"
-        parts.append(
-            "Steps:\n"
-            "1. Call search_comprehensive_intel to get latest news, company announcements "
-            "(公司公告), risk events, and earnings outlook.\n"
-            "2. Call get_capital_flow to obtain main-force (主力) capital flow data "
-            "(A-share only; skip for HK/US).\n"
-            "3. Output the JSON opinion including capital_flow_signal."
-        )
+
+        if ctx.get_data("news_context") or ctx.get_data("intel_comprehensive"):
+            parts.append(
+                "Pre-fetched intelligence is already available in context. "
+                "Analyze it directly and output the JSON opinion. "
+                "Do not call search tools unless a required field is truly missing."
+            )
+        else:
+            parts.append(
+                "Steps:\n"
+                "1. Call search_comprehensive_intel once to gather news, announcements, "
+                "risk events, and earnings outlook.\n"
+                "2. Call get_capital_flow for A-share stocks when capital-flow data is missing.\n"
+                "3. Output the JSON opinion including capital_flow_signal."
+            )
         return "\n".join(parts)
 
     def post_process(self, ctx: AgentContext, raw_text: str) -> Optional[AgentOpinion]:
@@ -101,6 +109,8 @@ Return **only** a JSON object:
         # Cache parsed intel so downstream agents (especially RiskAgent) can
         # reuse it instead of re-searching the same evidence.
         ctx.set_data("intel_opinion", parsed)
+        if ctx.get_data("intel_comprehensive") is None and ctx.get_data("news_context"):
+            ctx.set_data("intel_comprehensive", {"report": ctx.get_data("news_context")})
 
         # Propagate risk alerts to context
         for alert in parsed.get("risk_alerts", []):
@@ -114,5 +124,3 @@ Return **only** a JSON object:
             reasoning=parsed.get("reasoning", ""),
             raw_data=parsed,
         )
-
-
