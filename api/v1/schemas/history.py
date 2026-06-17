@@ -122,6 +122,23 @@ class ReportMeta(BaseModel):
     current_price: Optional[float] = Field(None, description="分析时股价")
     change_pct: Optional[float] = Field(None, description="分析时涨跌幅(%)")
     model_used: Optional[str] = Field(None, description="分析使用的 LLM 模型")
+    prediction_cycle: Optional["PredictionCycleMeta"] = Field(
+        None,
+        description="预测周期元数据（锚点日、目标日、缓存复用等）",
+    )
+
+
+class PredictionCycleMeta(BaseModel):
+    """预测周期元数据"""
+
+    cycle_anchor_date: Optional[str] = Field(None, description="周期锚点交易日")
+    prediction_target_date: Optional[str] = Field(None, description="预测目标交易日")
+    data_as_of_date: Optional[str] = Field(None, description="结构化数据截至交易日")
+    from_cache: Optional[bool] = Field(None, description="是否复用本周期 canonical 缓存")
+    probe_credits_charged: Optional[int] = Field(
+        None,
+        description="情报探测积分（无新新闻时）",
+    )
 
 
 class ReportSummary(BaseModel):

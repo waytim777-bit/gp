@@ -13,7 +13,7 @@ import logging
 import os
 import threading
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Dict, Optional
 
 from sqlalchemy import select
 
@@ -236,3 +236,188 @@ class CreditService:
             user_id, total_tokens, credits_spent, balance_after,
         )
         return credits_spent
+
+    def deduct_subscription_push(
+        self,
+        user_id: int,
+        credits: int,
+        *,
+        subscription_id: Optional[int] = None,
+        code: Optional[str] = None,
+    ) -> int:
+        """Deduct fixed credits after a successful subscription push."""
+        amount = int(credits)
+        if amount <= 0:
+            return 0
+
+        db = DatabaseManager.get_instance()
+        with db.session_scope() as session:
+            balance_row = session.execute(
+                select(UserCreditBalance).where(
+                    UserCreditBalance.user_id == user_id
+                ).with_for_update()
+            ).scalar_one_or_none()
+
+            if balance_row is None or balance_row.balance < amount:
+                return 0
+
+            balance_row.balance -= amount
+            balance_row.version += 1
+            balance_after = balance_row.balance
+
+            reason_bits = ["subscription_push"]
+            if subscription_id is not None:
+                reason_bits.append(f"sub={subscription_id}")
+            if code:
+                reason_bits.append(code)
+
+            session.add(
+                CreditDeduction(
+                    user_id=user_id,
+                    call_type="subscription_push",
+                    model="subscription",
+                    total_tokens=0,
+                    credits_spent=amount,
+                    balance_after=balance_after,
+                )
+            )
+
+        logger.info(
+            "Subscription credit deduction: user=%d sub=%s code=%s spent=%d balance=%d",
+            user_id,
+            subscription_id,
+            code,
+            amount,
+            balance_after,
+        )
+        return amount
+
+    def deduct_analysis_probe(
+        self,
+        user_id: int,
+        *,
+        code: Optional[str] = None,
+        shared_run_id: Optional[int] = None,
+    ) -> int:
+        """Deduct fixed credits for a successful intel probe with no new news."""
+        amount = self._parse_positive_int_env("CREDITS_ANALYSIS_PROBE", 2)
+        if amount <= 0:
+            return 0
+
+        db = DatabaseManager.get_instance()
+        with db.session_scope() as session:
+            balance_row = session.execute(
+                select(UserCreditBalance).where(
+                    UserCreditBalance.user_id == user_id
+                ).with_for_update()
+            ).scalar_one_or_none()
+
+            if balance_row is None or balance_row.balance < amount:
+                return 0
+
+            balance_row.balance -= amount
+            balance_row.version += 1
+            balance_after = balance_row.balance
+
+            session.add(
+                CreditDeduction(
+                    user_id=user_id,
+                    call_type="analysis_probe",
+                    model="searxng",
+                    total_tokens=0,
+                    credits_spent=amount,
+                    balance_after=balance_after,
+                )
+            )
+
+        logger.info(
+            "Analysis probe credit deduction: user=%d code=%s run=%s spent=%d balance=%d",
+            user_id,
+            code,
+            shared_run_id,
+            amount,
+            balance_after,
+        )
+        return amount
+
+    def purchase_prediction_report(
+        self,
+        *,
+        buyer_user_id: int,
+        seller_user_id: int,
+        purchase_credits: int,
+        seller_credits: int,
+        listing_id: int,
+        code: Optional[str] = None,
+    ) -> Dict[str, int]:
+        """Transfer credits for a prediction report marketplace purchase."""
+        paid = int(purchase_credits)
+        reward = int(seller_credits)
+        if paid <= 0:
+            raise ValueError("purchase_credits must be positive")
+        if reward < 0 or reward > paid:
+            raise ValueError("invalid seller reward")
+
+        db = DatabaseManager.get_instance()
+        with db.session_scope() as session:
+            buyer_row = session.execute(
+                select(UserCreditBalance).where(
+                    UserCreditBalance.user_id == int(buyer_user_id)
+                ).with_for_update()
+            ).scalar_one_or_none()
+            if buyer_row is None or int(buyer_row.balance) < paid:
+                balance = int(buyer_row.balance) if buyer_row is not None else 0
+                raise InsufficientCreditsError(paid, balance)
+
+            seller_row = session.execute(
+                select(UserCreditBalance).where(
+                    UserCreditBalance.user_id == int(seller_user_id)
+                ).with_for_update()
+            ).scalar_one_or_none()
+
+            buyer_row.balance -= paid
+            buyer_row.version += 1
+            buyer_after = int(buyer_row.balance)
+
+            session.add(
+                CreditDeduction(
+                    user_id=int(buyer_user_id),
+                    call_type="prediction_report_purchase",
+                    model="marketplace",
+                    total_tokens=0,
+                    credits_spent=paid,
+                    balance_after=buyer_after,
+                )
+            )
+
+            if reward > 0:
+                if seller_row is None:
+                    seller_row = UserCreditBalance(
+                        user_id=int(seller_user_id),
+                        balance=reward,
+                        lifetime_credits=reward,
+                    )
+                    session.add(seller_row)
+                else:
+                    seller_row.balance += reward
+                    seller_row.lifetime_credits += reward
+                    seller_row.version += 1
+
+                session.add(
+                    CreditTransaction(
+                        user_id=int(seller_user_id),
+                        credit_amount=reward,
+                        operator_user_id=int(buyer_user_id),
+                        reason=f"prediction_report_sale listing={listing_id} code={code or ''}".strip(),
+                    )
+                )
+
+        logger.info(
+            "Prediction report purchase: listing=%s buyer=%s seller=%s paid=%d reward=%d",
+            listing_id,
+            buyer_user_id,
+            seller_user_id,
+            paid,
+            reward,
+        )
+        return {"credits_paid": paid, "seller_credits": reward, "buyer_balance": buyer_after}

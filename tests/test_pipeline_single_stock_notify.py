@@ -9,6 +9,7 @@ import threading
 import time
 import unittest
 from types import SimpleNamespace
+from unittest import mock
 from unittest.mock import MagicMock
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -162,6 +163,41 @@ class TestPipelineSingleStockNotify(unittest.TestCase):
         self.assertFalse(result.success)
         pipeline.notifier.generate_brief_report.assert_not_called()
         pipeline.notifier.send.assert_not_called()
+
+    def test_single_stock_notify_uses_subscription_profile_for_logged_in_user(self):
+        pipeline = StockAnalysisPipeline.__new__(StockAnalysisPipeline)
+        pipeline.config = SimpleNamespace(
+            email_sender="noreply@example.com",
+            email_password="secret",
+        )
+        pipeline.db = MagicMock()
+        pipeline.db.get_notification_profile.return_value = SimpleNamespace(
+            notification_email="user@example.com",
+            webhook_urls="",
+            webhook_bearer_token="",
+        )
+        pipeline.notifier = _TrackingNotifier()
+        pipeline._single_stock_notify_lock = threading.Lock()
+
+        with mock.patch(
+            "src.user_context.get_current_user_id",
+            return_value=42,
+        ), mock.patch(
+            "src.core.pipeline.deliver_subscription_report",
+            return_value=(True, "email"),
+        ) as mock_deliver:
+            pipeline._send_single_stock_notification(
+                _make_result("601318"),
+                report_type=ReportType.FULL,
+            )
+
+        pipeline.notifier.generate_dashboard_report.assert_called_once()
+        pipeline.notifier.send.assert_not_called()
+        mock_deliver.assert_called_once()
+        self.assertEqual(
+            mock_deliver.call_args.kwargs["notification_email"],
+            "user@example.com",
+        )
 
 
 if __name__ == "__main__":

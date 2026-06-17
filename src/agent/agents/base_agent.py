@@ -19,6 +19,7 @@ from src.agent.llm_adapter import LLMToolAdapter
 from src.agent.memory import AgentMemory
 from src.agent.protocols import AgentContext, AgentOpinion, StageResult, StageStatus
 from src.agent.runner import RunLoopResult, run_agent_loop
+from src.agent.run_context import agent_run_cache_scope
 from src.agent.skills.defaults import extract_skill_id
 from src.agent.tools.registry import ToolRegistry
 
@@ -110,14 +111,15 @@ class BaseAgent(ABC):
             # Restrict tools if the agent declares a subset
             registry = self._filtered_registry()
 
-            loop_result: RunLoopResult = run_agent_loop(
-                messages=messages,
-                tool_registry=registry,
-                llm_adapter=self.llm_adapter,
-                max_steps=self.max_steps,
-                progress_callback=progress_callback,
-                max_wall_clock_seconds=timeout_seconds,
-            )
+            with agent_run_cache_scope(ctx.data, stock_code=ctx.stock_code):
+                loop_result: RunLoopResult = run_agent_loop(
+                    messages=messages,
+                    tool_registry=registry,
+                    llm_adapter=self.llm_adapter,
+                    max_steps=self.max_steps,
+                    progress_callback=progress_callback,
+                    max_wall_clock_seconds=timeout_seconds,
+                )
 
             result.tokens_used = loop_result.total_tokens
             result.tool_calls_count = len(loop_result.tool_calls_log)

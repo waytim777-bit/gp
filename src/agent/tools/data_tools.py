@@ -9,11 +9,13 @@ Tools:
 - get_analysis_context: historical analysis context from DB
 """
 
+import json
 import logging
 from datetime import date
 from threading import Lock
-from typing import Optional
+from typing import Any, Dict, List, Optional
 
+from src.agent.tools.cache_helpers import run_cached_tool
 from src.agent.tools.registry import ToolParameter, ToolDefinition
 
 logger = logging.getLogger(__name__)
@@ -179,37 +181,40 @@ def _compact_portfolio_risk(risk: dict, top_n: int = 10) -> dict:
 
 def _handle_get_realtime_quote(stock_code: str) -> dict:
     """Get real-time stock quote."""
-    manager = _get_fetcher_manager()
-    quote = manager.get_realtime_quote(stock_code)
-    if quote is None:
+    def _fetch() -> dict:
+        manager = _get_fetcher_manager()
+        quote = manager.get_realtime_quote(stock_code)
+        if quote is None:
+            return {
+                "error": f"No realtime quote available for {stock_code}",
+                "retriable": False,
+                "note": "All data sources unavailable (network or circuit-breaker). Skip this tool and proceed with historical data only.",
+            }
+
         return {
-            "error": f"No realtime quote available for {stock_code}",
-            "retriable": False,
-            "note": "All data sources unavailable (network or circuit-breaker). Skip this tool and proceed with historical data only.",
+            "code": quote.code,
+            "name": quote.name,
+            "price": quote.price,
+            "change_pct": quote.change_pct,
+            "change_amount": quote.change_amount,
+            "volume": quote.volume,
+            "amount": quote.amount,
+            "volume_ratio": quote.volume_ratio,
+            "turnover_rate": quote.turnover_rate,
+            "amplitude": quote.amplitude,
+            "open": quote.open_price,
+            "high": quote.high,
+            "low": quote.low,
+            "pre_close": quote.pre_close,
+            "pe_ratio": quote.pe_ratio,
+            "pb_ratio": quote.pb_ratio,
+            "total_mv": quote.total_mv,
+            "circ_mv": quote.circ_mv,
+            "change_60d": quote.change_60d,
+            "source": quote.source.value if hasattr(quote.source, 'value') else str(quote.source),
         }
 
-    return {
-        "code": quote.code,
-        "name": quote.name,
-        "price": quote.price,
-        "change_pct": quote.change_pct,
-        "change_amount": quote.change_amount,
-        "volume": quote.volume,
-        "amount": quote.amount,
-        "volume_ratio": quote.volume_ratio,
-        "turnover_rate": quote.turnover_rate,
-        "amplitude": quote.amplitude,
-        "open": quote.open_price,
-        "high": quote.high,
-        "low": quote.low,
-        "pre_close": quote.pre_close,
-        "pe_ratio": quote.pe_ratio,
-        "pb_ratio": quote.pb_ratio,
-        "total_mv": quote.total_mv,
-        "circ_mv": quote.circ_mv,
-        "change_60d": quote.change_60d,
-        "source": quote.source.value if hasattr(quote.source, 'value') else str(quote.source),
-    }
+    return run_cached_tool(cache_key="realtime_quote", stock_code=stock_code, fetcher=_fetch)
 
 
 get_realtime_quote_tool = ToolDefinition(
@@ -234,25 +239,26 @@ get_realtime_quote_tool = ToolDefinition(
 
 def _handle_get_daily_history(stock_code: str, days: int = 60) -> dict:
     """Get daily OHLCV history data."""
-    manager = _get_fetcher_manager()
-    df, source = manager.get_daily_data(stock_code, days=days)
+    def _fetch() -> dict:
+        manager = _get_fetcher_manager()
+        df, source = manager.get_daily_data(stock_code, days=days)
 
-    if df is None or df.empty:
-        return {"error": f"No historical data available for {stock_code}"}
+        if df is None or df.empty:
+            return {"error": f"No historical data available for {stock_code}"}
 
-    # Convert DataFrame to list of dicts (last N records)
-    records = df.tail(min(days, len(df))).to_dict(orient="records")
-    # Ensure date is string
-    for r in records:
-        if "date" in r:
-            r["date"] = str(r["date"])
+        records = df.tail(min(days, len(df))).to_dict(orient="records")
+        for r in records:
+            if "date" in r:
+                r["date"] = str(r["date"])
 
-    return {
-        "code": stock_code,
-        "source": source,
-        "total_records": len(records),
-        "data": records,
-    }
+        return {
+            "code": stock_code,
+            "source": source,
+            "total_records": len(records),
+            "data": records,
+        }
+
+    return run_cached_tool(cache_key="daily_history", stock_code=stock_code, fetcher=_fetch)
 
 
 get_daily_history_tool = ToolDefinition(
@@ -284,25 +290,28 @@ get_daily_history_tool = ToolDefinition(
 
 def _handle_get_chip_distribution(stock_code: str) -> dict:
     """Get chip distribution data."""
-    manager = _get_fetcher_manager()
-    chip = manager.get_chip_distribution(stock_code)
+    def _fetch() -> dict:
+        manager = _get_fetcher_manager()
+        chip = manager.get_chip_distribution(stock_code)
 
-    if chip is None:
-        return {"error": f"No chip distribution data available for {stock_code}"}
+        if chip is None:
+            return {"error": f"No chip distribution data available for {stock_code}"}
 
-    return {
-        "code": chip.code,
-        "date": chip.date,
-        "source": chip.source,
-        "profit_ratio": chip.profit_ratio,
-        "avg_cost": chip.avg_cost,
-        "cost_90_low": chip.cost_90_low,
-        "cost_90_high": chip.cost_90_high,
-        "concentration_90": chip.concentration_90,
-        "cost_70_low": chip.cost_70_low,
-        "cost_70_high": chip.cost_70_high,
-        "concentration_70": chip.concentration_70,
-    }
+        return {
+            "code": chip.code,
+            "date": chip.date,
+            "source": chip.source,
+            "profit_ratio": chip.profit_ratio,
+            "avg_cost": chip.avg_cost,
+            "cost_90_low": chip.cost_90_low,
+            "cost_90_high": chip.cost_90_high,
+            "concentration_90": chip.concentration_90,
+            "cost_70_low": chip.cost_70_low,
+            "cost_70_high": chip.cost_70_high,
+            "concentration_70": chip.concentration_70,
+        }
+
+    return run_cached_tool(cache_key="chip_distribution", stock_code=stock_code, fetcher=_fetch)
 
 
 get_chip_distribution_tool = ToolDefinition(
@@ -346,6 +355,100 @@ def _handle_get_analysis_context(stock_code: str) -> dict:
     return safe_context
 
 
+def _compact_snapshot_list(value: Any, *, limit: int) -> Any:
+    if not isinstance(value, list):
+        return value
+    if limit <= 0:
+        return []
+    if len(value) <= limit:
+        return value
+    return value[-limit:]
+
+
+def _compact_report_context_snapshot(snapshot: Dict[str, Any]) -> Dict[str, Any]:
+    """Compact a pipeline context_snapshot payload for agent reuse."""
+    enhanced = snapshot.get("enhanced_context") or {}
+    news_content = snapshot.get("news_content")
+    realtime_raw = snapshot.get("realtime_quote_raw")
+    chip_raw = snapshot.get("chip_distribution_raw")
+
+    # Keep a compact view; avoid huge nested fields.
+    result: Dict[str, Any] = {
+        "enhanced_context": enhanced,
+        "news_content": news_content,
+        "realtime_quote_raw": realtime_raw,
+        "chip_distribution_raw": chip_raw,
+    }
+
+    # Defensive trimming for any large arrays nested inside enhanced_context.
+    if isinstance(enhanced, dict):
+        for key in ("raw_data", "daily_data", "daily_history", "kline", "kline_data"):
+            if key in enhanced:
+                enhanced[key] = _compact_snapshot_list(enhanced.get(key), limit=80)
+
+    return result
+
+
+def _handle_get_report_context(record_id: int, days: int = 60) -> dict:
+    """Reuse a previous analysis record's context snapshot and cached daily data."""
+    rid = int(record_id)
+    if rid <= 0:
+        return {"error": "record_id must be a positive integer"}
+
+    from src.storage import get_db
+    from src.user_context import get_current_user_id
+
+    db = get_db()
+    row = db.get_analysis_history_by_id(rid)
+    if row is None:
+        return {"error": f"Analysis record not found: {rid}"}
+
+    # Enforce ownership (tool runs under request user context).
+    owner_id = get_current_user_id()
+    if owner_id is not None and int(getattr(row, "owner_user_id", 0) or 0) != int(owner_id):
+        return {"error": "Record does not belong to current user"}
+
+    snapshot_raw = getattr(row, "context_snapshot", None) or ""
+    snapshot_obj: Optional[Dict[str, Any]] = None
+    if isinstance(snapshot_raw, str) and snapshot_raw.strip():
+        try:
+            loaded = json.loads(snapshot_raw)
+            if isinstance(loaded, dict):
+                snapshot_obj = loaded
+        except Exception:
+            snapshot_obj = None
+
+    compact_snapshot = _compact_report_context_snapshot(snapshot_obj) if snapshot_obj else None
+
+    # Prefer DB-cached daily data to avoid network calls.
+    code = getattr(row, "code", "") or ""
+    daily_records: List[Dict[str, Any]] = []
+    if code:
+        try:
+            capped_days = max(1, min(int(days), 180))
+            recent = db.get_latest_data(code, days=capped_days)
+            # get_latest_data returns desc order; convert to asc for readability
+            for item in reversed(list(recent)):
+                daily_records.append(item.to_dict())
+        except Exception:
+            daily_records = []
+
+    return {
+        "record_id": rid,
+        "stock_code": code,
+        "context_snapshot": compact_snapshot,
+        "daily_history": {
+            "code": code,
+            "total_records": len(daily_records),
+            "data": daily_records,
+            "source": "db",
+        } if daily_records else None,
+        "news_content": (compact_snapshot or {}).get("news_content") if compact_snapshot else None,
+        "chip_distribution": (compact_snapshot or {}).get("chip_distribution_raw") if compact_snapshot else None,
+        "realtime_quote": (compact_snapshot or {}).get("realtime_quote_raw") if compact_snapshot else None,
+    }
+
+
 get_analysis_context_tool = ToolDefinition(
     name="get_analysis_context",
     description="Get historical analysis context from the database for a stock. "
@@ -362,6 +465,29 @@ get_analysis_context_tool = ToolDefinition(
     category="data",
 )
 
+
+get_report_context_tool = ToolDefinition(
+    name="get_report_context",
+    description="Reuse a previous homepage analysis record by record_id. "
+                "Returns a compact context_snapshot and DB-cached daily_history. "
+                "Use this first for follow-up chats to avoid redundant fetches.",
+    parameters=[
+        ToolParameter(
+            name="record_id",
+            type="integer",
+            description="Analysis history record id from homepage report (recordId in URL).",
+        ),
+        ToolParameter(
+            name="days",
+            type="integer",
+            description="How many trading days of OHLCV to include from DB (default 60).",
+            required=False,
+            default=60,
+        ),
+    ],
+    handler=_handle_get_report_context,
+    category="data",
+)
 
 # ============================================================
 # get_stock_info
@@ -536,6 +662,7 @@ ALL_DATA_TOOLS = [
     get_daily_history_tool,
     get_chip_distribution_tool,
     get_analysis_context_tool,
+    get_report_context_tool,
     get_stock_info_tool,
     get_portfolio_snapshot_tool,
 ]
@@ -547,42 +674,45 @@ ALL_DATA_TOOLS = [
 
 def _handle_get_capital_flow(stock_code: str) -> dict:
     """Get main-force capital flow data for a stock."""
-    manager = _get_fetcher_manager()
-    try:
-        ctx = manager.get_capital_flow_context(stock_code)
-    except Exception as exc:
-        logger.warning("get_capital_flow failed for %s: %s", stock_code, exc)
+    def _fetch() -> dict:
+        manager = _get_fetcher_manager()
+        try:
+            ctx = manager.get_capital_flow_context(stock_code)
+        except Exception as exc:
+            logger.warning("get_capital_flow failed for %s: %s", stock_code, exc)
+            return {
+                "stock_code": stock_code,
+                "status": "error",
+                "error": f"capital flow fetch failed: {exc}",
+            }
+
+        status = ctx.get("status", "not_supported")
+        if status == "not_supported":
+            return {
+                "stock_code": stock_code,
+                "status": "not_supported",
+                "note": "Capital flow data is only available for A-share stocks (not ETFs/indices).",
+            }
+
+        data = ctx.get("data", {})
+        stock_flow = data.get("stock_flow") or {}
+        sector_rankings = data.get("sector_rankings") or {}
+        errors = ctx.get("errors") or []
+
         return {
             "stock_code": stock_code,
-            "status": "error",
-            "error": f"capital flow fetch failed: {exc}",
+            "status": status,
+            "main_net_inflow": stock_flow.get("main_net_inflow"),
+            "inflow_5d": stock_flow.get("inflow_5d"),
+            "inflow_10d": stock_flow.get("inflow_10d"),
+            "sector_rankings": {
+                "top_inflow_sectors": sector_rankings.get("top", [])[:3],
+                "top_outflow_sectors": sector_rankings.get("bottom", [])[:3],
+            },
+            "errors": errors,
         }
 
-    status = ctx.get("status", "not_supported")
-    if status == "not_supported":
-        return {
-            "stock_code": stock_code,
-            "status": "not_supported",
-            "note": "Capital flow data is only available for A-share stocks (not ETFs/indices).",
-        }
-
-    data = ctx.get("data", {})
-    stock_flow = data.get("stock_flow") or {}
-    sector_rankings = data.get("sector_rankings") or {}
-    errors = ctx.get("errors") or []
-
-    return {
-        "stock_code": stock_code,
-        "status": status,
-        "main_net_inflow": stock_flow.get("main_net_inflow"),
-        "inflow_5d": stock_flow.get("inflow_5d"),
-        "inflow_10d": stock_flow.get("inflow_10d"),
-        "sector_rankings": {
-            "top_inflow_sectors": sector_rankings.get("top", [])[:3],
-            "top_outflow_sectors": sector_rankings.get("bottom", [])[:3],
-        },
-        "errors": errors,
-    }
+    return run_cached_tool(cache_key="capital_flow", stock_code=stock_code, fetcher=_fetch)
 
 
 get_capital_flow_tool = ToolDefinition(

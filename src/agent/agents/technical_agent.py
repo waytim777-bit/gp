@@ -31,6 +31,7 @@ class TechnicalAgent(BaseAgent):
         "get_volume_analysis",
         "analyze_pattern",
         "get_chip_distribution",
+        "get_report_context",
         "get_analysis_context",
     ]
 
@@ -50,10 +51,12 @@ Your task: perform a thorough technical analysis of the given stock and \
 output a structured JSON opinion.
 
 ## Workflow (execute stages in order)
-1. Fetch realtime quote + daily history (if not already provided)
-2. Run trend analysis (MA alignment, MACD, RSI)
-3. Analyse volume and chip distribution
+1. **Use pre-fetched data first** when provided in context (realtime quote, daily history, chip distribution, trend result)
+2. Only call data tools when the required field is missing from pre-fetched context
+3. Run trend/volume/pattern analysis tools on the available data
 4. Identify chart patterns
+
+**Important**: Do NOT call `get_realtime_quote`, `get_daily_history`, or `get_chip_distribution` if equivalent pre-fetched blocks are already present.
 
 {baseline}
 {skills}
@@ -79,7 +82,10 @@ Return **only** a JSON object (no markdown fences):
         parts = [f"Perform technical analysis on stock **{ctx.stock_code}**"]
         if ctx.stock_name:
             parts[0] += f" ({ctx.stock_name})"
-        parts.append("Use your tools to fetch any missing data, then output the JSON opinion.")
+        parts.append(
+            "Use any pre-fetched realtime quote, daily history, chip distribution, and trend data "
+            "already provided in context. Only call data tools when a required field is missing."
+        )
         return "\n".join(parts)
 
     def post_process(self, ctx: AgentContext, raw_text: str) -> Optional[AgentOpinion]:

@@ -59,6 +59,13 @@ export type ApiError = Error & {
   detail?: unknown
 }
 
+export type AdjustCreditsResponse = {
+  userId: number
+  appliedDelta: number
+  balance: number
+  lifetimeCredits: number
+}
+
 export type LoginValues = {
   username: string
   password: string

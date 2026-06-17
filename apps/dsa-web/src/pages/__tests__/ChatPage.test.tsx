@@ -465,6 +465,7 @@ describe('ChatPage', () => {
           context: expect.objectContaining({
             stock_code: '600519',
             stock_name: '贵州茅台',
+            record_id: 1,
             previous_price: 1523.6,
             previous_change_pct: 1.8,
             previous_strategy: expect.objectContaining({

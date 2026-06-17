@@ -46,10 +46,15 @@ from api.v1.schemas.history import (
     ReportSummary,
     ReportStrategy,
     ReportDetails,
+    PredictionCycleMeta,
 )
 from data_provider.base import canonical_stock_code, normalize_stock_code
 from src.config import Config
 from src.report_language import get_localized_stock_name, normalize_report_language
+from src.services.prediction_cycle_meta import (
+    prediction_cycle_meta_for_history_record,
+    prediction_cycle_meta_from_mapping,
+)
 from src.services.name_to_code_resolver import resolve_name_to_code
 from src.services.stock_code_utils import is_code_like
 from src.services.task_queue import (
@@ -375,6 +380,7 @@ def _handle_sync_analysis(
             result.get("stock_name"),
             context_snapshot=context_snapshot,
             fallback_fundamental_payload=fundamental_snapshot,
+            prediction_cycle=result.get("prediction_cycle"),
         )
 
         return AnalysisResultResponse(
@@ -640,6 +646,7 @@ def get_analysis_status(
                 query_id=task_id,
                 code=record.code,
             )
+            cycle_raw = prediction_cycle_meta_for_history_record(db, record)
             report_data = {
                 "meta": {
                     "id": record.id,
@@ -678,6 +685,7 @@ def get_analysis_status(
                 stock_name,
                 context_snapshot=context_snapshot,
                 fallback_fundamental_payload=fallback_fundamental,
+                prediction_cycle=cycle_raw,
             )
             report_dict = report.model_dump() if report else None
             return TaskStatus(
@@ -756,6 +764,7 @@ def _build_analysis_report(
         stock_name: Optional[str] = None,
         context_snapshot: Optional[Any] = None,
         fallback_fundamental_payload: Optional[Dict[str, Any]] = None,
+        prediction_cycle: Optional[Dict[str, Any]] = None,
 ) -> AnalysisReport:
     """
     构建符合 API 规范的分析报告
@@ -796,6 +805,7 @@ def _build_analysis_report(
         current_price=meta_data.get("current_price"),
         change_pct=meta_data.get("change_pct"),
         model_used=normalize_model_used(meta_data.get("model_used")),
+        prediction_cycle=_coerce_prediction_cycle_meta(prediction_cycle),
     )
 
     summary = ReportSummary(
@@ -859,3 +869,12 @@ def _build_analysis_report(
         strategy=strategy,
         details=details
     )
+
+
+def _coerce_prediction_cycle_meta(
+    raw: Optional[Dict[str, Any]],
+) -> Optional[PredictionCycleMeta]:
+    normalized = prediction_cycle_meta_from_mapping(raw)
+    if not normalized:
+        return None
+    return PredictionCycleMeta(**normalized)

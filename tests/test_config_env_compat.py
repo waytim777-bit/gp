@@ -74,31 +74,43 @@ class ConfigEnvCompatibilityTestCase(unittest.TestCase):
 
     @patch("src.config.setup_env")
     @patch.object(Config, "_parse_litellm_yaml", return_value=[])
-    def test_authorized_empty_user_webhook_does_not_fallback_to_platform(
+    def test_web_user_ignores_user_config_overrides(
         self, _mock_parse_litellm_yaml, _mock_setup_env
     ):
         current_user = CurrentUser(
             id=123,
             username="alice",
             account_type="web",
-            setting_permissions=("WECHAT_WEBHOOK_URL",),
+            setting_permissions=("WECHAT_WEBHOOK_URL", "LLM_CHANNELS"),
         )
         db = MagicMock()
-        db.get_system_config_map.return_value = {
-            "STOCK_LIST": "600519",
-            "WECHAT_WEBHOOK_URL": "https://platform.example/webhook",
+        db.get_user_config_map.return_value = {
+            "WECHAT_WEBHOOK_URL": "",
+            "LLM_CHANNELS": "",
         }
-        db.get_user_config_map.return_value = {"WECHAT_WEBHOOK_URL": ""}
 
-        with patch.dict(os.environ, {"STOCK_LIST": "600519"}, clear=True):
+        with patch.dict(
+            os.environ,
+            {
+                "STOCK_LIST": "600519",
+                "WECHAT_WEBHOOK_URL": "https://platform.example/webhook",
+                "LLM_CHANNELS": "comet",
+                "LLM_COMET_API_KEY": "sk-test-key-12345678",
+                "LLM_COMET_BASE_URL": "https://api.cometapi.com/v1",
+                "LLM_COMET_MODELS": "gpt-4o-mini",
+            },
+            clear=True,
+        ):
             with patch("src.storage.DatabaseManager") as db_manager:
                 db_manager._instance = MagicMock(_initialized=True)
                 db_manager.get_instance.return_value = db
                 with use_current_user(current_user):
                     clear_user_config_cache(123)
+                    Config.reset_instance()
                     config = get_config()
 
-        self.assertEqual(config.wechat_webhook_url, "")
+        self.assertEqual(config.wechat_webhook_url, "https://platform.example/webhook")
+        self.assertEqual(config.llm_channels[0]["name"], "comet")
 
     @patch("src.config.setup_env")
     @patch.object(Config, "_parse_litellm_yaml", return_value=[])
@@ -112,13 +124,16 @@ class ConfigEnvCompatibilityTestCase(unittest.TestCase):
             setting_permissions=("STOCK_LIST",),
         )
         db = MagicMock()
-        db.get_system_config_map.return_value = {
-            "STOCK_LIST": "600519",
-            "WECHAT_WEBHOOK_URL": "https://platform.example/webhook",
-        }
         db.get_user_config_map.return_value = {"WECHAT_WEBHOOK_URL": ""}
 
-        with patch.dict(os.environ, {"STOCK_LIST": "600519"}, clear=True):
+        with patch.dict(
+            os.environ,
+            {
+                "STOCK_LIST": "600519",
+                "WECHAT_WEBHOOK_URL": "https://platform.example/webhook",
+            },
+            clear=True,
+        ):
             with patch("src.storage.DatabaseManager") as db_manager:
                 db_manager._instance = MagicMock(_initialized=True)
                 db_manager.get_instance.return_value = db
@@ -126,6 +141,77 @@ class ConfigEnvCompatibilityTestCase(unittest.TestCase):
                     clear_user_config_cache(123)
                     config = get_config()
 
+        self.assertEqual(config.wechat_webhook_url, "https://platform.example/webhook")
+
+    @patch("src.config.setup_env")
+    @patch.object(Config, "_parse_litellm_yaml", return_value=[])
+    def test_system_config_does_not_override_dotenv_platform_values(
+        self, _mock_parse_litellm_yaml, _mock_setup_env
+    ):
+        db = MagicMock()
+        db.get_system_config_map.return_value = {
+            "TUSHARE_TOKEN": "",
+            "LLM_CHANNELS": "",
+            "ENABLE_REALTIME_QUOTE": "false",
+        }
+
+        with patch.dict(
+            os.environ,
+            {
+                "TUSHARE_TOKEN": "env-token-12345678",
+                "LLM_CHANNELS": "comet",
+                "LLM_COMET_API_KEY": "sk-test-key-12345678",
+                "LLM_COMET_BASE_URL": "https://api.cometapi.com/v1",
+                "LLM_COMET_MODELS": "gpt-4o-mini",
+                "ENABLE_REALTIME_QUOTE": "true",
+            },
+            clear=True,
+        ):
+            with patch("src.storage.DatabaseManager") as db_manager:
+                db_manager._instance = MagicMock(_initialized=True)
+                db_manager.get_instance.return_value = db
+                Config.reset_instance()
+                config = Config.get_instance()
+
+        self.assertEqual(config.tushare_token, "env-token-12345678")
+        self.assertEqual(config.llm_channels[0]["name"], "comet")
+        self.assertTrue(config.enable_realtime_quote)
+
+    @patch("src.config.setup_env")
+    @patch.object(Config, "_parse_litellm_yaml", return_value=[])
+    def test_authorized_user_without_override_inherits_platform_env(
+        self, _mock_parse_litellm_yaml, _mock_setup_env
+    ):
+        current_user = CurrentUser(
+            id=123,
+            username="alice",
+            account_type="web",
+            setting_permissions=("LLM_CHANNELS", "TUSHARE_TOKEN", "WECHAT_WEBHOOK_URL"),
+        )
+        db = MagicMock()
+        db.get_user_config_map.return_value = {}
+
+        with patch.dict(
+            os.environ,
+            {
+                "LLM_CHANNELS": "comet",
+                "LLM_COMET_API_KEY": "sk-test-key-12345678",
+                "LLM_COMET_BASE_URL": "https://api.cometapi.com/v1",
+                "LLM_COMET_MODELS": "gpt-4o-mini",
+                "TUSHARE_TOKEN": "env-token-12345678",
+                "WECHAT_WEBHOOK_URL": "https://platform.example/webhook",
+            },
+            clear=True,
+        ):
+            with patch("src.storage.DatabaseManager") as db_manager:
+                db_manager._instance = MagicMock(_initialized=True)
+                db_manager.get_instance.return_value = db
+                with use_current_user(current_user):
+                    clear_user_config_cache(123)
+                    config = get_config()
+
+        self.assertEqual(config.tushare_token, "env-token-12345678")
+        self.assertEqual(config.llm_channels[0]["name"], "comet")
         self.assertEqual(config.wechat_webhook_url, "https://platform.example/webhook")
 
     def test_explicit_database_path_can_override_dotenv_database_url(self):

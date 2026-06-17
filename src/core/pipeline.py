@@ -37,6 +37,7 @@ from src.report_language import (
 )
 from src.search_service import SearchService
 from src.services.social_sentiment_service import SocialSentimentService
+from src.services.subscription_push import deliver_subscription_report
 from src.enums import ReportType
 from src.stock_analyzer import StockTrendAnalyzer, TrendAnalysisResult
 from src.core.trading_calendar import (
@@ -343,6 +344,7 @@ class StockAnalysisPipeline:
 
             # Step 3: 趋势分析（基于交易理念）— 在 Agent 分支之前执行，供两条路径共用
             trend_result: Optional[TrendAnalysisResult] = None
+            historical_bars = None
             try:
                 _mkt = get_market_for_stock(normalize_stock_code(code))
                 end_date = get_market_now(_mkt).date()
@@ -371,6 +373,7 @@ class StockAnalysisPipeline:
                     chip_data,
                     fundamental_context,
                     trend_result,
+                    historical_bars=historical_bars,
                 )
 
             # Step 4: 多维度情报搜索（最新消息+风险排查+业绩预期）
@@ -736,6 +739,138 @@ class StockAnalysisPipeline:
         enriched_context["belong_boards"] = boards
         return enriched_context
 
+    @staticmethod
+    def _build_daily_history_payload(code: str, historical_bars: Any) -> Dict[str, Any]:
+        records = [bar.to_dict() for bar in historical_bars]
+        for row in records:
+            if "date" in row:
+                row["date"] = str(row["date"])
+        tail = records[-60:]
+        return {
+            "code": code,
+            "source": "pipeline_prefetch",
+            "total_records": len(tail),
+            "data": tail,
+        }
+
+    @staticmethod
+    def _capital_flow_payload_from_fundamental(
+        fundamental_context: Optional[Dict[str, Any]],
+        code: str,
+    ) -> Optional[Dict[str, Any]]:
+        if not isinstance(fundamental_context, dict):
+            return None
+        block = fundamental_context.get("capital_flow")
+        if not isinstance(block, dict):
+            return None
+        status = block.get("status")
+        data = block.get("data") or {}
+        stock_flow = data.get("stock_flow") or {}
+        sector_rankings = data.get("sector_rankings") or {}
+        if status in (None, "not_supported", "failed") and not stock_flow:
+            return None
+        return {
+            "stock_code": code,
+            "status": status or "ok",
+            "main_net_inflow": stock_flow.get("main_net_inflow"),
+            "inflow_5d": stock_flow.get("inflow_5d"),
+            "inflow_10d": stock_flow.get("inflow_10d"),
+            "sector_rankings": {
+                "top_inflow_sectors": sector_rankings.get("top", [])[:3],
+                "top_outflow_sectors": sector_rankings.get("bottom", [])[:3],
+            },
+            "errors": block.get("errors") or [],
+            "cached": True,
+        }
+
+    def _save_intel_results_to_db(
+        self,
+        *,
+        code: str,
+        stock_name: str,
+        intel_results: Dict[str, Any],
+        query_id: str,
+    ) -> None:
+        query_context = self._build_query_context(query_id=query_id)
+        for dim_name, response in intel_results.items():
+            if response and response.success and response.results:
+                self.db.save_news_intel(
+                    code=code,
+                    name=stock_name,
+                    dimension=dim_name,
+                    query=response.query,
+                    response=response,
+                    query_context=query_context,
+                )
+
+    def _prefetch_agent_run_data(
+        self,
+        *,
+        code: str,
+        stock_name: str,
+        query_id: str,
+        realtime_quote: Any,
+        chip_data: Optional[ChipDistribution],
+        fundamental_context: Optional[Dict[str, Any]],
+        trend_result: Optional[TrendAnalysisResult],
+        historical_bars: Any = None,
+    ) -> Dict[str, Any]:
+        """Collect external data once before the agent pipeline starts."""
+        from src.agent.tools.search_tools import build_comprehensive_intel_tool_result
+
+        payload: Dict[str, Any] = {}
+        if realtime_quote:
+            payload["realtime_quote"] = self._safe_to_dict(realtime_quote)
+        if chip_data:
+            payload["chip_distribution"] = self._safe_to_dict(chip_data)
+        if trend_result:
+            payload["trend_result"] = self._safe_to_dict(trend_result)
+        if historical_bars:
+            payload["daily_history"] = self._build_daily_history_payload(code, historical_bars)
+
+        capital_flow = self._capital_flow_payload_from_fundamental(fundamental_context, code)
+        if capital_flow:
+            payload["capital_flow"] = capital_flow
+
+        intel_saved = False
+        if self.search_service is not None and self.search_service.is_available:
+            self._emit_progress(46, f"{stock_name}：正在检索新闻与舆情")
+            logger.info(f"{stock_name}({code}) Agent 模式：开始一次性多维度情报采集")
+            intel_results = self.search_service.search_comprehensive_intel(
+                stock_code=code,
+                stock_name=stock_name,
+                max_searches=6,
+            )
+            if intel_results:
+                news_context = self.search_service.format_intel_report(intel_results, stock_name)
+                payload["news_context"] = news_context
+                payload["intel_comprehensive"] = build_comprehensive_intel_tool_result(
+                    intel_results,
+                    stock_name,
+                    service=self.search_service,
+                )
+                total_results = sum(
+                    len(r.results) for r in intel_results.values() if r.success
+                )
+                logger.info(
+                    f"{stock_name}({code}) Agent 模式：情报采集完成，共 {total_results} 条结果"
+                )
+                try:
+                    self._save_intel_results_to_db(
+                        code=code,
+                        stock_name=stock_name,
+                        intel_results=intel_results,
+                        query_id=query_id,
+                    )
+                    intel_saved = True
+                except Exception as e:
+                    logger.warning(f"{stock_name}({code}) Agent 模式保存新闻情报失败: {e}")
+        else:
+            logger.info(f"{stock_name}({code}) 搜索服务不可用，Agent 模式跳过情报预采集")
+
+        payload["_intel_saved_to_db"] = intel_saved
+        return payload
+
     def _analyze_with_agent(
         self, 
         code: str, 
@@ -746,6 +881,7 @@ class StockAnalysisPipeline:
         chip_data: Optional[ChipDistribution],
         fundamental_context: Optional[Dict[str, Any]] = None,
         trend_result: Optional[TrendAnalysisResult] = None,
+        historical_bars: Any = None,
     ) -> Optional[AnalysisResult]:
         """
         使用 Agent 模式分析单只股票。
@@ -765,13 +901,17 @@ class StockAnalysisPipeline:
                 "report_language": report_language,
                 "fundamental_context": fundamental_context,
             }
-            
-            if realtime_quote:
-                initial_context["realtime_quote"] = self._safe_to_dict(realtime_quote)
-            if chip_data:
-                initial_context["chip_distribution"] = self._safe_to_dict(chip_data)
-            if trend_result:
-                initial_context["trend_result"] = self._safe_to_dict(trend_result)
+            prefetched = self._prefetch_agent_run_data(
+                code=code,
+                stock_name=stock_name,
+                query_id=query_id,
+                realtime_quote=realtime_quote,
+                chip_data=chip_data,
+                fundamental_context=fundamental_context,
+                trend_result=trend_result,
+                historical_bars=historical_bars,
+            )
+            initial_context.update(prefetched)
 
             # Agent path: inject social sentiment as news_context so both
             # executor (_build_user_message) and orchestrator (ctx.set_data)
@@ -821,9 +961,12 @@ class StockAnalysisPipeline:
 
             resolved_stock_name = result.name if result and result.name else stock_name
 
-            # 保存新闻情报到数据库（Agent 工具结果仅用于 LLM 上下文，未持久化，Fixes #396）
-            # 使用 search_stock_news（与 Agent 工具调用逻辑一致），仅 1 次 API 调用，无额外延迟
-            if self.search_service is not None and self.search_service.is_available:
+            # Agent 模式已在预采集阶段持久化多维度情报；仅在未采集时做最小化补存
+            if (
+                not initial_context.get("_intel_saved_to_db")
+                and self.search_service is not None
+                and self.search_service.is_available
+            ):
                 try:
                     news_response = self.search_service.search_stock_news(
                         stock_code=code,
@@ -1420,6 +1563,31 @@ class StockAnalysisPipeline:
         
         return results
 
+    def _get_current_user_notification_profile(self):
+        """Load per-user push destinations from subscription profile (C-end)."""
+        from src.user_context import get_current_user_id
+
+        user_id = get_current_user_id()
+        if user_id is None:
+            return None
+        profile = self.db.get_notification_profile(int(user_id))
+        if profile is None:
+            return None
+        email = (profile.notification_email or "").strip()
+        webhooks = (profile.webhook_urls or "").strip()
+        if not email and not webhooks:
+            return None
+        return profile
+
+    @staticmethod
+    def _subscription_push_is_configured(profile, config: Config) -> bool:
+        """Whether platform SMTP/webhook can deliver to the user's subscription profile."""
+        email = (profile.notification_email or "").strip()
+        webhooks = [item.strip() for item in (profile.webhook_urls or "").split(",") if item.strip()]
+        if webhooks:
+            return True
+        return bool(email and config.email_sender and config.email_password)
+
     def _send_single_stock_notification(
         self,
         result: AnalysisResult,
@@ -1427,7 +1595,8 @@ class StockAnalysisPipeline:
         fallback_code: Optional[str] = None,
     ) -> None:
         """发送单股通知，供直接单股入口和批量串行推送共用。"""
-        if not self.notifier.is_available():
+        user_profile = self._get_current_user_notification_profile()
+        if user_profile is None and not self.notifier.is_available():
             return
 
         stock_code = getattr(result, "code", None) or fallback_code or "unknown"
@@ -1451,7 +1620,25 @@ class StockAnalysisPipeline:
                     report_content = self.notifier.generate_single_stock_report(result)
                     logger.info(f"[{stock_code}] 使用精简报告格式")
 
-                if self.notifier.send(report_content, email_stock_codes=[stock_code]):
+                if user_profile is not None:
+                    if not self._subscription_push_is_configured(user_profile, self.config):
+                        logger.warning(
+                            "[%s] 用户已配置推送方式，但平台 SMTP/Webhook 未就绪，跳过推送",
+                            stock_code,
+                        )
+                        return
+                    success, channel = deliver_subscription_report(
+                        content=report_content,
+                        platform_config=self.config,
+                        notification_email=user_profile.notification_email,
+                        webhook_urls=user_profile.webhook_urls,
+                        webhook_bearer_token=user_profile.webhook_bearer_token,
+                    )
+                    if success:
+                        logger.info(f"[{stock_code}] 单股推送成功 (channel={channel})")
+                    else:
+                        logger.warning(f"[{stock_code}] 单股推送失败 (channel={channel})")
+                elif self.notifier.send(report_content, email_stock_codes=[stock_code]):
                     logger.info(f"[{stock_code}] 单股推送成功")
                 else:
                     logger.warning(f"[{stock_code}] 单股推送失败")

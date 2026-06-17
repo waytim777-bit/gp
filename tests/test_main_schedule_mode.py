@@ -275,8 +275,8 @@ class MainScheduleModeTestCase(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "boom"):
                 provider()
 
-    def test_schedule_time_provider_reads_db_first(self) -> None:
-        """Provider reads DB first (.env and env var are fallbacks)."""
+    def test_schedule_time_provider_ignores_db_and_reads_env_file(self) -> None:
+        """Provider reads .env file; system_configs is ignored."""
         mock_db = unittest.mock.MagicMock()
         mock_db._initialized = True
         mock_db.get_system_config_map.return_value = {"SCHEDULE_TIME": "16:50"}
@@ -291,16 +291,12 @@ class MainScheduleModeTestCase(unittest.TestCase):
         ), patch(
             "src.core.config_manager.ConfigManager.read_config_map",
             return_value={"SCHEDULE_TIME": "18:00"},
-        ), patch.object(
-            type(unittest.mock.sentinel),
-            "__eq__",
-            create=True,
         ):
             with patch("src.storage.DatabaseManager") as db_mgr_cls:
                 db_mgr_cls._instance = mock_db
                 db_mgr_cls.get_instance.return_value = mock_db
                 provider = main._build_schedule_time_provider("09:30")
-                self.assertEqual(provider(), "16:50")
+                self.assertEqual(provider(), "18:00")
 
     def test_schedule_time_provider_falls_back_to_env_file_when_db_unavailable(self) -> None:
         """When DB is not initialized, .env file value is used."""

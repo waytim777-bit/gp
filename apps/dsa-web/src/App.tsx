@@ -3,12 +3,13 @@ import { useEffect } from 'react';
 import { BrowserRouter as Router, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import BacktestPage from './pages/BacktestPage';
+import SubscriptionsPage from './pages/SubscriptionsPage';
 import SettingsPage from './pages/SettingsPage';
 import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ChatPage from './pages/ChatPage';
 import PaymentPage from './pages/PaymentPage';
-import PortfolioPage from './pages/PortfolioPage';
+import PredictionReportsPage from './pages/PredictionReportsPage';
 import { ApiErrorAlert, Shell } from './components/common';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { useAgentChatStore } from './stores/agentChatStore';
@@ -63,14 +64,19 @@ const AppContent: React.FC = () => {
     if (currentUser?.isAdmin) {
       return true;
     }
-    return Boolean(currentUser?.menuPermissions?.includes(menuKey));
+    const permissions = currentUser?.menuPermissions ?? [];
+    if (menuKey === 'subscriptions') {
+      return permissions.includes('subscriptions') || permissions.includes('settings');
+    }
+    return permissions.includes(menuKey);
   };
 
   const firstAllowedPath = [
     ['home', '/'],
     ['chat', '/chat'],
-    ['portfolio', '/portfolio'],
     ['backtest', '/backtest'],
+    ['subscriptions', '/subscriptions'],
+    ['prediction_reports', '/prediction-reports'],
     ['payment', '/payment'],
     ['settings', '/settings'],
   ].find(([key]) => hasPermission(key))?.[1];
@@ -88,10 +94,12 @@ const AppContent: React.FC = () => {
       <Route element={<Shell />}>
         <Route path="/" element={protectedElement('home', <HomePage />)} />
         <Route path="/chat" element={protectedElement('chat', <ChatPage />)} />
-        <Route path="/portfolio" element={protectedElement('portfolio', <PortfolioPage />)} />
+        <Route path="/portfolio" element={<Navigate to="/" replace />} />
         <Route path="/backtest" element={protectedElement('backtest', <BacktestPage />)} />
         <Route path="/payment" element={protectedElement('payment', <PaymentPage />)} />
-        <Route path="/settings" element={protectedElement('settings', <SettingsPage />)} />
+        <Route path="/subscriptions" element={protectedElement('subscriptions', <SubscriptionsPage />)} />
+        <Route path="/prediction-reports" element={protectedElement('prediction_reports', <PredictionReportsPage />)} />
+        <Route path="/settings" element={currentUser?.isAdmin ? protectedElement('settings', <SettingsPage />) : <Navigate to="/subscriptions" replace />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
       <Route path="/login" element={<LoginPage />} />

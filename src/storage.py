@@ -373,6 +373,8 @@ class AnalysisHistory(Base):
     stop_loss = Column(Float)
     take_profit = Column(Float)
 
+    shared_run_id = Column(Integer, ForeignKey('shared_analysis_runs.id'), index=True)
+
     created_at = Column(DateTime, default=datetime.now, index=True)
 
     __table_args__ = (
@@ -838,6 +840,162 @@ class UserCreditBalance(Base):
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
 
+class UserNotificationProfile(Base):
+    """Per-user push destinations for subscription delivery."""
+
+    __tablename__ = 'user_notification_profiles'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False, unique=True, index=True)
+    notification_email = Column(String(320))
+    webhook_urls = Column(Text)
+    webhook_bearer_token = Column(Text)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+
+class StockSubscription(Base):
+    """User stock push subscription with configurable trading-day interval."""
+
+    __tablename__ = 'stock_subscriptions'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False, index=True)
+    code = Column(String(16), nullable=False, index=True)
+    name = Column(String(64))
+    market = Column(String(8), nullable=False, default='cn', index=True)
+    interval_days = Column(Integer, nullable=False, default=1)
+    status = Column(String(16), nullable=False, default='active', index=True)
+    anchor_date = Column(Date, nullable=False)
+    last_pushed_on = Column(Date)
+    next_push_on = Column(Date, index=True)
+    credits_per_push = Column(Integer, nullable=False, default=30)
+    created_at = Column(DateTime, default=datetime.now, index=True)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    __table_args__ = (
+        UniqueConstraint('user_id', 'code', name='uix_stock_subscription_user_code'),
+        Index('ix_stock_subscription_due', 'status', 'next_push_on'),
+    )
+
+
+class StockDataSnapshot(Base):
+    """Frozen market/fundamental payload for a prediction cycle anchor."""
+
+    __tablename__ = 'stock_data_snapshots'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    code = Column(String(16), nullable=False, index=True)
+    cycle_anchor_date = Column(Date, nullable=False, index=True)
+    market = Column(String(8), nullable=False, default='cn')
+    payload = Column(Text)
+    created_at = Column(DateTime, default=datetime.now, index=True)
+
+    __table_args__ = (
+        UniqueConstraint(
+            'code',
+            'cycle_anchor_date',
+            name='uix_stock_data_snapshot_code_anchor',
+        ),
+    )
+
+
+class SharedAnalysisRun(Base):
+    """Cached shared analysis result for subscription fan-out."""
+
+    __tablename__ = 'shared_analysis_runs'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    code = Column(String(16), nullable=False, index=True)
+    analysis_date = Column(Date, nullable=False, index=True)
+    market = Column(String(8), nullable=False, default='cn')
+    report_type = Column(String(16), nullable=False, default='simple', index=True)
+    analysis_history_id = Column(Integer, ForeignKey('analysis_history.id'), index=True)
+    query_id = Column(String(64), index=True)
+    data_as_of_date = Column(Date)
+    prediction_target_date = Column(Date)
+    last_analyzed_at = Column(DateTime)
+    news_fingerprint = Column(Text)
+    version = Column(Integer, nullable=False, default=1)
+    data_snapshot_id = Column(Integer, ForeignKey('stock_data_snapshots.id'), index=True)
+    status = Column(String(16), nullable=False, default='ready')
+    created_at = Column(DateTime, default=datetime.now, index=True)
+
+    __table_args__ = (
+        UniqueConstraint(
+            'code',
+            'analysis_date',
+            'report_type',
+            name='uix_shared_analysis_run_code_date_type',
+        ),
+    )
+
+
+class SubscriptionPushLog(Base):
+    """Audit log for subscription push attempts."""
+
+    __tablename__ = 'subscription_push_logs'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    subscription_id = Column(Integer, ForeignKey('stock_subscriptions.id'), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False, index=True)
+    shared_run_id = Column(Integer, ForeignKey('shared_analysis_runs.id'), index=True)
+    code = Column(String(16), nullable=False, index=True)
+    pushed_on = Column(Date, nullable=False, index=True)
+    channel = Column(String(16), nullable=False, default='none')
+    status = Column(String(16), nullable=False, default='pending', index=True)
+    credits_charged = Column(Integer, nullable=False, default=0)
+    error_message = Column(Text)
+    created_at = Column(DateTime, default=datetime.now, index=True)
+
+    __table_args__ = (
+        Index('ix_subscription_push_log_user_created', 'user_id', 'created_at'),
+    )
+
+
+class PredictionReportListing(Base):
+    """Shared prediction report offered on the daily market."""
+
+    __tablename__ = 'prediction_report_listings'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    seller_user_id = Column(Integer, ForeignKey('users.id'), nullable=False, index=True)
+    analysis_history_id = Column(Integer, ForeignKey('analysis_history.id'), nullable=False, unique=True)
+    shared_run_id = Column(Integer, ForeignKey('shared_analysis_runs.id'), nullable=False, index=True)
+    code = Column(String(16), nullable=False, index=True)
+    name = Column(String(64))
+    market = Column(String(8), nullable=False, default='cn', index=True)
+    cycle_anchor_date = Column(Date, nullable=False, index=True)
+    report_type = Column(String(16), nullable=False, default='simple')
+    purchase_credits = Column(Integer, nullable=False, default=100)
+    seller_reward_credits = Column(Integer, nullable=False, default=90)
+    status = Column(String(16), nullable=False, default='active', index=True)
+    created_at = Column(DateTime, default=datetime.now, index=True)
+
+    __table_args__ = (
+        Index('ix_prediction_report_listing_cycle', 'cycle_anchor_date', 'status'),
+    )
+
+
+class PredictionReportPurchase(Base):
+    """Purchase audit for a shared prediction report listing."""
+
+    __tablename__ = 'prediction_report_purchases'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    listing_id = Column(Integer, ForeignKey('prediction_report_listings.id'), nullable=False, index=True)
+    buyer_user_id = Column(Integer, ForeignKey('users.id'), nullable=False, index=True)
+    seller_user_id = Column(Integer, ForeignKey('users.id'), nullable=False, index=True)
+    credits_paid = Column(Integer, nullable=False, default=0)
+    seller_credits = Column(Integer, nullable=False, default=0)
+    buyer_history_id = Column(Integer, ForeignKey('analysis_history.id'), index=True)
+    created_at = Column(DateTime, default=datetime.now, index=True)
+
+    __table_args__ = (
+        UniqueConstraint('listing_id', 'buyer_user_id', name='uix_prediction_report_purchase_listing_buyer'),
+        Index('ix_prediction_report_purchase_buyer_created', 'buyer_user_id', 'created_at'),
+    )
+
+
 class DatabaseManager:
     """
     数据库管理器 - 单例模式
@@ -993,7 +1151,19 @@ class DatabaseManager:
             ],
             "news_intel": [("owner_user_id", "INTEGER")],
             "fundamental_snapshot": [("owner_user_id", "INTEGER")],
-            "analysis_history": [("owner_user_id", "INTEGER")],
+            "analysis_history": [
+                ("owner_user_id", "INTEGER"),
+                ("shared_run_id", "INTEGER"),
+            ],
+            "shared_analysis_runs": [
+                ("data_as_of_date", "DATE"),
+                ("prediction_target_date", "DATE"),
+                ("last_analyzed_at", "DATETIME"),
+                ("news_fingerprint", "TEXT"),
+                ("version", "INTEGER NOT NULL DEFAULT 1"),
+                ("data_snapshot_id", "INTEGER"),
+                ("status", "VARCHAR(16) NOT NULL DEFAULT 'ready'"),
+            ],
             "portfolio_accounts": [("owner_user_id", "INTEGER")],
             "conversation_messages": [("owner_user_id", "INTEGER")],
             "llm_usage": [("owner_user_id", "INTEGER")],
@@ -1107,6 +1277,73 @@ class DatabaseManager:
                     """
                 )
 
+            for table_name, column_name, column_type in (
+                ("shared_analysis_runs", "data_as_of_date", "DATE"),
+                ("shared_analysis_runs", "prediction_target_date", "DATE"),
+                ("shared_analysis_runs", "last_analyzed_at", "TIMESTAMP"),
+                ("shared_analysis_runs", "news_fingerprint", "TEXT"),
+                ("shared_analysis_runs", "version", "INTEGER NOT NULL DEFAULT 1"),
+                ("shared_analysis_runs", "data_snapshot_id", "INTEGER"),
+                ("shared_analysis_runs", "status", "VARCHAR(16) NOT NULL DEFAULT 'ready'"),
+                ("analysis_history", "shared_run_id", "INTEGER"),
+            ):
+                conn.exec_driver_sql(
+                    f"""
+                    ALTER TABLE {table_name}
+                    ADD COLUMN IF NOT EXISTS {column_name} {column_type}
+                    """
+                )
+
+            conn.exec_driver_sql(
+                """
+                CREATE TABLE IF NOT EXISTS stock_data_snapshots (
+                    id SERIAL PRIMARY KEY,
+                    code VARCHAR(16) NOT NULL,
+                    cycle_anchor_date DATE NOT NULL,
+                    market VARCHAR(8) NOT NULL DEFAULT 'cn',
+                    payload TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    CONSTRAINT uix_stock_data_snapshot_code_anchor
+                        UNIQUE (code, cycle_anchor_date)
+                )
+                """
+            )
+            conn.exec_driver_sql(
+                """
+                CREATE TABLE IF NOT EXISTS prediction_report_listings (
+                    id SERIAL PRIMARY KEY,
+                    seller_user_id INTEGER NOT NULL REFERENCES users(id),
+                    analysis_history_id INTEGER NOT NULL UNIQUE REFERENCES analysis_history(id),
+                    shared_run_id INTEGER NOT NULL REFERENCES shared_analysis_runs(id),
+                    code VARCHAR(16) NOT NULL,
+                    name VARCHAR(64),
+                    market VARCHAR(8) NOT NULL DEFAULT 'cn',
+                    cycle_anchor_date DATE NOT NULL,
+                    report_type VARCHAR(16) NOT NULL DEFAULT 'simple',
+                    purchase_credits INTEGER NOT NULL DEFAULT 100,
+                    seller_reward_credits INTEGER NOT NULL DEFAULT 90,
+                    status VARCHAR(16) NOT NULL DEFAULT 'active',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                """
+            )
+            conn.exec_driver_sql(
+                """
+                CREATE TABLE IF NOT EXISTS prediction_report_purchases (
+                    id SERIAL PRIMARY KEY,
+                    listing_id INTEGER NOT NULL REFERENCES prediction_report_listings(id),
+                    buyer_user_id INTEGER NOT NULL REFERENCES users(id),
+                    seller_user_id INTEGER NOT NULL REFERENCES users(id),
+                    credits_paid INTEGER NOT NULL DEFAULT 0,
+                    seller_credits INTEGER NOT NULL DEFAULT 0,
+                    buyer_history_id INTEGER REFERENCES analysis_history(id),
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    CONSTRAINT uix_prediction_report_purchase_listing_buyer
+                        UNIQUE (listing_id, buyer_user_id)
+                )
+                """
+            )
+
     def _migrate_users_table_to_integer_id(self, conn) -> None:
         """Rebuild users table with INTEGER id if currently using VARCHAR id."""
         users_info = {
@@ -1203,6 +1440,20 @@ class DatabaseManager:
 
         logger.info("Users table migrated to INTEGER id successfully (%d users)", len(new_users))
 
+    def _ensure_role_menu_key(self, session: Session, role_key: str, menu_key: str) -> None:
+        """Ensure a menu permission exists on a built-in role."""
+        role = session.execute(
+            select(Role).where(Role.key == role_key).limit(1)
+        ).scalar_one_or_none()
+        if role is None:
+            return
+        existing = session.execute(
+            select(RoleMenuPermission.menu_key).where(RoleMenuPermission.role_id == int(role.id))
+        ).scalars().all()
+        if menu_key in set(existing):
+            return
+        session.add(RoleMenuPermission(role_id=int(role.id), menu_key=menu_key))
+
     def ensure_default_roles(self) -> None:
         """Ensure built-in roles and their permissions exist."""
         defaults = [
@@ -1270,6 +1521,14 @@ class DatabaseManager:
                     for setting_key in normalize_setting_keys(list(setting_keys)):
                         if setting_key not in current_setting_keys:
                             session.add(RoleSettingPermission(role_id=int(role.id), setting_key=setting_key))
+
+                if key == DEFAULT_USER_ROLE_KEY and not should_seed_permissions:
+                    # Keep built-in default user role evolving with the menu catalog.
+                    # Existing installations may already have a non-empty permission set,
+                    # so we must ensure new menu keys are appended incrementally.
+                    for menu_key in normalize_menu_keys(list(DEFAULT_USER_MENU_KEYS)):
+                        self._ensure_role_menu_key(session, DEFAULT_USER_ROLE_KEY, menu_key)
+
             session.commit()
         except Exception:
             session.rollback()
@@ -1898,6 +2157,614 @@ class DatabaseManager:
         return changed
 
     # ------------------------------------------------------------------
+    # Subscriptions – notification profile & stock subscriptions
+    # ------------------------------------------------------------------
+
+    def get_notification_profile(self, user_id: int) -> Optional[UserNotificationProfile]:
+        with self.get_session() as session:
+            return session.execute(
+                select(UserNotificationProfile).where(UserNotificationProfile.user_id == int(user_id)).limit(1)
+            ).scalar_one_or_none()
+
+    def upsert_notification_profile(
+        self,
+        user_id: int,
+        *,
+        notification_email: Optional[str] = None,
+        webhook_urls: Optional[str] = None,
+        webhook_bearer_token: Optional[str] = None,
+        clear_bearer_token: bool = False,
+    ) -> UserNotificationProfile:
+        with self.session_scope() as session:
+            row = session.execute(
+                select(UserNotificationProfile)
+                .where(UserNotificationProfile.user_id == int(user_id))
+                .limit(1)
+            ).scalar_one_or_none()
+            if row is None:
+                row = UserNotificationProfile(user_id=int(user_id))
+                session.add(row)
+                session.flush()
+            if notification_email is not None:
+                row.notification_email = notification_email.strip() or None
+            if webhook_urls is not None:
+                row.webhook_urls = webhook_urls.strip() or None
+            if webhook_bearer_token is not None:
+                row.webhook_bearer_token = webhook_bearer_token.strip() or None
+            elif clear_bearer_token:
+                row.webhook_bearer_token = None
+            row.updated_at = datetime.now()
+            session.flush()
+            session.expunge(row)
+            return row
+
+    def list_stock_subscriptions(self, user_id: int) -> List[StockSubscription]:
+        with self.get_session() as session:
+            rows = session.execute(
+                select(StockSubscription)
+                .where(StockSubscription.user_id == int(user_id))
+                .order_by(StockSubscription.created_at.desc(), StockSubscription.id.desc())
+            ).scalars().all()
+            for row in rows:
+                session.expunge(row)
+            return list(rows)
+
+    def get_stock_subscription(self, user_id: int, subscription_id: int) -> Optional[StockSubscription]:
+        with self.get_session() as session:
+            row = session.execute(
+                select(StockSubscription).where(
+                    StockSubscription.id == int(subscription_id),
+                    StockSubscription.user_id == int(user_id),
+                ).limit(1)
+            ).scalar_one_or_none()
+            if row is not None:
+                session.expunge(row)
+            return row
+
+    def count_stock_subscriptions(self, user_id: int) -> int:
+        with self.get_session() as session:
+            return int(
+                session.execute(
+                    select(func.count()).select_from(StockSubscription).where(
+                        StockSubscription.user_id == int(user_id)
+                    )
+                ).scalar_one()
+            )
+
+    def create_stock_subscription(
+        self,
+        *,
+        user_id: int,
+        code: str,
+        name: Optional[str],
+        market: str,
+        interval_days: int,
+        anchor_date: date,
+        next_push_on: date,
+        credits_per_push: int,
+    ) -> StockSubscription:
+        with self.session_scope() as session:
+            row = StockSubscription(
+                user_id=int(user_id),
+                code=code,
+                name=name,
+                market=market,
+                interval_days=int(interval_days),
+                status='active',
+                anchor_date=anchor_date,
+                next_push_on=next_push_on,
+                credits_per_push=int(credits_per_push),
+            )
+            session.add(row)
+            session.flush()
+            session.expunge(row)
+            return row
+
+    def update_stock_subscription(
+        self,
+        subscription_id: int,
+        user_id: int,
+        *,
+        interval_days: Optional[int] = None,
+        status: Optional[str] = None,
+        next_push_on: Optional[date] = None,
+        last_pushed_on: Optional[date] = None,
+    ) -> Optional[StockSubscription]:
+        with self.session_scope() as session:
+            row = session.execute(
+                select(StockSubscription).where(
+                    StockSubscription.id == int(subscription_id),
+                    StockSubscription.user_id == int(user_id),
+                ).limit(1)
+            ).scalar_one_or_none()
+            if row is None:
+                return None
+            if interval_days is not None:
+                row.interval_days = int(interval_days)
+            if status is not None:
+                row.status = status
+            if next_push_on is not None:
+                row.next_push_on = next_push_on
+            if last_pushed_on is not None:
+                row.last_pushed_on = last_pushed_on
+            row.updated_at = datetime.now()
+            session.flush()
+            session.expunge(row)
+            return row
+
+    def delete_stock_subscription(self, subscription_id: int, user_id: int) -> bool:
+        with self.session_scope() as session:
+            row = session.execute(
+                select(StockSubscription).where(
+                    StockSubscription.id == int(subscription_id),
+                    StockSubscription.user_id == int(user_id),
+                ).limit(1)
+            ).scalar_one_or_none()
+            if row is None:
+                return False
+            session.delete(row)
+            return True
+
+    def list_active_stock_subscriptions(self) -> List[StockSubscription]:
+        with self.get_session() as session:
+            rows = session.execute(
+                select(StockSubscription)
+                .where(StockSubscription.status == 'active')
+                .order_by(StockSubscription.code.asc(), StockSubscription.id.asc())
+            ).scalars().all()
+            for row in rows:
+                session.expunge(row)
+            return list(rows)
+
+    def get_shared_analysis_run(
+        self,
+        code: str,
+        analysis_date: date,
+        report_type: str = 'simple',
+    ) -> Optional[SharedAnalysisRun]:
+        with self.get_session() as session:
+            row = session.execute(
+                select(SharedAnalysisRun).where(
+                    SharedAnalysisRun.code == code,
+                    SharedAnalysisRun.analysis_date == analysis_date,
+                    SharedAnalysisRun.report_type == report_type,
+                ).limit(1)
+            ).scalar_one_or_none()
+            if row is not None:
+                session.expunge(row)
+            return row
+
+    def get_shared_analysis_run_by_id(self, run_id: int) -> Optional[SharedAnalysisRun]:
+        with self.get_session() as session:
+            row = session.execute(
+                select(SharedAnalysisRun).where(SharedAnalysisRun.id == int(run_id)).limit(1)
+            ).scalar_one_or_none()
+            if row is not None:
+                session.expunge(row)
+            return row
+
+    def create_shared_analysis_run(
+        self,
+        *,
+        code: str,
+        analysis_date: date,
+        market: str,
+        report_type: str,
+        analysis_history_id: Optional[int],
+        query_id: Optional[str],
+        data_as_of_date: Optional[date] = None,
+        prediction_target_date: Optional[date] = None,
+        last_analyzed_at: Optional[datetime] = None,
+        news_fingerprint: Optional[str] = None,
+        version: int = 1,
+        data_snapshot_id: Optional[int] = None,
+        status: str = "ready",
+    ) -> SharedAnalysisRun:
+        with self.session_scope() as session:
+            row = SharedAnalysisRun(
+                code=code,
+                analysis_date=analysis_date,
+                market=market,
+                report_type=report_type,
+                analysis_history_id=analysis_history_id,
+                query_id=query_id,
+                data_as_of_date=data_as_of_date,
+                prediction_target_date=prediction_target_date,
+                last_analyzed_at=last_analyzed_at,
+                news_fingerprint=news_fingerprint,
+                version=version,
+                data_snapshot_id=data_snapshot_id,
+                status=status,
+            )
+            session.add(row)
+            session.flush()
+            session.expunge(row)
+            return row
+
+    def update_shared_analysis_run(
+        self,
+        run_id: int,
+        *,
+        analysis_history_id: Optional[int] = None,
+        query_id: Optional[str] = None,
+        data_as_of_date: Optional[date] = None,
+        prediction_target_date: Optional[date] = None,
+        last_analyzed_at: Optional[datetime] = None,
+        news_fingerprint: Optional[str] = None,
+        version: Optional[int] = None,
+        data_snapshot_id: Optional[int] = None,
+        status: Optional[str] = None,
+    ) -> Optional[SharedAnalysisRun]:
+        with self.session_scope() as session:
+            row = session.execute(
+                select(SharedAnalysisRun).where(SharedAnalysisRun.id == int(run_id)).limit(1)
+            ).scalar_one_or_none()
+            if row is None:
+                return None
+            if analysis_history_id is not None:
+                row.analysis_history_id = analysis_history_id
+            if query_id is not None:
+                row.query_id = query_id
+            if data_as_of_date is not None:
+                row.data_as_of_date = data_as_of_date
+            if prediction_target_date is not None:
+                row.prediction_target_date = prediction_target_date
+            if last_analyzed_at is not None:
+                row.last_analyzed_at = last_analyzed_at
+            if news_fingerprint is not None:
+                row.news_fingerprint = news_fingerprint
+            if version is not None:
+                row.version = version
+            if data_snapshot_id is not None:
+                row.data_snapshot_id = data_snapshot_id
+            if status is not None:
+                row.status = status
+            session.flush()
+            session.expunge(row)
+            return row
+
+    def upsert_stock_data_snapshot(
+        self,
+        *,
+        code: str,
+        cycle_anchor_date: date,
+        market: str,
+        payload: Optional[Dict[str, Any]],
+    ) -> StockDataSnapshot:
+        payload_text = self._safe_json_dumps(payload) if payload is not None else None
+        with self.session_scope() as session:
+            row = session.execute(
+                select(StockDataSnapshot).where(
+                    StockDataSnapshot.code == code,
+                    StockDataSnapshot.cycle_anchor_date == cycle_anchor_date,
+                ).limit(1)
+            ).scalar_one_or_none()
+            if row is None:
+                row = StockDataSnapshot(
+                    code=code,
+                    cycle_anchor_date=cycle_anchor_date,
+                    market=market,
+                    payload=payload_text,
+                )
+                session.add(row)
+            else:
+                row.payload = payload_text
+                row.market = market
+            session.flush()
+            session.expunge(row)
+            return row
+
+    def clone_analysis_history_for_user(
+        self,
+        *,
+        canonical_history_id: int,
+        owner_user_id: int,
+        query_id: str,
+        shared_run_id: Optional[int] = None,
+    ) -> Optional[AnalysisHistory]:
+        with self.session_scope() as session:
+            source = session.execute(
+                select(AnalysisHistory).where(AnalysisHistory.id == int(canonical_history_id)).limit(1)
+            ).scalar_one_or_none()
+            if source is None:
+                return None
+            cloned = AnalysisHistory(
+                query_id=query_id,
+                owner_user_id=int(owner_user_id),
+                code=source.code,
+                name=source.name,
+                report_type=source.report_type,
+                sentiment_score=source.sentiment_score,
+                operation_advice=source.operation_advice,
+                trend_prediction=source.trend_prediction,
+                analysis_summary=source.analysis_summary,
+                raw_result=source.raw_result,
+                news_content=source.news_content,
+                context_snapshot=source.context_snapshot,
+                ideal_buy=source.ideal_buy,
+                secondary_buy=source.secondary_buy,
+                stop_loss=source.stop_loss,
+                take_profit=source.take_profit,
+                shared_run_id=shared_run_id,
+                created_at=datetime.now(),
+            )
+            session.add(cloned)
+            session.flush()
+            session.expunge(cloned)
+            return cloned
+
+    def clone_news_intel_for_query(
+        self,
+        *,
+        source_query_id: str,
+        target_query_id: str,
+        owner_user_id: int,
+        limit: int = 100,
+    ) -> int:
+        """Clone news_intel rows from a canonical query_id to a buyer's query_id.
+
+        This keeps `/api/v1/history/{record_id}/news` working for purchased reports
+        because that endpoint resolves by the buyer record's query_id and also
+        scopes rows by owner_user_id.
+        """
+        src_qid = str(source_query_id or "").strip()
+        dst_qid = str(target_query_id or "").strip()
+        if not src_qid or not dst_qid:
+            return 0
+        if src_qid == dst_qid:
+            return 0
+
+        saved = 0
+        with self.session_scope() as session:
+            rows = session.execute(
+                select(NewsIntel)
+                .where(NewsIntel.query_id == src_qid)
+                .order_by(desc(NewsIntel.fetched_at))
+                .limit(int(limit))
+            ).scalars().all()
+
+            for row in rows:
+                try:
+                    with session.begin_nested():
+                        session.add(
+                            NewsIntel(
+                                owner_user_id=int(owner_user_id),
+                                query_id=dst_qid,
+                                code=row.code,
+                                name=row.name,
+                                dimension=row.dimension,
+                                query=row.query,
+                                provider=row.provider,
+                                title=row.title,
+                                snippet=row.snippet,
+                                url=row.url,
+                                source=row.source,
+                                published_date=row.published_date,
+                                fetched_at=row.fetched_at,
+                                query_source=row.query_source,
+                                requester_platform=row.requester_platform,
+                                requester_user_id=row.requester_user_id,
+                                requester_user_name=row.requester_user_name,
+                                requester_chat_id=row.requester_chat_id,
+                                requester_message_id=row.requester_message_id,
+                                requester_query=row.requester_query,
+                            )
+                        )
+                    saved += 1
+                except IntegrityError:
+                    # De-dupe by (owner_user_id, url) unique constraint
+                    continue
+
+        return saved
+
+    def create_prediction_report_listing(
+        self,
+        *,
+        seller_user_id: int,
+        analysis_history_id: int,
+        shared_run_id: int,
+        code: str,
+        name: Optional[str],
+        market: str,
+        cycle_anchor_date: date,
+        report_type: str,
+        purchase_credits: int,
+        seller_reward_credits: int,
+    ) -> PredictionReportListing:
+        with self.session_scope() as session:
+            row = PredictionReportListing(
+                seller_user_id=int(seller_user_id),
+                analysis_history_id=int(analysis_history_id),
+                shared_run_id=int(shared_run_id),
+                code=code,
+                name=name,
+                market=market,
+                cycle_anchor_date=cycle_anchor_date,
+                report_type=report_type,
+                purchase_credits=int(purchase_credits),
+                seller_reward_credits=int(seller_reward_credits),
+                status="active",
+            )
+            session.add(row)
+            session.flush()
+            session.expunge(row)
+            return row
+
+    def get_prediction_report_listing_by_id(
+        self,
+        listing_id: int,
+    ) -> Optional[PredictionReportListing]:
+        with self.get_session() as session:
+            row = session.execute(
+                select(PredictionReportListing).where(
+                    PredictionReportListing.id == int(listing_id)
+                ).limit(1)
+            ).scalar_one_or_none()
+            if row is not None:
+                session.expunge(row)
+            return row
+
+    def get_prediction_report_listing_by_history_id(
+        self,
+        analysis_history_id: int,
+    ) -> Optional[PredictionReportListing]:
+        with self.get_session() as session:
+            row = session.execute(
+                select(PredictionReportListing).where(
+                    PredictionReportListing.analysis_history_id == int(analysis_history_id)
+                ).limit(1)
+            ).scalar_one_or_none()
+            if row is not None:
+                session.expunge(row)
+            return row
+
+    def list_prediction_report_listings(
+        self,
+        *,
+        status: str = "active",
+        limit: int = 200,
+    ) -> List[PredictionReportListing]:
+        with self.get_session() as session:
+            rows = session.execute(
+                select(PredictionReportListing)
+                .where(PredictionReportListing.status == status)
+                .order_by(PredictionReportListing.created_at.desc(), PredictionReportListing.id.desc())
+                .limit(max(1, int(limit)))
+            ).scalars().all()
+            for row in rows:
+                session.expunge(row)
+            return list(rows)
+
+    def get_prediction_report_purchase(
+        self,
+        *,
+        listing_id: int,
+        buyer_user_id: int,
+    ) -> Optional[PredictionReportPurchase]:
+        with self.get_session() as session:
+            row = session.execute(
+                select(PredictionReportPurchase).where(
+                    PredictionReportPurchase.listing_id == int(listing_id),
+                    PredictionReportPurchase.buyer_user_id == int(buyer_user_id),
+                ).limit(1)
+            ).scalar_one_or_none()
+            if row is not None:
+                session.expunge(row)
+            return row
+
+    def create_prediction_report_purchase(
+        self,
+        *,
+        listing_id: int,
+        buyer_user_id: int,
+        seller_user_id: int,
+        credits_paid: int,
+        seller_credits: int,
+        buyer_history_id: Optional[int],
+    ) -> PredictionReportPurchase:
+        with self.session_scope() as session:
+            row = PredictionReportPurchase(
+                listing_id=int(listing_id),
+                buyer_user_id=int(buyer_user_id),
+                seller_user_id=int(seller_user_id),
+                credits_paid=int(credits_paid),
+                seller_credits=int(seller_credits),
+                buyer_history_id=buyer_history_id,
+            )
+            session.add(row)
+            session.flush()
+            session.expunge(row)
+            return row
+
+    def get_user_username(self, user_id: int) -> Optional[str]:
+        with self.get_session() as session:
+            row = session.execute(
+                select(User.username).where(User.id == int(user_id)).limit(1)
+            ).scalar_one_or_none()
+            return str(row) if row else None
+
+    def get_analysis_history_by_id(self, record_id: int) -> Optional[AnalysisHistory]:
+        with self.get_session() as session:
+            row = session.execute(
+                select(AnalysisHistory).where(AnalysisHistory.id == int(record_id)).limit(1)
+            ).scalar_one_or_none()
+            if row is not None:
+                session.expunge(row)
+            return row
+
+    def get_latest_analysis_history_for_code(
+        self,
+        code: str,
+        owner_user_id: int,
+    ) -> Optional[AnalysisHistory]:
+        with self.get_session() as session:
+            row = session.execute(
+                select(AnalysisHistory)
+                .where(
+                    AnalysisHistory.code == code,
+                    AnalysisHistory.owner_user_id == int(owner_user_id),
+                )
+                .order_by(AnalysisHistory.created_at.desc(), AnalysisHistory.id.desc())
+                .limit(1)
+            ).scalar_one_or_none()
+            if row is not None:
+                session.expunge(row)
+            return row
+
+    def create_subscription_push_log(
+        self,
+        *,
+        subscription_id: int,
+        user_id: int,
+        shared_run_id: Optional[int],
+        code: str,
+        pushed_on: date,
+        channel: str,
+        status: str,
+        credits_charged: int = 0,
+        error_message: Optional[str] = None,
+    ) -> SubscriptionPushLog:
+        with self.session_scope() as session:
+            row = SubscriptionPushLog(
+                subscription_id=int(subscription_id),
+                user_id=int(user_id),
+                shared_run_id=shared_run_id,
+                code=code,
+                pushed_on=pushed_on,
+                channel=channel,
+                status=status,
+                credits_charged=int(credits_charged),
+                error_message=error_message,
+            )
+            session.add(row)
+            session.flush()
+            session.expunge(row)
+            return row
+
+    def list_subscription_push_logs(self, user_id: int, limit: int = 20) -> List[SubscriptionPushLog]:
+        with self.get_session() as session:
+            rows = session.execute(
+                select(SubscriptionPushLog)
+                .where(SubscriptionPushLog.user_id == int(user_id))
+                .order_by(SubscriptionPushLog.created_at.desc(), SubscriptionPushLog.id.desc())
+                .limit(max(1, int(limit)))
+            ).scalars().all()
+            for row in rows:
+                session.expunge(row)
+            return list(rows)
+
+    def list_all_subscription_push_logs(self, limit: int = 100) -> List[SubscriptionPushLog]:
+        with self.get_session() as session:
+            rows = session.execute(
+                select(SubscriptionPushLog)
+                .order_by(SubscriptionPushLog.created_at.desc(), SubscriptionPushLog.id.desc())
+                .limit(max(1, int(limit)))
+            ).scalars().all()
+            for row in rows:
+                session.expunge(row)
+            return list(rows)
+
+    # ------------------------------------------------------------------
     # SystemConfig – 全局系统配置（DB 为权威数据源，.env 仅作引导）
     # ------------------------------------------------------------------
 
@@ -2439,7 +3306,13 @@ class DatabaseManager:
             
             return list(results), total
     
-    def get_analysis_history_by_id(self, record_id: int, owner_user_id: Optional[int] = None) -> Optional[AnalysisHistory]:
+    def get_analysis_history_by_id(
+        self,
+        record_id: int,
+        owner_user_id: Optional[int] = None,
+        *,
+        scoped: bool = True,
+    ) -> Optional[AnalysisHistory]:
         """
         根据数据库主键 ID 查询单条分析历史记录
         
@@ -2448,15 +3321,16 @@ class DatabaseManager:
         
         Args:
             record_id: 分析历史记录的主键 ID
+            scoped: 为 False 时不按 owner 过滤（用于 canonical 共享分析读取）
             
         Returns:
             AnalysisHistory 对象，不存在返回 None
         """
-        if owner_user_id is None:
+        if scoped and owner_user_id is None:
             owner_user_id = self._resolve_owner_id()
         with self.get_session() as session:
             conditions = [AnalysisHistory.id == record_id]
-            if owner_user_id is not None:
+            if scoped and owner_user_id is not None:
                 conditions.append(AnalysisHistory.owner_user_id == owner_user_id)
             result = session.execute(
                 select(AnalysisHistory).where(and_(*conditions))
@@ -3380,6 +4254,85 @@ class DatabaseManager:
 
             session.expunge(tx)
             return tx
+
+    def adjust_user_credits(
+        self,
+        user_id: int,
+        delta: int,
+        *,
+        operator_user_id: Optional[int] = None,
+        reason: Optional[str] = None,
+    ) -> Dict[str, int]:
+        """Admin: adjust a user's credit balance by delta (can be negative).
+
+        - Balance is clamped to >= 0 (cannot go negative)
+        - Lifetime credits only increase when delta is positive and applied
+        """
+        amount = int(delta)
+        if amount == 0:
+            with self.get_session() as session:
+                row = session.execute(
+                    select(UserCreditBalance)
+                    .where(UserCreditBalance.user_id == int(user_id))
+                    .limit(1)
+                ).scalar_one_or_none()
+                balance = int(getattr(row, "balance", 0) or 0) if row else 0
+                lifetime = int(getattr(row, "lifetime_credits", 0) or 0) if row else 0
+            return {"applied_delta": 0, "balance": balance, "lifetime_credits": lifetime}
+
+        with self.session_scope() as session:
+            balance_row = session.execute(
+                select(UserCreditBalance).where(
+                    UserCreditBalance.user_id == int(user_id)
+                ).with_for_update()
+            ).scalar_one_or_none()
+
+            if balance_row is None:
+                balance_before = 0
+                lifetime_before = 0
+                balance_row = UserCreditBalance(
+                    user_id=int(user_id),
+                    balance=0,
+                    lifetime_credits=0,
+                )
+                session.add(balance_row)
+                session.flush()
+            else:
+                balance_before = int(balance_row.balance or 0)
+                lifetime_before = int(balance_row.lifetime_credits or 0)
+
+            # Clamp to non-negative balance.
+            target = balance_before + amount
+            balance_after = max(0, target)
+            applied_delta = balance_after - balance_before
+
+            balance_row.balance = balance_after
+            if applied_delta > 0:
+                balance_row.lifetime_credits = lifetime_before + applied_delta
+            balance_row.version = int(balance_row.version or 1) + 1
+            # Reuse existing credit_transactions as admin adjustment audit log.
+            # Store applied_delta (after clamping) to match real balance change.
+            merged_reason = None
+            if reason:
+                merged_reason = f"[admin_adjust requested={amount}] {reason}"
+            else:
+                merged_reason = f"[admin_adjust requested={amount}]"
+            session.add(
+                CreditTransaction(
+                    user_id=int(user_id),
+                    credit_amount=int(applied_delta),
+                    operator_user_id=int(operator_user_id) if operator_user_id is not None else None,
+                    reason=merged_reason,
+                )
+            )
+
+            session.flush()
+
+            return {
+                "applied_delta": int(applied_delta),
+                "balance": int(balance_after),
+                "lifetime_credits": int(balance_row.lifetime_credits or 0),
+            }
 
 
 # 便捷函数

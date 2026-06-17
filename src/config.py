@@ -839,6 +839,9 @@ class Config:
         1. 大多数配置保持系统环境变量优先
         2. WebUI 可写的运行期关键键优先复用持久化 `.env`，但保留启动时显式进程环境变量的 override
         3. 代码中的默认值
+
+        平台级运行配置仅来自 `.env`/进程环境变量；`system_configs` 表不参与运行时合并。
+        C 端用户个性化能力（订阅邮箱/Webhook 等）走业务表，不在此叠加 ``user_configs``。
         """
         cls._capture_bootstrap_runtime_env_overrides()
         preexisting_report_language = os.environ.get("REPORT_LANGUAGE")
@@ -847,35 +850,6 @@ class Config:
 
         # 确保环境变量已加载
         setup_env()
-
-        # 注入 DB system_configs（DB 值优先于 .env；DB 未就绪时静默跳过）
-        try:
-            from src.storage import DatabaseManager
-            instance = getattr(DatabaseManager, "_instance", None)
-            if instance is not None and getattr(instance, "_initialized", False):
-                db = DatabaseManager.get_instance()
-                db_config = db.get_system_config_map()
-                try:
-                    from src.user_context import get_current_user, get_current_user_id
-
-                    current_user = get_current_user()
-                    current_user_id = get_current_user_id()
-                    if (
-                        current_user_id is not None
-                        and getattr(current_user, "account_type", "web") not in {"admin", "system"}
-                    ):
-                        user_config = db.get_user_config_map(int(current_user_id))
-                        allowed = {
-                            str(key).upper()
-                            for key in (getattr(current_user, "setting_permissions", ()) or ())
-                        }
-                        for key in allowed:
-                            db_config[key] = user_config.get(key, "")
-                except Exception:
-                    pass
-                os.environ.update(db_config)
-        except Exception:
-            pass
 
         # === 智能代理配置 (关键修复) ===
         # 如果配置了代理，自动设置 NO_PROXY 以排除国内数据源，避免行情获取失败
@@ -2454,42 +2428,12 @@ class Config:
 
 # === 便捷的配置访问函数 ===
 def get_config() -> Config:
-    """获取全局配置实例的快捷方式"""
-    try:
-        from src.user_context import get_current_user, get_current_user_id
-        user_id = get_current_user_id()
-    except Exception:
-        user_id = None
-    if user_id is not None:
-        with _USER_CONFIG_LOCK:
-            cached = _USER_CONFIG_CACHE.get(int(user_id))
-            if cached is not None:
-                return cached
-            base_env = dict(os.environ)
-            try:
-                from src.storage import DatabaseManager
-                instance = getattr(DatabaseManager, "_instance", None)
-                if instance is None or not getattr(instance, "_initialized", False):
-                    return Config.get_instance()
-                db = DatabaseManager.get_instance()
-                system_config = db.get_system_config_map()
-                overrides = db.get_user_config_map(int(user_id))
-                # 用户有权限设置但未覆盖的 key → 清除平台 fallback，回退到代码默认值
-                current_user = get_current_user()
-                allowed = {
-                    str(key).upper()
-                    for key in (getattr(current_user, "setting_permissions", ()) or ())
-                }
-                effective = dict(system_config)
-                for key in allowed:
-                    effective[key] = overrides.get(key, "")
-                os.environ.update(effective)
-                cfg = Config._load_from_env()
-                _USER_CONFIG_CACHE[int(user_id)] = cfg
-                return cfg
-            finally:
-                os.environ.clear()
-                os.environ.update(base_env)
+    """Return the platform runtime config loaded from ``.env``.
+
+    All users (C-end web, admin API, background workers) share the same
+    platform configuration. Per-user preferences such as subscription email
+    or webhook are handled outside ``user_configs``.
+    """
     return Config.get_instance()
 
 

@@ -4,6 +4,9 @@ import { getErrorMessage } from './api'
 import { AdminLayout } from './components/AdminLayout'
 import { useAdminData } from './hooks/useAdminData'
 import { LoginPage } from './pages/LoginPage'
+import { CreditsManagementPage } from './pages/CreditsManagementPage'
+import { PushManagementPage } from './pages/PushManagementPage'
+import { PredictionReportPricingPage } from './pages/PredictionReportPricingPage'
 import { RolesPage } from './pages/RolesPage'
 import { SystemSettingsPage } from './pages/SystemSettingsPage'
 import { UsersPage } from './pages/UsersPage'
@@ -52,6 +55,9 @@ function App() {
       <Route element={<AdminLayout />}>
         <Route index element={<Navigate to={defaultPath} replace />} />
         <Route path="/users" element={<UsersPage />} />
+        <Route path="/credits" element={<CreditsManagementPage />} />
+        <Route path="/push" element={<PushManagementPage />} />
+        <Route path="/prediction-reports" element={<PredictionReportPricingPage />} />
         <Route path="/roles" element={<RolesPage />} />
         <Route path="/settings" element={<SystemSettingsPage />} />
         <Route path="*" element={<Navigate to={defaultPath} replace />} />

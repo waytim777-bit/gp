@@ -15,7 +15,7 @@ const TITLES: Record<string, string> = {
   '/': '首页',
   '/chat': '问股',
   '/backtest': '回测',
-  '/portfolio': '持仓',
+  '/subscriptions': '我的订阅',
   '/payment': '积分',
   '/settings': '设置',
 };

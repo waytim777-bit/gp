@@ -5,6 +5,7 @@ import { getErrorMessage, optionalRequest, requestJson } from '../api'
 import { canAccessAdmin } from '../routes'
 import { AdminDataContext } from './adminDataContextValue'
 import type { ApiError, AuthStatus, LoginValues, MenuItem, Role, SettingItem, User } from '../types'
+import type { AdjustCreditsResponse } from '../types'
 
 export function AdminDataProvider({ children }: { children: ReactNode }) {
   const { message } = AntApp.useApp()
@@ -156,6 +157,25 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
     [loadData, message],
   )
 
+  const adjustUserCredits = useCallback(
+    async (user: User, delta: number, reason?: string) => {
+      setSavingUserId(user.id)
+      try {
+        await requestJson<AdjustCreditsResponse>(`/api/v1/admin/users/${user.id}/credits:adjust`, {
+          method: 'POST',
+          body: JSON.stringify({ delta, reason: reason ?? '' }),
+        })
+        message.success('积分已调整')
+        await loadData()
+      } catch (err) {
+        message.error(getErrorMessage(err))
+      } finally {
+        setSavingUserId(null)
+      }
+    },
+    [loadData, message],
+  )
+
   const value = useMemo(
     () => ({
       authStatus,
@@ -175,6 +195,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
       handleLogout,
       assignUserRole,
       updateUserStatus,
+      adjustUserCredits,
     }),
     [
       authStatus,
@@ -194,6 +215,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
       handleLogout,
       assignUserRole,
       updateUserStatus,
+      adjustUserCredits,
     ],
   )
 

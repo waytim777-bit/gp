@@ -3,7 +3,7 @@ import { createAvatar } from '@dicebear/core';
 import { identicon } from '@dicebear/collection';
 import { Button, Popover } from '@heroui/react';
 import { motion } from 'motion/react';
-import { BarChart3, BriefcaseBusiness, Coins, Home, LogOut, MessageSquareQuote, Settings2, Unplug } from 'lucide-react';
+import { BarChart3, BellRing, Coins, Home, LogOut, MessageSquareQuote, Share2, Unplug } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useAccount, useDisconnect } from 'wagmi';
 import { useAuth } from '../../contexts/AuthContext';
@@ -31,10 +31,10 @@ type NavItem = {
 const NAV_ITEMS: NavItem[] = [
   { key: 'home', label: '首页', to: '/', icon: Home, exact: true, permission: 'home' },
   { key: 'chat', label: '问股', to: '/chat', icon: MessageSquareQuote, badge: 'completion', permission: 'chat' },
-  { key: 'portfolio', label: '持仓', to: '/portfolio', icon: BriefcaseBusiness, permission: 'portfolio' },
   { key: 'backtest', label: '回测', to: '/backtest', icon: BarChart3, permission: 'backtest' },
+  { key: 'subscriptions', label: '我的订阅', to: '/subscriptions', icon: BellRing, permission: 'subscriptions' },
+  { key: 'prediction_reports', label: '预测报告', to: '/prediction-reports', icon: Share2, permission: 'prediction_reports' },
   { key: 'payment', label: '积分', to: '/payment', icon: Coins, permission: 'payment' },
-  { key: 'settings', label: '设置', to: '/settings', icon: Settings2, permission: 'settings' },
 ];
 
 function formatAddress(address: string): string {
@@ -62,6 +62,9 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
   const visibleItems = NAV_ITEMS.filter((item) => {
     if (currentUser?.isAdmin) {
       return true;
+    }
+    if (item.permission === 'subscriptions') {
+      return permissions.has('subscriptions') || permissions.has('settings');
     }
     return !item.permission || permissions.has(item.permission);
   });

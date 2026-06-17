@@ -22,6 +22,14 @@ export interface AnalysisRequest {
 export type ReportLanguage = 'zh' | 'en';
 
 /** Report metadata */
+export interface PredictionCycleMeta {
+  cycleAnchorDate?: string;
+  predictionTargetDate?: string;
+  dataAsOfDate?: string;
+  fromCache?: boolean;
+  probeCreditsCharged?: number;
+}
+
 export interface ReportMeta {
   id?: number;  // Analysis history record ID, present for persisted reports
   queryId: string;
@@ -33,6 +41,7 @@ export interface ReportMeta {
   currentPrice?: number;
   changePct?: number;
   modelUsed?: string;  // LLM model used for analysis
+  predictionCycle?: PredictionCycleMeta;
 }
 
 /** Sentiment label */

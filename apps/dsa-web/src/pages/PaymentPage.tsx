@@ -5,6 +5,7 @@ import { paymentApi, type DeductionHistoryItem, type DepositHistoryItem } from '
 import { EmptyState } from '../components/common';
 import { DepositDialog } from '../components/payment/DepositDialog';
 import { useCreditStore } from '../stores/creditStore';
+import { formatDateTime } from '../utils/format';
 
 const PaymentPage: React.FC = () => {
   const {
@@ -162,7 +163,7 @@ const PaymentPage: React.FC = () => {
                           ) : null}
                         </div>
                         <div className="text-xs text-default-500">
-                          {new Date(d.createdAt).toLocaleDateString('zh-CN')}
+                          {formatDateTime(d.createdAt)}
                         </div>
                       </div>
                     ))}
@@ -185,7 +186,7 @@ const PaymentPage: React.FC = () => {
                         <div className="text-xs text-default-500">
                           {(d.totalTokens ?? 0).toLocaleString()} tokens
                           {' / '}
-                          {new Date(d.createdAt).toLocaleDateString('zh-CN')}
+                          {formatDateTime(d.createdAt)}
                         </div>
                       </div>
                     ))}
