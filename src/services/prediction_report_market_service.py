@@ -74,11 +74,17 @@ class PredictionReportMarketService:
         db = DatabaseManager.get_instance()
         existing = db.get_prediction_report_listing_by_history_id(int(history.id))
         if existing is not None:
+            stats = db.get_prediction_report_like_stats(
+                [int(existing.id)],
+                user_id=int(owner_user_id),
+            ).get(int(existing.id), {"like_count": 0, "liked": False})
             return self._serialize_listing(
                 existing,
                 viewer_user_id=owner_user_id,
                 purchased=True,
                 can_view_full=True,
+                like_count=int(stats["like_count"]),
+                liked=bool(stats["liked"]),
             )
 
         pricing = self.get_pricing()
@@ -108,12 +114,18 @@ class PredictionReportMarketService:
             purchased=True,
             can_view_full=True,
             history=history,
+            like_count=0,
+            liked=False,
         )
 
     def list_reports(self, *, viewer_user_id: int) -> Dict[str, Any]:
         db = DatabaseManager.get_instance()
         pricing = self.get_pricing()
         rows = db.list_prediction_report_listings(status="active")
+        like_stats = db.get_prediction_report_like_stats(
+            [int(row.id) for row in rows],
+            user_id=int(viewer_user_id),
+        )
         items: List[Dict[str, Any]] = []
         for row in rows:
             purchase = db.get_prediction_report_purchase(
@@ -121,6 +133,7 @@ class PredictionReportMarketService:
                 buyer_user_id=int(viewer_user_id),
             )
             is_seller = int(row.seller_user_id) == int(viewer_user_id)
+            stats = like_stats.get(int(row.id), {"like_count": 0, "liked": False})
             items.append(
                 self._serialize_listing(
                     row,
@@ -128,6 +141,8 @@ class PredictionReportMarketService:
                     purchased=purchase is not None or is_seller,
                     can_view_full=purchase is not None or is_seller,
                     buyer_history_id=int(purchase.buyer_history_id) if purchase and purchase.buyer_history_id else None,
+                    like_count=int(stats["like_count"]),
+                    liked=bool(stats["liked"]),
                 )
             )
         return {
@@ -152,6 +167,10 @@ class PredictionReportMarketService:
             history = db.get_analysis_history_by_id(int(purchase.buyer_history_id), scoped=False)
         elif is_seller:
             history = db.get_analysis_history_by_id(int(listing.analysis_history_id), scoped=False)
+        stats = db.get_prediction_report_like_stats(
+            [int(listing.id)],
+            user_id=int(viewer_user_id),
+        ).get(int(listing.id), {"like_count": 0, "liked": False})
         return self._serialize_listing(
             listing,
             viewer_user_id=viewer_user_id,
@@ -161,7 +180,24 @@ class PredictionReportMarketService:
             buyer_history_id=int(purchase.buyer_history_id) if purchase and purchase.buyer_history_id else (
                 int(listing.analysis_history_id) if is_seller else None
             ),
+            like_count=int(stats["like_count"]),
+            liked=bool(stats["liked"]),
         )
+
+    def like_report(self, *, listing_id: int, user_id: int) -> Dict[str, Any]:
+        db = DatabaseManager.get_instance()
+        listing = db.get_prediction_report_listing_by_id(int(listing_id))
+        if listing is None or listing.status != "active":
+            raise PredictionReportMarketError("not_found", "预测报告不存在或已下架")
+        liked, like_count = db.toggle_prediction_report_like(
+            listing_id=int(listing_id),
+            user_id=int(user_id),
+        )
+        return {
+            "listing_id": int(listing_id),
+            "liked": liked,
+            "like_count": like_count,
+        }
 
     def purchase_report(self, *, buyer_user_id: int, listing_id: int) -> Dict[str, Any]:
         db = DatabaseManager.get_instance()
@@ -298,6 +334,8 @@ class PredictionReportMarketService:
         can_view_full: bool,
         history: Any = None,
         buyer_history_id: Optional[int] = None,
+        like_count: int = 0,
+        liked: bool = False,
     ) -> Dict[str, Any]:
         db = DatabaseManager.get_instance()
         if history is None:
@@ -330,5 +368,7 @@ class PredictionReportMarketService:
             "can_view_full": can_view_full,
             "buyer_history_id": buyer_history_id,
             "preview": preview,
+            "like_count": int(like_count),
+            "liked": bool(liked),
             "created_at": listing.created_at.isoformat() if listing.created_at else None,
         }

@@ -36,6 +36,7 @@ RATE_LIMIT_MAX_FAILURES = 5
 SESSION_MAX_AGE_HOURS_DEFAULT = 24
 MIN_PASSWORD_LEN = 6
 MIN_USERNAME_LEN = 3
+MAX_AVATAR_URL_LEN = 512_000
 
 _session_secret: Optional[bytes] = None
 _rate_limit: dict[str, Tuple[int, float]] = {}
@@ -318,6 +319,7 @@ def _user_to_dict(row) -> dict:
     return {
         "id": int(row.id),
         "username": str(row.username),
+        "avatarUrl": getattr(row, "avatar_url", None) or None,
         "isAdmin": bool(row.is_admin),
         "is_admin": bool(row.is_admin),
         "accountType": "web",
@@ -381,7 +383,7 @@ def verify_password(password: str) -> bool:
 
 def change_password(current: str, new: str) -> Optional[str]:
     """
-    Change password. Verifies current, writes new hash. Returns error message or None on success.
+    Change admin password. Verifies current, writes new hash. Returns error message or None on success.
     """
     if not is_password_set():
         return "尚未设置密码"
@@ -396,6 +398,112 @@ def change_password(current: str, new: str) -> Optional[str]:
         return err
 
     return _store_admin_password(new)
+
+
+def change_web_user_password(user_id: int, current: str, new: str) -> Optional[str]:
+    """Change password for a registered web user."""
+    if not current or not current.strip():
+        return "请输入当前密码"
+
+    from src.storage import DatabaseManager
+
+    row = DatabaseManager.get_instance().get_user_by_id(int(user_id))
+    if row is None or not row.is_active:
+        return "用户不存在或已停用"
+    if not _verify_password_hash(current, row.password_salt, row.password_hash):
+        return "当前密码错误"
+
+    err = _validate_password(new)
+    if err:
+        return err
+
+    salt, stored = _hash_password(new)
+    if not DatabaseManager.get_instance().update_user_password(
+        int(user_id),
+        password_salt=salt,
+        password_hash=stored,
+    ):
+        return "密码保存失败"
+    return None
+
+
+def _validate_avatar_url(value: Optional[str]) -> Optional[str]:
+    if value is None:
+        return None
+    trimmed = value.strip()
+    if not trimmed:
+        return None
+    if len(trimmed) > MAX_AVATAR_URL_LEN:
+        return "头像数据过大"
+    if trimmed.startswith("data:image/"):
+        if ";base64," not in trimmed:
+            return "无效的头像格式"
+        return None
+    if trimmed.startswith("http://") or trimmed.startswith("https://"):
+        if len(trimmed) > 2048:
+            return "头像链接过长"
+        return None
+    return "头像须为图片链接或上传的图片"
+
+
+def get_user_profile(user_id: int) -> Optional[dict]:
+    user = get_user_by_id(int(user_id))
+    if user is None:
+        return None
+    return {
+        "id": int(user["id"]),
+        "username": str(user["username"]),
+        "avatarUrl": user.get("avatarUrl"),
+        "accountType": user.get("accountType") or "web",
+        "isAdmin": bool(user.get("isAdmin") or user.get("is_admin")),
+    }
+
+
+def update_user_profile(
+    user_id: int,
+    *,
+    username: Optional[str] = None,
+    avatar_url: Optional[str] = None,
+    clear_avatar: bool = False,
+) -> tuple[Optional[dict], Optional[str]]:
+    from sqlalchemy.exc import IntegrityError
+    from src.storage import DatabaseManager
+
+    db = DatabaseManager.get_instance()
+    row = db.get_user_by_id(int(user_id))
+    if row is None or not row.is_active:
+        return None, "用户不存在或已停用"
+
+    username_norm: Optional[str] = None
+    if username is not None:
+        username_norm = _normalize_username(username)
+        if username_norm == "admin":
+            return None, "该昵称不可用"
+        err = _validate_username(username_norm)
+        if err:
+            return None, err
+        existing = db.get_user_by_username(username_norm)
+        if existing is not None and int(existing.id) != int(user_id):
+            return None, "昵称已被占用"
+
+    if avatar_url is not None and not clear_avatar:
+        err = _validate_avatar_url(avatar_url)
+        if err:
+            return None, err
+
+    try:
+        updated = db.update_user_profile(
+            int(user_id),
+            username=username_norm,
+            avatar_url=avatar_url,
+            clear_avatar=clear_avatar,
+        )
+    except IntegrityError:
+        return None, "昵称已被占用"
+
+    if updated is None:
+        return None, "更新失败"
+    return get_user_profile(int(user_id)), None
 
 
 def create_session(user: Optional[dict] = None, subject_type: Optional[str] = None) -> str:

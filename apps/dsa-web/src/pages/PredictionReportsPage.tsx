@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@heroui/react/card';
-import { ShoppingBag, Share2 } from 'lucide-react';
+import { ShoppingBag, Share2, ThumbsUp } from 'lucide-react';
 import { predictionReportsApi } from '../api/predictionReports';
 import { historyApi } from '../api/history';
 import { getParsedApiError, type ParsedApiError } from '../api/error';
@@ -18,6 +18,7 @@ const PredictionReportsPage: React.FC = () => {
   const [purchaseCredits, setPurchaseCredits] = useState(100);
   const [loading, setLoading] = useState(true);
   const [purchasingId, setPurchasingId] = useState<number | null>(null);
+  const [likingId, setLikingId] = useState<number | null>(null);
   const [error, setError] = useState<ParsedApiError | null>(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [selectedReport, setSelectedReport] = useState<AnalysisReport | null>(null);
@@ -82,6 +83,23 @@ const PredictionReportsPage: React.FC = () => {
     }
   }, [loadList, openReport, refreshBalance]);
 
+  const handleLike = useCallback(async (item: PredictionReportListingItem) => {
+    setLikingId(item.id);
+    setError(null);
+    try {
+      const result = await predictionReportsApi.like(item.id);
+      setItems((prev) => prev.map((row) => (
+        row.id === item.id
+          ? { ...row, liked: result.liked, likeCount: result.likeCount }
+          : row
+      )));
+    } catch (err) {
+      setError(getParsedApiError(err));
+    } finally {
+      setLikingId(null);
+    }
+  }, []);
+
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-5 px-4 py-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
@@ -131,18 +149,13 @@ const PredictionReportsPage: React.FC = () => {
               <div className="mt-3 space-y-1 text-sm text-secondary-text">
                 <div>分享者：{item.sellerUsername}</div>
                 <div>周期锚点：{item.cycleAnchorDate || '—'}</div>
-                {item.preview.operationAdvice ? (
-                  <div>操作建议：{item.preview.operationAdvice}</div>
-                ) : null}
-                {item.preview.sentimentScore != null ? (
-                  <div>情绪评分：{item.preview.sentimentScore}</div>
-                ) : null}
                 {!item.canViewFull && item.preview.analysisSummary ? (
                   <p className="line-clamp-3 text-default-600">{item.preview.analysisSummary}</p>
                 ) : null}
               </div>
 
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="mt-4 flex items-end justify-between gap-2">
+                <div className="flex flex-wrap gap-2">
                 {item.canViewFull ? (
                   <Button
                     size="sm"
@@ -164,6 +177,17 @@ const PredictionReportsPage: React.FC = () => {
                     {item.isMine ? '自己的报告' : `购买（${item.purchaseCredits} 积分）`}
                   </Button>
                 )}
+                </div>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  isLoading={likingId === item.id}
+                  className={item.liked ? 'text-danger' : 'text-muted-text'}
+                  onClick={() => void handleLike(item)}
+                >
+                  <ThumbsUp className={`mr-1 h-4 w-4 ${item.liked ? 'fill-current' : ''}`} />
+                  点赞{item.likeCount > 0 ? ` ${item.likeCount}` : ''}
+                </Button>
               </div>
             </Card>
           ))}

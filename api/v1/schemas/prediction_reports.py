@@ -33,6 +33,8 @@ class PredictionReportListingItem(BaseModel):
     can_view_full: bool = Field(alias="canViewFull")
     buyer_history_id: Optional[int] = Field(default=None, alias="buyerHistoryId")
     preview: PredictionReportPreview
+    like_count: int = Field(default=0, alias="likeCount")
+    liked: bool = False
     created_at: Optional[str] = Field(default=None, alias="createdAt")
 
 
@@ -67,6 +69,14 @@ class PurchasePredictionReportResponse(BaseModel):
     already_purchased: bool = Field(alias="alreadyPurchased")
     credits_paid: int = Field(alias="creditsPaid")
     seller_credits: Optional[int] = Field(default=None, alias="sellerCredits")
+
+
+class LikePredictionReportResponse(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    listing_id: int = Field(alias="listingId")
+    liked: bool
+    like_count: int = Field(alias="likeCount")
 
 
 class UpdatePredictionReportPricingRequest(BaseModel):

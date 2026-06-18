@@ -1,8 +1,9 @@
 import type React from 'react';
 import { Menu, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { CreditBalanceBadge } from '../payment/CreditBalanceBadge';
+import { resolveUserAvatarUrl } from '../../utils/userAvatar';
 // import { ThemeToggle } from '../theme/ThemeToggle';
 
 type ShellHeaderProps = {
@@ -18,6 +19,7 @@ const TITLES: Record<string, string> = {
   '/subscriptions': '我的订阅',
   '/payment': '积分',
   '/settings': '设置',
+  '/profile': '个人中心',
 };
 
 export const ShellHeader: React.FC<ShellHeaderProps> = ({
@@ -60,9 +62,23 @@ export const ShellHeader: React.FC<ShellHeaderProps> = ({
       <div className="flex items-center gap-2">
         <CreditBalanceBadge />
         {currentUser ? (
-          <span className="hidden text-xs text-secondary-text sm:inline-block">
-            {currentUser.username}
-          </span>
+          <Link
+            to="/profile"
+            className="hidden items-center gap-2 rounded-lg px-2 py-1 text-xs text-secondary-text transition-colors hover:bg-hover hover:text-foreground sm:inline-flex"
+            title="个人中心"
+          >
+            <img
+              src={resolveUserAvatarUrl(
+                currentUser.id,
+                currentUser.username,
+                currentUser.avatarUrl,
+                24,
+              )}
+              alt=""
+              className="h-6 w-6 rounded-full border border-default-200 object-cover"
+            />
+            <span>{currentUser.username}</span>
+          </Link>
         ) : null}
         {/* <ThemeToggle /> */}
       </div>

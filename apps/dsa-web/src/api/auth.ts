@@ -9,6 +9,7 @@ export type AuthStatusResponse = {
   currentUser?: {
     id: number;
     username: string;
+    avatarUrl?: string | null;
     isAdmin: boolean;
     accountType?: 'admin' | 'web' | 'system';
     role?: {

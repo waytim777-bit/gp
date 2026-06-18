@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 > For user-friendly release highlights, see the [GitHub Releases](https://github.com/ZhuLinsen/daily_stock_analysis/releases) page.
 
 ## [Unreleased]
+- [新功能] Web 端新增个人中心（点击顶栏昵称进入），支持修改昵称、头像与登录密码。
+- [改进] 预测报告市场卡片隐藏操作建议与情绪评分，右下角新增点赞按钮（支持切换点赞/取消并展示点赞数）。
 - [改进] Agent 多阶段分析改为单次数据采集：Pipeline 预采集行情/K线/筹码/多维度情报，工具层按 run 级缓存复用，避免 Technical/Intel/Risk 重复搜索与重复拉数。
 - [新功能] 预测报告市场（Phase 5）：首页历史记录可分享当前周期报告；侧边栏新增「预测报告」页展示当日周期上架报告；他人可花积分购买查看完整报告，分享者获得收益积分。
 - [新功能] 管理后台新增「预测报告定价」页面，可配置购买价格与分享者收益积分（`PREDICTION_REPORT_PURCHASE_CREDITS` / `PREDICTION_REPORT_SELLER_CREDITS`）。

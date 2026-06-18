@@ -245,6 +245,27 @@ class PredictionReportMarketTestCase(unittest.TestCase):
             )
         self.assertEqual(ctx.exception.code, "not_shareable")
 
+    @patch("src.services.prediction_report_market_service.resolve_prediction_cycle")
+    def test_like_toggle_updates_count(self, mock_resolve) -> None:
+        mock_resolve.return_value = self.cycle
+        listing = self.service.share_report(
+            owner_user_id=self.seller_id,
+            history_id=self.history_id,
+        )
+        listing_id = int(listing["id"])
+
+        liked = self.service.like_report(listing_id=listing_id, user_id=self.buyer_id)
+        self.assertTrue(liked["liked"])
+        self.assertEqual(liked["like_count"], 1)
+
+        payload = self.service.list_reports(viewer_user_id=self.buyer_id)
+        self.assertEqual(payload["items"][0]["like_count"], 1)
+        self.assertTrue(payload["items"][0]["liked"])
+
+        unliked = self.service.like_report(listing_id=listing_id, user_id=self.buyer_id)
+        self.assertFalse(unliked["liked"])
+        self.assertEqual(unliked["like_count"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -21,6 +21,8 @@ export type PredictionReportListingItem = {
   canViewFull: boolean;
   buyerHistoryId?: number | null;
   preview: PredictionReportPreview;
+  likeCount: number;
+  liked: boolean;
   createdAt?: string | null;
 };
 
@@ -43,4 +45,10 @@ export type PurchasePredictionReportResponse = {
   alreadyPurchased: boolean;
   creditsPaid: number;
   sellerCredits?: number | null;
+};
+
+export type LikePredictionReportResponse = {
+  listingId: number;
+  liked: boolean;
+  likeCount: number;
 };

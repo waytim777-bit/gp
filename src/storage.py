@@ -133,6 +133,7 @@ class User(Base):
     password_hash = Column(LargeBinary, nullable=False)
     is_admin = Column(Boolean, nullable=False, default=False, index=True)
     is_active = Column(Boolean, nullable=False, default=True, index=True)
+    avatar_url = Column(Text)
     created_at = Column(DateTime, default=datetime.now, index=True)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
@@ -996,6 +997,22 @@ class PredictionReportPurchase(Base):
     )
 
 
+class PredictionReportLike(Base):
+    """User like on a shared prediction report listing."""
+
+    __tablename__ = 'prediction_report_likes'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    listing_id = Column(Integer, ForeignKey('prediction_report_listings.id'), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False, index=True)
+    created_at = Column(DateTime, default=datetime.now, index=True)
+
+    __table_args__ = (
+        UniqueConstraint('listing_id', 'user_id', name='uix_prediction_report_like_listing_user'),
+        Index('ix_prediction_report_like_listing_created', 'listing_id', 'created_at'),
+    )
+
+
 class DatabaseManager:
     """
     数据库管理器 - 单例模式
@@ -1143,6 +1160,7 @@ class DatabaseManager:
                 ("password_hash", "BLOB"),
                 ("is_admin", "INTEGER"),
                 ("is_active", "INTEGER"),
+                ("avatar_url", "TEXT"),
                 ("created_at", "DATETIME"),
                 ("updated_at", "DATETIME"),
             ],
@@ -1230,6 +1248,12 @@ class DatabaseManager:
                 """
                 ALTER TABLE admin_users
                 ADD COLUMN IF NOT EXISTS password_initialized BOOLEAN NOT NULL DEFAULT TRUE
+                """
+            )
+            conn.exec_driver_sql(
+                """
+                ALTER TABLE users
+                ADD COLUMN IF NOT EXISTS avatar_url TEXT
                 """
             )
             # 修正 operation_advice 列类型：从 VARCHAR(20) 扩展为 TEXT，避免 LLM 长输出截断
@@ -1340,6 +1364,18 @@ class DatabaseManager:
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     CONSTRAINT uix_prediction_report_purchase_listing_buyer
                         UNIQUE (listing_id, buyer_user_id)
+                )
+                """
+            )
+            conn.exec_driver_sql(
+                """
+                CREATE TABLE IF NOT EXISTS prediction_report_likes (
+                    id SERIAL PRIMARY KEY,
+                    listing_id INTEGER NOT NULL REFERENCES prediction_report_listings(id),
+                    user_id INTEGER NOT NULL REFERENCES users(id),
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    CONSTRAINT uix_prediction_report_like_listing_user
+                        UNIQUE (listing_id, user_id)
                 )
                 """
             )
@@ -1862,6 +1898,49 @@ class DatabaseManager:
             return session.execute(
                 select(User).where(User.id == int(user_id)).limit(1)
             ).scalar_one_or_none()
+
+    def update_user_profile(
+        self,
+        user_id: int,
+        *,
+        username: Optional[str] = None,
+        avatar_url: Optional[str] = None,
+        clear_avatar: bool = False,
+    ) -> Optional[User]:
+        with self.session_scope() as session:
+            row = session.execute(
+                select(User).where(User.id == int(user_id)).limit(1)
+            ).scalar_one_or_none()
+            if row is None:
+                return None
+            if username is not None:
+                row.username = (username or "").strip().lower()
+            if clear_avatar:
+                row.avatar_url = None
+            elif avatar_url is not None:
+                row.avatar_url = avatar_url or None
+            row.updated_at = datetime.now()
+            session.flush()
+            session.expunge(row)
+            return row
+
+    def update_user_password(
+        self,
+        user_id: int,
+        *,
+        password_salt: bytes,
+        password_hash: bytes,
+    ) -> bool:
+        with self.session_scope() as session:
+            row = session.execute(
+                select(User).where(User.id == int(user_id)).limit(1)
+            ).scalar_one_or_none()
+            if row is None:
+                return False
+            row.password_salt = password_salt
+            row.password_hash = password_hash
+            row.updated_at = datetime.now()
+            return True
 
     def create_user(
         self,
@@ -2651,6 +2730,69 @@ class DatabaseManager:
             if row is not None:
                 session.expunge(row)
             return row
+
+    def get_prediction_report_like_stats(
+        self,
+        listing_ids: List[int],
+        *,
+        user_id: int,
+    ) -> Dict[int, Dict[str, Any]]:
+        if not listing_ids:
+            return {}
+        ids = [int(listing_id) for listing_id in listing_ids]
+        with self.get_session() as session:
+            counts = session.execute(
+                select(PredictionReportLike.listing_id, func.count())
+                .where(PredictionReportLike.listing_id.in_(ids))
+                .group_by(PredictionReportLike.listing_id)
+            ).all()
+            liked_rows = session.execute(
+                select(PredictionReportLike.listing_id).where(
+                    PredictionReportLike.listing_id.in_(ids),
+                    PredictionReportLike.user_id == int(user_id),
+                )
+            ).scalars().all()
+        count_map = {int(listing_id): int(count) for listing_id, count in counts}
+        liked_set = {int(listing_id) for listing_id in liked_rows}
+        return {
+            listing_id: {
+                "like_count": count_map.get(listing_id, 0),
+                "liked": listing_id in liked_set,
+            }
+            for listing_id in ids
+        }
+
+    def toggle_prediction_report_like(
+        self,
+        *,
+        listing_id: int,
+        user_id: int,
+    ) -> tuple[bool, int]:
+        with self.session_scope() as session:
+            existing = session.execute(
+                select(PredictionReportLike).where(
+                    PredictionReportLike.listing_id == int(listing_id),
+                    PredictionReportLike.user_id == int(user_id),
+                ).limit(1)
+            ).scalar_one_or_none()
+            if existing is not None:
+                session.delete(existing)
+                liked = False
+            else:
+                session.add(
+                    PredictionReportLike(
+                        listing_id=int(listing_id),
+                        user_id=int(user_id),
+                    )
+                )
+                liked = True
+            session.flush()
+            like_count = session.execute(
+                select(func.count())
+                .select_from(PredictionReportLike)
+                .where(PredictionReportLike.listing_id == int(listing_id))
+            ).scalar_one()
+            return liked, int(like_count or 0)
 
     def create_prediction_report_purchase(
         self,

@@ -2198,6 +2198,10 @@ class DataFetcherManager:
         stock_code = normalize_stock_code(stock_code)
         market = _market_tag(stock_code)
         timeout = float(budget_seconds if budget_seconds is not None else config.fundamental_fetch_timeout_seconds)
+        try:
+            timeout = max(timeout, float(getattr(config, "company_profile_timeout_seconds", 5.0)))
+        except (TypeError, ValueError):
+            timeout = max(timeout, 5.0)
 
         if timeout <= 0:
             logger.warning(

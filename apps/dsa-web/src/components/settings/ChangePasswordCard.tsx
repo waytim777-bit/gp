@@ -7,7 +7,13 @@ import { Button, Input } from '../common';
 import { SettingsAlert } from './SettingsAlert';
 import { SettingsSectionCard } from './SettingsSectionCard';
 
-export const ChangePasswordCard: React.FC = () => {
+export const ChangePasswordCard: React.FC<{
+  description?: string;
+  successMessage?: string;
+}> = ({
+  description = '更新当前管理员登录密码。修改成功后，后续登录请使用新密码。',
+  successMessage = '管理员密码已更新。',
+}) => {
   const { changePassword } = useAuth();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -59,7 +65,7 @@ export const ChangePasswordCard: React.FC = () => {
   return (
     <SettingsSectionCard
       title="修改密码"
-      description="更新当前管理员登录密码。修改成功后，后续登录请使用新密码。"
+      description={description}
     >
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="grid gap-4 md:grid-cols-2">
@@ -116,7 +122,7 @@ export const ChangePasswordCard: React.FC = () => {
             : <SettingsAlert title="修改失败" message={error} variant="error" className="!mt-3" />
           : null}
         {success ? (
-          <SettingsAlert title="修改成功" message="管理员密码已更新。" variant="success" />
+          <SettingsAlert title="修改成功" message={successMessage} variant="success" />
         ) : null}
 
         <Button type="submit" variant="primary" isLoading={isSubmitting}>

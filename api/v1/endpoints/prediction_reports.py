@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from api.deps import get_current_user
 from api.v1.schemas.prediction_reports import (
+    LikePredictionReportResponse,
     PredictionReportListResponse,
     PredictionReportListingItem,
     PredictionReportPricing,
@@ -76,6 +77,26 @@ def get_prediction_report(
             viewer_user_id=int(current_user.id),
         )
         return PredictionReportListingItem.model_validate(payload)
+    except PredictionReportMarketError as exc:
+        status = 404 if exc.code == "not_found" else 400
+        raise HTTPException(status_code=status, detail={"error": exc.code, "message": exc.message}) from exc
+
+
+@router.post(
+    "/{listing_id}/like",
+    response_model=LikePredictionReportResponse,
+    summary="Like or unlike a shared prediction report",
+)
+def like_prediction_report(
+    listing_id: int,
+    current_user: CurrentUser = Depends(get_current_user),
+) -> LikePredictionReportResponse:
+    try:
+        payload = _service().like_report(
+            listing_id=int(listing_id),
+            user_id=int(current_user.id),
+        )
+        return LikePredictionReportResponse.model_validate(payload)
     except PredictionReportMarketError as exc:
         status = 404 if exc.code == "not_found" else 400
         raise HTTPException(status_code=status, detail={"error": exc.code, "message": exc.message}) from exc

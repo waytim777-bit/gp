@@ -1,6 +1,7 @@
 import apiClient from './index';
 import { toCamelCase } from './utils';
 import type {
+  LikePredictionReportResponse,
   PredictionReportListResponse,
   PredictionReportListingItem,
   PredictionReportPricing,
@@ -38,5 +39,12 @@ export const predictionReportsApi = {
       `/api/v1/prediction-reports/${listingId}/purchase`,
     );
     return toCamelCase<PurchasePredictionReportResponse>(response.data);
+  },
+
+  like: async (listingId: number): Promise<LikePredictionReportResponse> => {
+    const response = await apiClient.post<Record<string, unknown>>(
+      `/api/v1/prediction-reports/${listingId}/like`,
+    );
+    return toCamelCase<LikePredictionReportResponse>(response.data);
   },
 };

@@ -21,6 +21,7 @@ from src.auth import (
     authenticate_admin_user,
     authenticate_user,
     change_password,
+    change_web_user_password,
     check_rate_limit,
     clear_rate_limit,
     create_session,
@@ -175,6 +176,7 @@ def _get_auth_status_dict(request: Request | None = None) -> dict:
             {
                 "id": session_user["id"],
                 "username": session_user["username"],
+                "avatarUrl": session_user.get("avatarUrl"),
                 "isAdmin": bool(session_user.get("isAdmin") or session_user.get("is_admin")),
                 "accountType": session_user.get("accountType") or "web",
                 "role": session_user.get("role"),
@@ -459,12 +461,20 @@ async def auth_register(request: Request, body: RegisterRequest):
     summary="Change password",
     description="Change password. Requires valid session.",
 )
-async def auth_change_password(body: ChangePasswordRequest):
+async def auth_change_password(request: Request, body: ChangePasswordRequest):
     """Change password. Requires login."""
     if not is_password_changeable():
         return JSONResponse(
             status_code=400,
             content={"error": "not_changeable", "message": "Password cannot be changed via web"},
+        )
+
+    cookie_val = _get_session_cookie(request)
+    session_user = get_session_user(cookie_val) if cookie_val else None
+    if not session_user:
+        return JSONResponse(
+            status_code=401,
+            content={"error": "unauthorized", "message": "Login required"},
         )
 
     current = (body.current_password or "").strip()
@@ -482,7 +492,13 @@ async def auth_change_password(body: ChangePasswordRequest):
             content={"error": "password_mismatch", "message": "两次输入的新密码不一致"},
         )
 
-    err = change_password(current, new_pwd)
+    account_type = str(session_user.get("accountType") or "web")
+    subject_type = str(session_user.get("subjectType") or "")
+    if account_type == "admin" or subject_type == SESSION_SUBJECT_ADMIN_USER:
+        err = change_password(current, new_pwd)
+    else:
+        err = change_web_user_password(int(session_user["id"]), current, new_pwd)
+
     if err:
         return JSONResponse(
             status_code=400,

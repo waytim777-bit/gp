@@ -10,6 +10,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import ChatPage from './pages/ChatPage';
 import PaymentPage from './pages/PaymentPage';
 import PredictionReportsPage from './pages/PredictionReportsPage';
+import ProfilePage from './pages/ProfilePage';
 import { ApiErrorAlert, Shell } from './components/common';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { useAgentChatStore } from './stores/agentChatStore';
@@ -99,6 +100,7 @@ const AppContent: React.FC = () => {
         <Route path="/payment" element={protectedElement('payment', <PaymentPage />)} />
         <Route path="/subscriptions" element={protectedElement('subscriptions', <SubscriptionsPage />)} />
         <Route path="/prediction-reports" element={protectedElement('prediction_reports', <PredictionReportsPage />)} />
+        <Route path="/profile" element={<ProfilePage />} />
         <Route path="/settings" element={currentUser?.isAdmin ? protectedElement('settings', <SettingsPage />) : <Navigate to="/subscriptions" replace />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>

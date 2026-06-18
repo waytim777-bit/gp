@@ -12,7 +12,7 @@ API v1 路由聚合
 from fastapi import APIRouter, Depends
 
 from api.deps import require_permission, require_any_permission
-from api.v1.endpoints import admin, analysis, auth, history, stocks, backtest, system_config, agent, usage, payment, portfolio, subscriptions, prediction_reports
+from api.v1.endpoints import admin, analysis, auth, history, stocks, backtest, system_config, agent, usage, payment, portfolio, subscriptions, prediction_reports, profile
 
 # 创建 v1 版本主路由
 router = APIRouter(prefix="/api/v1")
@@ -21,6 +21,11 @@ router.include_router(
     auth.router,
     prefix="/auth",
     tags=["Auth"]
+)
+
+router.include_router(
+    profile.router,
+    tags=["Profile"],
 )
 
 router.include_router(

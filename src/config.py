@@ -703,6 +703,8 @@ class Config:
     fundamental_stage_timeout_seconds: float = 5.0
     # 单能力源调用超时（秒）
     fundamental_fetch_timeout_seconds: float = 0.8
+    # 公司信息（company_profile）单独超时（秒）；默认比其它 block 更宽松
+    company_profile_timeout_seconds: float = 5.0
     # 单能力失败重试次数（已包含首次）
     fundamental_retry_max: int = 1
     # 基本面上下文短 TTL（秒）
@@ -1401,6 +1403,12 @@ class Config:
                 os.getenv('FUNDAMENTAL_FETCH_TIMEOUT_SECONDS'),
                 0.8,
                 field_name='FUNDAMENTAL_FETCH_TIMEOUT_SECONDS',
+                minimum=0.0,
+            ),
+            company_profile_timeout_seconds=parse_env_float(
+                os.getenv('COMPANY_PROFILE_TIMEOUT_SECONDS'),
+                5.0,
+                field_name='COMPANY_PROFILE_TIMEOUT_SECONDS',
                 minimum=0.0,
             ),
             fundamental_retry_max=parse_env_int(os.getenv('FUNDAMENTAL_RETRY_MAX'), 1, field_name='FUNDAMENTAL_RETRY_MAX', minimum=0),
