@@ -8,6 +8,7 @@ import { CreditsManagementPage } from './pages/CreditsManagementPage'
 import { PushManagementPage } from './pages/PushManagementPage'
 import { PredictionReportPricingPage } from './pages/PredictionReportPricingPage'
 import { RolesPage } from './pages/RolesPage'
+import { StockManagementPage } from './pages/StockManagementPage'
 import { SystemSettingsPage } from './pages/SystemSettingsPage'
 import { UsersPage } from './pages/UsersPage'
 import { canAccessAdmin, getDefaultAdminPath } from './routes'
@@ -57,6 +58,7 @@ function App() {
         <Route path="/users" element={<UsersPage />} />
         <Route path="/credits" element={<CreditsManagementPage />} />
         <Route path="/push" element={<PushManagementPage />} />
+        <Route path="/stocks" element={<StockManagementPage />} />
         <Route path="/prediction-reports" element={<PredictionReportPricingPage />} />
         <Route path="/roles" element={<RolesPage />} />
         <Route path="/settings" element={<SystemSettingsPage />} />

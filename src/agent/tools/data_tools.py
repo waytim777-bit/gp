@@ -493,40 +493,84 @@ get_report_context_tool = ToolDefinition(
 # get_stock_info
 # ============================================================
 
-def _handle_get_stock_info(stock_code: str) -> dict:
-    """Get stock fundamental information through unified fundamental context."""
-    manager = _get_fetcher_manager()
-    try:
-        fundamental_context = manager.get_fundamental_context(stock_code)
-    except Exception as e:
-        logger.warning(f"get_stock_info via fundamental pipeline failed for {stock_code}: {e}")
-        fundamental_context = manager.build_failed_fundamental_context(stock_code, str(e))
-
+def _build_stock_info_payload(
+    stock_code: str,
+    fundamental_context: dict,
+    *,
+    belong_boards: Optional[list] = None,
+    stock_name: Optional[str] = None,
+) -> dict:
     compact_context = _compact_fundamental_context(fundamental_context)
     valuation = compact_context.get("valuation", {}).get("data", {})
     sector_rankings = compact_context.get("boards", {}).get("data", {})
-    belong_boards = manager.get_belong_boards(stock_code)
-
-    stock_name = stock_code.upper()
-    try:
-        stock_name = manager.get_stock_name(stock_code) or stock_name
-    except Exception:
-        pass
-
+    resolved_name = stock_name or stock_code.upper()
+    cp = compact_context.get("company_profile", {}).get("data", {})
+    if isinstance(cp, dict) and cp.get("short_name"):
+        resolved_name = cp["short_name"]
     return {
         "code": stock_code.upper(),
-        "name": stock_name,
+        "name": resolved_name,
         "pe_ratio": valuation.get("pe_ratio"),
         "pb_ratio": valuation.get("pb_ratio"),
         "total_mv": valuation.get("total_mv"),
         "circ_mv": valuation.get("circ_mv"),
         "fundamental_context": compact_context,
-        "belong_boards": belong_boards,
-        # Compatibility alias for existing callers; prefer belong_boards.
-        # Planned for future deprecation in a major version.
-        "boards": belong_boards,
+        "belong_boards": belong_boards or [],
+        "boards": belong_boards or [],
         "sector_rankings": sector_rankings,
+        "cached": True,
     }
+
+
+def _handle_get_stock_info(stock_code: str) -> dict:
+    """Get stock fundamental information through unified fundamental context."""
+    from src.agent.run_context import cache_get
+
+    def _fetch() -> dict:
+        manager = _get_fetcher_manager()
+        try:
+            fundamental_context = manager.get_fundamental_context(stock_code)
+        except Exception as e:
+            logger.warning(f"get_stock_info via fundamental pipeline failed for {stock_code}: {e}")
+            fundamental_context = manager.build_failed_fundamental_context(stock_code, str(e))
+
+        belong_boards = manager.get_belong_boards(stock_code)
+        stock_name = stock_code.upper()
+        try:
+            stock_name = manager.get_stock_name(stock_code) or stock_name
+        except Exception:
+            pass
+        payload = _build_stock_info_payload(
+            stock_code,
+            fundamental_context,
+            belong_boards=belong_boards,
+            stock_name=stock_name,
+        )
+        payload["cached"] = False
+        return payload
+
+    cached_fc = cache_get("fundamental_context")
+    if isinstance(cached_fc, dict) and _has_usable_fundamental_block(cached_fc):
+        run_name = cache_get("stock_name")
+        boards = cached_fc.get("belong_boards")
+        if not isinstance(boards, list):
+            boards = []
+        return _build_stock_info_payload(
+            stock_code,
+            cached_fc,
+            belong_boards=boards,
+            stock_name=str(run_name) if run_name else None,
+        )
+
+    return run_cached_tool(cache_key="stock_info", stock_code=stock_code, fetcher=_fetch)
+
+
+def _has_usable_fundamental_block(fundamental_context: dict) -> bool:
+    for key in ("valuation", "company_profile", "growth", "earnings"):
+        block = fundamental_context.get(key)
+        if isinstance(block, dict) and block.get("status") in ("ok", "partial"):
+            return True
+    return False
 
 
 get_stock_info_tool = ToolDefinition(

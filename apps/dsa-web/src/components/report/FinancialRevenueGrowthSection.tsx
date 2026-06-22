@@ -10,11 +10,14 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import type { FinancialReport, ReportLanguage, RevenueGrowthRow } from '../../types/analysis';
+import type { FinancialReport, ReportLanguage, RevenueGrowthRow, DimensionAnalysisReport } from '../../types/analysis';
 import { normalizeReportLanguage } from '../../utils/reportLanguage';
+import { DimensionAnalysisBlock } from './DimensionAnalysisBlock';
+import { pickDimensionAnalysis } from '../../utils/dimensionAnalysis';
 
 interface FinancialRevenueGrowthSectionProps {
   financialReport?: FinancialReport;
+  financialFundamentalsAnalysis?: DimensionAnalysisReport;
   language?: ReportLanguage;
   compact?: boolean;
 }
@@ -76,12 +79,17 @@ const toChartData = (rows: RevenueGrowthRow[]): RevenueChartPoint[] => rows
 
 export const FinancialRevenueGrowthSection: React.FC<FinancialRevenueGrowthSectionProps> = ({
   financialReport,
+  financialFundamentalsAnalysis,
   language,
   compact = false,
 }) => {
   const reportLanguage = normalizeReportLanguage(language);
   const rows = getRevenueRows(financialReport);
-  if (rows.length === 0) {
+  const dimensionAnalysis = pickDimensionAnalysis(
+    financialFundamentalsAnalysis,
+    'revenue_growth',
+  );
+  if (rows.length === 0 && !dimensionAnalysis) {
     return null;
   }
 
@@ -127,6 +135,14 @@ export const FinancialRevenueGrowthSection: React.FC<FinancialRevenueGrowthSecti
         ) : null}
       </div>
 
+      <DimensionAnalysisBlock
+        analysis={dimensionAnalysis}
+        dimension="revenue_growth"
+        language={reportLanguage}
+      />
+
+      {rows.length > 0 ? (
+      <>
       <div className="overflow-x-auto">
         <table className="min-w-full table-fixed text-left text-sm">
           <thead>
@@ -203,6 +219,8 @@ export const FinancialRevenueGrowthSection: React.FC<FinancialRevenueGrowthSecti
             </BarChart>
           </ResponsiveContainer>
         </div>
+      ) : null}
+      </>
       ) : null}
     </>
   );

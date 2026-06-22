@@ -16,6 +16,10 @@ from src.repositories.backtest_repo import BacktestRepository
 from src.repositories.stock_repo import StockRepository
 from src.storage import BacktestResult, BacktestSummary, DatabaseManager
 from src.user_context import get_current_user_id
+from src.utils.backtest_display import (
+    resolve_canonical_analysis_history_id,
+    serialize_backtest_preview,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -221,6 +225,30 @@ class BacktestService:
             "insufficient": insufficient,
             "errors": errors,
         }
+
+    def get_completed_result_for_history(
+        self,
+        analysis_history_id: int,
+    ) -> Optional[Dict[str, Any]]:
+        """Return full backtest payload when evaluation completed; else None."""
+        canonical_id = resolve_canonical_analysis_history_id(self.db, int(analysis_history_id))
+        row = self.repo.get_latest_result_by_analysis_history_id(canonical_id)
+        if row is None or row.eval_status != "completed":
+            return None
+
+        history = self.db.get_analysis_history_by_id(canonical_id, scoped=False)
+        stock_name = getattr(history, "name", None) if history else None
+        trend_prediction = getattr(history, "trend_prediction", None) if history else None
+        return self._result_to_dict(row, stock_name=stock_name, trend_prediction=trend_prediction)
+
+    def get_backtest_preview_for_history(
+        self,
+        analysis_history_id: int,
+    ) -> Dict[str, Any]:
+        """Compact card preview for marketplace/history list."""
+        canonical_id = resolve_canonical_analysis_history_id(self.db, int(analysis_history_id))
+        row = self.repo.get_latest_result_by_analysis_history_id(canonical_id)
+        return serialize_backtest_preview(row)
 
     def get_recent_evaluations(
         self,

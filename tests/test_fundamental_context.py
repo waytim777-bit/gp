@@ -398,18 +398,97 @@ class TestFundamentalContext(unittest.TestCase):
                 "circ_mv": 17900000.0,
             }]),
             "income": pd.DataFrame([
-                {"ts_code": "600519.SH", "ann_date": "20260330", "end_date": "20251231", "revenue": 1500.0},
-                {"ts_code": "600519.SH", "ann_date": "20250330", "end_date": "20241231", "revenue": 1200.0},
+                {
+                    "ts_code": "600519.SH",
+                    "ann_date": "20260430",
+                    "end_date": "20260331",
+                    "report_type": "1",
+                    "revenue": 400.0,
+                    "n_income_attr_p": 200.0,
+                    "rd_exp": 5.0,
+                },
+                {
+                    "ts_code": "600519.SH",
+                    "ann_date": "20260330",
+                    "end_date": "20251231",
+                    "report_type": "1",
+                    "revenue": 1500.0,
+                    "n_income_attr_p": 700.0,
+                },
+                {
+                    "ts_code": "600519.SH",
+                    "ann_date": "20250330",
+                    "end_date": "20241231",
+                    "report_type": "1",
+                    "revenue": 1200.0,
+                    "n_income_attr_p": 600.0,
+                },
             ]),
-            "fina_indicator": pd.DataFrame([{
+            "balancesheet": pd.DataFrame([{
                 "ts_code": "600519.SH",
                 "ann_date": "20260330",
                 "end_date": "20251231",
-                "grossprofit_margin": 91.5,
-                "netprofit_margin": 48.2,
-                "roe_dt": 35.6,
-                "roe": 34.9,
+                "report_type": "1",
+                "total_assets": 3000.0,
+                "total_liab": 800.0,
+                "total_cur_assets": 1500.0,
+                "total_cur_liab": 600.0,
+                "money_cap": 500.0,
+                "inventories": 120.0,
+                "cip": 30.0,
+                "prepayment": 10.0,
+                "st_borr": 50.0,
+                "lt_borr": 20.0,
             }]),
+            "cashflow": pd.DataFrame([{
+                "ts_code": "600519.SH",
+                "ann_date": "20260330",
+                "end_date": "20251231",
+                "report_type": "1",
+                "n_cashflow_act": 900.0,
+                "n_cashflow_inv_act": -100.0,
+                "n_cashflow_fina_act": -50.0,
+            }]),
+            "express": pd.DataFrame([{
+                "ts_code": "600519.SH",
+                "ann_date": "20260115",
+                "end_date": "20251231",
+                "revenue": 1500.0,
+                "n_income": 700.0,
+                "yoy_net_profit": 16.7,
+                "diluted_roe": 30.0,
+                "diluted_eps": 5.5,
+            }]),
+            "fina_indicator": pd.DataFrame([
+                {
+                    "ts_code": "600519.SH",
+                    "ann_date": "20260330",
+                    "end_date": "20251231",
+                    "grossprofit_margin": 91.5,
+                    "netprofit_margin": 48.2,
+                    "roe_dt": 35.6,
+                    "roe": 34.9,
+                    "debt_to_assets": 26.7,
+                    "current_ratio": 2.5,
+                    "quick_ratio": 2.1,
+                    "inv_turn": 1.2,
+                    "ar_turn": 8.5,
+                },
+                {
+                    "ts_code": "600519.SH",
+                    "ann_date": "20250330",
+                    "end_date": "20241231",
+                    "grossprofit_margin": 90.0,
+                    "netprofit_margin": 47.0,
+                    "roe_dt": 34.0,
+                    "roe": 33.5,
+                    "debt_to_assets": 25.0,
+                    "current_ratio": 2.4,
+                    "quick_ratio": 2.0,
+                    "inv_turn": 1.1,
+                    "ar_turn": 8.0,
+                },
+            ]),
         })
         manager = DataFetcherManager(fetchers=[fetcher])
         cfg = SimpleNamespace(
@@ -434,11 +513,20 @@ class TestFundamentalContext(unittest.TestCase):
         self.assertEqual(financial_report["revenue_growth"]["rows"][0]["revenue_yoy"], 25.0)
         self.assertEqual(financial_report["profitability"]["source"], "tushare_fina_indicator")
         self.assertEqual(financial_report["profitability"]["rows"][0]["gross_margin"], 91.5)
+        self.assertEqual(financial_report["balance_sheet"]["source"], "tushare_balancesheet")
+        self.assertEqual(financial_report["cash_flow"]["rows"][0]["operating_cash_flow"], 900.0)
+        self.assertEqual(financial_report["express_report"]["rows"][0]["net_profit"], 700.0)
+        self.assertEqual(financial_report["income_periods"]["rows"][0]["period"], "2026Q1")
+        self.assertEqual(financial_report["operating_cash_flow"], 900.0)
+        self.assertEqual(financial_report["net_profit_parent"], 200.0)
         self.assertEqual(ctx["valuation"]["data"]["total_mv"], 180000000000.0)
         providers = [item["provider"] for item in ctx["source_chain"] if isinstance(item, dict)]
         self.assertIn("tushare_daily_basic", providers)
         self.assertIn("revenue_growth:tushare_income", providers)
         self.assertIn("profitability:tushare_fina_indicator", providers)
+        self.assertIn("balance_sheet:tushare_balancesheet", providers)
+        self.assertIn("cash_flow:tushare_cashflow", providers)
+        self.assertIn("express_report:tushare_express", providers)
 
     def test_cn_company_profile_keeps_cninfo_when_supplemental_source_fails(self) -> None:
         manager = DataFetcherManager(fetchers=[])

@@ -24,6 +24,19 @@ import unicodedata
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
+
+def _ensure_utf8_stdio() -> None:
+    for name in ("stdout", "stderr"):
+        stream = getattr(sys, name, None)
+        if stream is not None and hasattr(stream, "reconfigure"):
+            try:
+                stream.reconfigure(encoding="utf-8", errors="replace")
+            except (AttributeError, OSError, ValueError):
+                pass
+
+
+_ensure_utf8_stdio()
+
 # Add the project root to sys.path.
 sys.path.insert(0, str(Path(__file__).parent.parent))
 

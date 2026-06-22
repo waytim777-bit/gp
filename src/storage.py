@@ -1013,6 +1013,20 @@ class PredictionReportLike(Base):
     )
 
 
+class ReportPublicShare(Base):
+    """Public read-only share link for an analysis history record."""
+
+    __tablename__ = 'report_public_shares'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    analysis_history_id = Column(Integer, ForeignKey('analysis_history.id'), nullable=False, unique=True)
+    owner_user_id = Column(Integer, ForeignKey('users.id'), nullable=False, index=True)
+    share_token = Column(String(64), nullable=False, unique=True, index=True)
+    enabled = Column(Boolean, nullable=False, default=True, index=True)
+    created_at = Column(DateTime, default=datetime.now, index=True)
+    revoked_at = Column(DateTime, nullable=True)
+
+
 class DatabaseManager:
     """
     数据库管理器 - 单例模式
@@ -1376,6 +1390,19 @@ class DatabaseManager:
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     CONSTRAINT uix_prediction_report_like_listing_user
                         UNIQUE (listing_id, user_id)
+                )
+                """
+            )
+            conn.exec_driver_sql(
+                """
+                CREATE TABLE IF NOT EXISTS report_public_shares (
+                    id SERIAL PRIMARY KEY,
+                    analysis_history_id INTEGER NOT NULL UNIQUE REFERENCES analysis_history(id),
+                    owner_user_id INTEGER NOT NULL REFERENCES users(id),
+                    share_token VARCHAR(64) NOT NULL UNIQUE,
+                    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    revoked_at TIMESTAMP NULL
                 )
                 """
             )
@@ -2818,6 +2845,89 @@ class DatabaseManager:
             session.expunge(row)
             return row
 
+    def get_report_public_share_by_history_id(
+        self,
+        analysis_history_id: int,
+    ) -> Optional[ReportPublicShare]:
+        with self.get_session() as session:
+            row = session.execute(
+                select(ReportPublicShare).where(
+                    ReportPublicShare.analysis_history_id == int(analysis_history_id),
+                ).limit(1)
+            ).scalar_one_or_none()
+            if row is not None:
+                session.expunge(row)
+            return row
+
+    def get_report_public_share_by_token(
+        self,
+        share_token: str,
+    ) -> Optional[ReportPublicShare]:
+        token = str(share_token or "").strip()
+        if not token:
+            return None
+        with self.get_session() as session:
+            row = session.execute(
+                select(ReportPublicShare).where(
+                    ReportPublicShare.share_token == token,
+                    ReportPublicShare.enabled.is_(True),
+                ).limit(1)
+            ).scalar_one_or_none()
+            if row is not None:
+                session.expunge(row)
+            return row
+
+    def upsert_report_public_share(
+        self,
+        *,
+        analysis_history_id: int,
+        owner_user_id: int,
+        share_token: str,
+    ) -> ReportPublicShare:
+        with self.session_scope() as session:
+            row = session.execute(
+                select(ReportPublicShare).where(
+                    ReportPublicShare.analysis_history_id == int(analysis_history_id),
+                ).limit(1)
+            ).scalar_one_or_none()
+            if row is None:
+                row = ReportPublicShare(
+                    analysis_history_id=int(analysis_history_id),
+                    owner_user_id=int(owner_user_id),
+                    share_token=str(share_token),
+                    enabled=True,
+                    revoked_at=None,
+                )
+                session.add(row)
+            else:
+                row.owner_user_id = int(owner_user_id)
+                row.share_token = str(share_token)
+                row.enabled = True
+                row.revoked_at = None
+            session.flush()
+            session.expunge(row)
+            return row
+
+    def revoke_report_public_share(
+        self,
+        *,
+        analysis_history_id: int,
+        owner_user_id: int,
+    ) -> bool:
+        with self.session_scope() as session:
+            row = session.execute(
+                select(ReportPublicShare).where(
+                    ReportPublicShare.analysis_history_id == int(analysis_history_id),
+                    ReportPublicShare.owner_user_id == int(owner_user_id),
+                ).limit(1)
+            ).scalar_one_or_none()
+            if row is None:
+                return False
+            row.enabled = False
+            row.revoked_at = datetime.now()
+            session.flush()
+            return True
+
     def get_user_username(self, user_id: int) -> Optional[str]:
         with self.get_session() as session:
             row = session.execute(
@@ -3183,6 +3293,7 @@ class DatabaseManager:
         self,
         query_id: str,
         code: str,
+        owner_user_id: Optional[int] = None,
     ) -> Optional[Dict[str, Any]]:
         """
         获取指定 query_id + code 的最新基本面快照 payload。
@@ -3191,7 +3302,8 @@ class DatabaseManager:
         """
         if not query_id or not code:
             return None
-        owner_user_id = self._resolve_owner_id()
+        if owner_user_id is None:
+            owner_user_id = self._resolve_owner_id()
 
         with self.get_session() as session:
             try:

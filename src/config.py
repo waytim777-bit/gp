@@ -400,6 +400,43 @@ def get_effective_agent_models_to_try(config: "Config") -> List[str]:
     return ordered_models
 
 
+def get_effective_consultation_models(config: "Config") -> List[str]:
+    """Return models for read-only post-analysis consultation (excludes primary Agent model)."""
+    if not getattr(config, "multi_model_panel_enabled", False):
+        return []
+    configured_router_models = set(
+        get_configured_llm_models(getattr(config, "llm_model_list", []) or [])
+    )
+    primary = get_effective_agent_primary_model(config)
+    primary_key = normalize_agent_litellm_model(
+        primary,
+        configured_models=configured_router_models,
+    )
+    raw_models: List[str] = list(getattr(config, "multi_model_panel_models", []) or [])
+    if not raw_models:
+        raw_models = list(
+            dict.fromkeys(
+                entry.get("litellm_params", {}).get("model", "")
+                for entry in (getattr(config, "llm_model_list", []) or [])
+                if entry.get("litellm_params", {}).get("model")
+            )
+        )
+    seen: set[str] = set()
+    ordered: List[str] = []
+    for model in raw_models:
+        normalized = normalize_agent_litellm_model(
+            (model or "").strip(),
+            configured_models=configured_router_models,
+        )
+        if not normalized or normalized in seen:
+            continue
+        if primary_key and normalized == primary_key:
+            continue
+        seen.add(normalized)
+        ordered.append(normalized)
+    return ordered
+
+
 def setup_env(override: bool = False):
     """
     Initialize environment variables from .env file.
@@ -541,6 +578,10 @@ class Config:
     agent_event_monitor_enabled: bool = False  # Enable periodic event-driven alert checks in schedule mode
     agent_event_monitor_interval_minutes: int = 5  # Polling interval for event monitor background checks
     agent_event_alert_rules_json: str = ""  # JSON array of serialized EventMonitor rules
+
+    # === Multi-model consultation panel (read-only after primary Agent run) ===
+    multi_model_panel_enabled: bool = False
+    multi_model_panel_models: List[str] = field(default_factory=list)
 
     # === 通知配置（可同时配置多个，全部推送）===
     
@@ -1235,6 +1276,12 @@ class Config:
                 minimum=1,
             ),
             agent_event_alert_rules_json=os.getenv('AGENT_EVENT_ALERT_RULES_JSON', ''),
+            multi_model_panel_enabled=os.getenv('MULTI_MODEL_PANEL_ENABLED', 'false').lower() == 'true',
+            multi_model_panel_models=[
+                m.strip()
+                for m in os.getenv('MULTI_MODEL_PANEL_MODELS', '').split(',')
+                if m.strip()
+            ],
             wechat_webhook_url=os.getenv('WECHAT_WEBHOOK_URL'),
             feishu_webhook_url=os.getenv('FEISHU_WEBHOOK_URL'),
             feishu_webhook_secret=os.getenv('FEISHU_WEBHOOK_SECRET'),

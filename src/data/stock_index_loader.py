@@ -134,3 +134,8 @@ def _clear_stock_index_cache_for_tests() -> None:
     global _STOCK_INDEX_CACHE
     with _STOCK_INDEX_CACHE_LOCK:
         _STOCK_INDEX_CACHE = None
+
+
+def clear_stock_index_cache_for_admin() -> None:
+    """Clear cached stock index after admin publish/build."""
+    _clear_stock_index_cache_for_tests()

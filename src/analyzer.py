@@ -367,6 +367,12 @@ class AnalysisResult:
     company_highlights: str = ""  # 公司亮点/风险点
     business_model: Optional[Dict[str, Any]] = None  # Structured business model analysis
     profitability_analysis: Optional[Dict[str, Any]] = None  # LLM-written profitability analysis
+    financial_fundamentals_analysis: Optional[Dict[str, Any]] = None  # LLM-written multi-dimension financial analysis
+    technical_analysis_report: Optional[Dict[str, Any]] = None  # LLM-written technical analysis
+    price_trend_analysis: Optional[Dict[str, Any]] = None  # LLM-written price trend / K-line narrative
+    key_levels_analysis: Optional[Dict[str, Any]] = None  # LLM-written support/resistance + chip linkage
+    weekly_trend_analysis: Optional[Dict[str, Any]] = None  # LLM-written weekly trend narrative
+    capital_flow_analysis: Optional[Dict[str, Any]] = None  # LLM-written capital flow narrative
 
     # ========== 情绪面/消息面分析 ==========
     news_summary: str = ""  # 近期重要新闻/公告摘要
@@ -421,6 +427,12 @@ class AnalysisResult:
             'company_highlights': self.company_highlights,
             'business_model': self.business_model,
             'profitability_analysis': self.profitability_analysis,
+            'financial_fundamentals_analysis': self.financial_fundamentals_analysis,
+            'technical_analysis_report': self.technical_analysis_report,
+            'price_trend_analysis': self.price_trend_analysis,
+            'key_levels_analysis': self.key_levels_analysis,
+            'weekly_trend_analysis': self.weekly_trend_analysis,
+            'capital_flow_analysis': self.capital_flow_analysis,
             'news_summary': self.news_summary,
             'market_sentiment': self.market_sentiment,
             'hot_topics': self.hot_topics,
@@ -1611,6 +1623,122 @@ class GeminiAnalyzer:
                     roe = row.get("roe", "N/A")
                     prompt += f"| {period} | {gross_margin} | {net_margin} | {roe} |\n"
 
+            revenue_growth = financial_report.get("revenue_growth")
+            revenue_rows = (
+                revenue_growth.get("rows", [])
+                if isinstance(revenue_growth, dict)
+                else []
+            )
+            if isinstance(revenue_rows, list) and revenue_rows:
+                prompt += "\n### 营收增长结构化指标（用于 2.1 营收分析）\n"
+                prompt += "| 年度 | 营业收入 | 营收同比(%) | 归母净利润 |\n|------|------:|------:|------:|\n"
+                for row in revenue_rows[:5]:
+                    if not isinstance(row, dict):
+                        continue
+                    fiscal_year = row.get("fiscal_year", "N/A")
+                    revenue = row.get("revenue", "N/A")
+                    revenue_yoy = row.get("revenue_yoy", "N/A")
+                    net_profit = row.get("net_profit", "N/A")
+                    prompt += f"| {fiscal_year} | {revenue} | {revenue_yoy} | {net_profit} |\n"
+
+            income_periods = financial_report.get("income_periods")
+            income_period_rows = (
+                income_periods.get("rows", [])
+                if isinstance(income_periods, dict)
+                else []
+            )
+            if isinstance(income_period_rows, list) and income_period_rows:
+                prompt += "\n### 利润表分期数据（含季报，用于业绩节奏判断）\n"
+                prompt += "| 报告期 | 营业收入 | 营收同比(%) | 归母净利润 | 研发费用 |\n|------|------:|------:|------:|------:|\n"
+                for row in income_period_rows[:8]:
+                    if not isinstance(row, dict):
+                        continue
+                    period = row.get("period") or row.get("report_date") or "N/A"
+                    revenue = row.get("revenue", "N/A")
+                    revenue_yoy = row.get("revenue_yoy", "N/A")
+                    net_profit = row.get("net_profit", "N/A")
+                    rd_exp = row.get("rd_exp", "N/A")
+                    prompt += f"| {period} | {revenue} | {revenue_yoy} | {net_profit} | {rd_exp} |\n"
+
+            balance_sheet = financial_report.get("balance_sheet")
+            balance_rows = (
+                balance_sheet.get("rows", [])
+                if isinstance(balance_sheet, dict)
+                else []
+            )
+            if isinstance(balance_rows, list) and balance_rows:
+                latest_ratios = (
+                    balance_sheet.get("latest_ratios", {})
+                    if isinstance(balance_sheet, dict)
+                    else {}
+                )
+                prompt += "\n### 资产负债表结构化指标（用于 2.3 资产负债分析）\n"
+                if isinstance(latest_ratios, dict) and latest_ratios:
+                    prompt += (
+                        f"> 最新财务比率：资产负债率 {latest_ratios.get('debt_to_assets', 'N/A')}%，"
+                        f"流动比率 {latest_ratios.get('current_ratio', 'N/A')}，"
+                        f"速动比率 {latest_ratios.get('quick_ratio', 'N/A')}，"
+                        f"存货周转率 {latest_ratios.get('inv_turn', 'N/A')}，"
+                        f"应收账款周转率 {latest_ratios.get('ar_turn', 'N/A')}\n"
+                    )
+                prompt += (
+                    "| 报告期 | 总资产 | 总负债 | 负债率(%) | 货币资金 | 存货 | 在建工程 | 有息负债 |\n"
+                    "|------|------:|------:|------:|------:|------:|------:|------:|\n"
+                )
+                for row in balance_rows[:5]:
+                    if not isinstance(row, dict):
+                        continue
+                    period = row.get("period") or row.get("report_date") or "N/A"
+                    prompt += (
+                        f"| {period} | {row.get('total_assets', 'N/A')} | {row.get('total_liab', 'N/A')} | "
+                        f"{row.get('debt_ratio', 'N/A')} | {row.get('money_cap', 'N/A')} | "
+                        f"{row.get('inventories', 'N/A')} | {row.get('cip', 'N/A')} | "
+                        f"{row.get('interest_bearing_debt', 'N/A')} |\n"
+                    )
+
+            cash_flow = financial_report.get("cash_flow")
+            cash_flow_rows = (
+                cash_flow.get("rows", [])
+                if isinstance(cash_flow, dict)
+                else []
+            )
+            if isinstance(cash_flow_rows, list) and cash_flow_rows:
+                prompt += "\n### 现金流量表结构化指标（用于 2.4 现金流分析）\n"
+                prompt += (
+                    "| 报告期 | 经营现金流 | 经营同比(%) | 投资现金流 | 筹资现金流 |\n"
+                    "|------|------:|------:|------:|------:|\n"
+                )
+                for row in cash_flow_rows[:5]:
+                    if not isinstance(row, dict):
+                        continue
+                    period = row.get("period") or row.get("report_date") or "N/A"
+                    prompt += (
+                        f"| {period} | {row.get('operating_cash_flow', 'N/A')} | "
+                        f"{row.get('operating_cash_flow_yoy', 'N/A')} | "
+                        f"{row.get('investing_cash_flow', 'N/A')} | "
+                        f"{row.get('financing_cash_flow', 'N/A')} |\n"
+                    )
+
+            express_report = financial_report.get("express_report")
+            express_rows = (
+                express_report.get("rows", [])
+                if isinstance(express_report, dict)
+                else []
+            )
+            if isinstance(express_rows, list) and express_rows:
+                prompt += "\n### 业绩快报（用于业绩预期与最新披露节奏）\n"
+                prompt += "| 报告期 | 公告日 | 营业收入 | 净利润 | 净利同比(%) | 摊薄ROE(%) | 摊薄EPS |\n|------|------|------:|------:|------:|------:|------:|\n"
+                for row in express_rows[:3]:
+                    if not isinstance(row, dict):
+                        continue
+                    period = row.get("period") or row.get("report_date") or "N/A"
+                    prompt += (
+                        f"| {period} | {row.get('announcement_date', 'N/A')} | "
+                        f"{row.get('revenue', 'N/A')} | {row.get('net_profit', 'N/A')} | "
+                        f"{row.get('net_profit_yoy', 'N/A')} | {row.get('diluted_roe', 'N/A')} | "
+                        f"{row.get('diluted_eps', 'N/A')} |\n"
+                    )
+
         # 添加筹码分布数据
 
         company_profile_block = (
@@ -1659,6 +1787,78 @@ If the profitability metrics are available, add a top-level `profitability_analy
   "source": "llm"
 }
 Use 3-5 dynamic items that fit the company. Do not force fixed bullets. Do not mention industry average unless the context provides comparable data. If profitability metrics are unavailable, set `profitability_analysis` to null.
+
+### Technical analysis output requirement
+If structured technical indicators are available above, add a top-level `technical_analysis_report` object:
+{
+  "summary": "One concise paragraph on trend, MACD, RSI, volume and key levels, with trading implication.",
+  "overall_stance": "bullish|bearish|neutral",
+  "items": [
+    {"title": "Trend/indicator dimension", "stance": "bullish|bearish|neutral", "content": "Concrete explanation citing available indicator values only."}
+  ],
+  "source": "llm"
+}
+Use 3-5 dynamic items. Each item must cite numbers from the structured technical data. Do not invent indicator values. If technical indicators are unavailable, set `technical_analysis_report` to null.
+
+### Financial fundamentals output requirement
+If any structured financial blocks above are available, add a top-level `financial_fundamentals_analysis` object:
+{
+  "summary": "One concise paragraph on revenue, profitability, balance sheet, cash flow and express trends.",
+  "overall_stance": "bullish|bearish|neutral",
+  "items": [
+    {"dimension": "revenue_growth|profitability|balance_sheet|cash_flow|income_periods|express_report", "title": "...", "stance": "bullish|bearish|neutral", "content": "..."}
+  ],
+  "source": "llm"
+}
+Include one item per available financial dimension. Do not invent financial numbers. If no financial data is available, set `financial_fundamentals_analysis` to null.
+
+### Price trend output requirement
+If daily K-line snapshot data is available above, add a top-level `price_trend_analysis` object:
+{
+  "summary": "One concise paragraph on recent price trend, stage highs/lows, and relation to MAs.",
+  "overall_stance": "bullish|bearish|neutral",
+  "items": [
+    {"title": "Price action dimension", "stance": "bullish|bearish|neutral", "content": "Concrete explanation citing OHLC snapshot values only."}
+  ],
+  "source": "llm"
+}
+Use 3-5 dynamic items. Do not invent prices or dates. If K-line data is unavailable, set `price_trend_analysis` to null.
+
+### Key levels output requirement
+If structured key levels and/or chip distribution data are available above, add a top-level `key_levels_analysis` object:
+{
+  "summary": "One concise paragraph linking technical support/resistance, chip cost zones, and trading implication.",
+  "overall_stance": "bullish|bearish|neutral",
+  "items": [
+    {"title": "Support/resistance dimension", "stance": "bullish|bearish|neutral", "content": "Concrete explanation citing available level values only."}
+  ],
+  "source": "llm"
+}
+Use 3-5 dynamic items. Do not invent price levels. If no key level or chip data is available, set `key_levels_analysis` to null.
+
+### Weekly trend output requirement
+If weekly K-line snapshot data is available above, add a top-level `weekly_trend_analysis` object:
+{
+  "summary": "One concise paragraph on weekly trend, medium-term highs/lows, and relation to weekly MAs.",
+  "overall_stance": "bullish|bearish|neutral",
+  "items": [
+    {"title": "Weekly trend dimension", "stance": "bullish|bearish|neutral", "content": "Concrete explanation citing weekly OHLC snapshot values only."}
+  ],
+  "source": "llm"
+}
+Use 3-5 dynamic items. Do not invent prices or dates. If weekly K-line data is unavailable, set `weekly_trend_analysis` to null.
+
+### Capital flow output requirement
+If structured capital flow data is available above, add a top-level `capital_flow_analysis` object:
+{
+  "summary": "One concise paragraph on main-force inflow/outflow and sector flow context.",
+  "overall_stance": "bullish|bearish|neutral",
+  "items": [
+    {"title": "Capital flow dimension", "stance": "bullish|bearish|neutral", "content": "Concrete explanation citing available inflow values only."}
+  ],
+  "source": "llm"
+}
+Use 3-5 dynamic items. Do not invent flow numbers. If capital flow data is unavailable, set `capital_flow_analysis` to null.
 """
         else:
             prompt += """
@@ -1684,6 +1884,78 @@ Use 3-5 dynamic items that fit the company. Do not force fixed bullets. Do not m
   "source": "llm"
 }
 `items` 输出 3-5 项，标题和内容必须按公司、行业和已知数据动态生成，不要固定套用“毛利率/净利率/ROE/研发投入”同一组标题；只有上下文提供研发费用、行业均值、产品结构、客户结构等信息时才可引用。不要编造行业平均水平或研发投入。如果没有有效盈利能力指标，请将 `profitability_analysis` 设为 null。
+
+### 技术面输出要求
+如果上方“技术指标结构化数据”存在有效内容，请在最终 JSON 顶层新增 `technical_analysis_report` 对象：
+{
+  "summary": "一段话概括趋势、MACD、RSI、量能与关键支撑/阻力，并说明对当前交易含义。",
+  "overall_stance": "bullish|bearish|neutral",
+  "items": [
+    {"title": "趋势或指标维度", "stance": "bullish|bearish|neutral", "content": "仅引用上方结构化技术指标的具体数值进行解释。"}
+  ],
+  "source": "llm"
+}
+`items` 输出 3-5 项，必须引用已有指标数值，禁止编造 MACD/RSI/均线/支撑阻力。若无有效技术指标，请将 `technical_analysis_report` 设为 null。
+
+### 财务基本面输出要求
+如果上方存在任一财务结构化区块（营收、盈利、资产负债、现金流、分期业绩、业绩快报），请在最终 JSON 顶层新增 `financial_fundamentals_analysis` 对象：
+{
+  "summary": "一段话概括成长性、盈利质量、偿债与现金流等基本面结论。",
+  "overall_stance": "bullish|bearish|neutral",
+  "items": [
+    {"dimension": "revenue_growth|profitability|balance_sheet|cash_flow|income_periods|express_report", "title": "...", "stance": "bullish|bearish|neutral", "content": "..."}
+  ],
+  "source": "llm"
+}
+每个有数据的财务维度至少 1 条 item；`dimension` 必须与已有数据对应。禁止编造财务数字。若无有效财务数据，请将 `financial_fundamentals_analysis` 设为 null。
+
+### 股价走势输出要求
+如果上方“日K线走势快照”存在有效内容，请在最终 JSON 顶层新增 `price_trend_analysis` 对象：
+{
+  "summary": "一段话概括近期股价趋势、阶段高低点、与均线关系及交易含义。",
+  "overall_stance": "bullish|bearish|neutral",
+  "items": [
+    {"title": "走势维度", "stance": "bullish|bearish|neutral", "content": "仅引用上方K线快照中的具体价格与日期。"}
+  ],
+  "source": "llm"
+}
+`items` 输出 3-5 项，禁止编造价格或日期。若无有效K线数据，请将 `price_trend_analysis` 设为 null。
+
+### 关键位输出要求
+如果上方存在结构化关键位和/或筹码分布数据，请在最终 JSON 顶层新增 `key_levels_analysis` 对象：
+{
+  "summary": "一段话概括技术支撑/阻力、筹码成本区与交易含义。",
+  "overall_stance": "bullish|bearish|neutral",
+  "items": [
+    {"title": "关键位维度", "stance": "bullish|bearish|neutral", "content": "仅引用已有价位数值，禁止编造。"}
+  ],
+  "source": "llm"
+}
+`items` 输出 3-5 项。若无有效关键位或筹码数据，请将 `key_levels_analysis` 设为 null。
+
+### 周线走势输出要求
+如果上方“周K线走势快照”存在有效内容，请在最终 JSON 顶层新增 `weekly_trend_analysis` 对象：
+{
+  "summary": "一段话概括周线趋势、中期高低点、与周均线关系及交易含义。",
+  "overall_stance": "bullish|bearish|neutral",
+  "items": [
+    {"title": "周线维度", "stance": "bullish|bearish|neutral", "content": "仅引用上方周K快照中的具体价格与日期。"}
+  ],
+  "source": "llm"
+}
+`items` 输出 3-5 项，禁止编造价格或日期。若无有效周K数据，请将 `weekly_trend_analysis` 设为 null。
+
+### 主力资金流输出要求
+如果上方存在结构化主力资金流数据，请在最终 JSON 顶层新增 `capital_flow_analysis` 对象：
+{
+  "summary": "一段话概括主力净流入/流出、5日/10日趋势及板块资金背景。",
+  "overall_stance": "bullish|bearish|neutral",
+  "items": [
+    {"title": "资金流维度", "stance": "bullish|bearish|neutral", "content": "仅引用已有资金流数值，禁止编造。"}
+  ],
+  "source": "llm"
+}
+`items` 输出 3-5 项。若无有效资金流数据，请将 `capital_flow_analysis` 设为 null。
 """
         if 'chip' in context:
             chip = context['chip']
@@ -1750,6 +2022,168 @@ Use 3-5 dynamic items that fit the company. Do not force fixed bullets. Do not m
 **风险因素**：
 {chr(10).join('- ' + r for r in trend.get('risk_factors', ['无'])) if trend.get('risk_factors') else '- 无'}
 """
+
+            technical_indicators = context.get("technical_indicators")
+            if isinstance(technical_indicators, dict) and technical_indicators:
+                ma = technical_indicators.get("moving_averages", {})
+                macd = technical_indicators.get("macd", {})
+                rsi = technical_indicators.get("rsi", {})
+                volume = technical_indicators.get("volume", {})
+                levels = technical_indicators.get("levels", {})
+                signal = technical_indicators.get("signal", {})
+                prompt += "\n### 技术指标结构化数据（用于 3.2 技术面分析，禁止编造）\n"
+                prompt += (
+                    f"| 类别 | 指标 | 数值 |\n|------|------|------|\n"
+                    f"| 价格 | 现价 | {technical_indicators.get('as_of_price', 'N/A')} |\n"
+                    f"| 均线 | MA5/10/20/60 | {ma.get('ma5', 'N/A')} / {ma.get('ma10', 'N/A')} / "
+                    f"{ma.get('ma20', 'N/A')} / {ma.get('ma60', 'N/A')} |\n"
+                    f"| 乖离 | MA5/10/20 | {ma.get('bias_ma5', 'N/A')}% / {ma.get('bias_ma10', 'N/A')}% / "
+                    f"{ma.get('bias_ma20', 'N/A')}% |\n"
+                    f"| MACD | DIF/DEA/柱 | {macd.get('dif', 'N/A')} / {macd.get('dea', 'N/A')} / "
+                    f"{macd.get('bar', 'N/A')} |\n"
+                    f"| MACD | 状态/信号 | {macd.get('status', 'N/A')} / {macd.get('signal', 'N/A')} |\n"
+                    f"| RSI | 6/12/24 | {rsi.get('rsi_6', 'N/A')} / {rsi.get('rsi_12', 'N/A')} / "
+                    f"{rsi.get('rsi_24', 'N/A')} |\n"
+                    f"| RSI | 状态/信号 | {rsi.get('status', 'N/A')} / {rsi.get('signal', 'N/A')} |\n"
+                    f"| KDJ | K/D/J | {technical_indicators.get('kdj', {}).get('k', 'N/A')} / "
+                    f"{technical_indicators.get('kdj', {}).get('d', 'N/A')} / "
+                    f"{technical_indicators.get('kdj', {}).get('j', 'N/A')} |\n"
+                    f"| KDJ | 状态/信号 | {technical_indicators.get('kdj', {}).get('status', 'N/A')} / "
+                    f"{technical_indicators.get('kdj', {}).get('signal', 'N/A')} |\n"
+                    f"| BOLL | 上/中/下轨 | {technical_indicators.get('boll', {}).get('upper', 'N/A')} / "
+                    f"{technical_indicators.get('boll', {}).get('middle', 'N/A')} / "
+                    f"{technical_indicators.get('boll', {}).get('lower', 'N/A')} |\n"
+                    f"| BOLL | %B/状态 | {technical_indicators.get('boll', {}).get('pct_b', 'N/A')} / "
+                    f"{technical_indicators.get('boll', {}).get('status', 'N/A')} |\n"
+                    f"| 量能 | 状态/5日量比 | {volume.get('status', 'N/A')} / {volume.get('ratio_5d', 'N/A')} |\n"
+                    f"| 关键位 | 支撑位 | {levels.get('support_levels', 'N/A')} |\n"
+                    f"| 关键位 | 阻力位 | {levels.get('resistance_levels', 'N/A')} |\n"
+                    f"| 系统信号 | 评分/建议 | {signal.get('score', 'N/A')} / {signal.get('buy_signal', 'N/A')} |\n"
+                )
+        elif isinstance(context.get("technical_indicators"), dict) and context.get("technical_indicators"):
+            technical_indicators = context["technical_indicators"]
+            ma = technical_indicators.get("moving_averages", {})
+            macd = technical_indicators.get("macd", {})
+            rsi = technical_indicators.get("rsi", {})
+            volume = technical_indicators.get("volume", {})
+            levels = technical_indicators.get("levels", {})
+            signal = technical_indicators.get("signal", {})
+            prompt += "\n### 技术指标结构化数据（用于 3.2 技术面分析，禁止编造）\n"
+            prompt += (
+                f"| 类别 | 指标 | 数值 |\n|------|------|------|\n"
+                f"| 价格 | 现价 | {technical_indicators.get('as_of_price', 'N/A')} |\n"
+                f"| 均线 | MA5/10/20/60 | {ma.get('ma5', 'N/A')} / {ma.get('ma10', 'N/A')} / "
+                f"{ma.get('ma20', 'N/A')} / {ma.get('ma60', 'N/A')} |\n"
+                f"| MACD | DIF/DEA/柱 | {macd.get('dif', 'N/A')} / {macd.get('dea', 'N/A')} / "
+                f"{macd.get('bar', 'N/A')} |\n"
+                f"| RSI | 6/12/24 | {rsi.get('rsi_6', 'N/A')} / {rsi.get('rsi_12', 'N/A')} / "
+                f"{rsi.get('rsi_24', 'N/A')} |\n"
+                f"| KDJ | K/D/J | {technical_indicators.get('kdj', {}).get('k', 'N/A')} / "
+                f"{technical_indicators.get('kdj', {}).get('d', 'N/A')} / "
+                f"{technical_indicators.get('kdj', {}).get('j', 'N/A')} |\n"
+                f"| BOLL | 上/中/下轨 | {technical_indicators.get('boll', {}).get('upper', 'N/A')} / "
+                f"{technical_indicators.get('boll', {}).get('middle', 'N/A')} / "
+                f"{technical_indicators.get('boll', {}).get('lower', 'N/A')} |\n"
+                f"| 关键位 | 支撑位 | {levels.get('support_levels', 'N/A')} |\n"
+                f"| 关键位 | 阻力位 | {levels.get('resistance_levels', 'N/A')} |\n"
+                f"| 系统信号 | 评分/建议 | {signal.get('score', 'N/A')} / {signal.get('buy_signal', 'N/A')} |\n"
+            )
+
+        kline_series = context.get("kline_series") or context.get("daily_bars")
+        if isinstance(kline_series, dict) and kline_series.get("rows"):
+            snapshot = kline_series.get("snapshot", {})
+            prompt += "\n### 日K线走势快照（用于 3.1 股价走势分析，禁止编造）\n"
+            prompt += (
+                f"- 样本交易日数：{kline_series.get('total_records', 'N/A')}\n"
+                f"- 区间最高/最低：{snapshot.get('period_high', 'N/A')} / {snapshot.get('period_low', 'N/A')}\n"
+                f"- 最新收盘：{snapshot.get('latest_close', 'N/A')}\n"
+                f"- 距区间低点/高点：{snapshot.get('distance_from_low_pct', 'N/A')}% / "
+                f"{snapshot.get('distance_from_high_pct', 'N/A')}%\n"
+                f"- 近20日/60日涨跌：{snapshot.get('change_20d_pct', 'N/A')}% / "
+                f"{snapshot.get('change_60d_pct', 'N/A')}%\n"
+            )
+            recent_rows = kline_series.get("rows", [])[-8:]
+            if isinstance(recent_rows, list) and recent_rows:
+                prompt += "| 日期 | 开 | 高 | 低 | 收 | 涨跌幅(%) |\n|------|------:|------:|------:|------:|------:|\n"
+                for row in recent_rows:
+                    if not isinstance(row, dict):
+                        continue
+                    prompt += (
+                        f"| {row.get('date', 'N/A')} | {row.get('open', 'N/A')} | {row.get('high', 'N/A')} | "
+                        f"{row.get('low', 'N/A')} | {row.get('close', 'N/A')} | {row.get('pct_chg', 'N/A')} |\n"
+                    )
+
+        weekly_kline_series = context.get("weekly_kline_series")
+        if isinstance(weekly_kline_series, dict) and weekly_kline_series.get("rows"):
+            weekly_snapshot = weekly_kline_series.get("snapshot", {})
+            prompt += "\n### 周K线走势快照（用于多周期/周线分析，禁止编造）\n"
+            prompt += (
+                f"- 样本周数：{weekly_kline_series.get('total_records', 'N/A')}\n"
+                f"- 区间最高/最低：{weekly_snapshot.get('period_high', 'N/A')} / {weekly_snapshot.get('period_low', 'N/A')}\n"
+                f"- 最新收盘：{weekly_snapshot.get('latest_close', 'N/A')}\n"
+                f"- 距区间低点/高点：{weekly_snapshot.get('distance_from_low_pct', 'N/A')}% / "
+                f"{weekly_snapshot.get('distance_from_high_pct', 'N/A')}%\n"
+            )
+            recent_weekly_rows = weekly_kline_series.get("rows", [])[-6:]
+            if isinstance(recent_weekly_rows, list) and recent_weekly_rows:
+                prompt += "| 周结束日 | 开 | 高 | 低 | 收 | 涨跌幅(%) |\n|------|------:|------:|------:|------:|------:|\n"
+                for row in recent_weekly_rows:
+                    if not isinstance(row, dict):
+                        continue
+                    prompt += (
+                        f"| {row.get('date', 'N/A')} | {row.get('open', 'N/A')} | {row.get('high', 'N/A')} | "
+                        f"{row.get('low', 'N/A')} | {row.get('close', 'N/A')} | {row.get('pct_chg', 'N/A')} |\n"
+                    )
+
+        capital_flow = context.get("capital_flow")
+        if isinstance(capital_flow, dict) and capital_flow:
+            stock_flow = capital_flow.get("stock_flow") or {}
+            sector_rankings = capital_flow.get("sector_rankings") or {}
+            prompt += "\n### 主力资金流结构化数据（用于 4.2 市场情绪，禁止编造）\n"
+            prompt += (
+                f"- 数据状态：{capital_flow.get('status', 'N/A')}\n"
+                f"- 主力净流入：{stock_flow.get('main_net_inflow', 'N/A')}\n"
+                f"- 5日累计：{stock_flow.get('inflow_5d', 'N/A')}\n"
+                f"- 10日累计：{stock_flow.get('inflow_10d', 'N/A')}\n"
+                f"- 板块净流入前三：{sector_rankings.get('top', 'N/A')}\n"
+                f"- 板块净流出前三：{sector_rankings.get('bottom', 'N/A')}\n"
+            )
+
+        chip_distribution = context.get("chip_distribution")
+        if isinstance(chip_distribution, dict) and chip_distribution:
+            prompt += "\n### 筹码分布结构化数据（用于 3.3/4.2 关键位分析，禁止编造）\n"
+            prompt += (
+                f"- 获利比例：{chip_distribution.get('profit_ratio', 'N/A')}\n"
+                f"- 平均成本：{chip_distribution.get('avg_cost', 'N/A')}\n"
+                f"- 90%成本区间：{chip_distribution.get('cost_90_low', 'N/A')} ~ "
+                f"{chip_distribution.get('cost_90_high', 'N/A')}\n"
+                f"- 90%集中度：{chip_distribution.get('concentration_90', 'N/A')}\n"
+                f"- 筹码状态：{chip_distribution.get('chip_status', 'N/A')}\n"
+            )
+
+        key_levels = context.get("key_levels")
+        if isinstance(key_levels, dict) and key_levels:
+            technical = key_levels.get("technical") or {}
+            patterns = key_levels.get("patterns") or {}
+            prompt += "\n### 关键支撑/阻力结构化数据（用于 3.3，禁止编造）\n"
+            prompt += (
+                f"- 现价：{key_levels.get('current_price', 'N/A')}\n"
+                f"- 技术支撑位：{technical.get('support_levels', 'N/A')}\n"
+                f"- 技术阻力位：{technical.get('resistance_levels', 'N/A')}\n"
+            )
+            chip_levels = key_levels.get("chip")
+            if isinstance(chip_levels, dict) and chip_levels:
+                prompt += (
+                    f"- 筹码平均成本：{chip_levels.get('avg_cost', 'N/A')}\n"
+                    f"- 90%筹码成本区：{chip_levels.get('cost_90_low', 'N/A')} ~ "
+                    f"{chip_levels.get('cost_90_high', 'N/A')}\n"
+                )
+            if patterns:
+                prompt += (
+                    f"- 形态标签：{patterns.get('pattern_label', 'N/A')}\n"
+                    f"- 近期摆动高点：{patterns.get('swing_highs', 'N/A')}\n"
+                    f"- 近期摆动低点：{patterns.get('swing_lows', 'N/A')}\n"
+                )
         
         # 添加昨日对比数据
         if 'yesterday' in context:
@@ -2130,6 +2564,12 @@ Use 3-5 dynamic items that fit the company. Do not force fixed bullets. Do not m
                     company_highlights=data.get('company_highlights', ''),
                     business_model=data.get('business_model'),
                     profitability_analysis=data.get('profitability_analysis'),
+                    financial_fundamentals_analysis=data.get('financial_fundamentals_analysis'),
+                    technical_analysis_report=data.get('technical_analysis_report'),
+                    price_trend_analysis=data.get('price_trend_analysis'),
+                    key_levels_analysis=data.get('key_levels_analysis'),
+                    weekly_trend_analysis=data.get('weekly_trend_analysis'),
+                    capital_flow_analysis=data.get('capital_flow_analysis'),
                     # 情绪面/消息面
                     news_summary=data.get('news_summary', ''),
                     market_sentiment=data.get('market_sentiment', ''),

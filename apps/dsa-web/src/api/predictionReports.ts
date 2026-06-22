@@ -19,6 +19,15 @@ export const predictionReportsApi = {
     return toCamelCase<PredictionReportPricing>(response.data);
   },
 
+  recommend: async (recordId: number): Promise<PredictionReportListingItem> => {
+    const response = await apiClient.post<Record<string, unknown>>(
+      '/api/v1/prediction-reports/recommend',
+      { record_id: recordId },
+    );
+    return toCamelCase<PredictionReportListingItem>(response.data);
+  },
+
+  /** @deprecated use recommend */
   share: async (recordId: number): Promise<PredictionReportListingItem> => {
     const response = await apiClient.post<Record<string, unknown>>(
       '/api/v1/prediction-reports/share',

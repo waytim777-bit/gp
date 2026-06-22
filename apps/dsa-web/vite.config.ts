@@ -21,6 +21,12 @@ export default defineConfig({
       },
     }),
   ],
+  resolve: {
+    alias: {
+      // html2canvas (legacy) -> pro fork with oklab/oklch/color-mix support
+      html2canvas: 'html2canvas-pro',
+    },
+  },
   server: {
     host: '0.0.0.0',  // 允许公网访问
     port: 5173,       // 默认端口

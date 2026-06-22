@@ -126,6 +126,22 @@ class TrendAnalysisResult:
     rsi_status: RSIStatus = RSIStatus.NEUTRAL
     rsi_signal: str = ""              # RSI 信号描述
 
+    # KDJ 指标
+    kdj_k: float = 0.0
+    kdj_d: float = 0.0
+    kdj_j: float = 0.0
+    kdj_signal: str = ""
+    kdj_status: str = "中性"
+
+    # BOLL 指标
+    boll_upper: float = 0.0
+    boll_middle: float = 0.0
+    boll_lower: float = 0.0
+    boll_pct_b: float = 0.0           # %B 位置 (0-1 为带内)
+    boll_bandwidth: float = 0.0       # 带宽百分比
+    boll_signal: str = ""
+    boll_status: str = "中轨附近"
+
     # 买入信号
     buy_signal: BuySignal = BuySignal.WAIT
     signal_score: int = 0            # 综合评分 0-100
@@ -165,6 +181,20 @@ class TrendAnalysisResult:
             'rsi_24': self.rsi_24,
             'rsi_status': self.rsi_status.value,
             'rsi_signal': self.rsi_signal,
+            'kdj_k': self.kdj_k,
+            'kdj_d': self.kdj_d,
+            'kdj_j': self.kdj_j,
+            'kdj_status': self.kdj_status,
+            'kdj_signal': self.kdj_signal,
+            'boll_upper': self.boll_upper,
+            'boll_middle': self.boll_middle,
+            'boll_lower': self.boll_lower,
+            'boll_pct_b': self.boll_pct_b,
+            'boll_bandwidth': self.boll_bandwidth,
+            'boll_status': self.boll_status,
+            'boll_signal': self.boll_signal,
+            'support_levels': self.support_levels,
+            'resistance_levels': self.resistance_levels,
         }
 
 
@@ -197,6 +227,11 @@ class StockTrendAnalyzer:
     RSI_LONG = 24              # 长期RSI周期
     RSI_OVERBOUGHT = 70        # 超买阈值
     RSI_OVERSOLD = 30          # 超卖阈值
+
+    # KDJ / BOLL 参数
+    KDJ_PERIOD = 9
+    BOLL_PERIOD = 20
+    BOLL_STD = 2
     
     def __init__(self):
         """初始化分析器"""
@@ -229,6 +264,8 @@ class StockTrendAnalyzer:
         # 计算 MACD 和 RSI
         df = self._calculate_macd(df)
         df = self._calculate_rsi(df)
+        df = self._calculate_kdj(df)
+        df = self._calculate_boll(df)
 
         # 获取最新数据
         latest = df.iloc[-1]
@@ -256,7 +293,11 @@ class StockTrendAnalyzer:
         # 6. RSI 分析
         self._analyze_rsi(df, result)
 
-        # 7. 生成买入信号
+        # 7. KDJ / BOLL 分析
+        self._analyze_kdj(df, result)
+        self._analyze_boll(df, result)
+
+        # 8. 生成买入信号
         self._generate_signal(result)
 
         return result
@@ -334,6 +375,45 @@ class StockTrendAnalyzer:
             col_name = f'RSI_{period}'
             df[col_name] = rsi
 
+        return df
+
+    def _calculate_kdj(self, df: pd.DataFrame) -> pd.DataFrame:
+        """计算 KDJ 指标（RSV + 平滑 K/D/J）"""
+        df = df.copy()
+        period = self.KDJ_PERIOD
+        low_n = df["low"].rolling(window=period, min_periods=1).min()
+        high_n = df["high"].rolling(window=period, min_periods=1).max()
+        spread = (high_n - low_n).replace(0, np.nan)
+        rsv = ((df["close"] - low_n) / spread * 100.0).fillna(50.0).clip(0, 100)
+
+        k_values: List[float] = []
+        d_values: List[float] = []
+        k_prev = 50.0
+        d_prev = 50.0
+        for value in rsv:
+            if pd.isna(value):
+                k_values.append(k_prev)
+                d_values.append(d_prev)
+                continue
+            k_curr = (2.0 / 3.0) * k_prev + (1.0 / 3.0) * float(value)
+            d_curr = (2.0 / 3.0) * d_prev + (1.0 / 3.0) * k_curr
+            k_values.append(k_curr)
+            d_values.append(d_curr)
+            k_prev, d_prev = k_curr, d_curr
+
+        df["KDJ_K"] = k_values
+        df["KDJ_D"] = d_values
+        df["KDJ_J"] = 3.0 * df["KDJ_K"] - 2.0 * df["KDJ_D"]
+        return df
+
+    def _calculate_boll(self, df: pd.DataFrame) -> pd.DataFrame:
+        """计算布林带（20 日中轨 + 2 倍标准差）"""
+        df = df.copy()
+        period = self.BOLL_PERIOD
+        df["BOLL_MID"] = df["close"].rolling(window=period, min_periods=1).mean()
+        rolling_std = df["close"].rolling(window=period, min_periods=1).std().fillna(0)
+        df["BOLL_UPPER"] = df["BOLL_MID"] + self.BOLL_STD * rolling_std
+        df["BOLL_LOWER"] = df["BOLL_MID"] - self.BOLL_STD * rolling_std
         return df
     
     def _analyze_trend(self, df: pd.DataFrame, result: TrendAnalysisResult) -> None:
@@ -579,6 +659,73 @@ class StockTrendAnalyzer:
         else:
             result.rsi_status = RSIStatus.OVERSOLD
             result.rsi_signal = f"⭐ RSI超卖({rsi_mid:.1f}<30)，反弹机会大"
+
+    def _analyze_kdj(self, df: pd.DataFrame, result: TrendAnalysisResult) -> None:
+        if len(df) < self.KDJ_PERIOD or "KDJ_K" not in df.columns:
+            result.kdj_signal = "数据不足"
+            return
+
+        latest = df.iloc[-1]
+        prev = df.iloc[-2] if len(df) >= 2 else latest
+        result.kdj_k = float(latest["KDJ_K"])
+        result.kdj_d = float(latest["KDJ_D"])
+        result.kdj_j = float(latest["KDJ_J"])
+
+        prev_k = float(prev["KDJ_K"])
+        prev_d = float(prev["KDJ_D"])
+        if result.kdj_j >= 100:
+            result.kdj_status = "超买"
+            result.kdj_signal = f"⚠️ J值偏高({result.kdj_j:.1f})，短线超买风险"
+        elif result.kdj_j <= 0:
+            result.kdj_status = "超卖"
+            result.kdj_signal = f"⭐ J值偏低({result.kdj_j:.1f})，关注反弹机会"
+        elif prev_k <= prev_d and result.kdj_k > result.kdj_d:
+            result.kdj_status = "金叉"
+            result.kdj_signal = "✅ KDJ金叉，短线转强"
+        elif prev_k >= prev_d and result.kdj_k < result.kdj_d:
+            result.kdj_status = "死叉"
+            result.kdj_signal = "❌ KDJ死叉，短线转弱"
+        elif result.kdj_k > result.kdj_d:
+            result.kdj_status = "多头"
+            result.kdj_signal = f"✓ K>D({result.kdj_k:.1f}/{result.kdj_d:.1f})，偏多"
+        else:
+            result.kdj_status = "空头"
+            result.kdj_signal = f"⚠ K<D({result.kdj_k:.1f}/{result.kdj_d:.1f})，偏空"
+
+    def _analyze_boll(self, df: pd.DataFrame, result: TrendAnalysisResult) -> None:
+        if len(df) < self.BOLL_PERIOD or "BOLL_MID" not in df.columns:
+            result.boll_signal = "数据不足"
+            return
+
+        latest = df.iloc[-1]
+        upper = float(latest["BOLL_UPPER"])
+        middle = float(latest["BOLL_MID"])
+        lower = float(latest["BOLL_LOWER"])
+        close = float(latest["close"])
+        result.boll_upper = upper
+        result.boll_middle = middle
+        result.boll_lower = lower
+
+        band_width = upper - lower
+        if band_width > 0:
+            result.boll_pct_b = round((close - lower) / band_width, 4)
+            result.boll_bandwidth = round(band_width / middle * 100.0, 4) if middle else 0.0
+        else:
+            result.boll_pct_b = 0.5
+            result.boll_bandwidth = 0.0
+
+        if close >= upper:
+            result.boll_status = "上轨附近"
+            result.boll_signal = "⚠️ 触及/突破上轨，注意回调压力"
+        elif close <= lower:
+            result.boll_status = "下轨附近"
+            result.boll_signal = "⭐ 触及/跌破下轨，关注反弹"
+        elif close >= middle:
+            result.boll_status = "中轨上方"
+            result.boll_signal = f"✓ 运行于中轨上方(%B={result.boll_pct_b:.2f})"
+        else:
+            result.boll_status = "中轨下方"
+            result.boll_signal = f"⚠ 运行于中轨下方(%B={result.boll_pct_b:.2f})"
 
     def _generate_signal(self, result: TrendAnalysisResult) -> None:
         """

@@ -5,8 +5,20 @@ export type PredictionReportPreview = {
   analysisSummary?: string;
 };
 
+export type PredictionReportBacktestPreview = {
+  available?: boolean;
+  tone?: 'success' | 'danger' | 'neutral' | string;
+  label?: string;
+  outcome?: string;
+  directionCorrect?: boolean;
+  stockReturnPct?: number;
+  evalWindowDays?: number;
+  evalStatus?: string;
+};
+
 export type PredictionReportListingItem = {
   id: number;
+  analysisHistoryId?: number;
   sellerUserId: number;
   sellerUsername: string;
   code: string;
@@ -19,11 +31,15 @@ export type PredictionReportListingItem = {
   isMine: boolean;
   purchased: boolean;
   canViewFull: boolean;
+  canPurchase?: boolean;
+  isCurrentCycle?: boolean;
+  hasPurchaseRecord?: boolean;
   buyerHistoryId?: number | null;
   preview: PredictionReportPreview;
   likeCount: number;
   liked: boolean;
   createdAt?: string | null;
+  backtestPreview?: PredictionReportBacktestPreview;
 };
 
 export type PredictionReportPricing = {

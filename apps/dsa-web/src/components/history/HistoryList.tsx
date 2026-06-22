@@ -134,7 +134,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                 isLoading={isSharing}
                 className="history-batch-share-button"
               >
-                {isSharing ? '分享中' : '分享'}
+                {isSharing ? '推荐中' : '推荐'}
               </Button>
               <Button
                 variant="danger-subtle"

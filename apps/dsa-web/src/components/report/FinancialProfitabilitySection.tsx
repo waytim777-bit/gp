@@ -15,12 +15,16 @@ import type {
   ProfitabilityAnalysisReport,
   ProfitabilityRow,
   ReportLanguage,
+  DimensionAnalysisReport,
 } from '../../types/analysis';
 import { normalizeReportLanguage } from '../../utils/reportLanguage';
+import { pickDimensionAnalysis } from '../../utils/dimensionAnalysis';
+import { DimensionAnalysisBlock } from './DimensionAnalysisBlock';
 
 interface FinancialProfitabilitySectionProps {
   financialReport?: FinancialReport;
   profitabilityAnalysis?: ProfitabilityAnalysisReport;
+  financialFundamentalsAnalysis?: DimensionAnalysisReport;
   language?: ReportLanguage;
   compact?: boolean;
 }
@@ -161,14 +165,20 @@ const buildFallbackSummary = (
 export const FinancialProfitabilitySection: React.FC<FinancialProfitabilitySectionProps> = ({
   financialReport,
   profitabilityAnalysis,
+  financialFundamentalsAnalysis,
   language,
   compact = false,
 }) => {
   const reportLanguage = normalizeReportLanguage(language);
   const rows = getProfitabilityRows(financialReport);
+  const mergedAnalysis = pickDimensionAnalysis(
+    financialFundamentalsAnalysis,
+    'profitability',
+    profitabilityAnalysis,
+  );
   const fallbackSummary = buildFallbackSummary(rows, reportLanguage);
-  const analysisSummary = cleanText(profitabilityAnalysis?.summary) || fallbackSummary;
-  const analysisItems = getAnalysisItems(profitabilityAnalysis);
+  const analysisSummary = cleanText(mergedAnalysis?.summary) || fallbackSummary;
+  const analysisItems = getAnalysisItems(mergedAnalysis);
   const chartData = toChartData(rows);
 
   if (!analysisSummary && analysisItems.length === 0 && chartData.length === 0) {
@@ -220,25 +230,12 @@ export const FinancialProfitabilitySection: React.FC<FinancialProfitabilitySecti
         ) : null}
       </div>
 
-      {analysisSummary || analysisItems.length > 0 ? (
-        <div className="space-y-3 text-sm leading-7 text-foreground">
-          {analysisSummary ? (
-            <p className="whitespace-pre-wrap">{analysisSummary}</p>
-          ) : null}
-          {analysisItems.length > 0 ? (
-            <ul className="space-y-2">
-              {analysisItems.map((item, index) => (
-                <li key={`${item.title}-${index}`} className="flex gap-2">
-                  <span className="mt-[0.72em] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-default-400" />
-                  <span>
-                    {item.title ? <strong>{item.title}：</strong> : null}
-                    {item.content}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-        </div>
+      {(mergedAnalysis?.summary || mergedAnalysis?.items?.length || analysisSummary) ? (
+        <DimensionAnalysisBlock
+          analysis={mergedAnalysis ?? { summary: analysisSummary, items: analysisItems }}
+          dimension="profitability"
+          language={reportLanguage}
+        />
       ) : null}
 
       {chartData.length > 0 ? (

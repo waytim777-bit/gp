@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.exc import IntegrityError
 
 from api.deps import get_database_manager, require_admin, get_current_user
-from api.v1.endpoints import admin_subscription_push, admin_prediction_reports
+from api.v1.endpoints import admin_subscription_push, admin_prediction_reports, admin_stock_index
 from src.permissions import get_menu_items, get_setting_items
 from src.storage import DatabaseManager
 from src.user_context import CurrentUser
@@ -20,6 +20,7 @@ router = APIRouter()
 
 router.include_router(admin_subscription_push.router)
 router.include_router(admin_prediction_reports.router)
+router.include_router(admin_stock_index.router)
 
 ROLE_KEY_RE = re.compile(r"^[a-z][a-z0-9_-]{1,31}$")
 

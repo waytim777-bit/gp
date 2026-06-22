@@ -180,7 +180,7 @@ const PaymentPage: React.FC = () => {
                         <div>
                           <span className="font-medium text-red-400">-{d.creditsSpent}</span>
                           <span className="ml-2 text-default-500">
-                            {d.callType === 'analysis' ? '分析' : d.callType === 'agent' ? '问股' : d.callType}
+                            {d.callType === 'analysis' ? '分析' : d.callType === 'agent' ? '问股' : d.callType === 'consultation' ? '会诊' : d.callType}
                           </span>
                         </div>
                         <div className="text-xs text-default-500">

@@ -89,4 +89,18 @@ export const historyApi = {
 
     return toCamelCase<{ deleted: number }>(response.data);
   },
+
+  enableShareLink: async (recordId: number) => {
+    const response = await apiClient.post<Record<string, unknown>>(
+      `/api/v1/history/${recordId}/share-link`,
+    );
+    return toCamelCase<import('./publicReports').ReportShareLinkPayload>(response.data);
+  },
+
+  getShareLink: async (recordId: number) => {
+    const response = await apiClient.get<Record<string, unknown>>(
+      `/api/v1/history/${recordId}/share-link`,
+    );
+    return toCamelCase<import('./publicReports').ReportShareLinkPayload>(response.data);
+  },
 };

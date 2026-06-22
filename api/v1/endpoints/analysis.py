@@ -66,6 +66,7 @@ from src.utils.data_processing import (
     normalize_model_used,
     parse_json_field,
     extract_fundamental_detail_fields,
+    extract_technical_detail_fields,
     extract_board_detail_fields,
     extract_company_profile_detail_field,
 )
@@ -839,6 +840,46 @@ def _build_analysis_report(
     )
     business_model = details_data.get("business_model") or report_data.get("business_model")
     profitability_analysis = details_data.get("profitability_analysis") or report_data.get("profitability_analysis")
+    extracted_technical = extract_technical_detail_fields(
+        context_snapshot=context_snapshot,
+        report_data=report_data,
+    )
+    technical_indicators = extracted_technical.get("technical_indicators")
+    technical_analysis_report = (
+        details_data.get("technical_analysis_report")
+        or report_data.get("technical_analysis_report")
+        or extracted_technical.get("technical_analysis_report")
+    )
+    kline_series = extracted_technical.get("kline_series")
+    price_trend_analysis = (
+        details_data.get("price_trend_analysis")
+        or report_data.get("price_trend_analysis")
+        or extracted_technical.get("price_trend_analysis")
+    )
+    chip_distribution = extracted_technical.get("chip_distribution")
+    key_levels = extracted_technical.get("key_levels")
+    key_levels_analysis = (
+        details_data.get("key_levels_analysis")
+        or report_data.get("key_levels_analysis")
+        or extracted_technical.get("key_levels_analysis")
+    )
+    weekly_kline_series = extracted_technical.get("weekly_kline_series")
+    weekly_trend_analysis = (
+        details_data.get("weekly_trend_analysis")
+        or report_data.get("weekly_trend_analysis")
+        or extracted_technical.get("weekly_trend_analysis")
+    )
+    capital_flow = extracted_technical.get("capital_flow")
+    capital_flow_analysis = (
+        details_data.get("capital_flow_analysis")
+        or report_data.get("capital_flow_analysis")
+        or extracted_technical.get("capital_flow_analysis")
+    )
+    financial_fundamentals_analysis = (
+        details_data.get("financial_fundamentals_analysis")
+        or report_data.get("financial_fundamentals_analysis")
+        or extracted_technical.get("financial_fundamentals_analysis")
+    )
     details = None
     has_board_details = bool(extracted_boards.get("belong_boards")) or extracted_boards.get("sector_rankings") is not None
     if (
@@ -847,9 +888,24 @@ def _build_analysis_report(
         or company_profile
         or business_model
         or profitability_analysis
+        or technical_indicators
+        or technical_analysis_report
+        or kline_series
+        or price_trend_analysis
+        or chip_distribution
+        or key_levels
+        or key_levels_analysis
+        or weekly_kline_series
+        or weekly_trend_analysis
+        or capital_flow
+        or capital_flow_analysis
+        or financial_fundamentals_analysis
         or has_board_details
         or context_snapshot is not None
     ):
+        model_opinions = None
+        if isinstance(context_snapshot, dict):
+            model_opinions = context_snapshot.get("model_opinions")
         details = ReportDetails(
             news_content=details_data.get("news_summary") or details_data.get("news_content"),
             raw_result=details_data,
@@ -859,8 +915,21 @@ def _build_analysis_report(
             company_profile=company_profile,
             business_model=business_model,
             profitability_analysis=profitability_analysis,
+            financial_fundamentals_analysis=financial_fundamentals_analysis,
+            technical_indicators=technical_indicators,
+            technical_analysis_report=technical_analysis_report,
+            kline_series=kline_series,
+            price_trend_analysis=price_trend_analysis,
+            chip_distribution=chip_distribution,
+            key_levels=key_levels,
+            key_levels_analysis=key_levels_analysis,
+            weekly_kline_series=weekly_kline_series,
+            weekly_trend_analysis=weekly_trend_analysis,
+            capital_flow=capital_flow,
+            capital_flow_analysis=capital_flow_analysis,
             belong_boards=extracted_boards.get("belong_boards"),
             sector_rankings=extracted_boards.get("sector_rankings"),
+            model_opinions=model_opinions,
         )
 
     return AnalysisReport(

@@ -63,6 +63,22 @@ class BacktestRepository:
             rows = session.execute(query).scalars().all()
             return list(rows)
 
+    def get_latest_result_by_analysis_history_id(
+        self,
+        analysis_history_id: int,
+    ) -> Optional[BacktestResult]:
+        """Return the newest backtest row for a history record (any owner)."""
+        with self.db.get_session() as session:
+            row = session.execute(
+                select(BacktestResult)
+                .where(BacktestResult.analysis_history_id == int(analysis_history_id))
+                .order_by(desc(BacktestResult.evaluated_at), desc(BacktestResult.id))
+                .limit(1)
+            ).scalar_one_or_none()
+            if row is not None:
+                session.expunge(row)
+            return row
+
     def save_result(self, result: BacktestResult) -> None:
         with self.db.get_session() as session:
             session.add(result)

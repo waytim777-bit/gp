@@ -10,6 +10,7 @@ export const ADMIN_ROUTES: AdminRoute[] = [
   { key: 'users', label: '用户管理', path: '/users' },
   { key: 'credits', label: '积分管理', path: '/credits' },
   { key: 'push', label: '推送管理', path: '/push' },
+  { key: 'stocks', label: '股票管理', path: '/stocks' },
   { key: 'prediction-reports', label: '预测报告定价', path: '/prediction-reports' },
   { key: 'roles', label: '角色管理', path: '/roles' },
   { key: 'settings', label: '系统设置', path: '/settings' },

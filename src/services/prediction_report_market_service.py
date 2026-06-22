@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Optional
 from src.core.prediction_cycle import resolve_prediction_cycle
 from src.core.trading_calendar import get_market_for_stock
 from src.services.credit_service import CreditService, InsufficientCreditsError
+from src.services.backtest_service import BacktestService
 from src.storage import DatabaseManager, PredictionReportListing
 
 logger = logging.getLogger(__name__)
@@ -67,6 +68,10 @@ class PredictionReportMarketService:
             return False
 
     def share_report(self, *, owner_user_id: int, history_id: int) -> Dict[str, Any]:
+        """Recommend a report to the prediction marketplace (legacy alias)."""
+        return self.recommend_report(owner_user_id=owner_user_id, history_id=history_id)
+
+    def recommend_report(self, *, owner_user_id: int, history_id: int) -> Dict[str, Any]:
         history, shared_run, cycle_anchor = self._validate_share_candidate(
             owner_user_id=owner_user_id,
             history_id=history_id,
@@ -83,6 +88,7 @@ class PredictionReportMarketService:
                 viewer_user_id=owner_user_id,
                 purchased=True,
                 can_view_full=True,
+                has_purchase_record=False,
                 like_count=int(stats["like_count"]),
                 liked=bool(stats["liked"]),
             )
@@ -102,7 +108,7 @@ class PredictionReportMarketService:
             seller_reward_credits=pricing["seller_reward_credits"],
         )
         logger.info(
-            "Prediction report shared: listing=%s user=%s code=%s anchor=%s",
+            "Prediction report recommended: listing=%s user=%s code=%s anchor=%s",
             listing.id,
             owner_user_id,
             history.code,
@@ -114,9 +120,18 @@ class PredictionReportMarketService:
             purchased=True,
             can_view_full=True,
             history=history,
+            has_purchase_record=False,
             like_count=0,
             liked=False,
         )
+
+    def _listing_is_current_cycle(self, listing: PredictionReportListing) -> bool:
+        market = listing.market or get_market_for_stock(listing.code) or "cn"
+        cycle = resolve_prediction_cycle(market)
+        anchor = listing.cycle_anchor_date
+        if anchor is None:
+            return False
+        return anchor == cycle.cycle_anchor_date
 
     def list_reports(self, *, viewer_user_id: int) -> Dict[str, Any]:
         db = DatabaseManager.get_instance()
@@ -133,14 +148,16 @@ class PredictionReportMarketService:
                 buyer_user_id=int(viewer_user_id),
             )
             is_seller = int(row.seller_user_id) == int(viewer_user_id)
+            has_purchase_record = purchase is not None
             stats = like_stats.get(int(row.id), {"like_count": 0, "liked": False})
             items.append(
                 self._serialize_listing(
                     row,
                     viewer_user_id=viewer_user_id,
-                    purchased=purchase is not None or is_seller,
-                    can_view_full=purchase is not None or is_seller,
+                    purchased=has_purchase_record or is_seller,
+                    can_view_full=has_purchase_record or is_seller,
                     buyer_history_id=int(purchase.buyer_history_id) if purchase and purchase.buyer_history_id else None,
+                    has_purchase_record=has_purchase_record,
                     like_count=int(stats["like_count"]),
                     liked=bool(stats["liked"]),
                 )
@@ -162,6 +179,7 @@ class PredictionReportMarketService:
             buyer_user_id=int(viewer_user_id),
         )
         is_seller = int(listing.seller_user_id) == int(viewer_user_id)
+        has_purchase_record = purchase is not None
         history = None
         if purchase is not None and purchase.buyer_history_id:
             history = db.get_analysis_history_by_id(int(purchase.buyer_history_id), scoped=False)
@@ -174,12 +192,13 @@ class PredictionReportMarketService:
         return self._serialize_listing(
             listing,
             viewer_user_id=viewer_user_id,
-            purchased=purchase is not None or is_seller,
-            can_view_full=purchase is not None or is_seller,
+            purchased=has_purchase_record or is_seller,
+            can_view_full=has_purchase_record or is_seller,
             history=history,
             buyer_history_id=int(purchase.buyer_history_id) if purchase and purchase.buyer_history_id else (
                 int(listing.analysis_history_id) if is_seller else None
             ),
+            has_purchase_record=has_purchase_record,
             like_count=int(stats["like_count"]),
             liked=bool(stats["liked"]),
         )
@@ -206,6 +225,8 @@ class PredictionReportMarketService:
             raise PredictionReportMarketError("not_found", "预测报告不存在或已下架")
         if int(listing.seller_user_id) == int(buyer_user_id):
             raise PredictionReportMarketError("own_listing", "不能购买自己分享的报告")
+        if not self._listing_is_current_cycle(listing):
+            raise PredictionReportMarketError("expired_cycle", "该报告预测周期已结束，无法购买")
 
         existing = db.get_prediction_report_purchase(
             listing_id=int(listing.id),
@@ -334,6 +355,8 @@ class PredictionReportMarketService:
         can_view_full: bool,
         history: Any = None,
         buyer_history_id: Optional[int] = None,
+        has_purchase_record: bool = False,
+        is_current_cycle: Optional[bool] = None,
         like_count: int = 0,
         liked: bool = False,
     ) -> Dict[str, Any]:
@@ -352,8 +375,19 @@ class PredictionReportMarketService:
         if can_view_full and history is not None:
             preview["analysis_summary"] = history.analysis_summary
 
+        is_mine = int(listing.seller_user_id) == int(viewer_user_id)
+        if is_current_cycle is None:
+            is_current_cycle = self._listing_is_current_cycle(listing)
+        can_purchase = bool(is_current_cycle and not is_mine and not has_purchase_record)
+
+        canonical_history_id = int(listing.analysis_history_id)
+        backtest_preview = BacktestService(DatabaseManager.get_instance()).get_backtest_preview_for_history(
+            canonical_history_id,
+        )
+
         return {
             "id": int(listing.id),
+            "analysis_history_id": canonical_history_id,
             "seller_user_id": int(listing.seller_user_id),
             "seller_username": seller_name,
             "code": listing.code,
@@ -363,12 +397,16 @@ class PredictionReportMarketService:
             "report_type": listing.report_type,
             "purchase_credits": int(listing.purchase_credits),
             "seller_reward_credits": int(listing.seller_reward_credits),
-            "is_mine": int(listing.seller_user_id) == int(viewer_user_id),
+            "is_mine": is_mine,
             "purchased": purchased,
             "can_view_full": can_view_full,
+            "can_purchase": can_purchase,
+            "is_current_cycle": is_current_cycle,
+            "has_purchase_record": has_purchase_record,
             "buyer_history_id": buyer_history_id,
             "preview": preview,
             "like_count": int(like_count),
             "liked": bool(liked),
             "created_at": listing.created_at.isoformat() if listing.created_at else None,
+            "backtest_preview": backtest_preview,
         }

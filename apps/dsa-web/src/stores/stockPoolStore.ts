@@ -323,7 +323,7 @@ export const useStockPoolStore = create<StockPoolState>((set, get) => ({
     const recordId = selected[0];
     set({ isSharingHistory: true, error: null });
     try {
-      const listing = await predictionReportsApi.share(recordId);
+      const listing = await predictionReportsApi.recommend(recordId);
       set({ selectedHistoryIds: [] });
       return listing.id;
     } catch (error) {

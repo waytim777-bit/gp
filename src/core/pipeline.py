@@ -36,10 +36,18 @@ from src.report_language import (
     normalize_report_language,
 )
 from src.search_service import SearchService
+from src.stock_analyzer import StockTrendAnalyzer, TrendAnalysisResult
 from src.services.social_sentiment_service import SocialSentimentService
 from src.services.subscription_push import deliver_subscription_report
 from src.enums import ReportType
-from src.stock_analyzer import StockTrendAnalyzer, TrendAnalysisResult
+from src.utils.kline_series import (
+    KLINE_BACKFILL_DAYS,
+    KLINE_HISTORY_CALENDAR_DAYS,
+    KLINE_SERIES_MAX_BARS,
+    build_kline_series_from_dataframe,
+    build_kline_series_payload,
+    build_weekly_kline_series_from_dataframe,
+)
 from src.core.trading_calendar import (
     get_effective_trading_date,
     get_market_for_stock,
@@ -217,7 +225,7 @@ class StockAnalysisPipeline:
 
             # 从数据源获取数据
             logger.info(f"{stock_name}({code}) 开始从数据源获取数据...")
-            df, source_name = self.fetcher_manager.get_daily_data(code, days=30)
+            df, source_name = self.fetcher_manager.get_daily_data(code, days=KLINE_BACKFILL_DAYS)
 
             if df is None or df.empty:
                 return False, "获取数据为空"
@@ -345,16 +353,36 @@ class StockAnalysisPipeline:
             # Step 3: 趋势分析（基于交易理念）— 在 Agent 分支之前执行，供两条路径共用
             trend_result: Optional[TrendAnalysisResult] = None
             historical_bars = None
+            kline_series: Dict[str, Any] = {}
+            weekly_kline_series: Dict[str, Any] = {}
             try:
                 _mkt = get_market_for_stock(normalize_stock_code(code))
                 end_date = get_market_now(_mkt).date()
-                start_date = end_date - timedelta(days=89)  # ~60 trading days for MA60
+                start_date = end_date - timedelta(days=KLINE_HISTORY_CALENDAR_DAYS)
                 historical_bars = self.db.get_data_range(code, start_date, end_date)
+                min_bars_for_trend = 20
+                if not historical_bars or len(historical_bars) < min_bars_for_trend:
+                    try:
+                        hist_df, hist_source = self.fetcher_manager.get_daily_data(
+                            code, days=KLINE_BACKFILL_DAYS
+                        )
+                        if hist_df is not None and not hist_df.empty:
+                            self.db.save_daily_data(hist_df, code, hist_source)
+                        historical_bars = self.db.get_data_range(code, start_date, end_date)
+                    except Exception as backfill_exc:
+                        logger.debug(
+                            f"{stock_name}({code}) K线回填失败（fail-open）: {backfill_exc}"
+                        )
+                else:
+                    logger.info(
+                        f"{stock_name}({code}) K线回填跳过：本地 DB 已有 {len(historical_bars)} 条"
+                    )
                 if historical_bars:
                     df = pd.DataFrame([bar.to_dict() for bar in historical_bars])
-                    # Issue #234: Augment with realtime for intraday MA calculation
                     if self.config.enable_realtime_quote and realtime_quote:
                         df = self._augment_historical_with_realtime(df, realtime_quote, code)
+                    kline_series = build_kline_series_from_dataframe(df, max_bars=KLINE_SERIES_MAX_BARS)
+                    weekly_kline_series = build_weekly_kline_series_from_dataframe(df)
                     trend_result = self.trend_analyzer.analyze(df, code)
                     logger.info(f"{stock_name}({code}) 趋势分析: {trend_result.trend_status.value}, "
                               f"买入信号={trend_result.buy_signal.value}, 评分={trend_result.signal_score}")
@@ -374,6 +402,8 @@ class StockAnalysisPipeline:
                     fundamental_context,
                     trend_result,
                     historical_bars=historical_bars,
+                    kline_series=kline_series,
+                    weekly_kline_series=weekly_kline_series,
                 )
 
             # Step 4: 多维度情报搜索（最新消息+风险排查+业绩预期）
@@ -455,6 +485,8 @@ class StockAnalysisPipeline:
                 trend_result,
                 stock_name,  # 传入股票名称
                 fundamental_context,
+                kline_series=kline_series,
+                weekly_kline_series=weekly_kline_series,
             )
             
             # Step 7: 调用 AI 分析（传入增强的上下文和新闻）
@@ -529,7 +561,9 @@ class StockAnalysisPipeline:
         chip_data: Optional[ChipDistribution],
         trend_result: Optional[TrendAnalysisResult],
         stock_name: str = "",
-        fundamental_context: Optional[Dict[str, Any]] = None
+        fundamental_context: Optional[Dict[str, Any]] = None,
+        kline_series: Optional[Dict[str, Any]] = None,
+        weekly_kline_series: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
         增强分析上下文
@@ -582,6 +616,15 @@ class StockAnalysisPipeline:
         # 添加筹码分布
         if chip_data:
             current_price = getattr(realtime_quote, 'price', 0) if realtime_quote else 0
+            from src.utils.chip_distribution import build_chip_distribution_payload
+
+            chip_payload = build_chip_distribution_payload(
+                chip_data,
+                current_price=current_price or (trend_result.current_price if trend_result else None),
+                language=enhanced.get("report_language", "zh"),
+            )
+            if chip_payload:
+                enhanced['chip_distribution'] = chip_payload
             enhanced['chip'] = {
                 'profit_ratio': chip_data.profit_ratio,
                 'avg_cost': chip_data.avg_cost,
@@ -592,19 +635,98 @@ class StockAnalysisPipeline:
         
         # 添加趋势分析结果
         if trend_result:
+            from src.utils.technical_indicators import build_technical_indicators_payload
+
+            technical_payload = build_technical_indicators_payload(trend_result)
+            if technical_payload:
+                enhanced['technical_indicators'] = technical_payload
+
             enhanced['trend_analysis'] = {
                 'trend_status': trend_result.trend_status.value,
                 'ma_alignment': trend_result.ma_alignment,
                 'trend_strength': trend_result.trend_strength,
+                'ma5': trend_result.ma5,
+                'ma10': trend_result.ma10,
+                'ma20': trend_result.ma20,
+                'ma60': trend_result.ma60,
+                'current_price': trend_result.current_price,
                 'bias_ma5': trend_result.bias_ma5,
                 'bias_ma10': trend_result.bias_ma10,
+                'bias_ma20': trend_result.bias_ma20,
                 'volume_status': trend_result.volume_status.value,
+                'volume_ratio_5d': trend_result.volume_ratio_5d,
                 'volume_trend': trend_result.volume_trend,
                 'buy_signal': trend_result.buy_signal.value,
                 'signal_score': trend_result.signal_score,
                 'signal_reasons': trend_result.signal_reasons,
                 'risk_factors': trend_result.risk_factors,
+                'macd_dif': trend_result.macd_dif,
+                'macd_dea': trend_result.macd_dea,
+                'macd_bar': trend_result.macd_bar,
+                'macd_status': trend_result.macd_status.value,
+                'macd_signal': trend_result.macd_signal,
+                'rsi_6': trend_result.rsi_6,
+                'rsi_12': trend_result.rsi_12,
+                'rsi_24': trend_result.rsi_24,
+                'rsi_status': trend_result.rsi_status.value,
+                'rsi_signal': trend_result.rsi_signal,
+                'kdj_k': trend_result.kdj_k,
+                'kdj_d': trend_result.kdj_d,
+                'kdj_j': trend_result.kdj_j,
+                'kdj_status': trend_result.kdj_status,
+                'kdj_signal': trend_result.kdj_signal,
+                'boll_upper': trend_result.boll_upper,
+                'boll_middle': trend_result.boll_middle,
+                'boll_lower': trend_result.boll_lower,
+                'boll_pct_b': trend_result.boll_pct_b,
+                'boll_bandwidth': trend_result.boll_bandwidth,
+                'boll_status': trend_result.boll_status,
+                'boll_signal': trend_result.boll_signal,
+                'support_levels': trend_result.support_levels,
+                'resistance_levels': trend_result.resistance_levels,
+                'support_ma5': trend_result.support_ma5,
+                'support_ma10': trend_result.support_ma10,
             }
+
+        if isinstance(kline_series, dict) and kline_series.get("rows"):
+            enhanced["kline_series"] = kline_series
+            enhanced["daily_bars"] = kline_series
+
+        if isinstance(weekly_kline_series, dict) and weekly_kline_series.get("rows"):
+            enhanced["weekly_kline_series"] = weekly_kline_series
+            enhanced["multi_timeframe"] = {
+                "periods": ["daily", "weekly"],
+                "daily_bars": kline_series.get("total_records") if isinstance(kline_series, dict) else None,
+                "weekly_bars": weekly_kline_series.get("total_records"),
+            }
+
+        from src.utils.capital_flow_report import build_capital_flow_payload
+
+        capital_flow_payload = build_capital_flow_payload(
+            fundamental_context,
+            stock_code=context.get("code"),
+        )
+        if capital_flow_payload:
+            enhanced["capital_flow"] = capital_flow_payload
+
+        from src.utils.pattern_hints import build_pattern_hints_payload
+        from src.utils.key_levels import build_key_levels_payload
+
+        pattern_hints = build_pattern_hints_payload(kline_series) if isinstance(kline_series, dict) else {}
+        if pattern_hints:
+            enhanced["pattern_hints"] = pattern_hints
+
+        chip_distribution = enhanced.get("chip_distribution")
+        technical_payload = enhanced.get("technical_indicators")
+        key_levels = build_key_levels_payload(
+            trend_result,
+            chip_distribution=chip_distribution if isinstance(chip_distribution, dict) else None,
+            technical_indicators=technical_payload if isinstance(technical_payload, dict) else None,
+            current_price=(trend_result.current_price if trend_result else None),
+            pattern_hints=pattern_hints or None,
+        )
+        if key_levels:
+            enhanced["key_levels"] = key_levels
 
         # Issue #234: Override today with realtime OHLC + trend MA for intraday analysis
         # Guard: trend_result.ma5 > 0 ensures MA calculation succeeded (data sufficient)
@@ -741,16 +863,91 @@ class StockAnalysisPipeline:
 
     @staticmethod
     def _build_daily_history_payload(code: str, historical_bars: Any) -> Dict[str, Any]:
-        records = [bar.to_dict() for bar in historical_bars]
-        for row in records:
-            if "date" in row:
-                row["date"] = str(row["date"])
-        tail = records[-60:]
+        payload = build_kline_series_payload(
+            historical_bars,
+            max_bars=KLINE_SERIES_MAX_BARS,
+            source="pipeline_prefetch",
+        )
+        if payload:
+            payload["code"] = code
+            payload["data"] = payload.get("rows", [])
+            return payload
         return {
             "code": code,
             "source": "pipeline_prefetch",
-            "total_records": len(tail),
-            "data": tail,
+            "total_records": 0,
+            "data": [],
+        }
+
+    @staticmethod
+    def _build_snapshot_realtime_quote(
+        *,
+        code: str,
+        stock_name: str,
+        trend_result: Optional[TrendAnalysisResult] = None,
+        fundamental_context: Optional[Dict[str, Any]] = None,
+        kline_series: Optional[Dict[str, Any]] = None,
+    ) -> Optional[Dict[str, Any]]:
+        """Build a quote snapshot from pipeline data when live quote is disabled."""
+        price = None
+        if trend_result is not None:
+            price = getattr(trend_result, "current_price", None)
+        if price is None and isinstance(kline_series, dict):
+            rows = kline_series.get("rows") or kline_series.get("data") or []
+            if rows:
+                price = rows[-1].get("close")
+        if price is None:
+            return None
+
+        payload: Dict[str, Any] = {
+            "code": code,
+            "name": stock_name,
+            "price": price,
+            "source": "pipeline_snapshot",
+            "note": "Pipeline snapshot (historical close / trend price; live quote disabled or unavailable)",
+        }
+        if isinstance(fundamental_context, dict):
+            val_block = fundamental_context.get("valuation") or {}
+            val_data = val_block.get("data") if isinstance(val_block, dict) else {}
+            if isinstance(val_data, dict):
+                for key in ("pe_ratio", "pb_ratio", "total_mv", "circ_mv", "turnover_rate"):
+                    if val_data.get(key) is not None:
+                        payload[key] = val_data[key]
+        return payload
+
+    @staticmethod
+    def _block_to_capital_flow_payload(
+        code: str,
+        block: Optional[Dict[str, Any]],
+    ) -> Optional[Dict[str, Any]]:
+        """Normalize a fundamental capital_flow block into agent prefetch payload."""
+        if not isinstance(block, dict):
+            return None
+        status = block.get("status")
+        data = block.get("data") or {}
+        if not isinstance(data, dict):
+            data = {}
+        stock_flow = data.get("stock_flow") or {}
+        sector_rankings = data.get("sector_rankings") or {}
+        if not isinstance(stock_flow, dict):
+            stock_flow = {}
+        if not isinstance(sector_rankings, dict):
+            sector_rankings = {}
+        if status is None and not stock_flow and not sector_rankings:
+            return None
+        return {
+            "stock_code": code,
+            "status": status or ("ok" if stock_flow or sector_rankings else "partial"),
+            "main_net_inflow": stock_flow.get("main_net_inflow"),
+            "inflow_5d": stock_flow.get("inflow_5d"),
+            "inflow_10d": stock_flow.get("inflow_10d"),
+            "sector_rankings": {
+                "top_inflow_sectors": sector_rankings.get("top", [])[:3],
+                "top_outflow_sectors": sector_rankings.get("bottom", [])[:3],
+            },
+            "errors": block.get("errors") or [],
+            "cached": True,
+            "source": "pipeline_prefetch",
         }
 
     @staticmethod
@@ -761,27 +958,74 @@ class StockAnalysisPipeline:
         if not isinstance(fundamental_context, dict):
             return None
         block = fundamental_context.get("capital_flow")
-        if not isinstance(block, dict):
-            return None
-        status = block.get("status")
-        data = block.get("data") or {}
-        stock_flow = data.get("stock_flow") or {}
-        sector_rankings = data.get("sector_rankings") or {}
-        if status in (None, "not_supported", "failed") and not stock_flow:
-            return None
-        return {
-            "stock_code": code,
-            "status": status or "ok",
-            "main_net_inflow": stock_flow.get("main_net_inflow"),
-            "inflow_5d": stock_flow.get("inflow_5d"),
-            "inflow_10d": stock_flow.get("inflow_10d"),
-            "sector_rankings": {
-                "top_inflow_sectors": sector_rankings.get("top", [])[:3],
-                "top_outflow_sectors": sector_rankings.get("bottom", [])[:3],
-            },
-            "errors": block.get("errors") or [],
-            "cached": True,
-        }
+        return StockAnalysisPipeline._block_to_capital_flow_payload(code, block)
+
+    def _capital_flow_payload_has_usable_data(self, payload: Optional[Dict[str, Any]]) -> bool:
+        if not isinstance(payload, dict):
+            return False
+        if payload.get("status") not in ("ok", "partial"):
+            return False
+        if payload.get("main_net_inflow") is not None:
+            return True
+        if payload.get("inflow_5d") is not None or payload.get("inflow_10d") is not None:
+            return True
+        rankings = payload.get("sector_rankings") or {}
+        if isinstance(rankings, dict):
+            return bool(rankings.get("top_inflow_sectors") or rankings.get("top_outflow_sectors"))
+        return False
+
+    def _ensure_capital_flow_for_agent(
+        self,
+        code: str,
+        stock_name: str,
+        fundamental_context: Optional[Dict[str, Any]],
+    ) -> Optional[Dict[str, Any]]:
+        """Ensure capital flow is prefetched once before Intel agent runs."""
+        block = None
+        if isinstance(fundamental_context, dict):
+            block = fundamental_context.get("capital_flow")
+
+        payload = self._block_to_capital_flow_payload(code, block)
+        if payload and payload.get("status") == "not_supported":
+            return payload
+        if self._capital_flow_payload_has_usable_data(payload):
+            return payload
+
+        budget = float(getattr(self.config, "fundamental_fetch_timeout_seconds", 0.8) or 0)
+        if budget <= 0:
+            return payload or {
+                "stock_code": code,
+                "status": "failed",
+                "errors": ["capital flow prefetch disabled"],
+                "cached": True,
+                "source": "pipeline_prefetch",
+            }
+
+        logger.info(
+            "%s(%s) Agent 预取：基本面阶段未获有效资金流，单独补拉",
+            stock_name,
+            code,
+        )
+        try:
+            fresh_block = self.fetcher_manager.get_capital_flow_context(
+                code,
+                budget_seconds=budget,
+            )
+        except Exception as exc:
+            logger.warning("%s(%s) 资金流预取失败: %s", stock_name, code, exc)
+            return payload or {
+                "stock_code": code,
+                "status": "failed",
+                "errors": [str(exc)],
+                "cached": True,
+                "source": "pipeline_prefetch",
+            }
+
+        if isinstance(fundamental_context, dict) and isinstance(fresh_block, dict):
+            fundamental_context["capital_flow"] = fresh_block
+
+        refreshed = self._block_to_capital_flow_payload(code, fresh_block)
+        return refreshed or payload
 
     def _save_intel_results_to_db(
         self,
@@ -814,6 +1058,8 @@ class StockAnalysisPipeline:
         fundamental_context: Optional[Dict[str, Any]],
         trend_result: Optional[TrendAnalysisResult],
         historical_bars: Any = None,
+        kline_series: Optional[Dict[str, Any]] = None,
+        weekly_kline_series: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """Collect external data once before the agent pipeline starts."""
         from src.agent.tools.search_tools import build_comprehensive_intel_tool_result
@@ -821,14 +1067,39 @@ class StockAnalysisPipeline:
         payload: Dict[str, Any] = {}
         if realtime_quote:
             payload["realtime_quote"] = self._safe_to_dict(realtime_quote)
+        elif isinstance(kline_series, dict) and kline_series.get("rows"):
+            snapshot_quote = self._build_snapshot_realtime_quote(
+                code=code,
+                stock_name=stock_name,
+                trend_result=trend_result,
+                fundamental_context=fundamental_context,
+                kline_series=kline_series,
+            )
+            if snapshot_quote:
+                payload["realtime_quote"] = snapshot_quote
         if chip_data:
             payload["chip_distribution"] = self._safe_to_dict(chip_data)
         if trend_result:
             payload["trend_result"] = self._safe_to_dict(trend_result)
-        if historical_bars:
+            from src.utils.technical_indicators import build_technical_indicators_payload
+
+            technical_payload = build_technical_indicators_payload(trend_result)
+            if technical_payload:
+                payload["technical_indicators"] = technical_payload
+        if isinstance(kline_series, dict) and kline_series.get("rows"):
+            payload["kline_series"] = kline_series
+            payload["daily_history"] = {
+                **kline_series,
+                "code": code,
+                "data": kline_series.get("rows", []),
+            }
+        elif historical_bars:
             payload["daily_history"] = self._build_daily_history_payload(code, historical_bars)
 
-        capital_flow = self._capital_flow_payload_from_fundamental(fundamental_context, code)
+        if isinstance(weekly_kline_series, dict) and weekly_kline_series.get("rows"):
+            payload["weekly_kline_series"] = weekly_kline_series
+
+        capital_flow = self._ensure_capital_flow_for_agent(code, stock_name, fundamental_context)
         if capital_flow:
             payload["capital_flow"] = capital_flow
 
@@ -882,6 +1153,8 @@ class StockAnalysisPipeline:
         fundamental_context: Optional[Dict[str, Any]] = None,
         trend_result: Optional[TrendAnalysisResult] = None,
         historical_bars: Any = None,
+        kline_series: Optional[Dict[str, Any]] = None,
+        weekly_kline_series: Optional[Dict[str, Any]] = None,
     ) -> Optional[AnalysisResult]:
         """
         使用 Agent 模式分析单只股票。
@@ -910,7 +1183,21 @@ class StockAnalysisPipeline:
                 fundamental_context=fundamental_context,
                 trend_result=trend_result,
                 historical_bars=historical_bars,
+                kline_series=kline_series,
+                weekly_kline_series=weekly_kline_series,
             )
+            base_context = self.db.get_analysis_context(code) or {"code": code}
+            enhanced_for_snapshot = self._enhance_context(
+                base_context,
+                realtime_quote,
+                chip_data,
+                trend_result,
+                stock_name,
+                fundamental_context,
+                kline_series=kline_series,
+                weekly_kline_series=weekly_kline_series,
+            )
+            initial_context["enhanced_context"] = enhanced_for_snapshot
             initial_context.update(prefetched)
 
             # Agent path: inject social sentiment as news_context so both
@@ -989,6 +1276,27 @@ class StockAnalysisPipeline:
 
             # 保存分析历史记录
             if result and result.success:
+                try:
+                    from src.services.multi_model_consultation_service import MultiModelConsultationService
+
+                    consult_svc = MultiModelConsultationService(self.config)
+                    if consult_svc.is_enabled():
+                        self._emit_progress(96, f"{resolved_stock_name}：多模型会诊分析中")
+                        initial_context["model_opinions"] = consult_svc.run(
+                            stock_code=code,
+                            stock_name=resolved_stock_name,
+                            context=initial_context,
+                            sentiment_score=result.sentiment_score,
+                            operation_advice=result.operation_advice,
+                            trend_prediction=result.trend_prediction,
+                            analysis_summary=result.analysis_summary,
+                            dashboard=agent_result.dashboard if agent_result.success else None,
+                            primary_model=result.model_used,
+                            report_language=report_language,
+                        )
+                except Exception as consult_exc:
+                    logger.warning("[%s] 多模型会诊失败: %s", code, consult_exc)
+
                 try:
                     initial_context["stock_name"] = resolved_stock_name
                     self.db.save_analysis_history(

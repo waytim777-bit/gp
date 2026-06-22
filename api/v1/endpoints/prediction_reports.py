@@ -48,13 +48,13 @@ def get_prediction_report_pricing(
     return PredictionReportPricing.model_validate(_service().get_pricing())
 
 
-@router.post("/share", response_model=PredictionReportListingItem, summary="Share a prediction report")
-def share_prediction_report(
+@router.post("/recommend", response_model=PredictionReportListingItem, summary="Recommend a prediction report")
+def recommend_prediction_report(
     request: SharePredictionReportRequest,
     current_user: CurrentUser = Depends(get_current_user),
 ) -> PredictionReportListingItem:
     try:
-        payload = _service().share_report(
+        payload = _service().recommend_report(
             owner_user_id=int(current_user.id),
             history_id=int(request.record_id),
         )
@@ -62,8 +62,16 @@ def share_prediction_report(
     except PredictionReportMarketError as exc:
         raise HTTPException(status_code=400, detail={"error": exc.code, "message": exc.message}) from exc
     except Exception as exc:
-        logger.error("Share prediction report failed: %s", exc, exc_info=True)
-        raise HTTPException(status_code=500, detail={"error": "internal_error", "message": "分享失败"}) from exc
+        logger.error("Recommend prediction report failed: %s", exc, exc_info=True)
+        raise HTTPException(status_code=500, detail={"error": "internal_error", "message": "推荐失败"}) from exc
+
+
+@router.post("/share", response_model=PredictionReportListingItem, summary="Recommend a prediction report (legacy alias)")
+def share_prediction_report(
+    request: SharePredictionReportRequest,
+    current_user: CurrentUser = Depends(get_current_user),
+) -> PredictionReportListingItem:
+    return recommend_prediction_report(request, current_user)
 
 
 @router.get("/{listing_id}", response_model=PredictionReportListingItem, summary="Get listing detail")

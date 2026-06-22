@@ -199,6 +199,136 @@ def extract_fundamental_detail_fields(
     }
 
 
+def extract_enhanced_context(context_snapshot: Any) -> Optional[Dict[str, Any]]:
+    snapshot_obj = parse_json_field(context_snapshot)
+    if not isinstance(snapshot_obj, dict):
+        return None
+    enhanced = snapshot_obj.get("enhanced_context")
+    if isinstance(enhanced, dict):
+        return enhanced
+    return None
+
+
+def extract_technical_detail_fields(
+    context_snapshot: Any,
+    report_data: Any = None,
+) -> Dict[str, Any]:
+    """
+    Extract stable API-facing technical indicator blocks from context snapshot / report payload.
+    """
+    technical_indicators = None
+    enhanced = extract_enhanced_context(context_snapshot)
+    if isinstance(enhanced, dict):
+        technical_indicators = _non_empty_dict(enhanced.get("technical_indicators"))
+        if technical_indicators is None:
+            trend_analysis = enhanced.get("trend_analysis")
+            if isinstance(trend_analysis, dict) and trend_analysis:
+                from src.utils.technical_indicators import build_technical_indicators_payload
+
+                technical_indicators = _non_empty_dict(
+                    build_technical_indicators_payload(trend_analysis)
+                )
+
+    report_obj = report_data if isinstance(report_data, dict) else {}
+    details = report_obj.get("details") if isinstance(report_obj.get("details"), dict) else report_obj
+    technical_analysis_report = None
+    financial_fundamentals_analysis = None
+    if isinstance(details, dict):
+        technical_analysis_report = details.get("technical_analysis_report") or report_obj.get(
+            "technical_analysis_report"
+        )
+        financial_fundamentals_analysis = details.get("financial_fundamentals_analysis") or report_obj.get(
+            "financial_fundamentals_analysis"
+        )
+
+    return {
+        "technical_indicators": technical_indicators,
+        "technical_analysis_report": technical_analysis_report,
+        "financial_fundamentals_analysis": financial_fundamentals_analysis,
+        "kline_series": _extract_kline_series(context_snapshot),
+        "price_trend_analysis": _extract_price_trend_analysis(report_obj),
+        "chip_distribution": _extract_chip_distribution(context_snapshot),
+        "key_levels": _extract_key_levels(context_snapshot),
+        "key_levels_analysis": _extract_key_levels_analysis(report_obj),
+        "weekly_kline_series": _extract_weekly_kline_series(context_snapshot),
+        "weekly_trend_analysis": _extract_weekly_trend_analysis(report_obj),
+        "capital_flow": _extract_capital_flow(context_snapshot),
+        "capital_flow_analysis": _extract_capital_flow_analysis(report_obj),
+    }
+
+
+def _extract_kline_series(context_snapshot: Any) -> Optional[Dict[str, Any]]:
+    enhanced = extract_enhanced_context(context_snapshot)
+    if not isinstance(enhanced, dict):
+        return None
+    kline_series = _non_empty_dict(enhanced.get("kline_series") or enhanced.get("daily_bars"))
+    return kline_series
+
+
+def _extract_price_trend_analysis(report_obj: Any) -> Any:
+    if not isinstance(report_obj, dict):
+        return None
+    details = report_obj.get("details") if isinstance(report_obj.get("details"), dict) else report_obj
+    if not isinstance(details, dict):
+        return None
+    return details.get("price_trend_analysis") or report_obj.get("price_trend_analysis")
+
+
+def _extract_chip_distribution(context_snapshot: Any) -> Optional[Dict[str, Any]]:
+    enhanced = extract_enhanced_context(context_snapshot)
+    if not isinstance(enhanced, dict):
+        return None
+    return _non_empty_dict(enhanced.get("chip_distribution"))
+
+
+def _extract_key_levels(context_snapshot: Any) -> Optional[Dict[str, Any]]:
+    enhanced = extract_enhanced_context(context_snapshot)
+    if not isinstance(enhanced, dict):
+        return None
+    return _non_empty_dict(enhanced.get("key_levels"))
+
+
+def _extract_key_levels_analysis(report_obj: Any) -> Any:
+    if not isinstance(report_obj, dict):
+        return None
+    details = report_obj.get("details") if isinstance(report_obj.get("details"), dict) else report_obj
+    if not isinstance(details, dict):
+        return None
+    return details.get("key_levels_analysis") or report_obj.get("key_levels_analysis")
+
+
+def _extract_weekly_kline_series(context_snapshot: Any) -> Optional[Dict[str, Any]]:
+    enhanced = extract_enhanced_context(context_snapshot)
+    if not isinstance(enhanced, dict):
+        return None
+    return _non_empty_dict(enhanced.get("weekly_kline_series"))
+
+
+def _extract_weekly_trend_analysis(report_obj: Any) -> Any:
+    if not isinstance(report_obj, dict):
+        return None
+    details = report_obj.get("details") if isinstance(report_obj.get("details"), dict) else report_obj
+    if not isinstance(details, dict):
+        return None
+    return details.get("weekly_trend_analysis") or report_obj.get("weekly_trend_analysis")
+
+
+def _extract_capital_flow(context_snapshot: Any) -> Optional[Dict[str, Any]]:
+    enhanced = extract_enhanced_context(context_snapshot)
+    if not isinstance(enhanced, dict):
+        return None
+    return _non_empty_dict(enhanced.get("capital_flow"))
+
+
+def _extract_capital_flow_analysis(report_obj: Any) -> Any:
+    if not isinstance(report_obj, dict):
+        return None
+    details = report_obj.get("details") if isinstance(report_obj.get("details"), dict) else report_obj
+    if not isinstance(details, dict):
+        return None
+    return details.get("capital_flow_analysis") or report_obj.get("capital_flow_analysis")
+
+
 def extract_board_detail_fields(
     context_snapshot: Any,
     fallback_fundamental_payload: Any = None,

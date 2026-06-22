@@ -438,6 +438,68 @@ class AnalysisHistoryTestCase(unittest.TestCase):
         self.assertEqual(report.details.belong_boards, [])
         self.assertIsNone(report.details.sector_rankings)
 
+    def test_history_detail_includes_technical_fields_from_context_snapshot(self) -> None:
+        """History detail API should expose technical blocks like the analysis detail API."""
+        if get_history_detail is None:
+            self.skipTest("fastapi is not installed in this test environment")
+
+        query_id = "query_technical_detail_001"
+        context_snapshot = {
+            "enhanced_context": {
+                "kline_series": {
+                    "rows": [{"date": "2026-06-17", "close": 100.0}],
+                    "total_records": 1,
+                },
+                "weekly_kline_series": {
+                    "rows": [{"date": "2026-06-13", "close": 99.0}],
+                    "total_records": 1,
+                },
+                "technical_indicators": {
+                    "rsi": 55.0,
+                    "macd": {"dif": 0.1, "dea": 0.05, "hist": 0.05},
+                },
+                "capital_flow": {
+                    "status": "ok",
+                    "stock_flow": {"main_net_inflow": 12345678},
+                },
+            }
+        }
+        result = AnalysisResult(
+            code="600519",
+            name="贵州茅台",
+            sentiment_score=70,
+            trend_prediction="看多",
+            operation_advice="持有",
+            analysis_summary="技术面改善",
+            price_trend_analysis={"summary": "日K走强", "items": []},
+            weekly_trend_analysis={"summary": "周线偏多", "items": []},
+            capital_flow_analysis={"summary": "主力净流入", "items": []},
+        )
+        saved = self.db.save_analysis_history(
+            result=result,
+            query_id=query_id,
+            report_type="detailed",
+            news_content="新闻摘要",
+            context_snapshot=context_snapshot,
+            save_snapshot=True,
+        )
+        self.assertEqual(saved, 1)
+
+        with self.db.get_session() as session:
+            row = session.query(AnalysisHistory).filter(AnalysisHistory.query_id == query_id).first()
+            if row is None:
+                self.fail("未找到保存的历史记录")
+            record_id = row.id
+
+        report = get_history_detail(str(record_id), db_manager=self.db)
+        self.assertEqual(report.details.kline_series["total_records"], 1)
+        self.assertEqual(report.details.weekly_kline_series["total_records"], 1)
+        self.assertEqual(report.details.technical_indicators["rsi"], 55.0)
+        self.assertEqual(report.details.capital_flow["stock_flow"]["main_net_inflow"], 12345678)
+        self.assertEqual(report.details.price_trend_analysis["summary"], "日K走强")
+        self.assertEqual(report.details.weekly_trend_analysis["summary"], "周线偏多")
+        self.assertEqual(report.details.capital_flow_analysis["summary"], "主力净流入")
+
     def test_history_detail_returns_empty_related_boards_for_non_cn(self) -> None:
         if get_history_detail is None:
             self.skipTest("fastapi is not installed in this test environment")

@@ -30,6 +30,20 @@ from pathlib import Path
 from datetime import datetime
 from typing import Optional
 
+
+def _ensure_utf8_stdio() -> None:
+    """Avoid Windows GBK stdout errors when printing Unicode markers."""
+    for name in ("stdout", "stderr"):
+        stream = getattr(sys, name, None)
+        if stream is not None and hasattr(stream, "reconfigure"):
+            try:
+                stream.reconfigure(encoding="utf-8", errors="replace")
+            except (AttributeError, OSError, ValueError):
+                pass
+
+
+_ensure_utf8_stdio()
+
 import pandas as pd
 from dotenv import load_dotenv
 

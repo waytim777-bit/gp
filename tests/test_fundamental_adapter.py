@@ -16,9 +16,14 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from data_provider.fundamental_adapter import (
     AkshareFundamentalAdapter,
+    TushareFundamentalAdapter,
     _a_share_secu_code_candidates,
+    _build_balance_sheet_payload,
+    _build_cash_flow_payload,
     _build_dividend_payload,
+    _build_express_payload,
     _extract_latest_row,
+    _format_report_period_label,
     _parse_dividend_plan_to_per_share,
 )
 
@@ -313,6 +318,93 @@ class TestFundamentalAdapter(unittest.TestCase):
         payload = _build_dividend_payload(df, stock_code="600519")
         self.assertEqual(payload.get("ttm_event_count"), 1)
         self.assertAlmostEqual(payload.get("ttm_cash_dividend_per_share"), 0.3, places=6)
+
+    def test_format_report_period_label(self) -> None:
+        self.assertEqual(_format_report_period_label("20251231"), "2025")
+        self.assertEqual(_format_report_period_label("20260331"), "2026Q1")
+        self.assertEqual(_format_report_period_label("20260630"), "2026H1")
+
+    def test_build_balance_sheet_payload_includes_latest_ratios(self) -> None:
+        payload = _build_balance_sheet_payload(
+            [{
+                "period": "2025",
+                "report_date": "2025-12-31",
+                "total_assets": 1000.0,
+                "total_liab": 300.0,
+                "debt_ratio": 30.0,
+                "money_cap": 100.0,
+            }],
+            latest_ratios={"debt_to_assets": 30.0, "current_ratio": 2.0},
+        )
+        self.assertEqual(payload["rows"][0]["total_assets"], 1000.0)
+        self.assertEqual(payload["latest_ratios"]["current_ratio"], 2.0)
+
+    def test_tushare_fundamental_bundle_attaches_extended_financial_blocks(self) -> None:
+        fetcher = SimpleNamespace(
+            _call_api_with_rate_limit=lambda api_name, **kwargs: {
+                "income": pd.DataFrame([
+                    {"end_date": "20251231", "report_type": "1", "revenue": 100.0, "n_income_attr_p": 20.0},
+                    {"end_date": "20241231", "report_type": "1", "revenue": 80.0, "n_income_attr_p": 15.0},
+                ]),
+                "fina_indicator": pd.DataFrame([
+                    {
+                        "end_date": "20251231",
+                        "grossprofit_margin": 40.0,
+                        "netprofit_margin": 20.0,
+                        "roe_dt": 12.0,
+                        "debt_to_assets": 35.0,
+                        "current_ratio": 1.5,
+                        "quick_ratio": 1.2,
+                        "inv_turn": 2.0,
+                        "ar_turn": 3.0,
+                    },
+                ]),
+                "balancesheet": pd.DataFrame([
+                    {
+                        "end_date": "20251231",
+                        "report_type": "1",
+                        "total_assets": 500.0,
+                        "total_liab": 200.0,
+                        "total_cur_assets": 300.0,
+                        "total_cur_liab": 150.0,
+                        "money_cap": 50.0,
+                        "inventories": 20.0,
+                        "cip": 5.0,
+                        "prepayment": 2.0,
+                        "st_borr": 10.0,
+                        "lt_borr": 5.0,
+                    },
+                ]),
+                "cashflow": pd.DataFrame([
+                    {
+                        "end_date": "20251231",
+                        "report_type": "1",
+                        "n_cashflow_act": 60.0,
+                        "n_cashflow_inv_act": -10.0,
+                        "n_cashflow_fina_act": -5.0,
+                    },
+                ]),
+                "express": pd.DataFrame([
+                    {
+                        "end_date": "20251231",
+                        "ann_date": "20260110",
+                        "revenue": 100.0,
+                        "n_income": 20.0,
+                        "yoy_net_profit": 10.0,
+                        "diluted_roe": 12.0,
+                        "diluted_eps": 1.2,
+                    },
+                ]),
+            }[api_name],
+            _convert_stock_code=lambda code: f"{code}.SH",
+        )
+        adapter = TushareFundamentalAdapter(fetcher)
+        bundle = adapter.get_fundamental_bundle("600519")
+        financial_report = bundle["earnings"]["financial_report"]
+        self.assertIn("balance_sheet", financial_report)
+        self.assertIn("cash_flow", financial_report)
+        self.assertIn("express_report", financial_report)
+        self.assertEqual(financial_report["cash_flow"]["rows"][0]["operating_cash_flow"], 60.0)
 
 
 if __name__ == "__main__":

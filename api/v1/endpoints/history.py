@@ -24,29 +24,14 @@ from api.v1.schemas.history import (
     NewsIntelItem,
     NewsIntelResponse,
     AnalysisReport,
-    ReportMeta,
-    ReportSummary,
-    ReportStrategy,
-    ReportDetails,
-    PredictionCycleMeta,
     MarkdownReportResponse,
 )
+from api.v1.schemas.public_reports import ReportShareLinkResponse
 from api.v1.schemas.common import ErrorResponse
 from src.storage import DatabaseManager
-from src.report_language import (
-    get_sentiment_label,
-    get_localized_stock_name,
-    localize_operation_advice,
-    localize_trend_prediction,
-    normalize_report_language,
-)
 from src.services.history_service import HistoryService, MarkdownReportGenerationError
-from src.utils.data_processing import (
-    normalize_model_used,
-    extract_fundamental_detail_fields,
-    extract_board_detail_fields,
-    extract_company_profile_detail_field,
-)
+from src.services.history_report_builder import build_analysis_report
+from src.services.report_public_share_service import ReportPublicShareError, ReportPublicShareService
 
 logger = logging.getLogger(__name__)
 
@@ -237,131 +222,8 @@ def get_history_detail(
                     "message": f"未找到 id/query_id={record_id} 的分析记录"
                 }
             )
-        
-        # 从 context_snapshot 中提取价格信息
-        current_price = None
-        change_pct = None
-        context_snapshot = result.get("context_snapshot")
-        if context_snapshot and isinstance(context_snapshot, dict):
-            # 尝试从 enhanced_context.realtime 获取
-            enhanced_context = context_snapshot.get("enhanced_context") or {}
-            realtime = enhanced_context.get("realtime") or {}
-            current_price = realtime.get("price")
-            change_pct = realtime.get("change_pct") or realtime.get("change_60d")
-            
-            # 也尝试从 realtime_quote_raw 获取
-            if current_price is None:
-                realtime_quote_raw = context_snapshot.get("realtime_quote_raw") or {}
-                current_price = realtime_quote_raw.get("price")
-                change_pct = change_pct or realtime_quote_raw.get("change_pct") or realtime_quote_raw.get("pct_chg")
-        
-        raw_result = result.get("raw_result")
-        if not isinstance(raw_result, dict):
-            raw_result = {}
-        report_language = normalize_report_language(
-            result.get("report_language")
-            or raw_result.get("report_language")
-            or (
-                context_snapshot.get("report_language")
-                if isinstance(context_snapshot, dict)
-                else None
-            )
-        )
-        stock_name = get_localized_stock_name(
-            result.get("stock_name"),
-            result.get("stock_code", ""),
-            report_language,
-        )
 
-        # 构建响应模型
-        cycle_raw = result.get("prediction_cycle")
-        cycle_meta = PredictionCycleMeta(**cycle_raw) if isinstance(cycle_raw, dict) else None
-        meta = ReportMeta(
-            id=result.get("id"),
-            query_id=result.get("query_id", ""),
-            stock_code=result.get("stock_code", ""),
-            stock_name=stock_name,
-            report_type=result.get("report_type"),
-            report_language=report_language,
-            created_at=result.get("created_at"),
-            current_price=current_price,
-            change_pct=change_pct,
-            model_used=normalize_model_used(result.get("model_used")),
-            prediction_cycle=cycle_meta,
-        )
-        
-        summary = ReportSummary(
-            analysis_summary=result.get("analysis_summary"),
-            operation_advice=localize_operation_advice(
-                result.get("operation_advice"),
-                report_language,
-            ),
-            trend_prediction=localize_trend_prediction(
-                result.get("trend_prediction"),
-                report_language,
-            ),
-            sentiment_score=result.get("sentiment_score"),
-            sentiment_label=(
-                get_sentiment_label(result.get("sentiment_score"), report_language)
-                if result.get("sentiment_score") is not None
-                else result.get("sentiment_label")
-            )
-        )
-        
-        strategy = ReportStrategy(
-            ideal_buy=result.get("ideal_buy"),
-            secondary_buy=result.get("secondary_buy"),
-            stop_loss=result.get("stop_loss"),
-            take_profit=result.get("take_profit")
-        )
-        
-        fallback_fundamental = db_manager.get_latest_fundamental_snapshot(
-            query_id=result.get("query_id", ""),
-            code=result.get("stock_code", ""),
-        )
-        extracted_fundamental = extract_fundamental_detail_fields(
-            context_snapshot=result.get("context_snapshot"),
-            fallback_fundamental_payload=fallback_fundamental,
-        )
-        extracted_boards = extract_board_detail_fields(
-            context_snapshot=result.get("context_snapshot"),
-            fallback_fundamental_payload=fallback_fundamental,
-        )
-        company_profile = extract_company_profile_detail_field(
-            context_snapshot=result.get("context_snapshot"),
-            fallback_fundamental_payload=fallback_fundamental,
-        )
-        raw_result = result.get("raw_result")
-        business_model = (
-            raw_result.get("business_model")
-            if isinstance(raw_result, dict)
-            else None
-        )
-        profitability_analysis = (
-            raw_result.get("profitability_analysis")
-            if isinstance(raw_result, dict)
-            else None
-        )
-
-        details = ReportDetails(
-            news_content=result.get("news_content"),
-            raw_result=raw_result,
-            context_snapshot=result.get("context_snapshot"),
-            financial_report=extracted_fundamental.get("financial_report"),
-            dividend_metrics=extracted_fundamental.get("dividend_metrics"),
-            company_profile=company_profile,
-            business_model=business_model,
-            profitability_analysis=profitability_analysis,
-            belong_boards=extracted_boards.get("belong_boards"),
-            sector_rankings=extracted_boards.get("sector_rankings"),
-        )
-        
-        return AnalysisReport(
-            meta=meta,
-            summary=summary,
-            strategy=strategy,
-            details=details
-        )
+        return build_analysis_report(result, db_manager)
         
     except HTTPException:
         raise
@@ -374,6 +236,88 @@ def get_history_detail(
                 "message": f"查询历史详情失败: {str(e)}"
             }
         )
+
+
+@router.post(
+    "/{record_id}/share-link",
+    response_model=ReportShareLinkResponse,
+    summary="Enable public share link for a history report",
+)
+def enable_history_share_link(
+    record_id: str,
+    current_user: CurrentUser = Depends(get_current_user),
+) -> ReportShareLinkResponse:
+    try:
+        history_id = int(record_id)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={"error": "invalid_request", "message": "record_id 必须为整数"},
+        ) from exc
+    try:
+        payload = ReportPublicShareService.get_instance().enable_share(
+            owner_user_id=int(current_user.id),
+            history_id=history_id,
+        )
+        return ReportShareLinkResponse.model_validate(payload)
+    except ReportPublicShareError as exc:
+        status = 404 if exc.code == "not_found" else 403 if exc.code == "forbidden" else 400
+        raise HTTPException(status_code=status, detail={"error": exc.code, "message": exc.message}) from exc
+
+
+@router.get(
+    "/{record_id}/share-link",
+    response_model=ReportShareLinkResponse,
+    summary="Get public share link for a history report",
+)
+def get_history_share_link(
+    record_id: str,
+    current_user: CurrentUser = Depends(get_current_user),
+) -> ReportShareLinkResponse:
+    try:
+        history_id = int(record_id)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={"error": "invalid_request", "message": "record_id 必须为整数"},
+        ) from exc
+    payload = ReportPublicShareService.get_instance().get_share_link(
+        owner_user_id=int(current_user.id),
+        history_id=history_id,
+    )
+    if payload is None:
+        raise HTTPException(
+            status_code=404,
+            detail={"error": "not_found", "message": "该报告尚未开启分享"},
+        )
+    return ReportShareLinkResponse.model_validate(payload)
+
+
+@router.delete(
+    "/{record_id}/share-link",
+    summary="Revoke public share link for a history report",
+)
+def revoke_history_share_link(
+    record_id: str,
+    current_user: CurrentUser = Depends(get_current_user),
+) -> dict:
+    try:
+        history_id = int(record_id)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={"error": "invalid_request", "message": "record_id 必须为整数"},
+        ) from exc
+    revoked = ReportPublicShareService.get_instance().revoke_share(
+        owner_user_id=int(current_user.id),
+        history_id=history_id,
+    )
+    if not revoked:
+        raise HTTPException(
+            status_code=404,
+            detail={"error": "not_found", "message": "该报告尚未开启分享"},
+        )
+    return {"revoked": True}
 
 
 @router.get(

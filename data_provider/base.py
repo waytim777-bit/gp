@@ -652,7 +652,7 @@ class DataFetcherManager:
     def _get_fundamental_cache_key(self, stock_code: str, budget_seconds: Optional[float] = None) -> str:
         """生成基本面缓存 key（包含预算分桶以避免低预算结果污染高预算请求）。"""
         normalized_code = normalize_stock_code(stock_code)
-        schema_version = "fin-report-v2"
+        schema_version = "fin-report-v3"
         if budget_seconds is None:
             return f"{normalized_code}|budget=default|schema={schema_version}"
         try:

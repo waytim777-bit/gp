@@ -178,6 +178,12 @@ class AnalysisService:
                 "fundamental_analysis": result.fundamental_analysis,
                 "business_model": getattr(result, "business_model", None),
                 "profitability_analysis": getattr(result, "profitability_analysis", None),
+                "financial_fundamentals_analysis": getattr(result, "financial_fundamentals_analysis", None),
+                "technical_analysis_report": getattr(result, "technical_analysis_report", None),
+                "price_trend_analysis": getattr(result, "price_trend_analysis", None),
+                "key_levels_analysis": getattr(result, "key_levels_analysis", None),
+                "weekly_trend_analysis": getattr(result, "weekly_trend_analysis", None),
+                "capital_flow_analysis": getattr(result, "capital_flow_analysis", None),
                 "risk_warning": result.risk_warning,
             }
         }
@@ -249,6 +255,12 @@ class AnalysisService:
                 "fundamental_analysis": raw_payload.get("fundamental_analysis"),
                 "business_model": raw_payload.get("business_model"),
                 "profitability_analysis": raw_payload.get("profitability_analysis"),
+                "financial_fundamentals_analysis": raw_payload.get("financial_fundamentals_analysis"),
+                "technical_analysis_report": raw_payload.get("technical_analysis_report"),
+                "price_trend_analysis": raw_payload.get("price_trend_analysis"),
+                "key_levels_analysis": raw_payload.get("key_levels_analysis"),
+                "weekly_trend_analysis": raw_payload.get("weekly_trend_analysis"),
+                "capital_flow_analysis": raw_payload.get("capital_flow_analysis"),
                 "risk_warning": raw_payload.get("risk_warning"),
             },
         }

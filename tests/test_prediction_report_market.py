@@ -16,7 +16,8 @@ from src.services.prediction_report_market_service import (
     PredictionReportMarketError,
     PredictionReportMarketService,
 )
-from src.storage import AnalysisHistory, DatabaseManager, NewsIntel
+from src.repositories.backtest_repo import BacktestRepository
+from src.storage import AnalysisHistory, DatabaseManager, NewsIntel, BacktestResult
 
 
 class PredictionReportMarketTestCase(unittest.TestCase):
@@ -265,6 +266,130 @@ class PredictionReportMarketTestCase(unittest.TestCase):
         unliked = self.service.like_report(listing_id=listing_id, user_id=self.buyer_id)
         self.assertFalse(unliked["liked"])
         self.assertEqual(unliked["like_count"], 0)
+
+    @patch("src.services.prediction_report_market_service.resolve_prediction_cycle")
+    def test_list_marks_current_and_expired_cycles(self, mock_resolve) -> None:
+        mock_resolve.return_value = self.cycle
+
+        current = self.service.share_report(
+            owner_user_id=self.seller_id,
+            history_id=self.history_id,
+        )
+        db = DatabaseManager.get_instance()
+        with db.session_scope() as session:
+            expired_history = AnalysisHistory(
+                query_id="expired-query",
+                owner_user_id=self.seller_id,
+                code="000001",
+                name="平安银行",
+                report_type="simple",
+                sentiment_score=50,
+                operation_advice="观望",
+                trend_prediction="震荡",
+                analysis_summary="expired summary",
+                raw_result='{"current_price": 10}',
+                news_content="https://news.example/expired",
+                created_at=datetime.now(),
+                shared_run_id=self.shared_run_id,
+            )
+            session.add(expired_history)
+            session.flush()
+            expired_history_id = int(expired_history.id)
+
+        expired_listing = db.create_prediction_report_listing(
+            seller_user_id=self.seller_id,
+            analysis_history_id=expired_history_id,
+            shared_run_id=self.shared_run_id,
+            code="000001",
+            name="平安银行",
+            market="cn",
+            cycle_anchor_date=date(2026, 6, 10),
+            report_type="simple",
+            purchase_credits=100,
+            seller_reward_credits=90,
+        )
+
+        payload = self.service.list_reports(viewer_user_id=self.buyer_id)
+        by_id = {item["id"]: item for item in payload["items"]}
+        self.assertTrue(by_id[int(current["id"])]["is_current_cycle"])
+        self.assertTrue(by_id[int(current["id"])]["can_purchase"])
+        self.assertFalse(by_id[int(expired_listing.id)]["is_current_cycle"])
+        self.assertFalse(by_id[int(expired_listing.id)]["can_purchase"])
+
+    @patch("src.services.prediction_report_market_service.resolve_prediction_cycle")
+    def test_purchase_rejects_expired_cycle(self, mock_resolve) -> None:
+        mock_resolve.return_value = self.cycle
+        db = DatabaseManager.get_instance()
+        with db.session_scope() as session:
+            expired_history = AnalysisHistory(
+                query_id="expired-purchase-query",
+                owner_user_id=self.seller_id,
+                code="000002",
+                name="万科A",
+                report_type="simple",
+                sentiment_score=50,
+                operation_advice="观望",
+                trend_prediction="震荡",
+                analysis_summary="expired purchase summary",
+                raw_result='{"current_price": 8}',
+                news_content="https://news.example/expired2",
+                created_at=datetime.now(),
+                shared_run_id=self.shared_run_id,
+            )
+            session.add(expired_history)
+            session.flush()
+            expired_history_id = int(expired_history.id)
+
+        expired_listing = db.create_prediction_report_listing(
+            seller_user_id=self.seller_id,
+            analysis_history_id=expired_history_id,
+            shared_run_id=self.shared_run_id,
+            code="000002",
+            name="万科A",
+            market="cn",
+            cycle_anchor_date=date(2026, 6, 10),
+            report_type="simple",
+            purchase_credits=100,
+            seller_reward_credits=90,
+        )
+
+        with self.assertRaises(PredictionReportMarketError) as ctx:
+            self.service.purchase_report(
+                buyer_user_id=self.buyer_id,
+                listing_id=int(expired_listing.id),
+            )
+        self.assertEqual(ctx.exception.code, "expired_cycle")
+
+    @patch("src.services.prediction_report_market_service.resolve_prediction_cycle")
+    def test_listing_includes_backtest_preview(self, mock_resolve) -> None:
+        mock_resolve.return_value = self.cycle
+        listing = self.service.share_report(
+            owner_user_id=self.seller_id,
+            history_id=self.history_id,
+        )
+
+        db = DatabaseManager.get_instance()
+        BacktestRepository(db).save_results_batch([
+            BacktestResult(
+                analysis_history_id=self.history_id,
+                owner_user_id=self.seller_id,
+                code="600519",
+                analysis_date=date(2026, 6, 17),
+                eval_window_days=10,
+                engine_version="v1",
+                eval_status="completed",
+                evaluated_at=datetime(2026, 6, 20, 12, 0),
+                stock_return_pct=4.5,
+                direction_correct=True,
+                outcome="win",
+            )
+        ], replace_existing=True)
+
+        payload = self.service.list_reports(viewer_user_id=self.buyer_id)
+        item = next(row for row in payload["items"] if row["id"] == listing["id"])
+        self.assertTrue(item["backtest_preview"]["available"])
+        self.assertEqual(item["backtest_preview"]["tone"], "success")
+        self.assertIn("方向正确", item["backtest_preview"]["label"])
 
 
 if __name__ == "__main__":

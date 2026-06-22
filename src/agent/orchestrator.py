@@ -40,6 +40,7 @@ from src.agent.protocols import (
     StageStatus,
     normalize_decision_signal,
 )
+from src.agent.prefetch_policy import seed_tool_cache_from_context
 from src.agent.runner import parse_dashboard_json
 from src.agent.tools.registry import ToolRegistry
 from src.config import AGENT_MAX_STEPS_DEFAULT
@@ -399,6 +400,8 @@ class AgentOrchestrator:
         models_used: List[str] = []
         t0 = time.time()
         timeout_s = self._get_timeout_seconds()
+
+        seed_tool_cache_from_context(ctx.data)
 
         agents = self._build_agent_chain(ctx)
         specialist_agents_inserted = False

@@ -174,8 +174,25 @@ class ReportDetails(BaseModel):
     company_profile: Optional[Any] = Field(None, description="公司基本资料（来自 fundamental_context.company_profile）")
     business_model: Optional[Any] = Field(None, description="Structured business model analysis")
     profitability_analysis: Optional[Any] = Field(None, description="LLM-written profitability analysis")
+    financial_fundamentals_analysis: Optional[Any] = Field(None, description="LLM-written multi-dimension financial analysis")
+    technical_indicators: Optional[Any] = Field(None, description="Structured technical indicators from daily bars")
+    technical_analysis_report: Optional[Any] = Field(None, description="LLM-written technical analysis")
+    kline_series: Optional[Any] = Field(None, description="Daily K-line OHLCV series for charting")
+    price_trend_analysis: Optional[Any] = Field(None, description="LLM-written price trend analysis")
+    chip_distribution: Optional[Any] = Field(None, description="Structured chip distribution snapshot")
+    key_levels: Optional[Any] = Field(None, description="Merged technical and chip key levels")
+    key_levels_analysis: Optional[Any] = Field(None, description="LLM-written key levels analysis")
+    weekly_kline_series: Optional[Any] = Field(None, description="Weekly K-line OHLCV series for charting")
+    weekly_trend_analysis: Optional[Any] = Field(None, description="LLM-written weekly trend analysis")
+    capital_flow: Optional[Any] = Field(None, description="Structured main-force capital flow snapshot")
+    capital_flow_analysis: Optional[Any] = Field(None, description="LLM-written capital flow analysis")
     belong_boards: Optional[Any] = Field(None, description="关联板块列表")
     sector_rankings: Optional[Any] = Field(None, description="板块涨跌榜（结构 {top, bottom}）")
+    backtest_result: Optional[Any] = Field(None, description="Completed backtest evaluation for this report")
+    model_opinions: Optional[Any] = Field(
+        None,
+        description="Primary + consultation model opinions (multi-model panel)",
+    )
 
 
 class AnalysisReport(BaseModel):

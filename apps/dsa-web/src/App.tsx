@@ -10,6 +10,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import ChatPage from './pages/ChatPage';
 import PaymentPage from './pages/PaymentPage';
 import PredictionReportsPage from './pages/PredictionReportsPage';
+import SharedReportPage from './pages/SharedReportPage';
 import ProfilePage from './pages/ProfilePage';
 import { ApiErrorAlert, Shell } from './components/common';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -50,6 +51,13 @@ const AppContent: React.FC = () => {
   }
 
   if (!loggedIn) {
+    if (location.pathname.startsWith('/r/')) {
+      return (
+        <Routes>
+          <Route path="/r/:token" element={<SharedReportPage />} />
+        </Routes>
+      );
+    }
     if (location.pathname === '/login') {
       return <LoginPage />;
     }
@@ -92,6 +100,7 @@ const AppContent: React.FC = () => {
 
   return (
     <Routes>
+      <Route path="/r/:token" element={<SharedReportPage />} />
       <Route element={<Shell />}>
         <Route path="/" element={protectedElement('home', <HomePage />)} />
         <Route path="/chat" element={protectedElement('chat', <ChatPage />)} />

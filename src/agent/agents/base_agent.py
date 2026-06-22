@@ -19,6 +19,7 @@ from src.agent.llm_adapter import LLMToolAdapter
 from src.agent.memory import AgentMemory
 from src.agent.protocols import AgentContext, AgentOpinion, StageResult, StageStatus
 from src.agent.runner import RunLoopResult, run_agent_loop
+from src.agent.prefetch_policy import filter_tool_registry, seed_tool_cache_from_context
 from src.agent.run_context import agent_run_cache_scope
 from src.agent.skills.defaults import extract_skill_id
 from src.agent.tools.registry import ToolRegistry
@@ -108,10 +109,12 @@ class BaseAgent(ABC):
         try:
             messages = self._build_messages(ctx)
 
-            # Restrict tools if the agent declares a subset
-            registry = self._filtered_registry()
+            # Restrict tools if the agent declares a subset; withhold fetch-once
+            # tools when pipeline prefetch already injected the data.
+            registry = self._filtered_registry(ctx)
 
             with agent_run_cache_scope(ctx.data, stock_code=ctx.stock_code):
+                seed_tool_cache_from_context(ctx.data)
                 loop_result: RunLoopResult = run_agent_loop(
                     messages=messages,
                     tool_registry=registry,
@@ -203,22 +206,34 @@ class BaseAgent(ABC):
             parts.append(memory_context)
         return "\n\n".join(parts) if parts else ""
 
-    def _filtered_registry(self) -> ToolRegistry:
+    def _filtered_registry(self, ctx: Optional[AgentContext] = None) -> ToolRegistry:
         """Return a ToolRegistry restricted to ``self.tool_names``.
 
-        If ``tool_names`` is None (default), the full registry is returned.
+        When ``ctx`` is provided, fetch-once tools (quote/K-line/news/capital-flow)
+        are removed if pipeline prefetch already populated ``ctx.data``.
         """
-        if self.tool_names is None:
-            return self.tool_registry
+        allowed_names = self.tool_names
+        if allowed_names is None:
+            return filter_tool_registry(self.tool_registry, (ctx.data if ctx else None))
 
         from src.agent.tools.registry import ToolRegistry as TR
-        filtered = TR()
-        for name in self.tool_names:
+        base = TR()
+        for name in allowed_names:
             tool_def = self.tool_registry.get(name)
             if tool_def:
-                filtered.register(tool_def)
+                base.register(tool_def)
             else:
                 logger.warning("[%s] requested tool '%s' not found in registry", self.agent_name, name)
+
+        ctx_data = ctx.data if ctx else None
+        filtered = filter_tool_registry(base, ctx_data, allowed_names=base.list_names())
+        withheld = set(base.list_names()) - set(filtered.list_names())
+        if withheld:
+            logger.info(
+                "[%s] prefetch satisfied; withholding tools: %s",
+                self.agent_name,
+                sorted(withheld),
+            )
         return filtered
 
     def _build_memory_context(self, ctx: AgentContext) -> str:

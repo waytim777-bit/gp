@@ -236,6 +236,7 @@ def _build_revenue_growth_payload(rows: List[Dict[str, Any]], max_rows: int = 5)
                 "report_date": row.get("report_date"),
                 "revenue": revenue,
                 "revenue_yoy": _safe_float(row.get("revenue_yoy")),
+                "net_profit": _safe_float(row.get("net_profit")),
                 "announcement_date": row.get("announcement_date"),
             }
         )
@@ -292,6 +293,200 @@ def _build_profitability_payload(rows: List[Dict[str, Any]], max_rows: int = 5) 
         "unit": "percent",
         "frequency": "report_period",
         "source": "stock_financial_analysis_indicator_em",
+    }
+
+
+def _format_report_period_label(end_date: Any) -> str:
+    text = _safe_str(end_date).replace("-", "")
+    if re.fullmatch(r"\d{8}", text):
+        year = text[:4]
+        month_day = text[4:]
+        if month_day == "1231":
+            return year
+        quarter_map = {"0331": "Q1", "0630": "H1", "0930": "Q3"}
+        return f"{year}{quarter_map.get(month_day, month_day)}"
+    parsed_year = _extract_year_from_report_date(end_date)
+    return str(parsed_year) if parsed_year is not None else text
+
+
+def _prefer_consolidated_financial_df(df: pd.DataFrame) -> pd.DataFrame:
+    if not isinstance(df, pd.DataFrame) or df.empty:
+        return pd.DataFrame()
+    work = df.copy()
+    if "end_date" in work.columns:
+        work["end_date"] = work["end_date"].astype(str)
+    if "report_type" in work.columns:
+        consolidated = work[work["report_type"].astype(str).isin(["1", "1.0"])]
+        if not consolidated.empty:
+            work = consolidated
+    sort_cols = [column for column in ("end_date", "ann_date", "f_ann_date") if column in work.columns]
+    if sort_cols:
+        work = work.sort_values(sort_cols, ascending=[False] * len(sort_cols))
+    if "end_date" in work.columns:
+        work = work.drop_duplicates(subset=["end_date"], keep="first")
+    return work
+
+
+def _lookup_prior_period_value(period_to_value: Dict[str, float], end_date: str) -> Optional[float]:
+    text = _safe_str(end_date).replace("-", "")
+    if not re.fullmatch(r"\d{8}", text):
+        return None
+    try:
+        prior_year = f"{int(text[:4]) - 1}{text[4:]}"
+    except (TypeError, ValueError):
+        return None
+    return period_to_value.get(prior_year)
+
+
+def _build_income_periods_payload(rows: List[Dict[str, Any]], max_rows: int = 8) -> Dict[str, Any]:
+    normalized_rows: List[Dict[str, Any]] = []
+    seen_periods = set()
+    for row in rows:
+        report_date = _normalize_report_date(row.get("report_date") or row.get("end_date"))
+        period = _safe_str(row.get("period")) or _format_report_period_label(row.get("end_date") or report_date)
+        if not period:
+            continue
+        dedupe_key = report_date or period
+        if dedupe_key in seen_periods:
+            continue
+        seen_periods.add(dedupe_key)
+        normalized_rows.append(
+            {
+                "period": period,
+                "report_date": report_date,
+                "revenue": _safe_float(row.get("revenue")),
+                "net_profit": _safe_float(row.get("net_profit")),
+                "rd_exp": _safe_float(row.get("rd_exp")),
+                "revenue_yoy": _safe_float(row.get("revenue_yoy")),
+            }
+        )
+    normalized_rows.sort(key=lambda item: item.get("report_date") or item.get("period") or "", reverse=True)
+    normalized_rows = normalized_rows[:max(1, max_rows)]
+    if not normalized_rows:
+        return {}
+    return {
+        "rows": normalized_rows,
+        "unit": "yuan",
+        "frequency": "report_period",
+        "source": "tushare_income",
+    }
+
+
+def _build_balance_sheet_payload(
+    rows: List[Dict[str, Any]],
+    max_rows: int = 5,
+    latest_ratios: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    normalized_rows: List[Dict[str, Any]] = []
+    seen_periods = set()
+    for row in rows:
+        report_date = _normalize_report_date(row.get("report_date") or row.get("end_date"))
+        period = _safe_str(row.get("period")) or _format_report_period_label(row.get("end_date") or report_date)
+        if not period:
+            continue
+        dedupe_key = report_date or period
+        if dedupe_key in seen_periods:
+            continue
+        seen_periods.add(dedupe_key)
+        normalized_rows.append(
+            {
+                "period": period,
+                "report_date": report_date,
+                "total_assets": _safe_float(row.get("total_assets")),
+                "total_liab": _safe_float(row.get("total_liab")),
+                "debt_ratio": _safe_float(row.get("debt_ratio")),
+                "total_cur_assets": _safe_float(row.get("total_cur_assets")),
+                "total_cur_liab": _safe_float(row.get("total_cur_liab")),
+                "current_ratio": _safe_float(row.get("current_ratio")),
+                "money_cap": _safe_float(row.get("money_cap")),
+                "inventories": _safe_float(row.get("inventories")),
+                "cip": _safe_float(row.get("cip")),
+                "prepayment": _safe_float(row.get("prepayment")),
+                "interest_bearing_debt": _safe_float(row.get("interest_bearing_debt")),
+            }
+        )
+    normalized_rows.sort(key=lambda item: item.get("report_date") or item.get("period") or "", reverse=True)
+    normalized_rows = normalized_rows[:max(1, max_rows)]
+    if not normalized_rows:
+        return {}
+    payload: Dict[str, Any] = {
+        "rows": normalized_rows,
+        "unit": "yuan",
+        "frequency": "report_period",
+        "source": "tushare_balancesheet",
+    }
+    if isinstance(latest_ratios, dict) and latest_ratios:
+        payload["latest_ratios"] = latest_ratios
+    return payload
+
+
+def _build_cash_flow_payload(rows: List[Dict[str, Any]], max_rows: int = 5) -> Dict[str, Any]:
+    normalized_rows: List[Dict[str, Any]] = []
+    seen_periods = set()
+    for row in rows:
+        report_date = _normalize_report_date(row.get("report_date") or row.get("end_date"))
+        period = _safe_str(row.get("period")) or _format_report_period_label(row.get("end_date") or report_date)
+        if not period:
+            continue
+        dedupe_key = report_date or period
+        if dedupe_key in seen_periods:
+            continue
+        seen_periods.add(dedupe_key)
+        normalized_rows.append(
+            {
+                "period": period,
+                "report_date": report_date,
+                "operating_cash_flow": _safe_float(row.get("operating_cash_flow")),
+                "investing_cash_flow": _safe_float(row.get("investing_cash_flow")),
+                "financing_cash_flow": _safe_float(row.get("financing_cash_flow")),
+                "operating_cash_flow_yoy": _safe_float(row.get("operating_cash_flow_yoy")),
+            }
+        )
+    normalized_rows.sort(key=lambda item: item.get("report_date") or item.get("period") or "", reverse=True)
+    normalized_rows = normalized_rows[:max(1, max_rows)]
+    if not normalized_rows:
+        return {}
+    return {
+        "rows": normalized_rows,
+        "unit": "yuan",
+        "frequency": "report_period",
+        "source": "tushare_cashflow",
+    }
+
+
+def _build_express_payload(rows: List[Dict[str, Any]], max_rows: int = 3) -> Dict[str, Any]:
+    normalized_rows: List[Dict[str, Any]] = []
+    seen_periods = set()
+    for row in rows:
+        report_date = _normalize_report_date(row.get("report_date") or row.get("end_date"))
+        period = _safe_str(row.get("period")) or _format_report_period_label(row.get("end_date") or report_date)
+        if not period:
+            continue
+        dedupe_key = report_date or period
+        if dedupe_key in seen_periods:
+            continue
+        seen_periods.add(dedupe_key)
+        normalized_rows.append(
+            {
+                "period": period,
+                "report_date": report_date,
+                "announcement_date": row.get("announcement_date"),
+                "revenue": _safe_float(row.get("revenue")),
+                "net_profit": _safe_float(row.get("net_profit")),
+                "net_profit_yoy": _safe_float(row.get("net_profit_yoy")),
+                "diluted_roe": _safe_float(row.get("diluted_roe")),
+                "diluted_eps": _safe_float(row.get("diluted_eps")),
+            }
+        )
+    normalized_rows.sort(key=lambda item: item.get("report_date") or item.get("period") or "", reverse=True)
+    normalized_rows = normalized_rows[:max(1, max_rows)]
+    if not normalized_rows:
+        return {}
+    return {
+        "rows": normalized_rows,
+        "unit": "yuan",
+        "frequency": "report_period",
+        "source": "tushare_express",
     }
 
 
@@ -1098,10 +1293,10 @@ class TushareFundamentalAdapter:
             "trade_date": self._safe_date(row.get("trade_date")),
         })
 
-    def _fetch_annual_revenue_growth(self, stock_code: str, max_rows: int = 5) -> Tuple[Dict[str, Any], List[str]]:
+    def _fetch_income_statement_df(self, stock_code: str, years_back: int = 8) -> Tuple[pd.DataFrame, List[str]]:
         ts_code = self._to_ts_code(stock_code)
         end_date = datetime.now().strftime("%Y%m%d")
-        start_date = f"{datetime.now().year - max_rows - 3}0101"
+        start_date = f"{datetime.now().year - years_back - 1}0101"
         errors: List[str] = []
         try:
             df = self._call_api(
@@ -1109,23 +1304,32 @@ class TushareFundamentalAdapter:
                 ts_code=ts_code,
                 start_date=start_date,
                 end_date=end_date,
-                fields="ts_code,ann_date,f_ann_date,end_date,report_type,total_revenue,revenue",
+                fields=(
+                    "ts_code,ann_date,f_ann_date,end_date,report_type,"
+                    "total_revenue,revenue,n_income_attr_p,rd_exp"
+                ),
             )
         except Exception as exc:
-            return {}, [f"income:{type(exc).__name__}"]
+            return pd.DataFrame(), [f"income:{type(exc).__name__}"]
 
         if not isinstance(df, pd.DataFrame) or df.empty:
-            return {}, errors
+            return pd.DataFrame(), errors
+        if "end_date" not in df.columns:
+            return pd.DataFrame(), ["income:end_date_missing"]
+        return _prefer_consolidated_financial_df(df), errors
 
-        work_df = df.copy()
-        if "end_date" not in work_df.columns:
-            return {}, ["income:end_date_missing"]
+    def _build_annual_revenue_growth_from_df(
+        self,
+        income_df: pd.DataFrame,
+        max_rows: int = 5,
+    ) -> Dict[str, Any]:
+        if income_df.empty:
+            return {}
+        work_df = income_df.copy()
         work_df["end_date"] = work_df["end_date"].astype(str)
         work_df = work_df[work_df["end_date"].str.endswith("1231")]
         if work_df.empty:
-            return {}, errors
-        work_df = work_df.sort_values(["end_date", "ann_date"], ascending=[False, False])
-        work_df = work_df.drop_duplicates(subset=["end_date"], keep="first")
+            return {}
 
         rows: List[Dict[str, Any]] = []
         year_to_revenue: Dict[int, float] = {}
@@ -1154,10 +1358,56 @@ class TushareFundamentalAdapter:
                 "report_date": self._safe_date(row.get("end_date")),
                 "revenue": revenue,
                 "revenue_yoy": revenue_yoy,
+                "net_profit": _safe_float(row.get("n_income_attr_p")),
                 "announcement_date": self._safe_date(row.get("f_ann_date") or row.get("ann_date")),
             })
 
-        payload = _build_revenue_growth_payload(rows, max_rows=max_rows)
+        return _build_revenue_growth_payload(rows, max_rows=max_rows)
+
+    def _build_income_periods_from_df(
+        self,
+        income_df: pd.DataFrame,
+        max_rows: int = 8,
+    ) -> Dict[str, Any]:
+        if income_df.empty:
+            return {}
+
+        period_to_revenue: Dict[str, float] = {}
+        for _, row in income_df.iterrows():
+            end_date = _safe_str(row.get("end_date"))
+            revenue = _safe_float(row.get("revenue"))
+            if revenue is None:
+                revenue = _safe_float(row.get("total_revenue"))
+            if end_date and revenue is not None:
+                period_to_revenue[end_date] = revenue
+
+        rows: List[Dict[str, Any]] = []
+        for _, row in income_df.iterrows():
+            end_date = _safe_str(row.get("end_date"))
+            revenue = _safe_float(row.get("revenue"))
+            if revenue is None:
+                revenue = _safe_float(row.get("total_revenue"))
+            if not end_date:
+                continue
+            previous_revenue = _lookup_prior_period_value(period_to_revenue, end_date)
+            revenue_yoy = None
+            if previous_revenue is not None and previous_revenue != 0 and revenue is not None:
+                revenue_yoy = round((revenue - previous_revenue) / abs(previous_revenue) * 100.0, 4)
+            rows.append({
+                "end_date": end_date,
+                "report_date": self._safe_date(end_date),
+                "period": _format_report_period_label(end_date),
+                "revenue": revenue,
+                "net_profit": _safe_float(row.get("n_income_attr_p")),
+                "rd_exp": _safe_float(row.get("rd_exp")),
+                "revenue_yoy": revenue_yoy,
+            })
+
+        return _build_income_periods_payload(rows, max_rows=max_rows)
+
+    def _fetch_annual_revenue_growth(self, stock_code: str, max_rows: int = 5) -> Tuple[Dict[str, Any], List[str]]:
+        income_df, errors = self._fetch_income_statement_df(stock_code)
+        payload = self._build_annual_revenue_growth_from_df(income_df, max_rows=max_rows)
         if payload:
             payload["source"] = "tushare_income"
         return payload, errors
@@ -1202,6 +1452,195 @@ class TushareFundamentalAdapter:
             payload["source"] = "tushare_fina_indicator"
         return payload, errors
 
+    def _fetch_financial_ratios(self, stock_code: str) -> Tuple[Dict[str, Any], List[str]]:
+        ts_code = self._to_ts_code(stock_code)
+        end_date = datetime.now().strftime("%Y%m%d")
+        start_date = f"{datetime.now().year - 3}0101"
+        errors: List[str] = []
+        try:
+            df = self._call_api(
+                "fina_indicator",
+                ts_code=ts_code,
+                start_date=start_date,
+                end_date=end_date,
+                fields=(
+                    "ts_code,ann_date,end_date,debt_to_assets,current_ratio,"
+                    "quick_ratio,inv_turn,ar_turn"
+                ),
+            )
+        except Exception as exc:
+            return {}, [f"fina_indicator_ratios:{type(exc).__name__}"]
+
+        if not isinstance(df, pd.DataFrame) or df.empty:
+            return {}, errors
+
+        work_df = _prefer_consolidated_financial_df(df)
+        row = self._first_row(work_df)
+        if row is None:
+            return {}, errors
+        return {
+            "report_date": self._safe_date(row.get("end_date")),
+            "debt_to_assets": _safe_float(row.get("debt_to_assets")),
+            "current_ratio": _safe_float(row.get("current_ratio")),
+            "quick_ratio": _safe_float(row.get("quick_ratio")),
+            "inv_turn": _safe_float(row.get("inv_turn")),
+            "ar_turn": _safe_float(row.get("ar_turn")),
+        }, errors
+
+    def _fetch_balance_sheet(self, stock_code: str, max_rows: int = 5) -> Tuple[Dict[str, Any], List[str]]:
+        ts_code = self._to_ts_code(stock_code)
+        end_date = datetime.now().strftime("%Y%m%d")
+        start_date = f"{datetime.now().year - max_rows - 2}0101"
+        errors: List[str] = []
+        try:
+            df = self._call_api(
+                "balancesheet",
+                ts_code=ts_code,
+                start_date=start_date,
+                end_date=end_date,
+                fields=(
+                    "ts_code,ann_date,end_date,report_type,total_assets,total_liab,"
+                    "total_cur_assets,total_cur_liab,money_cap,inventories,cip,prepayment,"
+                    "st_borr,lt_borr"
+                ),
+            )
+        except Exception as exc:
+            return {}, [f"balancesheet:{type(exc).__name__}"]
+
+        if not isinstance(df, pd.DataFrame) or df.empty:
+            return {}, errors
+
+        work_df = _prefer_consolidated_financial_df(df)
+        rows: List[Dict[str, Any]] = []
+        for _, row in work_df.iterrows():
+            total_assets = _safe_float(row.get("total_assets"))
+            total_liab = _safe_float(row.get("total_liab"))
+            total_cur_assets = _safe_float(row.get("total_cur_assets"))
+            total_cur_liab = _safe_float(row.get("total_cur_liab"))
+            st_borr = _safe_float(row.get("st_borr")) or 0.0
+            lt_borr = _safe_float(row.get("lt_borr")) or 0.0
+            debt_ratio = None
+            if total_assets is not None and total_liab is not None and total_assets != 0:
+                debt_ratio = round(total_liab / abs(total_assets) * 100.0, 4)
+            current_ratio = None
+            if total_cur_assets is not None and total_cur_liab is not None and total_cur_liab != 0:
+                current_ratio = round(total_cur_assets / abs(total_cur_liab), 4)
+            interest_bearing_debt = None
+            if st_borr is not None or lt_borr is not None:
+                interest_bearing_debt = (st_borr or 0.0) + (lt_borr or 0.0)
+            rows.append({
+                "end_date": _safe_str(row.get("end_date")),
+                "report_date": self._safe_date(row.get("end_date")),
+                "period": _format_report_period_label(row.get("end_date")),
+                "total_assets": total_assets,
+                "total_liab": total_liab,
+                "debt_ratio": debt_ratio,
+                "total_cur_assets": total_cur_assets,
+                "total_cur_liab": total_cur_liab,
+                "current_ratio": current_ratio,
+                "money_cap": _safe_float(row.get("money_cap")),
+                "inventories": _safe_float(row.get("inventories")),
+                "cip": _safe_float(row.get("cip")),
+                "prepayment": _safe_float(row.get("prepayment")),
+                "interest_bearing_debt": interest_bearing_debt,
+            })
+
+        latest_ratios, ratio_errors = self._fetch_financial_ratios(stock_code)
+        errors.extend(ratio_errors)
+        payload = _build_balance_sheet_payload(rows, max_rows=max_rows, latest_ratios=latest_ratios)
+        return payload, errors
+
+    def _fetch_cash_flow(self, stock_code: str, max_rows: int = 5) -> Tuple[Dict[str, Any], List[str]]:
+        ts_code = self._to_ts_code(stock_code)
+        end_date = datetime.now().strftime("%Y%m%d")
+        start_date = f"{datetime.now().year - max_rows - 2}0101"
+        errors: List[str] = []
+        try:
+            df = self._call_api(
+                "cashflow",
+                ts_code=ts_code,
+                start_date=start_date,
+                end_date=end_date,
+                fields=(
+                    "ts_code,ann_date,end_date,report_type,n_cashflow_act,"
+                    "n_cashflow_inv_act,n_cashflow_fina_act"
+                ),
+            )
+        except Exception as exc:
+            return {}, [f"cashflow:{type(exc).__name__}"]
+
+        if not isinstance(df, pd.DataFrame) or df.empty:
+            return {}, errors
+
+        work_df = _prefer_consolidated_financial_df(df)
+        period_to_operating: Dict[str, float] = {}
+        for _, row in work_df.iterrows():
+            end_date_key = _safe_str(row.get("end_date"))
+            operating = _safe_float(row.get("n_cashflow_act"))
+            if end_date_key and operating is not None:
+                period_to_operating[end_date_key] = operating
+
+        rows: List[Dict[str, Any]] = []
+        for _, row in work_df.iterrows():
+            end_date_key = _safe_str(row.get("end_date"))
+            operating = _safe_float(row.get("n_cashflow_act"))
+            previous_operating = _lookup_prior_period_value(period_to_operating, end_date_key)
+            operating_yoy = None
+            if previous_operating is not None and previous_operating != 0 and operating is not None:
+                operating_yoy = round((operating - previous_operating) / abs(previous_operating) * 100.0, 4)
+            rows.append({
+                "end_date": end_date_key,
+                "report_date": self._safe_date(end_date_key),
+                "period": _format_report_period_label(end_date_key),
+                "operating_cash_flow": operating,
+                "investing_cash_flow": _safe_float(row.get("n_cashflow_inv_act")),
+                "financing_cash_flow": _safe_float(row.get("n_cashflow_fina_act")),
+                "operating_cash_flow_yoy": operating_yoy,
+            })
+
+        payload = _build_cash_flow_payload(rows, max_rows=max_rows)
+        return payload, errors
+
+    def _fetch_express_report(self, stock_code: str, max_rows: int = 3) -> Tuple[Dict[str, Any], List[str]]:
+        ts_code = self._to_ts_code(stock_code)
+        end_date = datetime.now().strftime("%Y%m%d")
+        start_date = f"{datetime.now().year - 3}0101"
+        errors: List[str] = []
+        try:
+            df = self._call_api(
+                "express",
+                ts_code=ts_code,
+                start_date=start_date,
+                end_date=end_date,
+                fields=(
+                    "ts_code,ann_date,end_date,revenue,n_income,yoy_net_profit,"
+                    "diluted_eps,diluted_roe"
+                ),
+            )
+        except Exception as exc:
+            return {}, [f"express:{type(exc).__name__}"]
+
+        if not isinstance(df, pd.DataFrame) or df.empty:
+            return {}, errors
+
+        work_df = _prefer_consolidated_financial_df(df)
+        rows: List[Dict[str, Any]] = []
+        for _, row in work_df.iterrows():
+            rows.append({
+                "end_date": _safe_str(row.get("end_date")),
+                "report_date": self._safe_date(row.get("end_date")),
+                "period": _format_report_period_label(row.get("end_date")),
+                "announcement_date": self._safe_date(row.get("ann_date")),
+                "revenue": _safe_float(row.get("revenue")),
+                "net_profit": _safe_float(row.get("n_income")),
+                "net_profit_yoy": _safe_float(row.get("yoy_net_profit")),
+                "diluted_roe": _safe_float(row.get("diluted_roe")),
+                "diluted_eps": _safe_float(row.get("diluted_eps")),
+            })
+
+        payload = _build_express_payload(rows, max_rows=max_rows)
+        return payload, errors
+
     def get_fundamental_bundle(self, stock_code: str) -> Dict[str, Any]:
         result: Dict[str, Any] = {
             "status": "not_supported",
@@ -1212,34 +1651,79 @@ class TushareFundamentalAdapter:
             "errors": [],
         }
 
-        revenue_growth_payload, revenue_growth_errors = self._fetch_annual_revenue_growth(stock_code, max_rows=5)
-        result["errors"].extend(revenue_growth_errors)
-        if revenue_growth_payload:
+        def _ensure_financial_report() -> Dict[str, Any]:
             financial_report_payload = result["earnings"].get("financial_report")
             if not isinstance(financial_report_payload, dict):
                 financial_report_payload = {}
-            financial_report_payload["revenue_growth"] = revenue_growth_payload
-            latest_row = revenue_growth_payload.get("rows", [{}])[0]
-            financial_report_payload.setdefault("report_date", latest_row.get("report_date"))
-            financial_report_payload.setdefault("revenue", latest_row.get("revenue"))
-            result["growth"]["revenue_yoy"] = latest_row.get("revenue_yoy")
-            result["earnings"]["financial_report"] = financial_report_payload
-            result["source_chain"].append("revenue_growth:tushare_income")
+                result["earnings"]["financial_report"] = financial_report_payload
+            return financial_report_payload
+
+        income_df, income_errors = self._fetch_income_statement_df(stock_code)
+        result["errors"].extend(income_errors)
+        if not income_df.empty:
+            revenue_growth_payload = self._build_annual_revenue_growth_from_df(income_df, max_rows=5)
+            if revenue_growth_payload:
+                revenue_growth_payload["source"] = "tushare_income"
+                financial_report_payload = _ensure_financial_report()
+                financial_report_payload["revenue_growth"] = revenue_growth_payload
+                latest_row = revenue_growth_payload.get("rows", [{}])[0]
+                financial_report_payload.setdefault("report_date", latest_row.get("report_date"))
+                financial_report_payload.setdefault("revenue", latest_row.get("revenue"))
+                if latest_row.get("net_profit") is not None:
+                    financial_report_payload.setdefault("net_profit_parent", latest_row.get("net_profit"))
+                result["growth"]["revenue_yoy"] = latest_row.get("revenue_yoy")
+                result["source_chain"].append("revenue_growth:tushare_income")
+
+            income_periods_payload = self._build_income_periods_from_df(income_df, max_rows=8)
+            if income_periods_payload:
+                financial_report_payload = _ensure_financial_report()
+                financial_report_payload["income_periods"] = income_periods_payload
+                latest_period = income_periods_payload.get("rows", [{}])[0]
+                financial_report_payload.setdefault("report_date", latest_period.get("report_date"))
+                if latest_period.get("revenue") is not None:
+                    financial_report_payload.setdefault("revenue", latest_period.get("revenue"))
+                if latest_period.get("net_profit") is not None:
+                    financial_report_payload.setdefault("net_profit_parent", latest_period.get("net_profit"))
+                result["source_chain"].append("income_periods:tushare_income")
 
         profitability_payload, profitability_errors = self._fetch_profitability_indicators(stock_code, max_rows=5)
         result["errors"].extend(profitability_errors)
         if profitability_payload:
-            financial_report_payload = result["earnings"].get("financial_report")
-            if not isinstance(financial_report_payload, dict):
-                financial_report_payload = {}
+            financial_report_payload = _ensure_financial_report()
             financial_report_payload["profitability"] = profitability_payload
             latest_row = profitability_payload.get("rows", [{}])[0]
             financial_report_payload.setdefault("report_date", latest_row.get("report_date"))
             financial_report_payload.setdefault("roe", latest_row.get("roe"))
             result["growth"]["roe"] = latest_row.get("roe")
             result["growth"]["gross_margin"] = latest_row.get("gross_margin")
-            result["earnings"]["financial_report"] = financial_report_payload
             result["source_chain"].append("profitability:tushare_fina_indicator")
+
+        balance_sheet_payload, balance_sheet_errors = self._fetch_balance_sheet(stock_code, max_rows=5)
+        result["errors"].extend(balance_sheet_errors)
+        if balance_sheet_payload:
+            financial_report_payload = _ensure_financial_report()
+            financial_report_payload["balance_sheet"] = balance_sheet_payload
+            result["source_chain"].append("balance_sheet:tushare_balancesheet")
+
+        cash_flow_payload, cash_flow_errors = self._fetch_cash_flow(stock_code, max_rows=5)
+        result["errors"].extend(cash_flow_errors)
+        if cash_flow_payload:
+            financial_report_payload = _ensure_financial_report()
+            financial_report_payload["cash_flow"] = cash_flow_payload
+            latest_cash_flow = cash_flow_payload.get("rows", [{}])[0]
+            if latest_cash_flow.get("operating_cash_flow") is not None:
+                financial_report_payload.setdefault(
+                    "operating_cash_flow",
+                    latest_cash_flow.get("operating_cash_flow"),
+                )
+            result["source_chain"].append("cash_flow:tushare_cashflow")
+
+        express_payload, express_errors = self._fetch_express_report(stock_code, max_rows=3)
+        result["errors"].extend(express_errors)
+        if express_payload:
+            financial_report_payload = _ensure_financial_report()
+            financial_report_payload["express_report"] = express_payload
+            result["source_chain"].append("express_report:tushare_express")
 
         has_content = bool(result["growth"] or result["earnings"] or result["institution"])
         result["status"] = "partial" if has_content else "not_supported"

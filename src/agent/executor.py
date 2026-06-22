@@ -22,6 +22,7 @@ from typing import Any, Callable, Dict, List, Optional
 from src.agent.llm_adapter import LLMToolAdapter
 from src.agent.runner import run_agent_loop, parse_dashboard_json
 from src.agent.run_context import agent_run_cache_scope
+from src.agent.prefetch_policy import filter_tool_registry, seed_tool_cache_from_context
 from src.agent.tools.registry import ToolRegistry
 from src.report_language import normalize_report_language
 from src.market_context import get_market_role, get_market_guidelines
@@ -492,7 +493,10 @@ class AgentExecutor:
         )
 
         # Build tool declarations in OpenAI format (litellm handles all providers)
-        tool_decls = self.tool_registry.to_openai_tools()
+        cache_store = context if isinstance(context, dict) else {}
+        seed_tool_cache_from_context(cache_store)
+        filtered_registry = filter_tool_registry(self.tool_registry, cache_store)
+        tool_decls = filtered_registry.to_openai_tools()
 
         # Initialize conversation
         messages: List[Dict[str, Any]] = [
@@ -500,9 +504,13 @@ class AgentExecutor:
             {"role": "user", "content": self._build_user_message(task, context)},
         ]
 
-        cache_store = context if isinstance(context, dict) else {}
         with agent_run_cache_scope(cache_store, stock_code=str(stock_code or "")):
-            return self._run_loop(messages, tool_decls, parse_dashboard=True)
+            return self._run_loop(
+                messages,
+                tool_decls,
+                parse_dashboard=True,
+                tool_registry=filtered_registry,
+            )
 
     def chat(self, message: str, session_id: str, progress_callback: Optional[Callable] = None, context: Optional[Dict[str, Any]] = None) -> AgentResult:
         """Execute the agent loop for a free-form chat message.
@@ -543,7 +551,10 @@ class AgentExecutor:
         )
 
         # Build tool declarations in OpenAI format (litellm handles all providers)
-        tool_decls = self.tool_registry.to_openai_tools()
+        cache_store = context if isinstance(context, dict) else {}
+        seed_tool_cache_from_context(cache_store)
+        filtered_registry = filter_tool_registry(self.tool_registry, cache_store)
+        tool_decls = filtered_registry.to_openai_tools()
 
         # Get conversation history
         session = conversation_manager.get_or_create(session_id)
@@ -586,7 +597,14 @@ class AgentExecutor:
         # Persist the user turn immediately so the session appears in history during processing
         conversation_manager.add_message(session_id, "user", message)
 
-        result = self._run_loop(messages, tool_decls, parse_dashboard=False, progress_callback=progress_callback)
+        with agent_run_cache_scope(cache_store, stock_code=str(stock_code or "")):
+            result = self._run_loop(
+                messages,
+                tool_decls,
+                parse_dashboard=False,
+                progress_callback=progress_callback,
+                tool_registry=filtered_registry,
+            )
 
         # Persist assistant reply (or error note) for context continuity
         if result.success:
@@ -597,16 +615,24 @@ class AgentExecutor:
 
         return result
 
-    def _run_loop(self, messages: List[Dict[str, Any]], tool_decls: List[Dict[str, Any]], parse_dashboard: bool, progress_callback: Optional[Callable] = None) -> AgentResult:
+    def _run_loop(
+        self,
+        messages: List[Dict[str, Any]],
+        tool_decls: List[Dict[str, Any]],
+        parse_dashboard: bool,
+        progress_callback: Optional[Callable] = None,
+        tool_registry: Optional[ToolRegistry] = None,
+    ) -> AgentResult:
         """Delegate to the shared runner and adapt the result.
 
         This preserves the exact same observable behaviour as the original
         inline implementation while sharing the single authoritative loop
         in :mod:`src.agent.runner`.
         """
+        active_registry = tool_registry or self.tool_registry
         loop_result = run_agent_loop(
             messages=messages,
-            tool_registry=self.tool_registry,
+            tool_registry=active_registry,
             llm_adapter=self.llm_adapter,
             max_steps=self.max_steps,
             progress_callback=progress_callback,
@@ -663,5 +689,13 @@ class AgentExecutor:
             if context.get("news_context"):
                 parts.append(f"\n[系统已获取的新闻与舆情情报]\n{context['news_context']}")
 
-        parts.append("\n请使用可用工具获取缺失的数据（如历史K线、新闻等），然后以决策仪表盘 JSON 格式输出分析结果。")
+        from src.agent.prefetch_policy import withheld_fetch_tools
+
+        if context and withheld_fetch_tools(context):
+            parts.append(
+                "\n系统已预取行情、K线、新闻/情报、资金流等数据并注入上文。"
+                "请直接基于预取数据分析并输出结果，不要尝试调用已被系统禁用的重复拉数工具。"
+            )
+        else:
+            parts.append("\n请使用可用工具获取缺失的数据（如历史K线、新闻等），然后以决策仪表盘 JSON 格式输出分析结果。")
         return "\n".join(parts)

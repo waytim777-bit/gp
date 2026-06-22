@@ -125,10 +125,10 @@
 |------|:---:|:---:|
 | 2.1 营收增长 | ✅ 已有 | ✅ 已有 |
 | 2.2 盈利能力（毛利率/净利率/ROE） | ✅ 已有 | ✅ 已有 |
-| 2.3 资产负债结构 | ❌ 无 | ❌ 无 |
-| 2.4 现金流状况 | ❌ 无 | ❌ 无 |
+| 2.3 资产负债结构 | ✅ 部分 | ✅ 部分（`balanceSheet` 区块） |
+| 2.4 现金流状况 | ✅ 部分 | ✅ 部分（`cashFlow` 区块） |
 
-> **注：** `details.financialReport.revenueGrowth.rows` 已用于 2.1 营收增长展示，数据主源来自 Tushare `income`，AkShare / 东方财富年度利润表为 fallback；`details.financialReport.profitability.rows` 已用于 2.2 盈利能力展示，数据主源来自 Tushare `fina_indicator`，AkShare `stock_financial_analysis_indicator_em` 为 fallback。资产负债结构、现金流状况仍待补齐。
+> **注：** `details.financialReport.revenueGrowth.rows` 已用于 2.1 营收增长展示，数据主源来自 Tushare `income`，AkShare / 东方财富年度利润表为 fallback；`details.financialReport.profitability.rows` 已用于 2.2 盈利能力展示，数据主源来自 Tushare `fina_indicator`，AkShare `stock_financial_analysis_indicator_em` 为 fallback。`balanceSheet` / `cashFlow` / `expressReport` / `incomePeriods` 已接入 Tushare `balancesheet` / `cashflow` / `express` / `income`（含季报）；基本面缓存 schema 已升至 `fin-report-v3`。
 
 **TypeScript 类型定义（`analysis.ts`）：**
 ```typescript
@@ -188,43 +188,41 @@ export interface FinancialReport {
 - 2.1 / 2.2 数据源优先看 Tushare source chain：`revenue_growth:tushare_income`、`profitability:tushare_fina_indicator`；若出现权限、配额、超时或空返回，再看 AkShare fallback：`revenue_growth:stock_lrb_em`、`profitability:stock_financial_analysis_indicator_em`。
 - Agent 模式保存的上下文快照为顶层 `fundamental_context`，API 详情提取已兼容该结构；标准模式仍使用 `enhanced_context.fundamental_context`。
 - 任务完成后首页会刷新历史并自动打开最新完成报告，避免仍停留在旧历史报告导致看不到新字段。
-- 基础面缓存 key 已带 `fin-report-v2` schema 版本，避免旧缓存继续返回缺少 2.1 / 2.2 的结果；若服务未重启，仍可能使用旧进程代码和内存缓存。
+- 基础面缓存 key 已带 `fin-report-v3` schema 版本，避免旧缓存继续返回缺少 2.3 / 2.4 的结果；若服务未重启，仍可能使用旧进程代码和内存缓存。
 
 ---
 
 ### 三、技术分析
 
-#### 3.1 股价走势 ⚠️ 部分覆盖
+#### 3.1 股价走势 ✅ 已部分实现（Phase 2）
 
 | 数据点 | 当前状态 | 说明 |
 |--------|:---:|------|
 | 当前价格 | ✅ 已有 | `meta.currentPrice` |
 | 涨跌幅 | ✅ 已有 | `meta.changePct` |
-| 历史K线图 | ❌ 缺失 | 无图表组件 |
-| 阶段趋势判断 | ❌ 缺失 | 后端 `trend_analysis` 字段存在但前端未渲染 |
-| 均线排列（MA5/10/20） | ❌ 缺失 | 后端 `data_perspective.trend_status.ma_alignment` 存在，前端未用 |
+| 历史K线图 | ✅ 已有 | `details.klineSeries` + `KlineChartSection`（近 120 根日 K + MA5/10/20） |
+| 周K线 / 多周期 | ✅ 已有 | `details.weeklyKlineSeries` + 周K图；`weeklyTrendAnalysis` AI 解读 |
+| 股价走势 AI 解读 | ✅ 已有 | `details.priceTrendAnalysis` + `PriceTrendAnalysisSection` |
+| 阶段趋势判断 | ✅ 部分 | `details.technicalAnalysisReport` + `details.technicalIndicators.trend` |
+| 均线排列（MA5/10/20） | ✅ 部分 | `details.technicalIndicators.movingAverages` + K 线图叠加 |
 
-#### 3.2 技术指标分析 ⚠️ 后端有数据，前端未渲染
-
-后端 LLM Prompt 已要求生成以下数据（均在 `AnalysisResult` / `dashboard JSON` 中），但 **前端完全未展示**：
+#### 3.2 技术指标分析 ✅ 已部分实现（含 Phase 3 KDJ/BOLL）
 
 | 数据字段 | 后端存在 | 前端展示 |
 |---------|:---:|:---:|
-| `ma_analysis`（均线系统分析） | ✅ | ❌ |
-| `volume_analysis`（量能分析，含量比/换手率） | ✅ | ❌ |
-| `pattern_analysis`（K线形态分析） | ✅ | ❌ |
-| `technical_analysis`（技术面综合分析） | ✅ | ❌ |
-| `trend_analysis`（走势形态分析） | ✅ | ❌ |
-| `data_perspective.price_position`（MA偏离度/支撑阻力） | ✅ | ❌ |
-| `data_perspective.chip_structure`（筹码结构：获利比例/平均成本/集中度） | ✅ | ❌ |
+| `technical_indicators`（MACD/RSI/均线/量能/关键位/KDJ/BOLL） | ✅ | ✅ `TechnicalIndicatorsSection` |
+| `technical_analysis_report`（LLM 技术面结论 + stance） | ✅ | ✅ `TechnicalAnalysisSection` |
+| `ma_analysis` / `volume_analysis` 等旧文本字段 | ✅ | ⚠️ 仍主要在 Markdown 正文 |
 
-#### 3.3 关键支撑/阻力位 ⚠️ 部分覆盖
+#### 3.3 关键支撑/阻力位 ✅ 已部分实现（Phase 3）
 
 | 数据点 | 当前状态 | 说明 |
 |--------|:---:|------|
 | 策略点位（理想买入/二次买入/止损/止盈） | ✅ 已有 | `ReportStrategy` 组件 |
-| 基于技术分析的支撑/阻力位拆解 | ❌ 缺失 | 仅有价格，无分析逻辑说明 |
-| 筹码分布支撑/压力区 | ❌ 缺失 | 后端有数据，前端未渲染 |
+| 基于技术分析的支撑/阻力位拆解 | ✅ 已有 | `details.keyLevels.technical` + `KeyLevelsSection` |
+| 筹码分布支撑/压力区 | ✅ 已有 | `details.chipDistribution` + `details.keyLevels.chip` |
+| 关键位 AI 解读 | ✅ 已有 | `details.keyLevelsAnalysis` + `KeyLevelsSection` |
+| K 线摆动形态提示 | ✅ 部分 | `details.keyLevels.patterns`（规则辅助，非复杂形态识别） |
 
 **现有组件：** `ReportStrategy.tsx`
 
@@ -236,11 +234,14 @@ export interface FinancialReport {
 
 无机构评级、目标价、盈利预测等内容。
 
-#### 4.2 资金流向与筹码分布 ⚠️ 后台有数据，前端未渲染
+#### 4.2 资金流向与筹码分布 ✅ 已部分实现
 
-- 后端 `chip_structure` 包含获利比例/平均成本/集中度/筹码健康度
-- 前端仅展示板块强弱信号（`details.sectorRankings`）
-- 无主力资金流向、北向资金等内容
+- 后端 `chip_distribution` / `chip_structure` 包含获利比例/平均成本/集中度/筹码健康度
+- 前端已展示 `ChipDistributionSection`（筹码分布表）并与关键位联动
+- A 股个股主力净流入/5日/10日累计与板块资金流排行：`details.capitalFlow` + `CapitalFlowSection`
+- 主力资金流 AI 解读：`details.capitalFlowAnalysis`
+- 板块强弱信号仍通过 `details.sectorRankings` 展示
+- 无北向资金个股持仓/净流入专用链路
 
 #### 4.3 市场情绪矛盾点 ⚠️ 部分覆盖
 

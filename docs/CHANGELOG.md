@@ -8,9 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 > For user-friendly release highlights, see the [GitHub Releases](https://github.com/ZhuLinsen/daily_stock_analysis/releases) page.
 
 ## [Unreleased]
+- [新功能] 多模型会诊：主 Agent 分析完成后，将同一事实摘要（不含主模型结论）并行推送给配置的会诊模型（只读、无工具），报告页展示主模型 + 会诊模型三栏对比；积分消费记为 `consultation`。
+- [改进] 多模型会诊：会诊 prompt 改为 facts-only brief，不再注入 `primary_conclusion`，避免会诊模型被主模型评分与叙事锚定。
+- [改进] 多模型会诊 ADC：会诊 JSON 增加 `bull_case`/`bear_case`/`dissent_note` 结构化多空与 dissent；后端计算 `divergence`（评分跨度/一致度）；报告页先展示会诊卡片、分歧条与偏离主模型高亮。
+- [修复] Agent 预取：基本面阶段未获有效资金流时 Pipeline 单独补拉 `get_capital_flow` 并写入 context；`failed`/`not_supported` 状态亦 withhold 工具，避免 Intel 阶段重复请求。
+- [修复] Web 完整分析报告 PDF 下载：改用 `html2canvas-pro`（支持 Tailwind v4 的 oklab/oklch 颜色），修复点击下载时报 `unsupported color function "oklab"` 失败。
+- [修复] 管理后台「股票管理」在 Windows 下拉取 Tushare 列表失败：子进程强制 UTF-8 输出，避免 `✓` 等字符触发 GBK 编码错误。
+- [新功能] 报告公开分享：完整报告抽屉新增「分享」按钮，生成固定链接 `/r/{token}`，未登录可直接查看；原预测报告市场上架操作改名为「推荐」。
+- [改进] 预测报告市场按「当前 / 已过期 / 我购买的 / 我发布的」分 Tab 展示（允许重叠）；过期报告禁止新购，已购用户仍可查看完整报告。
+- [改进] 预测报告新增周线/多周期：由日线重采样生成 `weekly_kline_series` 与 LLM `weekly_trend_analysis`，Web 新增「周线走势解读」「周K走势」区块。
+- [改进] 预测报告新增主力资金流：从 `fundamental_context.capital_flow` 透出结构化 `capital_flow` 与 LLM `capital_flow_analysis`，Web 新增「主力资金流」区块（A 股个股）。
+- [改进] 技术 Phase 3：新增 KDJ/BOLL 指标并入 `technical_indicators`；结构化 `chip_distribution` 与 `key_levels`（技术位+筹码成本区+摆动形态提示）；LLM `key_levels_analysis`（关键支撑/阻力解读）；Web 报告新增「筹码分布」「关键支撑/阻力」区块。
+- [改进] 技术 Phase 2：Pipeline 加长日 K 历史（约 180 日历日/120 根 K 线）并持久化回填；新增 `kline_series` 结构化快照与 LLM `price_trend_analysis`（股价走势解读）；Web 报告新增「股价走势解读」「日K走势」蜡烛图（含 MA5/10/20）区块。
+- [改进] 预测报告接入日线技术指标（MACD/RSI/均线/量能/支撑阻力）结构化快照与 LLM `technical_analysis_report`（含偏多/偏空/中性结论），Web 报告新增「技术面结论」「技术指标快照」区块。
+- [改进] 财务各维度新增 LLM `financial_fundamentals_analysis` 解读（按维度输出 stance 与要点），营收/盈利/资产负债/现金流/分期业绩/业绩快报卡片优先展示 AI 结论。
 - [新功能] Web 端新增个人中心（点击顶栏昵称进入），支持修改昵称、头像与登录密码。
 - [改进] 预测报告市场卡片隐藏操作建议与情绪评分，右下角新增点赞按钮（支持切换点赞/取消并展示点赞数）。
-- [改进] Agent 多阶段分析改为单次数据采集：Pipeline 预采集行情/K线/筹码/多维度情报，工具层按 run 级缓存复用，避免 Technical/Intel/Risk 重复搜索与重复拉数。
+- [改进] Agent 单次数据采集强化：Pipeline 趋势阶段 DB 优先跳过重复日线回填；实时行情禁用时注入 K 线/趋势快照；预取满足时额外 withhold `calculate_ma`/`get_volume_analysis`/`analyze_pattern`/`get_stock_info`/`get_capital_flow`/`get_realtime_quote`；分析类 tool 优先读本地 DB。
 - [新功能] 预测报告市场（Phase 5）：首页历史记录可分享当前周期报告；侧边栏新增「预测报告」页展示当日周期上架报告；他人可花积分购买查看完整报告，分享者获得收益积分。
 - [新功能] 管理后台新增「预测报告定价」页面，可配置购买价格与分享者收益积分（`PREDICTION_REPORT_PURCHASE_CREDITS` / `PREDICTION_REPORT_SELLER_CREDITS`）。
 - [新功能] 预测周期架构：新增 `resolve_prediction_cycle`、canonical 共享分析服务与 `stock_data_snapshots`；首页/API/订阅推送统一按 `(code, cycle_anchor_date, report_type)` 去重，周期内支持 SearXNG 情报探测与探测积分（`CREDITS_ANALYSIS_PROBE`）。

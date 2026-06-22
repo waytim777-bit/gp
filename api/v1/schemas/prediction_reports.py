@@ -15,10 +15,24 @@ class PredictionReportPreview(BaseModel):
     analysis_summary: Optional[str] = None
 
 
+class PredictionReportBacktestPreview(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    available: bool = False
+    tone: str = "neutral"
+    label: str = "未回测"
+    outcome: Optional[str] = None
+    direction_correct: Optional[bool] = Field(default=None, alias="directionCorrect")
+    stock_return_pct: Optional[float] = Field(default=None, alias="stockReturnPct")
+    eval_window_days: Optional[int] = Field(default=None, alias="evalWindowDays")
+    eval_status: Optional[str] = Field(default=None, alias="evalStatus")
+
+
 class PredictionReportListingItem(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     id: int
+    analysis_history_id: Optional[int] = Field(default=None, alias="analysisHistoryId")
     seller_user_id: int = Field(alias="sellerUserId")
     seller_username: str = Field(alias="sellerUsername")
     code: str
@@ -31,11 +45,18 @@ class PredictionReportListingItem(BaseModel):
     is_mine: bool = Field(alias="isMine")
     purchased: bool
     can_view_full: bool = Field(alias="canViewFull")
+    can_purchase: bool = Field(default=False, alias="canPurchase")
+    is_current_cycle: bool = Field(default=False, alias="isCurrentCycle")
+    has_purchase_record: bool = Field(default=False, alias="hasPurchaseRecord")
     buyer_history_id: Optional[int] = Field(default=None, alias="buyerHistoryId")
     preview: PredictionReportPreview
     like_count: int = Field(default=0, alias="likeCount")
     liked: bool = False
     created_at: Optional[str] = Field(default=None, alias="createdAt")
+    backtest_preview: Optional[PredictionReportBacktestPreview] = Field(
+        default=None,
+        alias="backtestPreview",
+    )
 
 
 class PredictionReportPricing(BaseModel):
