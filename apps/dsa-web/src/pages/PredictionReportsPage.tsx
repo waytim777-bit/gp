@@ -9,41 +9,34 @@ import { ApiErrorAlert, Button, EmptyState, InlineAlert } from '../components/co
 import { ReportSummary } from '../components/report';
 import { useCreditStore } from '../stores/creditStore';
 import { backtestToneBorderClass, backtestToneTextClass } from '../utils/backtestDisplay';
+import { formatDateTime } from '../utils/format';
 import type { AnalysisReport } from '../types/analysis';
 import type { PredictionReportListingItem } from '../types/predictionReports';
-
-type PredictionReportTab = 'current' | 'expired' | 'purchased' | 'published';
+import {
+  filterItemsByTab,
+  formatCycleVersionLabel,
+  type PredictionReportTab,
+} from '../utils/predictionReportListings';
 
 const TAB_OPTIONS: Array<{ key: PredictionReportTab; label: string; description: string }> = [
-  { key: 'current', label: '当前', description: '本周期可购买的预测报告' },
+  { key: 'purchasable', label: '可购买的', description: '本周期可购买的预测报告（同股仅展示最新一份）' },
   { key: 'expired', label: '已过期', description: '历史周期报告（已结束，不可新购）' },
   { key: 'purchased', label: '我购买的', description: '您已购买的报告' },
   { key: 'published', label: '我推荐的', description: '您推荐到市场的报告' },
 ];
 
-const filterItemsByTab = (
-  items: PredictionReportListingItem[],
-  tab: PredictionReportTab,
-): PredictionReportListingItem[] => {
-  switch (tab) {
-    case 'current':
-      return items.filter((item) => item.isCurrentCycle !== false);
-    case 'expired':
-      return items.filter((item) => item.isCurrentCycle === false);
-    case 'purchased':
-      return items.filter((item) => item.hasPurchaseRecord);
-    case 'published':
-      return items.filter((item) => item.isMine);
-    default:
-      return items;
+const formatCycleAnchorLabel = (item: PredictionReportListingItem): string => {
+  if (item.analyzedAt) {
+    return formatDateTime(item.analyzedAt);
   }
+  return item.cycleAnchorDate || '—';
 };
 
 const PredictionReportsPage: React.FC = () => {
   const navigate = useNavigate();
   const { balance, refreshBalance } = useCreditStore();
   const [items, setItems] = useState<PredictionReportListingItem[]>([]);
-  const [activeTab, setActiveTab] = useState<PredictionReportTab>('current');
+  const [activeTab, setActiveTab] = useState<PredictionReportTab>('purchasable');
   const [purchaseCredits, setPurchaseCredits] = useState(100);
   const [loading, setLoading] = useState(true);
   const [purchasingId, setPurchasingId] = useState<number | null>(null);
@@ -219,15 +212,15 @@ const PredictionReportsPage: React.FC = () => {
           title={`暂无${activeTabMeta.label}报告`}
           description={
             activeTab === 'published'
-              ? '在首页历史分析中选中报告并点击「推荐」，即可上架到本页。'
+              ? '在首页完成分析后会自动上架，您可在此查看自己上架的报告。'
               : activeTab === 'purchased'
                 ? '购买他人推荐的报告后，会出现在这里。'
                 : activeTab === 'expired'
                   ? '历史周期报告会保留在此，供已购用户回看。'
-                  : '本周期暂无推荐报告，请稍后再来或自行分析后推荐。'
+                  : '本周期暂无可购买的推荐报告，请稍后再来或自行分析生成新版本。'
           }
           icon={<Share2 className="h-6 w-6" />}
-          action={activeTab === 'published' || activeTab === 'current' ? (
+          action={activeTab === 'published' || activeTab === 'purchasable' ? (
             <Button variant="secondary" onClick={() => navigate('/')}>
               前往首页
             </Button>
@@ -243,6 +236,9 @@ const PredictionReportsPage: React.FC = () => {
                   <div className="mt-1 text-xs text-muted-text font-mono">{item.code}</div>
                 </div>
                 <div className="flex flex-col items-end gap-1">
+                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
+                    {formatCycleVersionLabel(item.cycleVersion)}
+                  </span>
                   {item.isMine ? (
                     <span className="rounded-full bg-cyan/10 px-2 py-0.5 text-xs text-cyan">我的推荐</span>
                   ) : null}
@@ -263,7 +259,8 @@ const PredictionReportsPage: React.FC = () => {
 
               <div className="mt-3 space-y-1 text-sm text-secondary-text">
                 <div>推荐者：{item.sellerUsername}</div>
-                <div>周期锚点：{item.cycleAnchorDate || '—'}</div>
+                <div>周期锚点：{formatCycleAnchorLabel(item)}</div>
+                <div>购买次数：{item.purchaseCount ?? 0}</div>
                 {!item.canViewFull && item.preview.analysisSummary ? (
                   <p className="line-clamp-3 text-default-600">{item.preview.analysisSummary}</p>
                 ) : null}

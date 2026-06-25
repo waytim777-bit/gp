@@ -5,6 +5,7 @@ import type {
   PredictionReportListResponse,
   PredictionReportListingItem,
   PredictionReportPricing,
+  PredictionReportSearchResponse,
   PurchasePredictionReportResponse,
 } from '../types/predictionReports';
 
@@ -12,6 +13,22 @@ export const predictionReportsApi = {
   list: async (): Promise<PredictionReportListResponse> => {
     const response = await apiClient.get<Record<string, unknown>>('/api/v1/prediction-reports');
     return toCamelCase<PredictionReportListResponse>(response.data);
+  },
+
+  searchByCode: async (params: {
+    stockCode: string;
+    reportType?: string;
+  }): Promise<PredictionReportSearchResponse> => {
+    const response = await apiClient.get<Record<string, unknown>>(
+      '/api/v1/prediction-reports/search',
+      {
+        params: {
+          code: params.stockCode,
+          report_type: params.reportType || 'detailed',
+        },
+      },
+    );
+    return toCamelCase<PredictionReportSearchResponse>(response.data);
   },
 
   getPricing: async (): Promise<PredictionReportPricing> => {

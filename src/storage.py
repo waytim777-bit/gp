@@ -282,7 +282,7 @@ class NewsIntel(Base):
     name = Column(String(50))
 
     # 搜索上下文
-    dimension = Column(String(32), index=True)  # latest_news / risk_check / earnings / market_analysis / industry
+    dimension = Column(String(32), index=True)  # latest_news / risk_check / industry_news / intl_news / cn_policy / ...
     query = Column(String(255))
     provider = Column(String(32), index=True)
 
@@ -375,6 +375,7 @@ class AnalysisHistory(Base):
     take_profit = Column(Float)
 
     shared_run_id = Column(Integer, ForeignKey('shared_analysis_runs.id'), index=True)
+    cycle_version = Column(Integer, nullable=False, default=1)
 
     created_at = Column(DateTime, default=datetime.now, index=True)
 
@@ -969,6 +970,7 @@ class PredictionReportListing(Base):
     report_type = Column(String(16), nullable=False, default='simple')
     purchase_credits = Column(Integer, nullable=False, default=100)
     seller_reward_credits = Column(Integer, nullable=False, default=90)
+    cycle_version = Column(Integer, nullable=False, default=1)
     status = Column(String(16), nullable=False, default='active', index=True)
     created_at = Column(DateTime, default=datetime.now, index=True)
 
@@ -1025,6 +1027,32 @@ class ReportPublicShare(Base):
     enabled = Column(Boolean, nullable=False, default=True, index=True)
     created_at = Column(DateTime, default=datetime.now, index=True)
     revoked_at = Column(DateTime, nullable=True)
+
+
+class PolymarketWatchItem(Base):
+    """Admin-managed Polymarket event/market slug for macro prediction context."""
+
+    __tablename__ = 'polymarket_watch_items'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    slug_type = Column(String(16), nullable=False, default='event', index=True)
+    slug = Column(String(128), nullable=False, index=True)
+    label = Column(String(200), nullable=False, default='')
+    category = Column(String(32), nullable=False, default='macro', index=True)
+    enabled = Column(Boolean, nullable=False, default=True, index=True)
+    priority = Column(Integer, nullable=False, default=100, index=True)
+    market_slug = Column(String(128), nullable=True)
+    outcome_label = Column(String(32), nullable=False, default='Yes')
+    min_volume_24h = Column(Float, nullable=True)
+    min_liquidity = Column(Float, nullable=True)
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.now, index=True)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now, index=True)
+
+    __table_args__ = (
+        UniqueConstraint('slug_type', 'slug', name='uix_polymarket_watch_slug_type_slug'),
+        Index('ix_polymarket_watch_enabled_priority', 'enabled', 'priority'),
+    )
 
 
 class DatabaseManager:
@@ -1186,6 +1214,7 @@ class DatabaseManager:
             "analysis_history": [
                 ("owner_user_id", "INTEGER"),
                 ("shared_run_id", "INTEGER"),
+                ("cycle_version", "INTEGER NOT NULL DEFAULT 1"),
             ],
             "shared_analysis_runs": [
                 ("data_as_of_date", "DATE"),
@@ -1201,6 +1230,9 @@ class DatabaseManager:
             "llm_usage": [("owner_user_id", "INTEGER")],
             "backtest_results": [("owner_user_id", "INTEGER")],
             "backtest_summaries": [("owner_user_id", "INTEGER")],
+            "prediction_report_listings": [
+                ("cycle_version", "INTEGER NOT NULL DEFAULT 1"),
+            ],
             "onchain_deposits": [
                 ("wallet_address", "VARCHAR(64)"),
                 ("tx_hash", "VARCHAR(80)"),
@@ -1324,6 +1356,8 @@ class DatabaseManager:
                 ("shared_analysis_runs", "data_snapshot_id", "INTEGER"),
                 ("shared_analysis_runs", "status", "VARCHAR(16) NOT NULL DEFAULT 'ready'"),
                 ("analysis_history", "shared_run_id", "INTEGER"),
+                ("analysis_history", "cycle_version", "INTEGER NOT NULL DEFAULT 1"),
+                ("prediction_report_listings", "cycle_version", "INTEGER NOT NULL DEFAULT 1"),
             ):
                 conn.exec_driver_sql(
                     f"""
@@ -1331,6 +1365,17 @@ class DatabaseManager:
                     ADD COLUMN IF NOT EXISTS {column_name} {column_type}
                     """
                 )
+
+            # Backfill NULLs for legacy rows (PostgreSQL won't retroactively fill existing NULLs).
+            conn.exec_driver_sql(
+                "UPDATE shared_analysis_runs SET version = 1 WHERE version IS NULL"
+            )
+            conn.exec_driver_sql(
+                "UPDATE analysis_history SET cycle_version = 1 WHERE cycle_version IS NULL"
+            )
+            conn.exec_driver_sql(
+                "UPDATE prediction_report_listings SET cycle_version = 1 WHERE cycle_version IS NULL"
+            )
 
             conn.exec_driver_sql(
                 """
@@ -1360,6 +1405,7 @@ class DatabaseManager:
                     report_type VARCHAR(16) NOT NULL DEFAULT 'simple',
                     purchase_credits INTEGER NOT NULL DEFAULT 100,
                     seller_reward_credits INTEGER NOT NULL DEFAULT 90,
+                    cycle_version INTEGER NOT NULL DEFAULT 1,
                     status VARCHAR(16) NOT NULL DEFAULT 'active',
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
@@ -1403,6 +1449,27 @@ class DatabaseManager:
                     enabled BOOLEAN NOT NULL DEFAULT TRUE,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     revoked_at TIMESTAMP NULL
+                )
+                """
+            )
+            conn.exec_driver_sql(
+                """
+                CREATE TABLE IF NOT EXISTS polymarket_watch_items (
+                    id SERIAL PRIMARY KEY,
+                    slug_type VARCHAR(16) NOT NULL DEFAULT 'event',
+                    slug VARCHAR(128) NOT NULL,
+                    label VARCHAR(200) NOT NULL DEFAULT '',
+                    category VARCHAR(32) NOT NULL DEFAULT 'macro',
+                    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+                    priority INTEGER NOT NULL DEFAULT 100,
+                    market_slug VARCHAR(128) NULL,
+                    outcome_label VARCHAR(32) NOT NULL DEFAULT 'Yes',
+                    min_volume_24h DOUBLE PRECISION NULL,
+                    min_liquidity DOUBLE PRECISION NULL,
+                    notes TEXT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    CONSTRAINT uix_polymarket_watch_slug_type_slug UNIQUE (slug_type, slug)
                 )
                 """
             )
@@ -2428,17 +2495,21 @@ class DatabaseManager:
         analysis_date: date,
         report_type: str = 'simple',
     ) -> Optional[SharedAnalysisRun]:
+        from src.services.stock_code_utils import stock_code_lookup_variants
+
         with self.get_session() as session:
-            row = session.execute(
-                select(SharedAnalysisRun).where(
-                    SharedAnalysisRun.code == code,
-                    SharedAnalysisRun.analysis_date == analysis_date,
-                    SharedAnalysisRun.report_type == report_type,
-                ).limit(1)
-            ).scalar_one_or_none()
-            if row is not None:
-                session.expunge(row)
-            return row
+            for variant in stock_code_lookup_variants(code):
+                row = session.execute(
+                    select(SharedAnalysisRun).where(
+                        SharedAnalysisRun.code == variant,
+                        SharedAnalysisRun.analysis_date == analysis_date,
+                        SharedAnalysisRun.report_type == report_type,
+                    ).limit(1)
+                ).scalar_one_or_none()
+                if row is not None:
+                    session.expunge(row)
+                    return row
+            return None
 
     def get_shared_analysis_run_by_id(self, run_id: int) -> Optional[SharedAnalysisRun]:
         with self.get_session() as session:
@@ -2529,6 +2600,46 @@ class DatabaseManager:
             session.expunge(row)
             return row
 
+    def get_stock_data_snapshot(
+        self,
+        *,
+        code: str,
+        cycle_anchor_date: date,
+    ) -> Optional[Dict[str, Any]]:
+        """Load frozen context snapshot payload for a prediction cycle anchor."""
+        with self.session_scope() as session:
+            row = session.execute(
+                select(StockDataSnapshot).where(
+                    StockDataSnapshot.code == code,
+                    StockDataSnapshot.cycle_anchor_date == cycle_anchor_date,
+                ).limit(1)
+            ).scalar_one_or_none()
+            if row is None or not row.payload:
+                return None
+            try:
+                parsed = json.loads(row.payload)
+            except Exception:
+                return None
+            return parsed if isinstance(parsed, dict) else None
+
+    def get_stock_data_snapshot_by_id(
+        self,
+        snapshot_id: int,
+    ) -> Optional[Dict[str, Any]]:
+        with self.session_scope() as session:
+            row = session.execute(
+                select(StockDataSnapshot).where(
+                    StockDataSnapshot.id == int(snapshot_id),
+                ).limit(1)
+            ).scalar_one_or_none()
+            if row is None or not row.payload:
+                return None
+            try:
+                parsed = json.loads(row.payload)
+            except Exception:
+                return None
+            return parsed if isinstance(parsed, dict) else None
+
     def upsert_stock_data_snapshot(
         self,
         *,
@@ -2592,6 +2703,7 @@ class DatabaseManager:
                 stop_loss=source.stop_loss,
                 take_profit=source.take_profit,
                 shared_run_id=shared_run_id,
+                cycle_version=getattr(source, "cycle_version", None) or 1,
                 created_at=datetime.now(),
             )
             session.add(cloned)
@@ -2663,6 +2775,18 @@ class DatabaseManager:
 
         return saved
 
+    def update_analysis_history_cycle_version(
+        self,
+        history_id: int,
+        cycle_version: int,
+    ) -> None:
+        with self.session_scope() as session:
+            row = session.execute(
+                select(AnalysisHistory).where(AnalysisHistory.id == int(history_id)).limit(1)
+            ).scalar_one_or_none()
+            if row is not None:
+                row.cycle_version = max(1, int(cycle_version))
+
     def create_prediction_report_listing(
         self,
         *,
@@ -2676,6 +2800,7 @@ class DatabaseManager:
         report_type: str,
         purchase_credits: int,
         seller_reward_credits: int,
+        cycle_version: int = 1,
     ) -> PredictionReportListing:
         with self.session_scope() as session:
             row = PredictionReportListing(
@@ -2689,12 +2814,45 @@ class DatabaseManager:
                 report_type=report_type,
                 purchase_credits=int(purchase_credits),
                 seller_reward_credits=int(seller_reward_credits),
+                cycle_version=max(1, int(cycle_version)),
                 status="active",
             )
             session.add(row)
             session.flush()
             session.expunge(row)
             return row
+
+    def supersede_older_prediction_report_listings(
+        self,
+        *,
+        seller_user_id: int,
+        code: str,
+        cycle_anchor_date: date,
+        keep_listing_id: int,
+        keep_version: int,
+    ) -> int:
+        from src.services.stock_code_utils import resolve_lookup_stock_code
+
+        lookup_code = resolve_lookup_stock_code(code)
+        with self.session_scope() as session:
+            rows = session.execute(
+                select(PredictionReportListing).where(
+                    PredictionReportListing.seller_user_id == int(seller_user_id),
+                    PredictionReportListing.cycle_anchor_date == cycle_anchor_date,
+                    PredictionReportListing.status == "active",
+                )
+            ).scalars().all()
+            superseded = 0
+            for row in rows:
+                if int(row.id) == int(keep_listing_id):
+                    continue
+                if resolve_lookup_stock_code(row.code) != lookup_code:
+                    continue
+                row_version = int(getattr(row, "cycle_version", None) or 1)
+                if row_version < int(keep_version):
+                    row.status = "superseded"
+                    superseded += 1
+            return superseded
 
     def get_prediction_report_listing_by_id(
         self,
@@ -2741,6 +2899,56 @@ class DatabaseManager:
                 session.expunge(row)
             return list(rows)
 
+    def list_prediction_report_listings_for_code_cycle(
+        self,
+        *,
+        code: str,
+        cycle_anchor_date: date,
+        status: str = "active",
+    ) -> List[PredictionReportListing]:
+        from src.services.stock_code_utils import resolve_lookup_stock_code
+
+        lookup_code = resolve_lookup_stock_code(code)
+        with self.get_session() as session:
+            rows = session.execute(
+                select(PredictionReportListing)
+                .where(
+                    PredictionReportListing.cycle_anchor_date == cycle_anchor_date,
+                    PredictionReportListing.status == status,
+                )
+                .order_by(
+                    PredictionReportListing.created_at.desc(),
+                    PredictionReportListing.id.desc(),
+                )
+            ).scalars().all()
+            matched = [
+                row for row in rows
+                if resolve_lookup_stock_code(row.code) == lookup_code
+            ]
+            for row in matched:
+                session.expunge(row)
+            return matched
+
+    def get_analysis_history_for_shared_run(
+        self,
+        *,
+        owner_user_id: int,
+        shared_run_id: int,
+    ) -> Optional[AnalysisHistory]:
+        with self.get_session() as session:
+            row = session.execute(
+                select(AnalysisHistory)
+                .where(
+                    AnalysisHistory.owner_user_id == int(owner_user_id),
+                    AnalysisHistory.shared_run_id == int(shared_run_id),
+                )
+                .order_by(AnalysisHistory.created_at.desc(), AnalysisHistory.id.desc())
+                .limit(1)
+            ).scalar_one_or_none()
+            if row is not None:
+                session.expunge(row)
+            return row
+
     def get_prediction_report_purchase(
         self,
         *,
@@ -2757,6 +2965,21 @@ class DatabaseManager:
             if row is not None:
                 session.expunge(row)
             return row
+
+    def count_prediction_report_purchases(
+        self,
+        listing_ids: List[int],
+    ) -> Dict[int, int]:
+        if not listing_ids:
+            return {}
+        ids = [int(listing_id) for listing_id in listing_ids]
+        with self.get_session() as session:
+            rows = session.execute(
+                select(PredictionReportPurchase.listing_id, func.count())
+                .where(PredictionReportPurchase.listing_id.in_(ids))
+                .group_by(PredictionReportPurchase.listing_id)
+            ).all()
+        return {int(listing_id): int(count) for listing_id, count in rows}
 
     def get_prediction_report_like_stats(
         self,
@@ -2925,6 +3148,160 @@ class DatabaseManager:
                 return False
             row.enabled = False
             row.revoked_at = datetime.now()
+            session.flush()
+            return True
+
+    def list_polymarket_watch_items(
+        self,
+        *,
+        enabled_only: bool = False,
+        limit: int = 500,
+    ) -> List[PolymarketWatchItem]:
+        with self.get_session() as session:
+            stmt = select(PolymarketWatchItem).order_by(
+                PolymarketWatchItem.priority.asc(),
+                PolymarketWatchItem.id.asc(),
+            )
+            if enabled_only:
+                stmt = stmt.where(PolymarketWatchItem.enabled.is_(True))
+            rows = session.execute(stmt.limit(max(1, int(limit)))).scalars().all()
+            for row in rows:
+                session.expunge(row)
+            return list(rows)
+
+    def get_polymarket_watch_item(self, item_id: int) -> Optional[PolymarketWatchItem]:
+        with self.get_session() as session:
+            row = session.execute(
+                select(PolymarketWatchItem).where(PolymarketWatchItem.id == int(item_id)).limit(1)
+            ).scalar_one_or_none()
+            if row is not None:
+                session.expunge(row)
+            return row
+
+    def get_polymarket_watch_item_by_slug(
+        self,
+        *,
+        slug_type: str,
+        slug: str,
+    ) -> Optional[PolymarketWatchItem]:
+        normalized_type = str(slug_type or "").strip().lower()
+        normalized_slug = str(slug or "").strip()
+        if not normalized_type or not normalized_slug:
+            return None
+        with self.get_session() as session:
+            row = session.execute(
+                select(PolymarketWatchItem).where(
+                    PolymarketWatchItem.slug_type == normalized_type,
+                    PolymarketWatchItem.slug == normalized_slug,
+                ).limit(1)
+            ).scalar_one_or_none()
+            if row is not None:
+                session.expunge(row)
+            return row
+
+    def create_polymarket_watch_item(
+        self,
+        *,
+        slug_type: str,
+        slug: str,
+        label: str = "",
+        category: str = "macro",
+        enabled: bool = True,
+        priority: int = 100,
+        market_slug: Optional[str] = None,
+        outcome_label: str = "Yes",
+        min_volume_24h: Optional[float] = None,
+        min_liquidity: Optional[float] = None,
+        notes: Optional[str] = None,
+    ) -> PolymarketWatchItem:
+        with self.session_scope() as session:
+            row = PolymarketWatchItem(
+                slug_type=str(slug_type or "event").strip().lower(),
+                slug=str(slug or "").strip(),
+                label=str(label or "").strip(),
+                category=str(category or "macro").strip() or "macro",
+                enabled=bool(enabled),
+                priority=int(priority),
+                market_slug=(str(market_slug).strip() if market_slug else None) or None,
+                outcome_label=str(outcome_label or "Yes").strip() or "Yes",
+                min_volume_24h=min_volume_24h,
+                min_liquidity=min_liquidity,
+                notes=(str(notes).strip() if notes else None) or None,
+            )
+            session.add(row)
+            session.flush()
+            session.expunge(row)
+            return row
+
+    def update_polymarket_watch_item(
+        self,
+        item_id: int,
+        *,
+        slug_type: Optional[str] = None,
+        slug: Optional[str] = None,
+        label: Optional[str] = None,
+        category: Optional[str] = None,
+        enabled: Optional[bool] = None,
+        priority: Optional[int] = None,
+        market_slug: Optional[str] = None,
+        outcome_label: Optional[str] = None,
+        min_volume_24h: Optional[float] = None,
+        min_liquidity: Optional[float] = None,
+        notes: Optional[str] = None,
+        clear_market_slug: bool = False,
+        clear_min_volume_24h: bool = False,
+        clear_min_liquidity: bool = False,
+        clear_notes: bool = False,
+    ) -> Optional[PolymarketWatchItem]:
+        with self.session_scope() as session:
+            row = session.execute(
+                select(PolymarketWatchItem).where(PolymarketWatchItem.id == int(item_id)).limit(1)
+            ).scalar_one_or_none()
+            if row is None:
+                return None
+            if slug_type is not None:
+                row.slug_type = str(slug_type).strip().lower()
+            if slug is not None:
+                row.slug = str(slug).strip()
+            if label is not None:
+                row.label = str(label).strip()
+            if category is not None:
+                row.category = str(category).strip() or "macro"
+            if enabled is not None:
+                row.enabled = bool(enabled)
+            if priority is not None:
+                row.priority = int(priority)
+            if clear_market_slug:
+                row.market_slug = None
+            elif market_slug is not None:
+                row.market_slug = str(market_slug).strip() or None
+            if outcome_label is not None:
+                row.outcome_label = str(outcome_label).strip() or "Yes"
+            if clear_min_volume_24h:
+                row.min_volume_24h = None
+            elif min_volume_24h is not None:
+                row.min_volume_24h = min_volume_24h
+            if clear_min_liquidity:
+                row.min_liquidity = None
+            elif min_liquidity is not None:
+                row.min_liquidity = min_liquidity
+            if clear_notes:
+                row.notes = None
+            elif notes is not None:
+                row.notes = str(notes).strip() or None
+            row.updated_at = datetime.now()
+            session.flush()
+            session.expunge(row)
+            return row
+
+    def delete_polymarket_watch_item(self, item_id: int) -> bool:
+        with self.session_scope() as session:
+            row = session.execute(
+                select(PolymarketWatchItem).where(PolymarketWatchItem.id == int(item_id)).limit(1)
+            ).scalar_one_or_none()
+            if row is None:
+                return False
+            session.delete(row)
             session.flush()
             return True
 

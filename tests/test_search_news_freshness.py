@@ -332,13 +332,16 @@ class SearchNewsFreshnessTestCase(unittest.TestCase):
         )
         mock_search.side_effect = [
             _response([_result("old", old), _result("fresh", fresh)]),
+            _response([]),
+            _response([]),
             _response([_result("analysis_unknown", None), _result("analysis_dated", analysis_text)]),
         ]
         with patch("src.search_service.time.sleep"):
             intel = service.search_comprehensive_intel(
                 stock_code="600519",
                 stock_name="贵州茅台",
-                max_searches=2,
+                max_searches=4,
+                include_external_intel=False,
             )
 
         self.assertGreaterEqual(mock_search.call_count, 1)
@@ -367,15 +370,17 @@ class SearchNewsFreshnessTestCase(unittest.TestCase):
         )
         mock_search.side_effect = [
             _response([_result("latest_news", fresh_text)]),
-            _response([_result("market_analysis_unknown", None)]),
             _response([_result("risk_unknown", None)]),
+            _response([_result("announcement_item", fresh_text)]),
+            _response([_result("market_analysis_unknown", None)]),
         ]
 
         with patch("src.search_service.time.sleep"):
             intel = service.search_comprehensive_intel(
                 stock_code="510300",
                 stock_name="沪深300ETF",
-                max_searches=3,
+                max_searches=4,
+                include_external_intel=False,
             )
 
         self.assertEqual(intel["latest_news"].results[0].published_date, expected_fresh_date)
@@ -396,15 +401,17 @@ class SearchNewsFreshnessTestCase(unittest.TestCase):
         )
         mock_search.side_effect = [
             _response([_result("latest_news", fresh_text)]),
-            _response([_result("market_analysis_unknown", None)]),
             _response([_result("risk_unknown", None)]),
+            _response([]),
+            _response([_result("market_analysis_unknown", None)]),
         ]
 
         with patch("src.search_service.time.sleep"):
             intel = service.search_comprehensive_intel(
                 stock_code="600519",
                 stock_name="贵州茅台",
-                max_searches=3,
+                max_searches=4,
+                include_external_intel=False,
             )
 
         self.assertEqual(intel["latest_news"].results[0].published_date, expected_fresh_date)
@@ -423,9 +430,9 @@ class SearchNewsFreshnessTestCase(unittest.TestCase):
         )
         mock_search.side_effect = [
             _response([_result("latest_news", fresh_text)]),
-            _response([_result("market_analysis", None)]),
             _response([_result("risk_check", fresh_text)]),
             _response([_result("announcement_item", fresh_text)]),
+            _response([_result("market_analysis", None)]),
         ]
 
         with patch("src.search_service.time.sleep"):
@@ -433,6 +440,7 @@ class SearchNewsFreshnessTestCase(unittest.TestCase):
                 stock_code="600519",
                 stock_name="贵州茅台",
                 max_searches=4,
+                include_external_intel=False,
             )
 
         self.assertIn("announcements", intel)
@@ -453,9 +461,9 @@ class SearchNewsFreshnessTestCase(unittest.TestCase):
         )
         mock_search.side_effect = [
             _response([_result("latest_news", fresh_text)]),
-            _response([_result("market_analysis", None)]),
             _response([_result("risk_check", fresh_text)]),
             _response([_result("old_announcement", old), _result("fresh_announcement", fresh_text)]),
+            _response([_result("market_analysis", None)]),
         ]
 
         with patch("src.search_service.time.sleep"):
@@ -463,6 +471,7 @@ class SearchNewsFreshnessTestCase(unittest.TestCase):
                 stock_code="600519",
                 stock_name="贵州茅台",
                 max_searches=4,
+                include_external_intel=False,
             )
 
         self.assertIn("announcements", intel)
@@ -482,9 +491,9 @@ class SearchNewsFreshnessTestCase(unittest.TestCase):
         )
         mock_search.side_effect = [
             _response([_result("latest_news", fresh_text)]),
-            _response([_result("market_analysis", None)]),
             _response([_result("risk_check", None)]),
             _response([_result("announcement_item", fresh_text)]),
+            _response([_result("market_analysis", None)]),
         ]
 
         with patch("src.search_service.time.sleep"):
@@ -492,6 +501,7 @@ class SearchNewsFreshnessTestCase(unittest.TestCase):
                 stock_code="510300",
                 stock_name="沪深300ETF",
                 max_searches=4,
+                include_external_intel=False,
             )
 
         self.assertIn("announcements", intel)

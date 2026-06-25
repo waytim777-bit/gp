@@ -355,98 +355,18 @@ def _handle_get_analysis_context(stock_code: str) -> dict:
     return safe_context
 
 
-def _compact_snapshot_list(value: Any, *, limit: int) -> Any:
-    if not isinstance(value, list):
-        return value
-    if limit <= 0:
-        return []
-    if len(value) <= limit:
-        return value
-    return value[-limit:]
-
-
 def _compact_report_context_snapshot(snapshot: Dict[str, Any]) -> Dict[str, Any]:
     """Compact a pipeline context_snapshot payload for agent reuse."""
-    enhanced = snapshot.get("enhanced_context") or {}
-    news_content = snapshot.get("news_content")
-    realtime_raw = snapshot.get("realtime_quote_raw")
-    chip_raw = snapshot.get("chip_distribution_raw")
+    from src.agent.report_context_loader import compact_report_context_snapshot
 
-    # Keep a compact view; avoid huge nested fields.
-    result: Dict[str, Any] = {
-        "enhanced_context": enhanced,
-        "news_content": news_content,
-        "realtime_quote_raw": realtime_raw,
-        "chip_distribution_raw": chip_raw,
-    }
-
-    # Defensive trimming for any large arrays nested inside enhanced_context.
-    if isinstance(enhanced, dict):
-        for key in ("raw_data", "daily_data", "daily_history", "kline", "kline_data"):
-            if key in enhanced:
-                enhanced[key] = _compact_snapshot_list(enhanced.get(key), limit=80)
-
-    return result
+    return compact_report_context_snapshot(snapshot)
 
 
 def _handle_get_report_context(record_id: int, days: int = 60) -> dict:
     """Reuse a previous analysis record's context snapshot and cached daily data."""
-    rid = int(record_id)
-    if rid <= 0:
-        return {"error": "record_id must be a positive integer"}
+    from src.agent.report_context_loader import load_report_context_by_id
 
-    from src.storage import get_db
-    from src.user_context import get_current_user_id
-
-    db = get_db()
-    row = db.get_analysis_history_by_id(rid)
-    if row is None:
-        return {"error": f"Analysis record not found: {rid}"}
-
-    # Enforce ownership (tool runs under request user context).
-    owner_id = get_current_user_id()
-    if owner_id is not None and int(getattr(row, "owner_user_id", 0) or 0) != int(owner_id):
-        return {"error": "Record does not belong to current user"}
-
-    snapshot_raw = getattr(row, "context_snapshot", None) or ""
-    snapshot_obj: Optional[Dict[str, Any]] = None
-    if isinstance(snapshot_raw, str) and snapshot_raw.strip():
-        try:
-            loaded = json.loads(snapshot_raw)
-            if isinstance(loaded, dict):
-                snapshot_obj = loaded
-        except Exception:
-            snapshot_obj = None
-
-    compact_snapshot = _compact_report_context_snapshot(snapshot_obj) if snapshot_obj else None
-
-    # Prefer DB-cached daily data to avoid network calls.
-    code = getattr(row, "code", "") or ""
-    daily_records: List[Dict[str, Any]] = []
-    if code:
-        try:
-            capped_days = max(1, min(int(days), 180))
-            recent = db.get_latest_data(code, days=capped_days)
-            # get_latest_data returns desc order; convert to asc for readability
-            for item in reversed(list(recent)):
-                daily_records.append(item.to_dict())
-        except Exception:
-            daily_records = []
-
-    return {
-        "record_id": rid,
-        "stock_code": code,
-        "context_snapshot": compact_snapshot,
-        "daily_history": {
-            "code": code,
-            "total_records": len(daily_records),
-            "data": daily_records,
-            "source": "db",
-        } if daily_records else None,
-        "news_content": (compact_snapshot or {}).get("news_content") if compact_snapshot else None,
-        "chip_distribution": (compact_snapshot or {}).get("chip_distribution_raw") if compact_snapshot else None,
-        "realtime_quote": (compact_snapshot or {}).get("realtime_quote_raw") if compact_snapshot else None,
-    }
+    return load_report_context_by_id(record_id, days=days)
 
 
 get_analysis_context_tool = ToolDefinition(

@@ -87,3 +87,30 @@ def normalize_code(raw: str) -> Optional[str]:
     if stripped is not None:
         return stripped
     return None
+
+
+def resolve_lookup_stock_code(code: str) -> str:
+    """Normalize stock code for shared-run and marketplace DB lookups."""
+    text = (code or "").strip().upper()
+    if not text:
+        return text
+    if is_code_like(text):
+        normalized = normalize_code(text)
+        if normalized:
+            return normalized
+    return text
+
+
+def stock_code_lookup_variants(code: str) -> list[str]:
+    """Return equivalent code forms for legacy DB rows (e.g. 603043 vs 603043.SH)."""
+    base = resolve_lookup_stock_code(code)
+    variants: list[str] = []
+    for candidate in (base, (code or "").strip().upper()):
+        if candidate and candidate not in variants:
+            variants.append(candidate)
+    if base.isdigit() and len(base) == 6:
+        for suffix in (".SH", ".SZ", ".SS", ".BJ"):
+            suffixed = f"{base}{suffix}"
+            if suffixed not in variants:
+                variants.append(suffixed)
+    return variants

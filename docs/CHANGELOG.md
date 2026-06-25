@@ -8,12 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 > For user-friendly release highlights, see the [GitHub Releases](https://github.com/ZhuLinsen/daily_stock_analysis/releases) page.
 
 ## [Unreleased]
+- [改进] 预测报告新增「宏观焦点影响（未来3日）」模块：基于注入的新浪焦点要闻，给出对未来 1-3 日股价的传导路径、触发条件与观察点。
+- [改进] 宏观焦点简报改为读取外部脚本生成的 `focus/tushare_focus_news_{date}.json`，不再调用 Tushare `news` 接口；新增 `MACRO_FOCUS_BRIEF_FILE` 路径模板配置。
+- [新功能] 预测报告周期版本：同股同交易日首次分析为 V1，「再次分析」递增为 V2/V3…；历史分析侧栏保留全部版本；预测报告市场「可购买」与首页购买卡片仅展示每支股票最新版本。
+- [改进] 首页搜索：先查本周期预测报告市场上架列表（同股多份全部展示），需购买后查看；无市场上架且本周期无分析时自动首次全量分析；有自有周期报告时可「再次分析」（复用快照、重搜新闻与宏观焦点）。
+- [新功能] dsa-admin 新增 Polymarket 宏观关注管理：维护 event/market slug 关注列表，支持 Gamma API 在线预览 Yes/No 隐含概率；配置项 `POLYMARKET_GAMMA_API_BASE`、`POLYMARKET_REQUEST_TIMEOUT`。
+- [改进] 首页情报搜索扩展外部环境维度：新增 `industry_news`（行业新闻）、`intl_news`（国际新闻）、`cn_policy`（中国政策）三个 SearXNG 搜索维度；按 `fundamental_context` 行业标签构造查询，默认最多 9 次搜索；Analyzer/IntelAgent 提示词强调外部环境利空研判。
+- [改进] 问股报告追问（方案 A）：从首页带 `record_id` 跳转时默认进入「报告解读」模式，基于已有报告 Markdown 作答、不重复跑 Agent pipeline；提供估值/同业/持仓/风险快捷追问与「查最新动态（增量）」入口。
+- [改进] 首页共享分析：同预测周期内多用户同时分析同一股票时，后续请求等待 in-flight leader 完成并复用 canonical 报告，避免并行重复跑 pipeline（`force_refresh` 除外）。
+- [修复] 问股跟进：复用 `analysis_history.news_content` 及 `news_intel` 表缓存构建 `news_context`/`intel_comprehensive`，屏蔽 `search_comprehensive_intel` 与 `search_stock_news` 重复搜索。
 - [新功能] 多模型会诊：主 Agent 分析完成后，将同一事实摘要（不含主模型结论）并行推送给配置的会诊模型（只读、无工具），报告页展示主模型 + 会诊模型三栏对比；积分消费记为 `consultation`。
 - [改进] 多模型会诊：会诊 prompt 改为 facts-only brief，不再注入 `primary_conclusion`，避免会诊模型被主模型评分与叙事锚定。
 - [改进] 多模型会诊 ADC：会诊 JSON 增加 `bull_case`/`bear_case`/`dissent_note` 结构化多空与 dissent；后端计算 `divergence`（评分跨度/一致度）；报告页先展示会诊卡片、分歧条与偏离主模型高亮。
 - [修复] Agent 预取：基本面阶段未获有效资金流时 Pipeline 单独补拉 `get_capital_flow` 并写入 context；`failed`/`not_supported` 状态亦 withhold 工具，避免 Intel 阶段重复请求。
 - [修复] Web 完整分析报告 PDF 下载：改用 `html2canvas-pro`（支持 Tailwind v4 的 oklab/oklch 颜色），修复点击下载时报 `unsupported color function "oklab"` 失败。
-- [修复] 管理后台「股票管理」在 Windows 下拉取 Tushare 列表失败：子进程强制 UTF-8 输出，避免 `✓` 等字符触发 GBK 编码错误。
+- [修复] TechnicalAgent 默认步数由 6 提升至 10，与 `AGENT_MAX_STEPS` 默认值一致；修复配置 `AGENT_MAX_STEPS=10` 时技术面子 Agent 仍仅 6 步导致问股失败的问题。
 - [新功能] 报告公开分享：完整报告抽屉新增「分享」按钮，生成固定链接 `/r/{token}`，未登录可直接查看；原预测报告市场上架操作改名为「推荐」。
 - [改进] 预测报告市场按「当前 / 已过期 / 我购买的 / 我发布的」分 Tab 展示（允许重叠）；过期报告禁止新购，已购用户仍可查看完整报告。
 - [改进] 预测报告新增周线/多周期：由日线重采样生成 `weekly_kline_series` 与 LLM `weekly_trend_analysis`，Web 新增「周线走势解读」「周K走势」区块。

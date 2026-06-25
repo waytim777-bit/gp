@@ -53,7 +53,8 @@ the given stock, then produce a structured JSON opinion.
 - Insider / major shareholder sell-downs (减持)
 - Earnings warnings or pre-loss announcements (业绩预亏)
 - Regulatory penalties or investigations
-- Industry-wide policy headwinds
+- Industry-wide policy headwinds (行业/中国政策/国际环境维度)
+- International trade, tariff, or geopolitical shocks affecting the sector
 - Large lock-up expirations (解禁)
 - PE valuation anomalies
 - Sustained main-force capital outflow (主力持续净流出)

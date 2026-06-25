@@ -56,6 +56,11 @@ from src.core.trading_calendar import (
 )
 from data_provider.us_index_mapping import is_us_stock_code
 from bot.models import BotMessage
+from src.search_intel import (
+    COMPREHENSIVE_INTEL_DEFAULT_MAX_SEARCHES,
+    resolve_intel_industry_label,
+)
+from src.services.macro_indicators_brief_service import prepend_macro_environment_brief
 
 
 logger = logging.getLogger(__name__)
@@ -412,11 +417,17 @@ class StockAnalysisPipeline:
             if self.search_service is not None and self.search_service.is_available:
                 logger.info(f"{stock_name}({code}) 开始多维度情报搜索...")
 
-                # 使用多维度搜索（最多5次搜索）
+                # 多维度情报搜索（含行业/国际/政策外部环境维度）
+                intel_industry = resolve_intel_industry_label(
+                    stock_code=code,
+                    stock_name=stock_name,
+                    fundamental_context=fundamental_context,
+                )
                 intel_results = self.search_service.search_comprehensive_intel(
                     stock_code=code,
                     stock_name=stock_name,
-                    max_searches=5
+                    max_searches=COMPREHENSIVE_INTEL_DEFAULT_MAX_SEARCHES,
+                    industry=intel_industry,
                 )
 
                 # 格式化情报报告
@@ -458,6 +469,8 @@ class StockAnalysisPipeline:
                             news_context = social_context
                 except Exception as e:
                     logger.warning(f"{stock_name}({code}) Social sentiment fetch failed: {e}")
+
+            news_context = prepend_macro_environment_brief(news_context)
 
             # Step 5: 获取分析上下文（技术面数据）
             self._emit_progress(58, f"{stock_name}：正在整理分析上下文")
@@ -553,7 +566,154 @@ class StockAnalysisPipeline:
             logger.error(f"{stock_name}({code}) 分析失败: {e}")
             logger.exception(f"{stock_name}({code}) 详细错误信息:")
             return None
-    
+
+    def refresh_intel_from_snapshot(
+        self,
+        code: str,
+        report_type: ReportType,
+        query_id: str,
+        context_snapshot: Dict[str, Any],
+        stock_name: Optional[str] = None,
+        *,
+        send_notification: bool = False,
+    ) -> Optional[AnalysisResult]:
+        """
+        Re-run intel search + macro focus + LLM using a frozen context snapshot.
+
+        Technical and fundamental blocks are reused from ``enhanced_context``;
+        only news/intel and macro brief are refreshed before analysis.
+        """
+        enhanced_context = context_snapshot.get("enhanced_context")
+        if not isinstance(enhanced_context, dict):
+            logger.error("%s refresh_intel 缺少 enhanced_context 快照", code)
+            return None
+
+        stock_name = (
+            stock_name
+            or enhanced_context.get("stock_name")
+            or code
+        )
+        fundamental_context = enhanced_context.get("fundamental_context")
+        if not isinstance(fundamental_context, dict):
+            fundamental_context = None
+
+        try:
+            news_context = None
+            self._emit_progress(46, f"{stock_name}：正在检索最新新闻与舆情")
+            if self.search_service is not None and self.search_service.is_available:
+                logger.info(f"{stock_name}({code}) refresh_intel 开始多维度情报搜索...")
+                intel_industry = resolve_intel_industry_label(
+                    stock_code=code,
+                    stock_name=stock_name,
+                    fundamental_context=fundamental_context,
+                )
+                intel_results = self.search_service.search_comprehensive_intel(
+                    stock_code=code,
+                    stock_name=stock_name,
+                    max_searches=COMPREHENSIVE_INTEL_DEFAULT_MAX_SEARCHES,
+                    industry=intel_industry,
+                )
+                if intel_results:
+                    news_context = self.search_service.format_intel_report(intel_results, stock_name)
+                    try:
+                        query_context = self._build_query_context(query_id=query_id)
+                        for dim_name, response in intel_results.items():
+                            if response and response.success and response.results:
+                                self.db.save_news_intel(
+                                    code=code,
+                                    name=stock_name,
+                                    dimension=dim_name,
+                                    query=response.query,
+                                    response=response,
+                                    query_context=query_context,
+                                )
+                    except Exception as exc:
+                        logger.warning(f"{stock_name}({code}) refresh_intel 保存新闻情报失败: {exc}")
+            else:
+                logger.info(f"{stock_name}({code}) 搜索服务不可用，refresh_intel 跳过情报搜索")
+
+            if (
+                self.social_sentiment_service is not None
+                and self.social_sentiment_service.is_available
+                and is_us_stock_code(code)
+            ):
+                try:
+                    social_context = self.social_sentiment_service.get_social_context(code)
+                    if social_context:
+                        news_context = (
+                            f"{news_context}\n\n{social_context}"
+                            if news_context
+                            else social_context
+                        )
+                except Exception as exc:
+                    logger.warning(f"{stock_name}({code}) refresh_intel Social sentiment 失败: {exc}")
+
+            news_context = prepend_macro_environment_brief(news_context)
+
+            llm_progress_state = {"last_progress": 64}
+
+            def _on_llm_stream(chars_received: int) -> None:
+                dynamic_progress = min(92, 64 + min(chars_received // 80, 28))
+                if dynamic_progress <= llm_progress_state["last_progress"]:
+                    return
+                llm_progress_state["last_progress"] = dynamic_progress
+                self._emit_progress(
+                    dynamic_progress,
+                    f"{stock_name}：LLM 正在生成分析结果（已接收 {chars_received} 字符）",
+                )
+
+            self._emit_progress(64, f"{stock_name}：正在请求 LLM 生成报告")
+            result = self.analyzer.analyze(
+                enhanced_context,
+                news_context=news_context,
+                progress_callback=self._emit_progress,
+                stream_progress_callback=_on_llm_stream,
+            )
+
+            if result:
+                self._emit_progress(94, f"{stock_name}：正在校验并整理分析结果")
+                result.query_id = query_id
+                realtime_data = enhanced_context.get("realtime", {})
+                if isinstance(realtime_data, dict):
+                    result.current_price = realtime_data.get("price")
+                    result.change_pct = realtime_data.get("change_pct")
+
+            if result and result.success:
+                try:
+                    self._emit_progress(97, f"{stock_name}：正在保存分析报告")
+                    updated_snapshot = self._build_context_snapshot(
+                        enhanced_context=enhanced_context,
+                        news_content=news_context,
+                        realtime_quote=context_snapshot.get("realtime_quote_raw"),
+                        chip_data=None,
+                    )
+                    self.db.save_analysis_history(
+                        result=result,
+                        query_id=query_id,
+                        report_type=report_type.value,
+                        news_content=news_context,
+                        context_snapshot=updated_snapshot,
+                        save_snapshot=self.save_context_snapshot,
+                    )
+                except Exception as exc:
+                    logger.warning(f"{stock_name}({code}) refresh_intel 保存分析历史失败: {exc}")
+
+            if send_notification and result and getattr(result, "success", False):
+                try:
+                    self._send_single_stock_notification(
+                        result,
+                        report_type=report_type,
+                        fallback_code=code,
+                    )
+                except Exception as exc:
+                    logger.warning("[%s] refresh_intel 单股推送异常: %s", code, exc)
+
+            return result
+        except Exception as exc:
+            logger.error(f"{stock_name}({code}) refresh_intel 失败: {exc}")
+            logger.exception(f"{stock_name}({code}) refresh_intel 详细错误:")
+            return None
+
     def _enhance_context(
         self,
         context: Dict[str, Any],
@@ -1107,10 +1267,16 @@ class StockAnalysisPipeline:
         if self.search_service is not None and self.search_service.is_available:
             self._emit_progress(46, f"{stock_name}：正在检索新闻与舆情")
             logger.info(f"{stock_name}({code}) Agent 模式：开始一次性多维度情报采集")
+            intel_industry = resolve_intel_industry_label(
+                stock_code=code,
+                stock_name=stock_name,
+                fundamental_context=fundamental_context,
+            )
             intel_results = self.search_service.search_comprehensive_intel(
                 stock_code=code,
                 stock_name=stock_name,
-                max_searches=6,
+                max_searches=COMPREHENSIVE_INTEL_DEFAULT_MAX_SEARCHES,
+                industry=intel_industry,
             )
             if intel_results:
                 news_context = self.search_service.format_intel_report(intel_results, stock_name)
@@ -1138,6 +1304,8 @@ class StockAnalysisPipeline:
                     logger.warning(f"{stock_name}({code}) Agent 模式保存新闻情报失败: {e}")
         else:
             logger.info(f"{stock_name}({code}) 搜索服务不可用，Agent 模式跳过情报预采集")
+
+        payload["news_context"] = prepend_macro_environment_brief(payload.get("news_context"))
 
         payload["_intel_saved_to_db"] = intel_saved
         return payload
@@ -1684,6 +1852,22 @@ class StockAnalysisPipeline:
                     f"[{code}] 分析完成: {result.operation_advice}, "
                     f"评分 {result.sentiment_score}"
                 )
+
+                # Debug visibility: print macro focus impact (next 3 days) explicitly.
+                # This helps distinguish "not generated" vs "generated but not rendered".
+                try:
+                    dashboard = getattr(result, "dashboard", None) or {}
+                    intel = (dashboard.get("intelligence") if isinstance(dashboard, dict) else None) or {}
+                    macro_impact = None
+                    if isinstance(intel, dict):
+                        macro_impact = intel.get("macro_focus_impact_3d")
+                    macro_impact_text = (str(macro_impact).strip() if macro_impact is not None else "")
+                    if macro_impact_text:
+                        logger.info("[%s] [MacroFocusImpact] %s", code, macro_impact_text)
+                    else:
+                        logger.info("[%s] [MacroFocusImpact] <missing_or_empty>", code)
+                except Exception as exc:
+                    logger.warning("[%s] [MacroFocusImpact] failed to extract: %s", code, exc)
                 
                 # 单股推送模式（#55）：每分析完一只股票立即推送
                 if single_stock_notify:

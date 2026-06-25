@@ -14,8 +14,6 @@ interface HistoryListProps {
   selectedId?: number;  // 当前选中的历史记录 ID
   selectedIds: Set<number>;
   isDeleting?: boolean;
-  isSharing?: boolean;
-  onShareSelected?: () => void;
   onItemClick: (recordId: number) => void;  // 点击记录的回调
   onLoadMore: () => void;
   onToggleItemSelection: (recordId: number) => void;
@@ -36,8 +34,6 @@ export const HistoryList: React.FC<HistoryListProps> = ({
   selectedId,
   selectedIds,
   isDeleting = false,
-  isSharing = false,
-  onShareSelected,
   onItemClick,
   onLoadMore,
   onToggleItemSelection,
@@ -126,16 +122,6 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                   <span className="text-[11px] text-default-500 select-none">全选当前</span>
                 </Checkbox.Content>
               </Checkbox>
-              <Button
-                variant="secondary"
-                size="xsm"
-                onClick={onShareSelected}
-                disabled={selectedCount !== 1 || isDeleting || isSharing}
-                isLoading={isSharing}
-                className="history-batch-share-button"
-              >
-                {isSharing ? '推荐中' : '推荐'}
-              </Button>
               <Button
                 variant="danger-subtle"
                 size="xsm"

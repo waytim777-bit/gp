@@ -39,8 +39,24 @@ export const validateStockCode = (value: string): ValidationResult => {
   return {
     valid,
     message: valid ? undefined : '股票代码格式不正确',
-    normalized,
+    normalized: valid ? normalizeStockCodeForApi(normalized) : normalized,
   };
+};
+
+/**
+ * Normalize stock code for API requests (strip SH/SZ/BJ exchange affixes).
+ */
+export const normalizeStockCodeForApi = (value: string): string => {
+  const text = value.trim().toUpperCase();
+  const suffixMatch = /^(\d{6})\.(SH|SZ|SS|BJ)$/.exec(text);
+  if (suffixMatch) {
+    return suffixMatch[1];
+  }
+  const prefixMatch = /^(SH|SZ|BJ)(\d{6})$/.exec(text);
+  if (prefixMatch) {
+    return prefixMatch[2];
+  }
+  return text;
 };
 
 /**

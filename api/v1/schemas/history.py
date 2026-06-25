@@ -17,6 +17,22 @@ from pydantic import BaseModel, ConfigDict, Field
 class HistoryItem(BaseModel):
     """历史记录摘要（列表展示用）"""
 
+    model_config = ConfigDict(
+        populate_by_name=True,
+        json_schema_extra={
+            "example": {
+                "id": 1234,
+                "query_id": "abc123",
+                "stock_code": "600519",
+                "stock_name": "贵州茅台",
+                "report_type": "detailed",
+                "sentiment_score": 75,
+                "operation_advice": "持有",
+                "created_at": "2024-01-01T12:00:00",
+            }
+        },
+    )
+
     id: Optional[int] = Field(None, description="分析历史记录主键 ID")
     query_id: str = Field(..., description="分析记录关联 query_id（批量分析时重复）")
     stock_code: str = Field(..., description="股票代码")
@@ -27,40 +43,29 @@ class HistoryItem(BaseModel):
         description="情绪评分（历史数据可能超出 0-100 范围，读取时不做约束）",
     )
     operation_advice: Optional[str] = Field(None, description="操作建议")
+    cycle_version: Optional[int] = Field(None, description="预测周期内版本号（V1/V2/…）", alias="cycleVersion")
     created_at: Optional[str] = Field(None, description="创建时间")
-    
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "id": 1234,
-                "query_id": "abc123",
-                "stock_code": "600519",
-                "stock_name": "贵州茅台",
-                "report_type": "detailed",
-                "sentiment_score": 75,
-                "operation_advice": "持有",
-                "created_at": "2024-01-01T12:00:00"
-            }
-        }
 
 
 class HistoryListResponse(BaseModel):
     """历史记录列表响应"""
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+        json_schema_extra={
+            "example": {
+                "total": 100,
+                "page": 1,
+                "limit": 20,
+                "items": [],
+            }
+        },
+    )
     
     total: int = Field(..., description="总记录数")
     page: int = Field(..., description="当前页码")
     limit: int = Field(..., description="每页数量")
     items: List[HistoryItem] = Field(default_factory=list, description="记录列表")
-    
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "total": 100,
-                "page": 1,
-                "limit": 20,
-                "items": []
-            }
-        }
 
 
 class DeleteHistoryRequest(BaseModel):

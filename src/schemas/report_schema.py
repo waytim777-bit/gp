@@ -86,6 +86,7 @@ class Intelligence(BaseModel):
     positive_catalysts: Optional[List[str]] = None
     earnings_outlook: Optional[str] = None
     sentiment_summary: Optional[str] = None
+    macro_focus_impact_3d: Optional[str] = None
 
 
 class SniperPoints(BaseModel):

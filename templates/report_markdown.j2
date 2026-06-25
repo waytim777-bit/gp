@@ -30,6 +30,9 @@
 {% if intel.get('earnings_outlook') %}
 **📊 {{ labels.earnings_outlook_label }}**: {{ intel.earnings_outlook }}
 {% endif %}
+{% if intel.get('macro_focus_impact_3d') %}
+**🧭 {{ labels.macro_focus_impact_3d_label }}**: {{ intel.macro_focus_impact_3d }}
+{% endif %}
 {% if intel.get('risk_alerts') %}
 
 **🚨 {{ labels.risk_alerts_label }}**:

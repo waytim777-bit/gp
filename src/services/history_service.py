@@ -27,6 +27,7 @@ from src.report_language import (
     localize_trend_prediction,
     normalize_report_language,
 )
+from src.services.stock_code_utils import resolve_lookup_stock_code
 from src.storage import DatabaseManager
 from src.services.prediction_cycle_meta import prediction_cycle_meta_for_history_record
 from src.utils.data_processing import normalize_model_used, parse_json_field
@@ -61,6 +62,28 @@ class HistoryService:
             db_manager: Database manager (optional, defaults to singleton instance)
         """
         self.db = db_manager or DatabaseManager.get_instance()
+
+    @staticmethod
+    def _infer_display_cycle_versions(records: List[Any]) -> Dict[int, int]:
+        from collections import defaultdict
+
+        groups: Dict[tuple, List[Any]] = defaultdict(list)
+        for record in records:
+            day = record.created_at.date() if getattr(record, "created_at", None) else None
+            key = (
+                int(getattr(record, "owner_user_id", 0) or 0),
+                resolve_lookup_stock_code(getattr(record, "code", "") or ""),
+                day,
+            )
+            groups[key].append(record)
+
+        version_map: Dict[int, int] = {}
+        for group in groups.values():
+            group.sort(key=lambda row: (getattr(row, "created_at", None) or datetime.min, int(row.id)))
+            for index, record in enumerate(group, start=1):
+                stored = int(getattr(record, "cycle_version", None) or 0)
+                version_map[int(record.id)] = stored if stored > 1 else index
+        return version_map
     
     def get_history_list(
         self,
@@ -115,6 +138,7 @@ class HistoryService:
             )
             
             # Convert to response format
+            version_map = self._infer_display_cycle_versions(records)
             items = []
             for record in records:
                 items.append({
@@ -125,6 +149,7 @@ class HistoryService:
                     "report_type": record.report_type,
                     "sentiment_score": record.sentiment_score,
                     "operation_advice": record.operation_advice,
+                    "cycle_version": version_map.get(int(record.id), int(getattr(record, "cycle_version", None) or 1)),
                     "created_at": record.created_at.isoformat() if record.created_at else None,
                 })
             
@@ -688,6 +713,11 @@ class HistoryService:
             # 业绩预期
             if intel.get('earnings_outlook'):
                 report_lines.append(f"**📊 {labels['earnings_outlook_label']}**: {intel['earnings_outlook']}")
+            # 宏观焦点影响（未来3日）
+            if intel.get('macro_focus_impact_3d'):
+                report_lines.append(
+                    f"**🧭 {labels['macro_focus_impact_3d_label']}**: {intel['macro_focus_impact_3d']}"
+                )
             # 风险警报（醒目显示）
             risk_alerts = intel.get('risk_alerts', [])
             if risk_alerts:

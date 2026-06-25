@@ -552,6 +552,23 @@ class Config:
     social_sentiment_api_key: Optional[str] = None
     social_sentiment_api_url: str = "https://api.adanos.org"
 
+    # === Polymarket Gamma API (macro prediction watchlist) ===
+    polymarket_gamma_api_base: str = "https://gamma-api.polymarket.com"
+    polymarket_request_timeout: float = 8.0
+
+    # === Macro focus brief (local focus/tushare_focus_news_{date}.json) ===
+    macro_focus_brief_enabled: bool = True
+    macro_focus_brief_ttl_seconds: int = 1800
+    macro_focus_brief_max_items: int = 0
+    macro_focus_brief_file: str = "focus/tushare_focus_news_{date}.json"
+
+    # === Macro indicators brief (Tushare cn_m / cn_gdp / us_trycr) ===
+    macro_indicators_brief_enabled: bool = True
+    macro_indicators_brief_ttl_seconds: int = 3600
+    macro_indicators_brief_include_cn_m: bool = True
+    macro_indicators_brief_include_cn_gdp: bool = True
+    macro_indicators_brief_include_us_trycr: bool = True
+
     # === 新闻与分析筛选配置 ===
     news_max_age_days: int = 3   # 新闻最大时效（天）
     news_strategy_profile: str = "short"  # 新闻窗口策略档位：ultra_short/short/medium/long
@@ -1220,6 +1237,58 @@ class Config:
             searxng_public_instances_enabled=searxng_public_instances_enabled,
             social_sentiment_api_key=os.getenv('SOCIAL_SENTIMENT_API_KEY') or None,
             social_sentiment_api_url=os.getenv('SOCIAL_SENTIMENT_API_URL', 'https://api.adanos.org').rstrip('/'),
+            polymarket_gamma_api_base=os.getenv(
+                'POLYMARKET_GAMMA_API_BASE',
+                'https://gamma-api.polymarket.com',
+            ).rstrip('/'),
+            polymarket_request_timeout=parse_env_float(
+                os.getenv('POLYMARKET_REQUEST_TIMEOUT'),
+                8.0,
+                field_name='POLYMARKET_REQUEST_TIMEOUT',
+                minimum=1.0,
+            ),
+            macro_focus_brief_enabled=parse_env_bool(
+                os.getenv('MACRO_FOCUS_BRIEF_ENABLED'),
+                True,
+            ),
+            macro_focus_brief_ttl_seconds=parse_env_int(
+                os.getenv('MACRO_FOCUS_BRIEF_TTL_SECONDS'),
+                1800,
+                field_name='MACRO_FOCUS_BRIEF_TTL_SECONDS',
+                minimum=60,
+            ),
+            macro_focus_brief_max_items=parse_env_int(
+                os.getenv('MACRO_FOCUS_BRIEF_MAX_ITEMS'),
+                0,
+                field_name='MACRO_FOCUS_BRIEF_MAX_ITEMS',
+                minimum=0,
+            ),
+            macro_focus_brief_file=os.getenv(
+                'MACRO_FOCUS_BRIEF_FILE',
+                'focus/tushare_focus_news_{date}.json',
+            ).strip() or 'focus/tushare_focus_news_{date}.json',
+            macro_indicators_brief_enabled=parse_env_bool(
+                os.getenv('MACRO_INDICATORS_BRIEF_ENABLED'),
+                True,
+            ),
+            macro_indicators_brief_ttl_seconds=parse_env_int(
+                os.getenv('MACRO_INDICATORS_BRIEF_TTL_SECONDS'),
+                3600,
+                field_name='MACRO_INDICATORS_BRIEF_TTL_SECONDS',
+                minimum=300,
+            ),
+            macro_indicators_brief_include_cn_m=parse_env_bool(
+                os.getenv('MACRO_INDICATORS_BRIEF_INCLUDE_CN_M'),
+                True,
+            ),
+            macro_indicators_brief_include_cn_gdp=parse_env_bool(
+                os.getenv('MACRO_INDICATORS_BRIEF_INCLUDE_CN_GDP'),
+                True,
+            ),
+            macro_indicators_brief_include_us_trycr=parse_env_bool(
+                os.getenv('MACRO_INDICATORS_BRIEF_INCLUDE_US_TRYCR'),
+                True,
+            ),
             news_max_age_days=parse_env_int(os.getenv('NEWS_MAX_AGE_DAYS'), 3, field_name='NEWS_MAX_AGE_DAYS', minimum=1),
             news_strategy_profile=cls._parse_news_strategy_profile(
                 os.getenv('NEWS_STRATEGY_PROFILE', 'short')

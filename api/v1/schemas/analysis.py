@@ -71,6 +71,11 @@ class AnalyzeRequest(BaseModel):
         True,
         description="是否发送推送通知（Telegram/企业微信等）"
     )
+    analysis_mode: str = Field(
+        "full",
+        description="分析模式：full(全量或周期缓存) / refresh_intel(复用数据快照，重搜新闻与宏观焦点)",
+        pattern="^(full|refresh_intel)$",
+    )
 
     class Config:
         json_schema_extra = {
@@ -85,6 +90,26 @@ class AnalyzeRequest(BaseModel):
                 "notify": True
             }
         }
+
+
+class CycleReportPredictionCycle(BaseModel):
+    cycle_anchor_date: str = Field(..., description="预测周期锚点日")
+    prediction_target_date: str = Field(..., description="预测目标日")
+    data_as_of_date: str = Field(..., description="数据截至日")
+
+
+class CycleReportLookupResponse(BaseModel):
+    """本预测周期报告查询结果"""
+
+    exists: bool = Field(..., description="当前周期是否已有 canonical 报告")
+    stock_code: str = Field(..., description="股票代码")
+    stock_name: Optional[str] = Field(None, description="股票名称")
+    report_type: str = Field(..., description="报告类型")
+    history_id: Optional[int] = Field(None, description="当前用户可查看的历史记录 ID")
+    shared_run_id: Optional[int] = Field(None, description="共享分析运行 ID")
+    version: Optional[int] = Field(None, description="周期内分析版本")
+    last_analyzed_at: Optional[str] = Field(None, description="上次分析完成时间 ISO8601")
+    prediction_cycle: CycleReportPredictionCycle = Field(..., description="预测周期元数据")
 
 
 class AnalysisResultResponse(BaseModel):

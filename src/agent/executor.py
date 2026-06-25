@@ -118,7 +118,8 @@ LEGACY_DEFAULT_AGENT_SYSTEM_PROMPT = """你是一位专注于趋势交易的{mar
             "risk_alerts": [],
             "positive_catalysts": [],
             "earnings_outlook": "",
-            "sentiment_summary": ""
+            "sentiment_summary": "",
+            "macro_focus_impact_3d": ""
         }},
         "battle_plan": {{
             "sniper_points": {{"ideal_buy": "", "secondary_buy": "", "stop_loss": "", "take_profit": ""}},
@@ -249,7 +250,8 @@ AGENT_SYSTEM_PROMPT = """你是一位{market_role}投资分析 Agent，拥有数
             "risk_alerts": [],
             "positive_catalysts": [],
             "earnings_outlook": "",
-            "sentiment_summary": ""
+            "sentiment_summary": "",
+            "macro_focus_impact_3d": ""
         }},
         "battle_plan": {{
             "sniper_points": {{"ideal_buy": "", "secondary_buy": "", "stop_loss": "", "take_profit": ""}},
@@ -458,6 +460,15 @@ class AgentExecutor:
         self.max_steps = max_steps
         self.timeout_seconds = timeout_seconds
 
+    @staticmethod
+    def _prepare_context(context: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+        from src.agent.report_context_loader import hydrate_context_from_record
+        from src.services.macro_focus_brief_service import ensure_macro_focus_in_agent_context
+
+        if not isinstance(context, dict):
+            return ensure_macro_focus_in_agent_context({})
+        return ensure_macro_focus_in_agent_context(hydrate_context_from_record(context))
+
     def run(self, task: str, context: Optional[Dict[str, Any]] = None) -> AgentResult:
         """Execute the agent loop for a given task.
 
@@ -468,6 +479,8 @@ class AgentExecutor:
         Returns:
             AgentResult with parsed dashboard or error.
         """
+        context = self._prepare_context(context)
+
         # Build system prompt with skills
         skills_section = ""
         if self.skill_instructions:
@@ -525,6 +538,8 @@ class AgentExecutor:
             AgentResult with the text response.
         """
         from src.agent.conversation import conversation_manager
+
+        context = self._prepare_context(context)
 
         # Build system prompt with skills
         skills_section = ""
@@ -587,6 +602,8 @@ class AgentExecutor:
                 strategy = context["previous_strategy"]
                 strategy_text = json.dumps(strategy, ensure_ascii=False) if isinstance(strategy, dict) else str(strategy)
                 context_parts.append(f"上次策略分析:\n{strategy_text}")
+            if context.get("news_context"):
+                context_parts.append(f"宏观与情报上下文:\n{context['news_context']}")
             if context_parts:
                 context_msg = "[系统提供的历史分析上下文，可供参考对比]\n" + "\n".join(context_parts)
                 messages.append({"role": "user", "content": context_msg})

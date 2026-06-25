@@ -4,6 +4,7 @@ import { Checkbox } from '@heroui/react/checkbox';
 import type { HistoryItem } from '../../types/analysis';
 import { getSentimentColor } from '../../types/analysis';
 import { formatDateTime } from '../../utils/format';
+import { formatCycleVersionLabel } from '../../utils/predictionReportListings';
 import { truncateStockName, isStockNameTruncated } from '../../utils/stockName';
 
 interface HistoryListItemProps {
@@ -107,6 +108,10 @@ export const HistoryListItem: React.FC<HistoryListItemProps> = ({
               )}
             </div>
             <div className="flex items-center gap-2 mt-1">
+              <span className="text-[11px] font-medium text-primary">
+                {formatCycleVersionLabel(item.cycleVersion)}
+              </span>
+              <span className="w-1 h-1 rounded-full bg-subtle-hover" />
               <span className="text-[11px] text-secondary-text font-mono">
                 {item.stockCode}
               </span>

@@ -100,6 +100,21 @@ Important: ``decision_type`` must stay within the existing enum
 ``buy|hold|sell``. Express stronger conviction via ``confidence_level``,
 ``sentiment_score``, and the natural-language fields instead of inventing
 new decision_type values.
+
+### Decision Dashboard schema (required nested keys)
+The `dashboard` object must include these keys:
+- `core_conclusion`
+- `data_perspective`
+- `intelligence`
+- `battle_plan`
+
+The `dashboard.intelligence` object must include these keys (empty string allowed):
+- `latest_news`
+- `risk_alerts`
+- `positive_catalysts`
+- `earnings_outlook`
+- `sentiment_summary`
+- `macro_focus_impact_3d` (Macro focus impact in next 3 days. If macro focus headlines exist in context, you MUST reference specific items; do not be generic.)
 """
         if report_language == "en":
             return prompt + """

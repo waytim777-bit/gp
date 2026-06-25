@@ -507,7 +507,7 @@ class TestOrchestratorModes(unittest.TestCase):
         high_limit_chain = orch._build_agent_chain(AgentContext(query="test", stock_code="600519"))
         self.assertEqual(
             {agent.agent_name: agent.max_steps for agent in high_limit_chain},
-            {"technical": 6, "intel": 4, "risk": 4, "decision": 3},
+            {"technical": 10, "intel": 4, "risk": 4, "decision": 3},
         )
 
         orch.max_steps = 5
@@ -564,6 +564,43 @@ class TestOrchestratorModes(unittest.TestCase):
         orch = self._make_orchestrator()
         ctx = orch._build_context("分析600519的走势")
         self.assertEqual(ctx.stock_code, "600519")
+
+    def test_build_context_hydrates_from_record_id(self):
+        orch = self._make_orchestrator()
+        bundle = {
+            "record_id": 26,
+            "stock_code": "603407",
+            "daily_history": {
+                "code": "603407",
+                "total_records": 1,
+                "data": [{"date": "2026-06-18", "close": 68.5}],
+                "source": "db",
+            },
+            "realtime_quote": {"code": "603407", "price": 68.04},
+            "context_snapshot": {
+                "enhanced_context": {
+                    "trend_analysis": {"current_price": 68.04},
+                    "technical_indicators": {"rsi_6": 64.1},
+                }
+            },
+        }
+        with patch(
+            "src.agent.report_context_loader.load_report_context_by_id",
+            return_value=bundle,
+        ):
+            ctx = orch._build_context(
+                "请深入分析 603407",
+                context={
+                    "stock_code": "603407",
+                    "stock_name": "长裕集团",
+                    "record_id": 26,
+                },
+            )
+
+        self.assertEqual(ctx.stock_code, "603407")
+        self.assertEqual(ctx.meta["record_id"], 26)
+        self.assertEqual(ctx.get_data("daily_history")["source"], "db")
+        self.assertTrue(ctx.get_data("_report_context_hydrated"))
 
     def test_fallback_summary(self):
         orch = self._make_orchestrator()

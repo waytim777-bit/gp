@@ -198,13 +198,15 @@ class TestTavilySearchProvider(unittest.TestCase):
                 news_max_age_days=3,
                 news_strategy_profile="short",
             )
-            intel = service.search_comprehensive_intel("BABA", "阿里巴巴", max_searches=2)
+            intel = service.search_comprehensive_intel("BABA", "阿里巴巴", max_searches=3, include_external_intel=False)
 
         self.assertIn("latest_news", intel)
+        self.assertIn("risk_check", intel)
         self.assertIn("market_analysis", intel)
-        self.assertGreaterEqual(len(_FakeTavilyClient.search_calls), 2)
+        self.assertGreaterEqual(len(_FakeTavilyClient.search_calls), 3)
         self.assertEqual(_FakeTavilyClient.search_calls[0]["topic"], "news")
-        self.assertNotIn("topic", _FakeTavilyClient.search_calls[1])
+        self.assertEqual(_FakeTavilyClient.search_calls[1]["topic"], "news")
+        self.assertNotIn("topic", _FakeTavilyClient.search_calls[2])
 
     def test_search_comprehensive_intel_etf_risk_check_does_not_force_news_topic(self) -> None:
         published_dt = datetime.now(timezone.utc).replace(microsecond=0)
@@ -228,15 +230,16 @@ class TestTavilySearchProvider(unittest.TestCase):
                 news_max_age_days=3,
                 news_strategy_profile="short",
             )
-            intel = service.search_comprehensive_intel("510300", "沪深300ETF", max_searches=3)
+            intel = service.search_comprehensive_intel("510300", "沪深300ETF", max_searches=4, include_external_intel=False)
 
         self.assertIn("latest_news", intel)
         self.assertIn("market_analysis", intel)
         self.assertIn("risk_check", intel)
-        self.assertGreaterEqual(len(_FakeTavilyClient.search_calls), 3)
+        self.assertGreaterEqual(len(_FakeTavilyClient.search_calls), 4)
         self.assertEqual(_FakeTavilyClient.search_calls[0]["topic"], "news")
         self.assertNotIn("topic", _FakeTavilyClient.search_calls[1])
-        self.assertNotIn("topic", _FakeTavilyClient.search_calls[2])
+        self.assertEqual(_FakeTavilyClient.search_calls[2]["topic"], "news")
+        self.assertNotIn("topic", _FakeTavilyClient.search_calls[3])
 
     def test_search_comprehensive_intel_non_etf_risk_check_stays_in_news_topic(self) -> None:
         published_dt = datetime.now(timezone.utc).replace(microsecond=0)
@@ -260,15 +263,16 @@ class TestTavilySearchProvider(unittest.TestCase):
                 news_max_age_days=3,
                 news_strategy_profile="short",
             )
-            intel = service.search_comprehensive_intel("600519", "贵州茅台", max_searches=3)
+            intel = service.search_comprehensive_intel("600519", "贵州茅台", max_searches=4, include_external_intel=False)
 
         self.assertIn("latest_news", intel)
         self.assertIn("market_analysis", intel)
         self.assertIn("risk_check", intel)
-        self.assertGreaterEqual(len(_FakeTavilyClient.search_calls), 3)
+        self.assertGreaterEqual(len(_FakeTavilyClient.search_calls), 4)
         self.assertEqual(_FakeTavilyClient.search_calls[0]["topic"], "news")
-        self.assertNotIn("topic", _FakeTavilyClient.search_calls[1])
+        self.assertEqual(_FakeTavilyClient.search_calls[1]["topic"], "news")
         self.assertEqual(_FakeTavilyClient.search_calls[2]["topic"], "news")
+        self.assertNotIn("topic", _FakeTavilyClient.search_calls[3])
 
 
 if __name__ == "__main__":

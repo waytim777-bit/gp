@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Modal } from '@heroui/react';
 import { ApiErrorAlert, ConfirmDialog, Button, EmptyState, InlineAlert } from '../components/common';
-import { DashboardStateBlock } from '../components/dashboard';
+import { DashboardStateBlock, HomeMarketListingsPanel } from '../components/dashboard';
 import { StockAutocomplete } from '../components/StockAutocomplete';
 import { HistoryList } from '../components/history';
 import { ReportMarkdown, ReportSummary } from '../components/report';
@@ -32,7 +32,6 @@ const HomePage: React.FC = () => {
     historyItems,
     selectedHistoryIds,
     isDeletingHistory,
-    isSharingHistory,
     isLoadingHistory,
     isLoadingMore,
     hasMore,
@@ -46,12 +45,14 @@ const HomePage: React.FC = () => {
     refreshHistory,
     loadMoreHistory,
     selectHistoryItem,
-    selectLatestHistoryItem,
+    handleAnalysisTaskCompleted,
     toggleHistorySelection,
     toggleSelectAllVisible,
     deleteSelectedHistory,
-    shareSelectedHistory,
     submitAnalysis,
+    refreshIntelAnalysis,
+    purchaseMarketListing,
+    openMarketListingReport,
     notify,
     setNotify,
     syncTaskCreated,
@@ -61,6 +62,12 @@ const HomePage: React.FC = () => {
     openMarkdownDrawer,
     closeMarkdownDrawer,
     selectedIds,
+    canRefreshIntel,
+    searchStockCode,
+    searchStockName,
+    marketListings,
+    marketPurchaseCredits,
+    purchasingListingId,
   } = useHomeDashboardState();
 
   useEffect(() => {
@@ -96,7 +103,7 @@ const HomePage: React.FC = () => {
   useDashboardLifecycle({
     loadInitialHistory,
     refreshHistory,
-    selectLatestHistoryItem,
+    handleAnalysisTaskCompleted,
     syncTaskCreated,
     syncTaskUpdated,
     syncTaskFailed,
@@ -123,6 +130,22 @@ const HomePage: React.FC = () => {
     },
     [query, submitAnalysis],
   );
+
+  const canShowRefreshIntel = canRefreshIntel && (
+    marketListings.length === 0 || Boolean(searchStockCode)
+  );
+
+  const handleRefreshIntel = useCallback(() => {
+    void refreshIntelAnalysis();
+  }, [refreshIntelAnalysis]);
+
+  const handlePurchaseListing = useCallback((item: Parameters<typeof purchaseMarketListing>[0]) => {
+    void purchaseMarketListing(item);
+  }, [purchaseMarketListing]);
+
+  const handleViewListing = useCallback((item: Parameters<typeof openMarketListingReport>[0]) => {
+    void openMarketListingReport(item);
+  }, [openMarketListingReport]);
 
   const handleAskFollowUp = useCallback(() => {
     if (selectedReport?.meta.id === undefined) {
@@ -167,14 +190,6 @@ const HomePage: React.FC = () => {
     setShowNotifyGuide(true);
   }, [hasPushDestination, isAnalyzing]);
 
-  const handleShareSelected = useCallback(() => {
-    void shareSelectedHistory().then((listingId) => {
-      if (listingId != null) {
-        navigate('/prediction-reports');
-      }
-    });
-  }, [navigate, shareSelectedHistory]);
-
   const sidebarContent = useMemo(
     () => (
       <div className="flex min-h-0 h-full flex-col gap-3 overflow-hidden">
@@ -187,8 +202,6 @@ const HomePage: React.FC = () => {
           selectedId={selectedReport?.meta.id}
           selectedIds={selectedIds}
           isDeleting={isDeletingHistory}
-          isSharing={isSharingHistory}
-          onShareSelected={handleShareSelected}
           onItemClick={handleHistoryItemClick}
           onLoadMore={() => void loadMoreHistory()}
           onToggleItemSelection={toggleHistorySelection}
@@ -203,8 +216,6 @@ const HomePage: React.FC = () => {
       hasMore,
       historyItems,
       isDeletingHistory,
-      isSharingHistory,
-      handleShareSelected,
       isLoadingHistory,
       isLoadingMore,
       handleHistoryItemClick,
@@ -277,7 +288,7 @@ const HomePage: React.FC = () => {
                   分析中
                 </>
               ) : (
-                '分析'
+                '查看'
               )}
             </button>
           </div>
@@ -301,6 +312,24 @@ const HomePage: React.FC = () => {
                 className="rounded-xl px-3 py-2 text-xs shadow-none"
               />
             ) : null}
+          </div>
+        ) : null}
+
+        {searchStockCode && marketListings.length > 0 ? (
+          <div className="px-3 pb-3 md:px-6">
+            <HomeMarketListingsPanel
+              stockCode={searchStockCode}
+              stockName={searchStockName ?? undefined}
+              items={marketListings}
+              purchaseCredits={marketPurchaseCredits}
+              purchasingListingId={purchasingListingId}
+              isLoadingReport={isLoadingReport}
+              canRefreshIntel={canShowRefreshIntel}
+              isAnalyzing={isAnalyzing}
+              onPurchase={handlePurchaseListing}
+              onView={handleViewListing}
+              onRefreshIntel={handleRefreshIntel}
+            />
           </div>
         ) : null}
 
@@ -334,8 +363,21 @@ const HomePage: React.FC = () => {
                 <DashboardStateBlock title="加载报告中..." loading />
               </div>
             ) : selectedReport ? (
-              <div className="max-w-4xl space-y-4 pb-8">
+              <div className={`max-w-4xl space-y-4 pb-8${searchStockCode && marketListings.length > 0 ? ' mt-6' : ''}`}>
                 <div className="flex flex-wrap items-center justify-end gap-2">
+                  {canShowRefreshIntel && marketListings.length === 0 ? (
+                    <Button
+                      variant="home-action-ai"
+                      size="sm"
+                      disabled={isAnalyzing}
+                      onClick={handleRefreshIntel}
+                    >
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      再次分析
+                    </Button>
+                  ) : null}
                   <Button
                     variant="home-action-ai"
                     size="sm"
@@ -361,11 +403,11 @@ const HomePage: React.FC = () => {
                 </div>
                 <ReportSummary data={selectedReport} isHistory />
               </div>
-            ) : (
+            ) : searchStockCode && marketListings.length > 0 ? null : (
               <div className="flex h-full items-center justify-center">
                 <EmptyState
                   title="开始分析"
-                  description="输入股票代码进行分析，或从左侧选择历史报告查看。"
+                  description="输入股票代码搜索本周期预测报告；首次分析将自动启动全量任务。"
                   className="max-w-xl border-dashed"
                   icon={(
                     <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
