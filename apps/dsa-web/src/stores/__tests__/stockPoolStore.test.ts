@@ -106,6 +106,27 @@ describe('stockPoolStore', () => {
     expect(historyApi.getList).toHaveBeenCalledTimes(1);
   });
 
+  it('deletes the current report when no history checkboxes are selected', async () => {
+    useStockPoolStore.setState({
+      historyItems: [historyItem],
+      selectedHistoryIds: [],
+      selectedReport: historyReport,
+    });
+
+    vi.mocked(historyApi.deleteRecords).mockResolvedValue({ deleted: 1 });
+    vi.mocked(historyApi.getList).mockResolvedValue({
+      total: 0,
+      page: 1,
+      limit: 20,
+      items: [],
+    });
+
+    await useStockPoolStore.getState().deleteSelectedHistory();
+
+    expect(historyApi.deleteRecords).toHaveBeenCalledWith([1]);
+    expect(useStockPoolStore.getState().selectedReport).toBeNull();
+  });
+
   it('falls back to the next history report after deleting the currently selected item', async () => {
     const nextHistoryItem = {
       ...historyItem,

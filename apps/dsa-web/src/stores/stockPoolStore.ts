@@ -281,7 +281,14 @@ export const useStockPoolStore = create<StockPoolState>((set, get) => ({
 
   deleteSelectedHistory: async () => {
     const state = get();
-    const recordIds = Array.from(new Set(state.selectedHistoryIds));
+    const selectedReportId = state.selectedReport?.meta.id;
+    const recordIds = Array.from(new Set(
+      state.selectedHistoryIds.length > 0
+        ? state.selectedHistoryIds
+        : selectedReportId !== undefined
+          ? [selectedReportId]
+          : [],
+    ));
     if (recordIds.length === 0 || state.isDeletingHistory) {
       return;
     }
@@ -315,7 +322,14 @@ export const useStockPoolStore = create<StockPoolState>((set, get) => ({
 
   shareSelectedHistory: async () => {
     const state = get();
-    const selected = Array.from(new Set(state.selectedHistoryIds));
+    const selectedReportId = state.selectedReport?.meta.id;
+    const selected = Array.from(new Set(
+      state.selectedHistoryIds.length > 0
+        ? state.selectedHistoryIds
+        : selectedReportId !== undefined
+          ? [selectedReportId]
+          : [],
+    ));
     if (selected.length !== 1 || state.isSharingHistory) {
       return null;
     }

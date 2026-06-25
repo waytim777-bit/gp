@@ -19,8 +19,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   return (
     <div className={cn('rounded-xl bg-default-50 px-6 py-10 text-center', className)}>
       {icon ? <div className="mb-4 flex justify-center text-default-400">{icon}</div> : null}
-      <h3 className="text-base font-semibold text-foreground">{title}</h3>
-      {description ? <p className="mx-auto mt-2 max-w-md text-sm text-default-500">{description}</p> : null}
+      <h3 className="text-base font-semibold text-secondary">{title}</h3>
+      {description ? <p className="mx-auto mt-2 max-w-md text-sm text-secondary">{description}</p> : null}
       {action ? <div className="mt-5 flex justify-center">{action}</div> : null}
     </div>
   );

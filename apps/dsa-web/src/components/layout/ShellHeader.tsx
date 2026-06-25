@@ -32,7 +32,7 @@ export const ShellHeader: React.FC<ShellHeaderProps> = ({
   const pageTitle = TITLES[location.pathname] ?? 'Daily Stock Analysis';
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 bg-card/70 px-4 backdrop-blur-xl sm:px-6">
+    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 px-4 backdrop-blur-xl sm:px-6">
       {/* Mobile menu button */}
       <button
         type="button"

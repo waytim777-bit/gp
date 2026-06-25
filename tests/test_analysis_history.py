@@ -14,6 +14,7 @@ import os
 import sys
 import tempfile
 import unittest
+from datetime import date
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -33,7 +34,15 @@ except ModuleNotFoundError:
     get_history_detail = None
 
 from src.config import Config
-from src.storage import DatabaseManager, AnalysisHistory, BacktestResult
+from src.storage import (
+    AnalysisHistory,
+    AnalysisHistoryDeleteConflictError,
+    BacktestResult,
+    DatabaseManager,
+    PredictionReportPurchase,
+    ReportPublicShare,
+    SharedAnalysisRun,
+)
 from src.analyzer import AnalysisResult
 from src.services.history_service import HistoryService
 from src.auth import register_user
@@ -706,6 +715,123 @@ class AnalysisHistoryTestCase(unittest.TestCase):
                 0,
             )
 
+    def test_delete_analysis_history_records_unlinks_shared_run_cache(self) -> None:
+        """删除自动共享缓存引用的历史记录时应解除引用并删除历史。"""
+        record_id = self._save_history("query_delete_shared_001")
+        shared = self.db.create_shared_analysis_run(
+            code="600519",
+            analysis_date=date(2026, 6, 25),
+            market="cn",
+            report_type="simple",
+            analysis_history_id=record_id,
+            query_id="query_delete_shared_001",
+        )
+
+        deleted = self.db.delete_analysis_history_records([record_id])
+        self.assertEqual(deleted, 1)
+
+        with self.db.get_session() as session:
+            self.assertIsNone(session.query(AnalysisHistory).filter(AnalysisHistory.id == record_id).first())
+            shared_row = session.query(SharedAnalysisRun).filter(SharedAnalysisRun.id == shared.id).first()
+            self.assertIsNotNone(shared_row)
+            self.assertIsNone(shared_row.analysis_history_id)
+            self.assertIsNone(shared_row.query_id)
+
+    def test_delete_analysis_history_records_removes_public_share(self) -> None:
+        """删除历史记录时应删除公开分享记录，避免分享链接悬空。"""
+        record_id = self._save_history("query_delete_public_share_001")
+        share = self.db.upsert_report_public_share(
+            analysis_history_id=record_id,
+            owner_user_id=self.current_user.id,
+            share_token="share-token-delete-test",
+        )
+
+        deleted = self.db.delete_analysis_history_records([record_id])
+        self.assertEqual(deleted, 1)
+
+        with self.db.get_session() as session:
+            self.assertIsNone(session.query(AnalysisHistory).filter(AnalysisHistory.id == record_id).first())
+            self.assertIsNone(session.query(ReportPublicShare).filter(ReportPublicShare.id == share.id).first())
+
+    def test_delete_analysis_history_records_clears_purchase_buyer_history(self) -> None:
+        """删除买家历史副本时应保留购买审计并清空 buyer_history_id。"""
+        canonical_id = self._save_history("query_delete_purchase_canonical_001")
+        buyer_history_id = self._save_history("query_delete_purchase_buyer_001")
+        shared = self.db.create_shared_analysis_run(
+            code="600519",
+            analysis_date=date(2026, 6, 26),
+            market="cn",
+            report_type="simple",
+            analysis_history_id=canonical_id,
+            query_id="query_delete_purchase_canonical_001",
+        )
+        listing = self.db.create_prediction_report_listing(
+            seller_user_id=self.current_user.id,
+            analysis_history_id=canonical_id,
+            shared_run_id=shared.id,
+            code="600519",
+            name="贵州茅台",
+            market="cn",
+            cycle_anchor_date=date(2026, 6, 26),
+            report_type="simple",
+            purchase_credits=100,
+            seller_reward_credits=90,
+        )
+        purchase = self.db.create_prediction_report_purchase(
+            listing_id=listing.id,
+            buyer_user_id=self.current_user.id,
+            seller_user_id=self.current_user.id,
+            credits_paid=100,
+            seller_credits=90,
+            buyer_history_id=buyer_history_id,
+        )
+
+        deleted = self.db.delete_analysis_history_records([buyer_history_id])
+        self.assertEqual(deleted, 1)
+
+        with self.db.get_session() as session:
+            self.assertIsNone(session.query(AnalysisHistory).filter(AnalysisHistory.id == buyer_history_id).first())
+            purchase_row = (
+                session.query(PredictionReportPurchase)
+                .filter(PredictionReportPurchase.id == purchase.id)
+                .first()
+            )
+            self.assertIsNotNone(purchase_row)
+            self.assertIsNone(purchase_row.buyer_history_id)
+
+    def test_delete_analysis_history_records_blocks_prediction_listing(self) -> None:
+        """已推荐到预测报告市场的历史记录应先下架，不应被静默删除。"""
+        record_id = self._save_history("query_delete_listing_001")
+        shared = self.db.create_shared_analysis_run(
+            code="600519",
+            analysis_date=date(2026, 6, 27),
+            market="cn",
+            report_type="simple",
+            analysis_history_id=record_id,
+            query_id="query_delete_listing_001",
+        )
+        self.db.create_prediction_report_listing(
+            seller_user_id=self.current_user.id,
+            analysis_history_id=record_id,
+            shared_run_id=shared.id,
+            code="600519",
+            name="贵州茅台",
+            market="cn",
+            cycle_anchor_date=date(2026, 6, 27),
+            report_type="simple",
+            purchase_credits=100,
+            seller_reward_credits=90,
+        )
+
+        with self.assertRaises(AnalysisHistoryDeleteConflictError) as ctx:
+            self.db.delete_analysis_history_records([record_id])
+        self.assertEqual(ctx.exception.record_ids, [record_id])
+
+        with self.db.get_session() as session:
+            self.assertIsNotNone(session.query(AnalysisHistory).filter(AnalysisHistory.id == record_id).first())
+            shared_row = session.query(SharedAnalysisRun).filter(SharedAnalysisRun.id == shared.id).first()
+            self.assertEqual(shared_row.analysis_history_id, record_id)
+
     def test_delete_history_api_deletes_selected_records(self) -> None:
         """DELETE /api/v1/history should remove only the requested records."""
         if TestClient is None or create_app is None:
@@ -735,6 +861,53 @@ class AnalysisHistoryTestCase(unittest.TestCase):
         with self.db.get_session() as session:
             self.assertIsNone(session.query(AnalysisHistory).filter(AnalysisHistory.id == record_id_1).first())
             self.assertIsNotNone(session.query(AnalysisHistory).filter(AnalysisHistory.id == record_id_2).first())
+
+    def test_delete_history_api_returns_409_for_prediction_listing(self) -> None:
+        """DELETE /api/v1/history should report a business conflict for listed reports."""
+        if TestClient is None or create_app is None:
+            self.skipTest("fastapi is not installed in this test environment")
+
+        record_id = self._save_history("query_delete_api_listing_001")
+        shared = self.db.create_shared_analysis_run(
+            code="600519",
+            analysis_date=date(2026, 6, 28),
+            market="cn",
+            report_type="simple",
+            analysis_history_id=record_id,
+            query_id="query_delete_api_listing_001",
+        )
+        self.db.create_prediction_report_listing(
+            seller_user_id=self.current_user.id,
+            analysis_history_id=record_id,
+            shared_run_id=shared.id,
+            code="600519",
+            name="贵州茅台",
+            market="cn",
+            cycle_anchor_date=date(2026, 6, 28),
+            report_type="simple",
+            purchase_credits=100,
+            seller_reward_credits=90,
+        )
+
+        static_dir = Path(self._temp_dir.name) / "empty-static"
+        static_dir.mkdir(exist_ok=True)
+        client = TestClient(create_app(static_dir=static_dir))
+        login_response = client.post(
+            "/api/v1/auth/login",
+            json={"username": "history_user", "password": "password123"},
+        )
+        self.assertEqual(login_response.status_code, 200)
+
+        response = client.request(
+            "DELETE",
+            "/api/v1/history",
+            json={"record_ids": [record_id]},
+        )
+
+        self.assertEqual(response.status_code, 409)
+        body = response.json()
+        self.assertEqual(body.get("detail", {}).get("error"), "history_delete_conflict")
+        self.assertEqual(body.get("detail", {}).get("record_ids"), [record_id])
 
 
 class HistoryItemSchemaNegativeSentimentTest(unittest.TestCase):

@@ -41,6 +41,7 @@ from sqlalchemy import (
     and_,
     or_,
     delete,
+    update,
     desc,
     event,
     func,
@@ -74,6 +75,15 @@ Base = declarative_base()
 
 if TYPE_CHECKING:
     from src.search_service import SearchResponse
+
+
+class AnalysisHistoryDeleteConflictError(Exception):
+    """Raised when a history row is still part of an external report listing."""
+
+    def __init__(self, record_ids: List[int]):
+        self.record_ids = [int(record_id) for record_id in record_ids]
+        message = "历史记录已推荐到预测报告市场，请先下架/取消推荐后再删除"
+        super().__init__(message)
 
 
 # === 数据模型定义 ===
@@ -3595,7 +3605,8 @@ class DatabaseManager:
         """
         删除指定的分析历史记录。
 
-        同时清理依赖这些历史记录的回测结果，避免外键约束失败。
+        同时清理或解除依赖这些历史记录的内部引用，避免外键约束失败。
+        已推荐到预测报告市场的记录会被保护，调用方应先下架/取消推荐。
 
         Args:
             record_ids: 要删除的历史记录主键 ID 列表
@@ -3620,8 +3631,28 @@ class DatabaseManager:
             ).scalars().all()
             if not scoped_ids:
                 return 0
+            listing_history_ids = session.execute(
+                select(PredictionReportListing.analysis_history_id).where(
+                    PredictionReportListing.analysis_history_id.in_(scoped_ids)
+                )
+            ).scalars().all()
+            if listing_history_ids:
+                raise AnalysisHistoryDeleteConflictError(sorted({int(row_id) for row_id in listing_history_ids}))
             session.execute(
                 delete(BacktestResult).where(BacktestResult.analysis_history_id.in_(scoped_ids))
+            )
+            session.execute(
+                update(SharedAnalysisRun)
+                .where(SharedAnalysisRun.analysis_history_id.in_(scoped_ids))
+                .values(analysis_history_id=None, query_id=None)
+            )
+            session.execute(
+                update(PredictionReportPurchase)
+                .where(PredictionReportPurchase.buyer_history_id.in_(scoped_ids))
+                .values(buyer_history_id=None)
+            )
+            session.execute(
+                delete(ReportPublicShare).where(ReportPublicShare.analysis_history_id.in_(scoped_ids))
             )
             result = session.execute(
                 delete(AnalysisHistory).where(AnalysisHistory.id.in_(scoped_ids))

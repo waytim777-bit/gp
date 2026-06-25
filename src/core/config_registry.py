@@ -46,6 +46,12 @@ _CATEGORY_DEFINITIONS: List[Dict[str, Any]] = [
         "display_order": 50,
     },
     {
+        "category": "analysis",
+        "title": "分析设置",
+        "description": "分析流程、预测周期和报告生成相关设置。",
+        "display_order": 52,
+    },
+    {
         "category": "agent",
         "title": "智能体",
         "description": "Agent 模式和策略技能设置。",

@@ -112,7 +112,7 @@ describe('HomePage', () => {
     expect(dashboard.className).toContain('lg:h-[calc(100vh-2rem)]');
     expect(dashboard.firstElementChild?.className).toContain('min-h-0');
     expect(dashboard.querySelector('.flex-1.flex.min-h-0.overflow-hidden')).toBeTruthy();
-    expect(screen.getByPlaceholderText('输入股票代码或名称，如 600519、贵州茅台、AAPL')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('输入股票代码或名称，如600519、贵州茅台、AAPL')).toBeInTheDocument();
     expect(await screen.findByText('趋势维持强势')).toBeInTheDocument();
     expect(
       screen.getByRole('button', {
@@ -158,9 +158,9 @@ describe('HomePage', () => {
       </MemoryRouter>,
     );
 
-    const input = await screen.findByPlaceholderText('输入股票代码或名称，如 600519、贵州茅台、AAPL');
+    const input = await screen.findByPlaceholderText('输入股票代码或名称，如600519、贵州茅台、AAPL');
     fireEvent.change(input, { target: { value: '600519' } });
-    fireEvent.click(screen.getByRole('button', { name: '分析' }));
+    fireEvent.click(screen.getByRole('button', { name: 'AI数据分析' }));
 
     await waitFor(() => {
       expect(screen.getByText(/股票 600519 正在分析中/)).toBeInTheDocument();
@@ -216,7 +216,7 @@ describe('HomePage', () => {
     fireEvent.click(await screen.findByRole('button', { name: '删除' }));
 
     expect(
-      await screen.findByText('确认删除这条历史记录吗？删除后将不可恢复。'),
+      await screen.findByText('确认删除当前选中的历史记录吗？删除后将不可恢复。'),
     ).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: '确认删除' }));

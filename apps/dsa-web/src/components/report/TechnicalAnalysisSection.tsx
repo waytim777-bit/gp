@@ -50,13 +50,11 @@ export const TechnicalAnalysisSection: React.FC<TechnicalAnalysisSectionProps> =
     </>
   );
 
-  if (compact) {
-    return <div className="space-y-3">{content}</div>;
-  }
-
   return (
-    <Card className="border border-subtle bg-surface/50 p-4 shadow-none">
-      <div className="space-y-4">{content}</div>
+    <Card className="text-left">
+      <Card.Content className={compact ? 'space-y-3' : 'space-y-4'}>
+        {content}
+      </Card.Content>
     </Card>
   );
 };

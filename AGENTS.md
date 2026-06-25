@@ -154,6 +154,8 @@ gh run view <run_id> --log-failed
 - Web 前端改动：
   - 适用范围：`apps/dsa-web/`
   - 默认执行：`cd apps/dsa-web && npm ci && npm run lint && npm run build`
+  - 若用户提供 Figma 设计稿或要求按设计稿改 UI，必须先阅读 `docs/figma-to-code-guidelines.md`；先对齐整页 frame 的页面骨架坐标，再实现局部组件，避免只按局部节点像素照搬。
+  - Figma 驱动的主题色、复杂状态和跨主题样式优先复用或调整 `apps/dsa-web/src/index.css` 现有变量/语义类；不要为每个节点随意新增同义变量。Tailwind 可直接表达的一次性布局尺寸、间距和断点可保留在 JSX class 中。
   - 若涉及 API 联调、路由、状态管理、Markdown/图表渲染或认证状态，交付说明中要明确说明联动面和未覆盖风险。
 
 - 桌面端改动：

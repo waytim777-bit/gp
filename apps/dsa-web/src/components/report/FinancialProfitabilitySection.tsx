@@ -251,8 +251,8 @@ export const FinancialProfitabilitySection: React.FC<FinancialProfitabilitySecti
               <AreaChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="profitabilityGrossMargin" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--home-action-report-text)" stopOpacity={0.26} />
-                    <stop offset="95%" stopColor="var(--home-action-report-text)" stopOpacity={0.04} />
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.26} />
+                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.04} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
@@ -270,7 +270,7 @@ export const FinancialProfitabilitySection: React.FC<FinancialProfitabilitySecti
                   width={56}
                 />
                 <RechartsTooltip
-                  cursor={{ stroke: 'var(--home-action-report-text)', strokeOpacity: 0.35 }}
+                  cursor={{ stroke: 'hsl(var(--primary))', strokeOpacity: 0.35 }}
                   formatter={(value, name, item) => {
                     if (name === 'grossMargin') {
                       const payload = item.payload as ProfitabilityChartPoint;
@@ -293,7 +293,7 @@ export const FinancialProfitabilitySection: React.FC<FinancialProfitabilitySecti
                 <Area
                   type="monotone"
                   dataKey="grossMargin"
-                  stroke="var(--home-action-report-text)"
+                  stroke="hsl(var(--primary))"
                   strokeWidth={2}
                   fill="url(#profitabilityGrossMargin)"
                   name="grossMargin"

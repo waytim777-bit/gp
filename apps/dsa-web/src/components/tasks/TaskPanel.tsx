@@ -1,6 +1,6 @@
 import type React from 'react';
-import { Badge, Card, StatusDot } from '../common';
-import { DashboardPanelHeader } from '../dashboard';
+import { CalendarDays } from 'lucide-react';
+import { Badge, StatusDot } from '../common';
 import type { TaskInfo } from '../../types/analysis';
 
 /**
@@ -10,66 +10,88 @@ interface TaskItemProps {
   task: TaskInfo;
 }
 
+const escapeRegExp = (value: string): string =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const stripTaskMessagePrefix = (message: string, task: TaskInfo): string => {
+  const prefixes = [
+    task.stockName,
+    task.stockCode,
+    task.stockCode.replace(/\.(SH|SZ|BJ|HK|US)$/i, ''),
+  ]
+    .filter((value): value is string => Boolean(value?.trim()))
+    .map((value) => escapeRegExp(value.trim()));
+
+  if (prefixes.length === 0) {
+    return message.trim();
+  }
+
+  const prefixPattern = new RegExp(`^\\s*(?:${prefixes.join('|')})\\s*[:：,-]?\\s*`, 'i');
+  let nextMessage = message.trim();
+
+  for (let index = 0; index < 3; index += 1) {
+    const stripped = nextMessage.replace(prefixPattern, '').trim();
+    if (stripped === nextMessage) {
+      break;
+    }
+    nextMessage = stripped;
+  }
+
+  return nextMessage;
+};
+
 /**
  * 单个任务项
  */
 const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
-  const isPending = task.status === 'pending';
   const isProcessing = task.status === 'processing';
   const statusLabel = isProcessing ? '分析中' : '等待中';
-  const statusVariant = isProcessing ? 'info' : 'default';
   const statusTone = isProcessing ? 'info' : 'neutral';
   const progress = Math.max(0, Math.min(100, task.progress || 0));
+  const displayMessage = stripTaskMessagePrefix(task.message || `${statusLabel}...`, task);
 
   return (
-    <div className="home-subpanel flex items-center gap-3 px-3 py-2.5">
-      {/* 状态图标 */}
-      <div className="shrink-0">
-        {isProcessing ? (
-          <StatusDot tone="info" pulse className="h-2.5 w-2.5" aria-label="任务进行中" />
-        ) : isPending ? (
-          <StatusDot tone="neutral" className="h-2.5 w-2.5" aria-label="任务等待中" />
-        ) : null}
-      </div>
-
-      {/* 任务信息 */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-foreground truncate">
+    <div
+      className="home-task-card min-h-[160px] w-full rounded-xl border-[1.5px] border-[hsl(var(--primary))] bg-[hsl(var(--card))] px-5 py-5 shadow-none"
+      aria-label={`任务状态：${statusLabel}`}
+    >
+      <div className="flex h-full min-w-0 flex-col justify-between gap-7">
+        <div className="flex items-center justify-between gap-4">
+          <span className="truncate text-base font-bold leading-[22px] text-foreground">
             {task.stockName || task.stockCode}
           </span>
-          <span className="text-xs text-muted-text">
+          <span className="shrink-0 text-base font-semibold leading-[22px] text-secondary-text">
             {task.stockCode}
           </span>
         </div>
-        {task.message && (
-          <p className="text-xs text-secondary-text truncate mt-0.5">
-            {task.message}
-          </p>
-        )}
-        <div className="mt-2 flex items-center gap-2">
-          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/8">
-            <div
-              className="h-full rounded-full bg-cyan transition-[width] duration-300 ease-out"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-          <span className="shrink-0 text-[11px] text-muted-text tabular-nums">
-            {progress}%
-          </span>
-        </div>
-      </div>
 
-      {/* 状态标签 */}
-      <div className="flex-shrink-0">
-        <Badge
-          variant={statusVariant}
-          className="min-w-[4.75rem] justify-center gap-1.5 shadow-none"
-          aria-label={`任务状态：${statusLabel}`}
-        >
-          <StatusDot tone={statusTone} pulse={isProcessing} className="h-1.5 w-1.5" />
-          {statusLabel}
-        </Badge>
+        <div className="space-y-5">
+          <div className="flex items-start gap-2.5">
+            <StatusDot tone={statusTone} pulse={isProcessing} className="mt-1 h-3 w-3" />
+            <p className="line-clamp-2 min-w-0 flex-1 text-sm font-medium leading-5 text-secondary-text">
+              {displayMessage}
+            </p>
+            <Badge
+              variant={isProcessing ? 'info' : 'default'}
+              className="shrink-0 border-[hsl(var(--primary)/0.38)] bg-[hsl(var(--primary)/0.12)] px-2 py-0.5 text-xs font-bold leading-4 text-[hsl(var(--primary))] shadow-none"
+            >
+              <StatusDot tone={statusTone} pulse={isProcessing} className="h-1.5 w-1.5" />
+              {statusLabel}
+            </Badge>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-[hsl(var(--foreground)/0.12)]">
+              <div
+                className="h-full rounded-full bg-[hsl(var(--primary))] transition-[width] duration-300 ease-out"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <span className="w-9 shrink-0 text-right text-base font-medium leading-[22px] text-secondary-text tabular-nums">
+              {progress}%
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -111,56 +133,30 @@ export const TaskPanel: React.FC<TaskPanelProps> = ({
 
   const pendingCount = activeTasks.filter((t) => t.status === 'pending').length;
   const processingCount = activeTasks.filter((t) => t.status === 'processing').length;
+  const statusText = processingCount > 0
+    ? `进行中(${processingCount})`
+    : `等待中(${pendingCount})`;
 
   return (
-    <Card
-      variant="bordered"
-      padding="none"
-      className={`home-panel-card overflow-hidden ${className}`}
-    >
-      <div className="border-b border-subtle px-3 py-3">
-        <DashboardPanelHeader
-          className="mb-0"
-          title={title}
-          titleClassName="text-sm font-medium"
-          leading={(
-            <svg className="h-4 w-4 text-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              />
-            </svg>
-          )}
-          headingClassName="items-center"
-          actions={(
-            <div className="flex items-center gap-2 text-xs text-muted-text">
-              {processingCount > 0 && (
-                <span className="flex items-center gap-1">
-                  <StatusDot tone="info" pulse className="h-1.5 w-1.5" aria-label="进行中任务" />
-                  {processingCount} 进行中
-                </span>
-              )}
-              {pendingCount > 0 ? (
-                <span className="flex items-center gap-1">
-                  <StatusDot tone="neutral" className="h-1.5 w-1.5" aria-label="等待中任务" />
-                  {pendingCount} 等待中
-                </span>
-              ) : null}
-            </div>
-          )}
-        />
+    <section className={`w-full max-w-[280px] ${className}`} aria-label={title}>
+      <div className="mb-4 flex h-6 items-center justify-between gap-4">
+        <div className="flex min-w-0 items-center gap-1">
+          <CalendarDays className="h-6 w-6 shrink-0 text-foreground" strokeWidth={2} aria-hidden="true" />
+          <h3 className="truncate text-base font-bold leading-[22px] text-foreground">{title}</h3>
+        </div>
+        <span className="shrink-0 text-sm font-bold leading-5 text-[hsl(var(--primary))]">
+          {statusText}
+        </span>
       </div>
 
-      <div className="max-h-64 overflow-y-auto p-2">
-        <div className="space-y-2">
+      <div className="max-h-[360px] overflow-y-auto">
+        <div className="space-y-4">
           {activeTasks.map((task) => (
             <TaskItem key={task.taskId} task={task} />
           ))}
         </div>
       </div>
-    </Card>
+    </section>
   );
 };
 

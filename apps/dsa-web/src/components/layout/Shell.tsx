@@ -32,7 +32,7 @@ export const Shell: React.FC<ShellProps> = ({ children }) => {
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          'hidden shrink-0 bg-card/60 backdrop-blur-sm transition-[width] duration-300 lg:flex lg:flex-col',
+          'hidden shrink-0 backdrop-blur-sm transition-[width] duration-300 lg:flex lg:flex-col',
           sidebarCollapsed ? 'w-[72px]' : 'w-[240px]'
         )}
       >
@@ -50,7 +50,7 @@ export const Shell: React.FC<ShellProps> = ({ children }) => {
           onOpenMobileNav={() => setMobileOpen(true)}
         />
 
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 pt-0!">
           {children ?? <Outlet />}
         </main>
       </div>

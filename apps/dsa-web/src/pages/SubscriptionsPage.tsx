@@ -1,14 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Card } from '@heroui/react/card';
-import { BellRing, Mail, Trash2, Webhook } from 'lucide-react';
+import { Modal } from '@heroui/react';
+import { Bell, Check, Trash2 } from 'lucide-react';
 import { subscriptionsApi } from '../api/subscriptions';
 import { getParsedApiError, createParsedApiError, type ParsedApiError } from '../api/error';
 import { StockAutocomplete } from '../components/StockAutocomplete/StockAutocomplete';
 import {
   ApiErrorAlert,
-  Button,
   ConfirmDialog,
-  EmptyState,
   InlineAlert,
 } from '../components/common';
 import { useCreditStore } from '../stores/creditStore';
@@ -27,7 +25,6 @@ const SubscriptionsPage: React.FC = () => {
   const [pricing, setPricing] = useState<SubscriptionPricing | null>(null);
   const [items, setItems] = useState<SubscriptionItem[]>([]);
   const [pushLogs, setPushLogs] = useState<SubscriptionPushLogItem[]>([]);
-  const [activeCount, setActiveCount] = useState(0);
 
   const [notificationEmail, setNotificationEmail] = useState('');
   const [webhookUrls, setWebhookUrls] = useState('');
@@ -37,11 +34,14 @@ const SubscriptionsPage: React.FC = () => {
   const [stockInput, setStockInput] = useState('');
   const [selectedCode, setSelectedCode] = useState('');
   const [selectedName, setSelectedName] = useState('');
-  const [intervalDays, setIntervalDays] = useState<1 | 3 | 5>(1);
+  const [intervalDays, setIntervalDays] = useState<1 | 3 | 5>(3);
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showPushDialog, setShowPushDialog] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [savingProfile, setSavingProfile] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [selectedSubscription, setSelectedSubscription] = useState<SubscriptionItem | null>(null);
   const [pendingDelete, setPendingDelete] = useState<SubscriptionItem | null>(null);
   const [error, setError] = useState<ParsedApiError | null>(null);
   const [successMessage, setSuccessMessage] = useState('');
@@ -60,7 +60,6 @@ const SubscriptionsPage: React.FC = () => {
       setPricing(pricingData);
       setItems(listData.items);
       setPushLogs(pushLogData.items);
-      setActiveCount(listData.activeCount);
       setNotificationEmail(profileData.notificationEmail || '');
       setWebhookUrls(profileData.webhookUrls || '');
     } catch (err: unknown) {
@@ -82,6 +81,7 @@ const SubscriptionsPage: React.FC = () => {
   });
   const estimatedMonthly = pricing?.estimatedMonthlyByInterval[String(intervalDays)] ?? 0;
   const creditsPerPush = pricing?.creditsPerPush ?? 0;
+  const activeCount = items.filter((item) => item.status === 'active').length;
 
   const pushStatusLabel = (status: string) => {
     if (status === 'success') return '成功';
@@ -121,6 +121,7 @@ const SubscriptionsPage: React.FC = () => {
       });
       setProfile(saved);
       setWebhookBearerToken('');
+      setShowPushDialog(false);
       setSuccessMessage('推送方式已保存');
     } catch (err: unknown) {
       setError(getParsedApiError(err));
@@ -155,10 +156,10 @@ const SubscriptionsPage: React.FC = () => {
         intervalDays,
       });
       setItems((prev) => [created, ...prev]);
-      setActiveCount((prev) => prev + 1);
       setStockInput('');
       setSelectedCode('');
       setSelectedName('');
+      setShowAddDialog(false);
       setSuccessMessage(`已添加订阅：${created.code}`);
     } catch (err: unknown) {
       setError(getParsedApiError(err));
@@ -173,7 +174,7 @@ const SubscriptionsPage: React.FC = () => {
       const nextStatus = item.status === 'active' ? 'paused' : 'active';
       const updated = await subscriptionsApi.update(item.id, { status: nextStatus });
       setItems((prev) => prev.map((row) => (row.id === item.id ? updated : row)));
-      setActiveCount((prev) => prev + (nextStatus === 'active' ? 1 : -1));
+      setSelectedSubscription((current) => (current?.id === item.id ? updated : current));
     } catch (err: unknown) {
       setError(getParsedApiError(err));
     }
@@ -187,9 +188,7 @@ const SubscriptionsPage: React.FC = () => {
     try {
       await subscriptionsApi.remove(pendingDelete.id);
       setItems((prev) => prev.filter((row) => row.id !== pendingDelete.id));
-      if (pendingDelete.status === 'active') {
-        setActiveCount((prev) => Math.max(0, prev - 1));
-      }
+      setSelectedSubscription((current) => (current?.id === pendingDelete.id ? null : current));
       setPendingDelete(null);
       setSuccessMessage(`已删除订阅：${pendingDelete.code}`);
     } catch (err: unknown) {
@@ -206,7 +205,7 @@ const SubscriptionsPage: React.FC = () => {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6 px-4 py-8 sm:px-6">
+    <div className="sm:px-6 w-full h-full overflow-hidden flex flex-col">
       <div className="space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -215,9 +214,9 @@ const SubscriptionsPage: React.FC = () => {
               配置推送方式并订阅股票，系统将在交易日按设定间隔发送分析报告。
             </p>
           </div>
-          <div className="rounded-xl border border-border/60 bg-card px-4 py-2 text-sm">
+          {/* <div className="rounded-xl border border-border/60 bg-card px-4 py-2 text-sm">
             当前余额 <span className="font-semibold text-amber-400">{Math.max(balance, 0)}</span> 积分
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -235,255 +234,358 @@ const SubscriptionsPage: React.FC = () => {
         />
       ) : null}
 
-      <Card>
-        <Card.Content className="space-y-4 p-6">
-          <div className="flex items-center gap-2">
-            <Mail className="h-4 w-4 text-primary" />
-            <h2 className="text-base font-semibold text-foreground">推送方式</h2>
-          </div>
-          <p className="text-sm text-default-500">
-            邮件由平台统一发送，您只需填写收件邮箱；也可选填 Webhook 接收推送。
-          </p>
+      <div className="flex-1 text-foreground flex flex-col md:flex-row gap-3 mt-4">
 
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-foreground">收件邮箱</span>
-            <input
-              type="email"
-              value={notificationEmail}
-              onChange={(event) => setNotificationEmail(event.target.value)}
-              placeholder="your@email.com"
-              className="input-surface input-focus-glow h-11 w-full rounded-xl border bg-transparent px-4 text-sm"
-            />
-          </label>
+        {/* 左侧栏：宽度固定或自适应，flex 垂直布局 */}
+        <div className="w-full md:w-1/3 flex flex-col gap-3">
 
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-foreground">Webhook 地址（可选）</span>
-            <textarea
-              value={webhookUrls}
-              onChange={(event) => setWebhookUrls(event.target.value)}
-              placeholder="https://oapi.dingtalk.com/robot/send?access_token=..."
-              rows={2}
-              className="input-surface input-focus-glow w-full rounded-xl border bg-transparent px-4 py-3 text-sm"
-            />
-          </label>
-
-          <button
-            type="button"
-            className="text-sm text-primary hover:underline"
-            onClick={() => setShowAdvanced((value) => !value)}
-          >
-            {showAdvanced ? '收起高级选项' : '展开高级选项'}
-          </button>
-
-          {showAdvanced ? (
-            <label className="block space-y-2">
-              <span className="text-sm font-medium text-foreground">Webhook Bearer Token（可选）</span>
-              <input
-                type="password"
-                value={webhookBearerToken}
-                onChange={(event) => setWebhookBearerToken(event.target.value)}
-                placeholder={profile?.hasWebhookBearerToken ? '已保存，留空则不修改' : '可选'}
-                className="input-surface input-focus-glow h-11 w-full rounded-xl border bg-transparent px-4 text-sm"
-              />
-            </label>
-          ) : null}
-
-          <div className="flex justify-end">
-            <Button
-              variant="primary"
-              isLoading={savingProfile}
-              disabled={!profileDirty}
-              onClick={() => void handleSaveProfile()}
-            >
-              保存推送方式
-            </Button>
-          </div>
-        </Card.Content>
-      </Card>
-
-      <Card>
-        <Card.Content className="space-y-4 p-6">
-          <div className="flex items-center gap-2">
-            <BellRing className="h-4 w-4 text-primary" />
-            <h2 className="text-base font-semibold text-foreground">添加订阅</h2>
+          {/* 当前积分余额 */}
+          <div className="bg-[hsl(var(--card))]  p-5 rounded-xl flex justify-between items-center">
+            <span className="text-sm font-medium">当前积分余额</span>
+            <span className="text-cyan-400 font-semibold">{Math.max(balance, 0)}</span>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
-            <label className="block space-y-2">
-              <span className="text-sm font-medium text-foreground">股票代码</span>
-              <StockAutocomplete
-                value={stockInput}
-                onChange={setStockInput}
-                onSubmit={handleStockSubmit}
-                placeholder="输入股票代码或名称"
-              />
-            </label>
-          </div>
-
-          <div className="space-y-2">
-            <span className="text-sm font-medium text-foreground">推送间隔（交易日）</span>
-            <div className="flex flex-wrap gap-2">
-              {INTERVAL_OPTIONS.map((option) => (
-                <button
-                  key={option.days}
-                  type="button"
-                  onClick={() => setIntervalDays(option.days)}
-                  className={`rounded-xl border px-4 py-2 text-sm transition-colors ${
-                    intervalDays === option.days
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-border/70 bg-card text-secondary-text hover:bg-hover'
-                  }`}
-                >
-                  {option.label}
-                </button>
-              ))}
+          {/* 我的订阅列表 */}
+          <div className="bg-[hsl(var(--card))]  p-5 rounded-xl flex-1 flex flex-col min-h-[300px]">
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-sm font-medium">我的订阅列表</span>
+              <button
+                type="button"
+                className="text-xs text-cyan-400 flex items-center gap-1 hover:underline"
+                onClick={() => setShowAddDialog(true)}
+              >
+                <span>+</span> 添加订阅
+              </button>
             </div>
-          </div>
-
-          <div className="rounded-xl border border-border/60 bg-base/60 px-4 py-3 text-sm text-default-500">
-            预计消耗 <span className="font-medium text-foreground">{creditsPerPush}</span> 积分/次，
-            约 <span className="font-medium text-foreground">{estimatedMonthly}</span> 积分/月（按
-            {pricing?.tradingDaysPerMonth ?? 22} 个交易日估算）。
-          </div>
-
-          <div className="flex justify-end">
-            <Button
-              variant="primary"
-              isLoading={creating}
-              onClick={() => void handleCreateSubscription()}
-            >
-              添加订阅
-            </Button>
-          </div>
-        </Card.Content>
-      </Card>
-
-      <Card>
-        <Card.Content className="space-y-4 p-6">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <Webhook className="h-4 w-4 text-primary" />
-              <h2 className="text-base font-semibold text-foreground">我的订阅列表</h2>
-            </div>
-            <span className="text-sm text-default-500">
-              共 {items.length} 只 · 活跃 {activeCount}
-            </span>
-          </div>
-
-          {items.length === 0 ? (
-            <EmptyState
-              title="还没有订阅股票"
-              description="在上方搜索代码并选择推送间隔，即可开始接收每日分析报告。"
-            />
-          ) : (
-            <div className="space-y-3">
-              {items.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex flex-col gap-3 rounded-xl border border-border/60 bg-base/40 p-4 md:flex-row md:items-center md:justify-between"
-                >
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-semibold text-foreground">{item.code}</span>
-                      {item.name ? (
-                        <span className="text-sm text-default-500">{item.name}</span>
-                      ) : null}
-                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
-                        {item.intervalLabel}
-                      </span>
-                      <span
-                        className={`rounded-full px-2 py-0.5 text-xs ${
-                          item.status === 'active'
-                            ? 'bg-green-500/10 text-green-600'
-                            : 'bg-default-100 text-default-500'
-                        }`}
-                      >
-                        {item.status === 'active' ? '活跃' : '已暂停'}
-                      </span>
-                    </div>
-                    <p className="mt-2 text-sm text-default-500">
-                      下次推送：{item.nextPushOn || '待定'} · {item.creditsPerPush} 积分/次
+            {items.length === 0 ? (
+              <div className="flex-1 flex flex-col items-center justify-center text-slate-500 text-xs gap-2">
+                <img src={new URL('../assets/sub-empty.png', import.meta.url).href} className="w-35 h-auto" alt="" />
+                <p>暂无订阅</p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-[10px] overflow-auto pb-2">
+                <div className="text-xs font-medium text-[#697087]">共 {items.length} 只 · 活跃 {activeCount}</div>
+                {items.map((item) => (
+                  <button
+                    type="button"
+                    key={item.id}
+                    className="grid w-full grid-cols-[minmax(0,1fr)_86px] gap-x-3 gap-y-3 rounded-[12px] bg-transparent px-3 py-3 text-left transition-colors hover:bg-[#262936] focus-visible:bg-[#262936] focus-visible:outline-none"
+                    onClick={() => setSelectedSubscription(item)}
+                  >
+                    <p className="min-w-0 truncate text-[16px] font-semibold leading-none text-foreground">
+                      {item.code}{item.name ? ` ${item.name}` : ''}
                     </p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => void handleTogglePause(item)}
+                    <span
+                      className={`ml-auto flex h-[22px] w-[60px] items-center justify-center rounded-full px-1 text-[12px] font-medium leading-none ${
+                        item.status === 'active'
+                          ? 'bg-[#00a1c2]/10 text-[#00a1c2]'
+                          : 'bg-[#ff5151]/10 text-[#ff5151]'
+                      }`}
                     >
-                      {item.status === 'active' ? '暂停' : '恢复'}
-                    </Button>
-                    <Button
-                      variant="danger-subtle"
-                      size="sm"
-                      onClick={() => setPendingDelete(item)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      删除
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </Card.Content>
-      </Card>
-
-      <Card>
-        <Card.Content className="space-y-4 p-6">
-          <div className="flex items-center gap-2">
-            <BellRing className="h-4 w-4 text-primary" />
-            <h2 className="text-base font-semibold text-foreground">最近推送记录</h2>
+                      {item.status === 'active' ? '订阅中' : '已暂停'}
+                    </span>
+                    <p className="min-w-0 truncate text-[12px] font-medium leading-none text-[#697087]">
+                      下次推送:{item.nextPushOn || '待定'}
+                    </p>
+                    <p className="text-right text-[12px] font-medium leading-none text-foreground">{item.creditsPerPush}积分/次</p>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
+          {/* 免责声明 */}
+          <div className="text-xs text-slate-500 leading-relaxed px-1">
+            免责声明：分析结果仅供参考，不构成投资建议。积分仅在推送成功后扣减；推送由管理员在后台「推送管理」中手动触发。
+          </div>
+        </div>
+
+        {/* 右侧栏：最近推送记录 (占据剩余空间) */}
+        <div className="flex-1 bg-[hsl(var(--card))] p-5 rounded-xl flex flex-col min-h-[400px]">
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-sm font-medium">最近推送记录</span>
+            <button
+              type="button"
+              className="text-xs text-slate-400 flex items-center gap-1 hover:text-slate-200"
+              onClick={() => setShowPushDialog(true)}
+            >
+              ✉️ 推送方式
+            </button>
+          </div>
           {pushLogs.length === 0 ? (
-            <EmptyState
-              title="暂无推送记录"
-              description="订阅到期并成功推送后，记录会显示在这里。"
-            />
+            <div className="flex-1 flex flex-col items-center justify-center text-slate-500 text-xs gap-2">
+              <img src={new URL('../assets/push-empty.png', import.meta.url).href} className="w-35 h-auto" alt="" />
+              <p>暂无推送记录</p>
+            </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-3 overflow-auto pr-1">
               {pushLogs.map((log) => (
                 <div
                   key={log.id}
-                  className="flex flex-col gap-1 rounded-xl border border-border/60 bg-base/40 px-4 py-3 text-sm md:flex-row md:items-center md:justify-between"
+                  className="rounded-xl border border-white/8 bg-[#11131b] px-4 py-3 text-sm"
                 >
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-medium text-foreground">{log.code}</span>
-                      <span
-                        className={`rounded-full px-2 py-0.5 text-xs ${
-                          log.status === 'success'
-                            ? 'bg-green-500/10 text-green-600'
-                            : log.status === 'skipped'
-                              ? 'bg-default-100 text-default-500'
-                              : 'bg-red-500/10 text-red-600'
-                        }`}
-                      >
-                        {pushStatusLabel(log.status)}
-                      </span>
-                      <span className="text-xs text-default-500">
-                        {pushChannelLabel(log.channel)}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-xs text-default-500">
-                      {log.pushedOn || log.createdAt || '-'}
-                      {log.status === 'success' && log.creditsCharged > 0
-                        ? ` · 扣费 ${log.creditsCharged} 积分`
-                        : ''}
-                      {log.errorMessage ? ` · ${log.errorMessage}` : ''}
-                    </p>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="font-medium text-slate-100">{log.code}</span>
+                    <span className="text-xs text-slate-500">
+                      {pushStatusLabel(log.status)} · {pushChannelLabel(log.channel)}
+                    </span>
                   </div>
+                  <p className="mt-1 text-xs text-slate-500">{log.pushedOn || log.createdAt || '-'}</p>
                 </div>
               ))}
             </div>
           )}
-        </Card.Content>
-      </Card>
+        </div>
 
-      <p className="text-xs leading-relaxed text-default-500">
-        免责声明：分析结果仅供参考，不构成投资建议。积分仅在推送成功后扣减；推送由管理员在后台「推送管理」中手动触发。
-      </p>
+      </div>
+
+      <Modal.Root isOpen={showAddDialog} onOpenChange={setShowAddDialog}>
+        <Modal.Backdrop variant="blur">
+          <Modal.Container size="lg" placement="center">
+            <Modal.Dialog className="w-full max-w-[620px] rounded-[22px] bg-[hsl(var(--card))] text-slate-100 shadow-2xl">
+              <Modal.Header className="px-6 pb-0 pt-6">
+                <Modal.Heading
+                  id="add-subscription-title"
+                  className="text-[22px] font-semibold leading-7 tracking-normal text-foreground"
+                >
+                  添加订阅
+                </Modal.Heading>
+                <Modal.CloseTrigger className="text-[#697087] transition-colors hover:text-slate-100" />
+              </Modal.Header>
+
+              <Modal.Body className="px-6 pb-6 pt-5">
+                <StockAutocomplete
+                  value={stockInput}
+                  onChange={setStockInput}
+                  onSubmit={handleStockSubmit}
+                  placeholder="请输入股票代码"
+                  className="h-12 rounded-full border-0 bg-[#262936] px-6 text-[15px] font-normal text-slate-100 placeholder:text-[#6f778c] focus:ring-0"
+                />
+
+                <div className="mt-7">
+                  <div className="text-[15px] leading-5 text-[#717990]">推送间隔（交易日）</div>
+                  <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    {INTERVAL_OPTIONS.map((option) => {
+                      const selected = intervalDays === option.days;
+                      return (
+                        <button
+                          key={option.days}
+                          type="button"
+                          className={`h-[42px] rounded-[12px] border text-[15px] font-medium leading-5 transition-colors ${
+                            selected
+                              ? 'border-[#09bde6] bg-transparent text-[#02c7f3]'
+                              : 'border-transparent bg-[#292c38] text-foreground hover:bg-[#303342]'
+                          }`}
+                          onClick={() => setIntervalDays(option.days)}
+                        >
+                          {option.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <p className="mt-6 text-[15px] font-medium leading-6 text-[#00c8f5]">
+                  预计消耗 {creditsPerPush} 积分/次， 约 {estimatedMonthly} 积分/月（按{pricing?.tradingDaysPerMonth ?? 22} 个交易日估算）。
+                </p>
+
+                <div className="mt-20 flex justify-end">
+                  <button
+                    type="button"
+                    disabled={creating}
+                    onClick={() => void handleCreateSubscription()}
+                    className="h-11 w-full rounded-[12px] bg-[hsl(var(--primary))]/60 text-[15px] font-medium text-foreground transition-colors hover:bg-[var(--color-cyan-glow)] sm:w-[280px]"
+                  >
+                    {creating ? '添加中...' : '添加订阅'}
+                  </button>
+                </div>
+              </Modal.Body>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
+      </Modal.Root>
+
+      <Modal.Root isOpen={showPushDialog} onOpenChange={setShowPushDialog}>
+        <Modal.Backdrop variant="blur">
+          <Modal.Container size="lg" placement="center">
+            <Modal.Dialog className="w-full max-w-[620px] rounded-[22px] bg-[hsl(var(--card))] text-slate-100 shadow-2xl">
+              <Modal.Header className="px-5 pb-0 pt-5">
+                <div>
+                  <div className="flex items-center gap-2.5">
+                    <Bell className="h-6 w-6 text-foreground" />
+                    <Modal.Heading className="text-[20px] font-semibold leading-none text-foreground">
+                      推送方式
+                    </Modal.Heading>
+                  </div>
+                  <p className="mt-2 text-[12px] font-medium leading-5 text-[#697087]">
+                    邮件由平台统一发送，您只需填写收件邮箱;也可选填Webhook接收推送。
+                  </p>
+                </div>
+                <Modal.CloseTrigger className="text-[#697087] transition-colors hover:text-slate-100" />
+              </Modal.Header>
+
+              <Modal.Body className="px-5 pb-5 pt-8">
+                <label className="block">
+                  <span className="text-[14px] font-medium leading-none text-foreground">收件邮箱</span>
+                  <input
+                    type="email"
+                    value={notificationEmail}
+                    onChange={(event) => setNotificationEmail(event.target.value)}
+                    placeholder="your@email.com"
+                    className="mt-3 h-10 w-full rounded-[12px] border-0 bg-[#262936] px-3 text-[14px] font-medium text-foreground outline-none transition-colors placeholder:text-[#697087] focus:ring-2 focus:ring-[#00a1c2]/40"
+                  />
+                </label>
+
+                <label className="mt-8 block">
+                  <span className="flex items-center justify-between gap-4">
+                    <span className="text-[14px] font-medium leading-none text-foreground">Webhook地址(可选)</span>
+                    <button
+                      type="button"
+                      className="flex items-center gap-1 text-[14px] font-medium leading-none text-[#00a1c2]"
+                      onClick={() => setShowAdvanced((value) => !value)}
+                    >
+                      <span className={`flex h-4 w-4 items-center justify-center rounded-[4px] border border-[#00a1c2] ${
+                        showAdvanced ? 'bg-[#00a1c2]' : 'bg-transparent'
+                      }`}
+                      >
+                        {showAdvanced ? <Check className="h-3 w-3 text-[#191b24]" /> : null}
+                      </span>
+                      高级选项
+                    </button>
+                  </span>
+                  <textarea
+                    value={webhookUrls}
+                    onChange={(event) => setWebhookUrls(event.target.value)}
+                    placeholder="请输入第三方推送链接"
+                    rows={2}
+                    className="mt-3 min-h-10 w-full resize-none rounded-[12px] border-0 bg-[#262936] px-3 py-3 text-[14px] font-medium text-foreground outline-none transition-colors placeholder:text-[#697087] focus:ring-2 focus:ring-[#00a1c2]/40"
+                  />
+                </label>
+
+                {showAdvanced ? (
+                  <label className="mt-8 block">
+                    <span className="text-[14px] font-medium leading-none text-foreground">Webhook Bearer Token(可选)</span>
+                    <input
+                      type="password"
+                      value={webhookBearerToken}
+                      onChange={(event) => setWebhookBearerToken(event.target.value)}
+                      placeholder={profile?.hasWebhookBearerToken ? '已保存，留空则不修改' : '请输入'}
+                      className="mt-3 h-10 w-full rounded-[12px] border-0 bg-[#262936] px-3 text-[14px] font-medium text-foreground outline-none transition-colors placeholder:text-[#697087] focus:ring-2 focus:ring-[#00a1c2]/40"
+                    />
+                  </label>
+                ) : null}
+
+                <div className="mt-24 flex justify-end">
+                  <button
+                    type="button"
+                    disabled={!profileDirty || savingProfile}
+                    onClick={() => void handleSaveProfile()}
+                    className="h-10 w-full rounded-[12px] bg-[hsl(var(--primary))] px-4 text-[14px] font-medium leading-none text-foreground transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 sm:w-[280px]"
+                  >
+                    {savingProfile ? '保存中...' : '保存推送方式'}
+                  </button>
+                </div>
+              </Modal.Body>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
+      </Modal.Root>
+
+      <Modal.Root
+        isOpen={Boolean(selectedSubscription)}
+        onOpenChange={(open) => {
+          if (!open) setSelectedSubscription(null);
+        }}
+      >
+        <Modal.Backdrop variant="blur">
+          <Modal.Container size="lg" placement="center">
+            <Modal.Dialog className="w-full max-w-[620px] rounded-[22px] bg-[hsl(var(--card))] shadow-2xl">
+              {selectedSubscription ? (
+                <>
+                  <Modal.Header className="px-5 pb-0 pt-5">
+                    <Modal.Heading className="text-[20px] font-semibold leading-none text-foreground">
+                      订阅详情
+                    </Modal.Heading>
+                    <Modal.CloseTrigger className="text-[#697087] transition-colors hover:text-slate-100" />
+                  </Modal.Header>
+
+                  <Modal.Body className="px-5 pb-5 pt-8">
+                    <div className="flex items-start justify-between gap-5">
+                      <div className="min-w-0">
+                        <div className="flex min-w-0 items-center gap-2.5">
+                          <h2 className="min-w-0 truncate text-[28px] font-semibold leading-none text-foreground">
+                            {selectedSubscription.name || selectedSubscription.code}
+                          </h2>
+                          <span
+                            className={`flex h-[22px] w-[60px] shrink-0 items-center justify-center rounded-full px-1 text-[12px] font-medium leading-none ${
+                              selectedSubscription.status === 'active'
+                                ? 'bg-[#00a1c2]/10 text-[#00a1c2]'
+                                : 'bg-[#ff5151]/10 text-[#ff5151]'
+                            }`}
+                          >
+                            {selectedSubscription.status === 'active' ? '订阅中' : '已暂停'}
+                          </span>
+                        </div>
+                        <p className="mt-2 text-[14px] font-medium leading-none text-[#697087]">
+                          股票代码：{selectedSubscription.code}
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        className="flex h-10 shrink-0 items-center justify-center gap-1 rounded-[12px] bg-[#ff5151] px-3 text-[14px] font-semibold leading-none text-foreground transition-colors hover:bg-[#ff6666]"
+                        onClick={() => {
+                          setPendingDelete(selectedSubscription);
+                          setSelectedSubscription(null);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        取消订阅
+                      </button>
+                    </div>
+
+                    <div className="mt-12">
+                      <p className="text-[14px] font-medium leading-none text-[#697087]">推送间隔（交易日）</p>
+                      <div className="mt-2 grid grid-cols-3 gap-5">
+                        {INTERVAL_OPTIONS.map((option) => {
+                          const selected = selectedSubscription.intervalDays === option.days;
+                          return (
+                            <div
+                              key={option.days}
+                              className={`flex h-10 items-center justify-center rounded-[12px] border px-2 text-[14px] font-medium leading-none ${
+                                selected
+                                  ? 'border-[#00a1c2] bg-[#262936] text-[#00c8f5]'
+                                  : 'border-transparent bg-[#262936] text-foreground'
+                              }`}
+                            >
+                              {option.label}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <p className="mt-6 text-[14px] font-medium leading-none text-[#00c8f5]">
+                      预计消耗 {selectedSubscription.creditsPerPush} 积分/次，
+                      约 {selectedSubscription.estimatedMonthlyCredits} 积分/月（按{pricing?.tradingDaysPerMonth ?? 22} 个交易日估算）。
+                    </p>
+
+                    <div className="mt-24">
+                      <button
+                        type="button"
+                        className="flex h-10 w-full items-center justify-center rounded-[12px] bg-[hsl(var(--primary))]/50 px-4 text-[14px] font-medium leading-none text-foreground transition-colors hover:brightness-110"
+                        onClick={() => void handleTogglePause(selectedSubscription)}
+                      >
+                        {selectedSubscription.status === 'active' ? '暂停订阅' : '恢复订阅'}
+                      </button>
+                    </div>
+                  </Modal.Body>
+                </>
+              ) : null}
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
+      </Modal.Root>
 
       <ConfirmDialog
         isOpen={Boolean(pendingDelete)}

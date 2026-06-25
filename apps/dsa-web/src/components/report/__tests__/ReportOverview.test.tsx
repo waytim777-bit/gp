@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { ReportOverview } from '../ReportOverview';
 
@@ -46,7 +46,9 @@ describe('ReportOverview', () => {
       />,
     );
 
-    expect(screen.getByText('Company Basics')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'View Company Basics' }));
+
+    expect(screen.getAllByText('Company Basics').length).toBeGreaterThan(0);
     expect(screen.getByText('Apple Inc.')).toBeInTheDocument();
     expect(screen.getByText('Consumer Electronics')).toBeInTheDocument();
     expect(screen.getByText('1980-12-12')).toBeInTheDocument();
@@ -103,7 +105,9 @@ describe('ReportOverview', () => {
       />,
     );
 
-    expect(screen.getByText('Company Basics')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'View Company Basics' }));
+
+    expect(screen.getAllByText('Company Basics').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Semiconductors').length).toBeGreaterThan(0);
   });
 
@@ -118,11 +122,13 @@ describe('ReportOverview', () => {
       />,
     );
 
-    expect(screen.getByText('Company Basics')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'View Company Basics' }));
+
+    expect(screen.getAllByText('Company Basics').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Baijiu').length).toBeGreaterThan(0);
   });
 
-  it('renders related boards with leading and lagging markers', () => {
+  it('renders related boards with leading and lagging markers in the overview summary strip', () => {
     render(
       <ReportOverview
         meta={baseMeta}
@@ -143,6 +149,8 @@ describe('ReportOverview', () => {
 
     expect(screen.getByText('关联板块')).toBeInTheDocument();
     expect(screen.getAllByText('白酒').length).toBeGreaterThan(0);
+    expect(screen.getByText('消费')).toBeInTheDocument();
+    expect(screen.getByText('新能源')).toBeInTheDocument();
     expect(screen.getByText('行业')).toBeInTheDocument();
     expect(screen.getByText('领涨')).toBeInTheDocument();
     expect(screen.getByText('+2.31%')).toBeInTheDocument();
@@ -175,7 +183,39 @@ describe('ReportOverview', () => {
     expect(screen.queryByText('关联板块')).not.toBeInTheDocument();
   });
 
-  it('fails open on malformed ranking payloads', () => {
+  it('renders strategy points inside the overview area when strategy is available', () => {
+    render(
+      <ReportOverview
+        meta={baseMeta}
+        summary={baseSummary}
+        strategy={{
+          idealBuy: '回踩企稳 MA10 附近',
+          secondaryBuy: '突破 MA5 后加仓',
+          stopLoss: '跌破 3.50 元退出',
+          takeProfit: '第一目标 4.16 元',
+        }}
+        details={{ belongBoards: [] }}
+      />,
+    );
+
+    expect(screen.getByText('狙击点位')).toBeInTheDocument();
+    expect(screen.getByText('理想买入')).toBeInTheDocument();
+    expect(screen.getByText('二次买入')).toBeInTheDocument();
+    expect(screen.getByText('止损价位')).toBeInTheDocument();
+    expect(screen.getByText('止盈目标')).toBeInTheDocument();
+    expect(screen.getByText('回踩企稳 MA10 附近')).toBeInTheDocument();
+    expect(screen.getByText('突破 MA5 后加仓')).toBeInTheDocument();
+    expect(screen.getByText('跌破 3.50 元退出')).toBeInTheDocument();
+    expect(screen.getByText('第一目标 4.16 元')).toBeInTheDocument();
+  });
+
+  it('does not render strategy points when strategy is unavailable', () => {
+    render(<ReportOverview meta={baseMeta} summary={baseSummary} details={{ belongBoards: [] }} />);
+
+    expect(screen.queryByText('狙击点位')).not.toBeInTheDocument();
+  });
+
+  it('fails open on malformed ranking payloads in the overview summary strip', () => {
     render(
       <ReportOverview
         meta={baseMeta}

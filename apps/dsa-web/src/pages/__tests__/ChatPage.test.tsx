@@ -182,17 +182,21 @@ describe('ChatPage', () => {
     expect(sessionCard).toHaveAttribute('aria-current', 'page');
   });
 
-  it('renders a separate delete button for each session and opens confirmation without switching', async () => {
+  it('opens session actions from the more button and confirms deletion without switching', async () => {
     render(
       <MemoryRouter initialEntries={['/chat']}>
         <ChatPage />
       </MemoryRouter>
     );
 
-    const deleteButton = await screen.findByRole('button', {
+    const moreButton = await screen.findByRole('button', {
+      name: /更多操作 请简要分析 600519/,
+    });
+    fireEvent.click(moreButton);
+
+    const deleteButton = await screen.findByRole('menuitem', {
       name: /删除对话 请简要分析 600519/,
     });
-
     fireEvent.click(deleteButton);
 
     expect(mockSwitchSession).not.toHaveBeenCalled();

@@ -8,7 +8,8 @@ import { getParsedApiError, type ParsedApiError } from '../api/error';
 import { ApiErrorAlert, Button, EmptyState, InlineAlert } from '../components/common';
 import { ReportSummary } from '../components/report';
 import { useCreditStore } from '../stores/creditStore';
-import { backtestToneBorderClass, backtestToneTextClass } from '../utils/backtestDisplay';
+import { backtestToneTextClass } from '../utils/backtestDisplay';
+import { cn } from '../utils/cn';
 import type { AnalysisReport } from '../types/analysis';
 import type { PredictionReportListingItem } from '../types/predictionReports';
 
@@ -137,47 +138,40 @@ const PredictionReportsPage: React.FC = () => {
   }, []);
 
   const renderActionButton = (item: PredictionReportListingItem) => {
-    if (item.canViewFull) {
+    if (item.canViewFull && item.buyerHistoryId) {
       return (
-        <Button
-          size="sm"
-          variant="secondary"
-          isLoading={loadingReport}
+        <button
+          type="button"
+          aria-busy={loadingReport || undefined}
+          disabled={loadingReport}
+          className="flex h-12 w-full cursor-pointer items-center justify-center rounded-full border-0 bg-[#10c97b] px-5 text-base font-bold leading-none text-white transition hover:brightness-105 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60"
           onClick={() => void openReport(item)}
         >
           查看完整报告
-        </Button>
-      );
-    }
-    if (item.isMine) {
-      return (
-        <Button size="sm" variant="secondary" disabled>
-          自己的报告
-        </Button>
+        </button>
       );
     }
     if (item.canPurchase) {
       return (
-        <Button
-          size="sm"
-          variant="primary"
-          isLoading={purchasingId === item.id}
+        <button
+          type="button"
+          aria-busy={purchasingId === item.id || undefined}
+          disabled={purchasingId === item.id}
+          className="flex h-12 w-full cursor-pointer items-center justify-center gap-2.5 rounded-full border-0 bg-[hsl(var(--primary))] px-5 text-base font-bold leading-none text-white transition hover:brightness-105 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60"
           onClick={() => void handlePurchase(item)}
         >
-          <ShoppingBag className="mr-1 h-4 w-4" />
-          {`购买（${item.purchaseCredits} 积分）`}
-        </Button>
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-cyan">
+            <ShoppingBag className="h-4 w-4" />
+          </span>
+          {`购买（${item.purchaseCredits}积分）`}
+        </button>
       );
     }
-    return (
-      <Button size="sm" variant="secondary" disabled>
-        周期已结束
-      </Button>
-    );
+    return null;
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-5 px-4 py-6">
+    <div className="mx-auto flex w-full max-w-[1760px] flex-col gap-5 px-4 py-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-foreground">预测报告</h1>
@@ -196,9 +190,9 @@ const PredictionReportsPage: React.FC = () => {
             key={tab.key}
             type="button"
             onClick={() => setActiveTab(tab.key)}
-            className={`rounded-full px-3 py-1.5 text-sm transition-colors ${
+            className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
               activeTab === tab.key
-                ? 'bg-cyan/15 text-cyan ring-1 ring-cyan/30'
+                ? 'bg-[hsl(var(--primary))]/70 text-while'
                 : 'bg-default-100 text-secondary-text hover:text-foreground'
             }`}
           >
@@ -226,7 +220,7 @@ const PredictionReportsPage: React.FC = () => {
                   ? '历史周期报告会保留在此，供已购用户回看。'
                   : '本周期暂无推荐报告，请稍后再来或自行分析后推荐。'
           }
-          icon={<Share2 className="h-6 w-6" />}
+          icon={ <img src={new URL('../assets/report-empty.png',import.meta.url).href} className='w-35 h-[auto]' /> }
           action={activeTab === 'published' || activeTab === 'current' ? (
             <Button variant="secondary" onClick={() => navigate('/')}>
               前往首页
@@ -234,67 +228,70 @@ const PredictionReportsPage: React.FC = () => {
           ) : undefined}
         />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
-          {visibleItems.map((item) => (
-            <Card key={item.id} className="border border-default-200 bg-surface/80 p-4">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <div className="text-lg font-semibold text-foreground">{item.name}</div>
-                  <div className="mt-1 text-xs text-muted-text font-mono">{item.code}</div>
-                </div>
-                <div className="flex flex-col items-end gap-1">
-                  {item.isMine ? (
-                    <span className="rounded-full bg-cyan/10 px-2 py-0.5 text-xs text-cyan">我的推荐</span>
-                  ) : null}
-                  {item.hasPurchaseRecord ? (
-                    <span className="rounded-full bg-success/10 px-2 py-0.5 text-xs text-success">已购买</span>
-                  ) : null}
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-xs ${
-                      item.isCurrentCycle !== false
-                        ? 'bg-primary/10 text-primary'
-                        : 'bg-default-100 text-default-500'
-                    }`}
-                  >
-                    {item.isCurrentCycle !== false ? '本周期' : '已过期'}
-                  </span>
-                </div>
-              </div>
+        <div
+          className="grid gap-5"
+          style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 540px), 540px))' }}
+        >
+          {visibleItems.map((item) => {
+            const actionButton = renderActionButton(item);
+            const ownerLabel = item.isMine
+              ? '我的推荐'
+              : item.hasPurchaseRecord
+                ? '已购买'
+                : `分享者:${item.sellerUsername}`;
+            const ownerLabelClass = item.isMine || item.hasPurchaseRecord
+              ? 'text-success'
+              : 'text-muted-text';
 
-              <div className="mt-3 space-y-1 text-sm text-secondary-text">
-                <div>推荐者：{item.sellerUsername}</div>
-                <div>周期锚点：{item.cycleAnchorDate || '—'}</div>
-                {!item.canViewFull && item.preview.analysisSummary ? (
-                  <p className="line-clamp-3 text-default-600">{item.preview.analysisSummary}</p>
-                ) : null}
-              </div>
-
-              <div
-                className={`mt-3 rounded-md border px-2.5 py-1.5 text-xs ${backtestToneBorderClass(item.backtestPreview?.tone)}`}
+            return (
+              <Card
+                key={item.id}
+                className={cn(
+                  'w-full rounded-xl border-0 p-5 shadow-none',
+                  actionButton ? 'h-[228px]' : 'h-[104px]',
+                )}
               >
-                <span className="text-default-500">回测：</span>
-                <span className={`font-medium ${backtestToneTextClass(item.backtestPreview?.tone)}`}>
-                  {item.backtestPreview?.label || '未回测'}
-                </span>
-              </div>
+                <div className={cn('flex h-full flex-col', actionButton ? 'gap-[76px]' : 'gap-3')}>
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex min-w-0 items-center gap-2">
+                        <h2 className="truncate text-xl font-bold leading-none text-foreground">{item.name}</h2>
+                        <span className="shrink-0 rounded bg-[#252936] px-2 py-1 text-xs font-medium leading-none text-white">
+                          {item.code}
+                        </span>
+                      </div>
+                      <span className={cn('shrink-0 text-sm font-bold leading-none', item.backtestPreview?.tone ? backtestToneTextClass(item.backtestPreview.tone) : 'text-[hsl(var(--primary))]')}>
+                        {item.backtestPreview?.label || '未回测'}
+                      </span>
+                    </div>
 
-              <div className="mt-4 flex items-end justify-between gap-2">
-                <div className="flex flex-wrap gap-2">
-                  {renderActionButton(item)}
+                    <div className="grid items-center gap-x-4 gap-y-2 text-sm font-medium leading-none text-[#6f778e] sm:grid-cols-[minmax(0,1fr)_auto_auto]">
+                      <span className={cn('min-w-0 truncate', ownerLabelClass)}>{ownerLabel}</span>
+                      <span className="min-w-0 truncate">
+                        周期锚点:{item.cycleAnchorDate || '—'}
+                        {item.isCurrentCycle === false ? '（已过期）' : ''}
+                      </span>
+                      <Button
+                        size="xsm"
+                        variant="ghost"
+                        isLoading={likingId === item.id}
+                        className={cn(
+                          'h-6 shrink-0 rounded-none px-2 text-sm font-medium leading-none hover:bg-transparent',
+                          item.liked ? 'text-[hsl(var(--primary))]' : 'text-[#6f778e]',
+                        )}
+                        onClick={() => void handleLike(item)}
+                      >
+                        <ThumbsUp className={cn('h-4 w-4', item.liked ? 'fill-current' : '')} />
+                        {`点赞(${item.likeCount})`}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {actionButton}
                 </div>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  isLoading={likingId === item.id}
-                  className={item.liked ? 'text-danger' : 'text-muted-text'}
-                  onClick={() => void handleLike(item)}
-                >
-                  <ThumbsUp className={`mr-1 h-4 w-4 ${item.liked ? 'fill-current' : ''}`} />
-                  点赞{item.likeCount > 0 ? ` ${item.likeCount}` : ''}
-                </Button>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </div>
       )}
 

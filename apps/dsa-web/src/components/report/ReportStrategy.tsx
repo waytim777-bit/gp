@@ -1,7 +1,6 @@
 import type React from 'react';
 import type { ReportLanguage, ReportStrategy as ReportStrategyType } from '../../types/analysis';
 import { Card } from '@heroui/react/card';
-import { DashboardPanelHeader } from '../dashboard';
 import { getReportText, normalizeReportLanguage } from '../../utils/reportLanguage';
 
 interface ReportStrategyProps {
@@ -12,25 +11,22 @@ interface ReportStrategyProps {
 interface StrategyItemProps {
   label: string;
   value?: string;
-  tone: string;
 }
 
 const StrategyItem: React.FC<StrategyItemProps> = ({
   label,
   value,
-  tone,
 }) => (
-  <div className="relative rounded-xl border border-default-200 bg-default-50 p-4">
-    <div className="flex flex-col">
-      <span className="mb-0.5 text-xs text-default-500">{label}</span>
-      <span className="text-lg font-bold font-mono text-foreground" style={!value ? { opacity: 0.4 } : undefined}>
+  <div className="min-h-[160px] rounded-xl border border-[#5f6780] p-4">
+    <div className="flex min-w-0 flex-col gap-2">
+      <span className="text-sm font-bold leading-5 text-[#5f6780]">{label}</span>
+      <span
+        className="whitespace-pre-wrap break-words text-sm font-bold leading-5 text-white"
+        style={!value ? { opacity: 0.4 } : undefined}
+      >
         {value || '—'}
       </span>
     </div>
-    <div
-      className="absolute bottom-0 left-0 right-0 h-0.5 rounded-b-xl"
-      style={{ background: `linear-gradient(90deg, transparent, var(${tone}), transparent)` }}
-    />
   </div>
 );
 
@@ -49,35 +45,26 @@ export const ReportStrategy: React.FC<ReportStrategyProps> = ({ strategy, langua
     {
       label: text.idealBuy,
       value: strategy.idealBuy,
-      tone: '--home-strategy-buy',
     },
     {
       label: text.secondaryBuy,
       value: strategy.secondaryBuy,
-      tone: '--home-strategy-secondary',
     },
     {
       label: text.stopLoss,
       value: strategy.stopLoss,
-      tone: '--home-strategy-stop',
     },
     {
       label: text.takeProfit,
       value: strategy.takeProfit,
-      tone: '--home-strategy-take',
     },
   ];
 
   return (
-    <Card>
-      <Card.Header className="pb-0">
-        <DashboardPanelHeader
-          eyebrow={text.strategyPoints}
-          title={text.sniperLevels}
-        />
-      </Card.Header>
-      <Card.Content className="p-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <Card className="rounded-xl border-0 bg-[#1c1f26] shadow-none">
+      <Card.Content className="space-y-5">
+        <h3 className="text-xl font-bold leading-7 text-white">{text.sniperLevels}</h3>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {strategyItems.map((item) => (
             <StrategyItem key={item.label} {...item} />
           ))}

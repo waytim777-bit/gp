@@ -28,7 +28,7 @@ from api.v1.schemas.history import (
 )
 from api.v1.schemas.public_reports import ReportShareLinkResponse
 from api.v1.schemas.common import ErrorResponse
-from src.storage import DatabaseManager
+from src.storage import AnalysisHistoryDeleteConflictError, DatabaseManager
 from src.services.history_service import HistoryService, MarkdownReportGenerationError
 from src.services.history_report_builder import build_analysis_report
 from src.services.report_public_share_service import ReportPublicShareError, ReportPublicShareService
@@ -130,6 +130,7 @@ def get_history_list(
     responses={
         200: {"description": "删除成功"},
         400: {"description": "请求参数错误", "model": ErrorResponse},
+        409: {"description": "历史记录仍被外部可见报告引用", "model": ErrorResponse},
         500: {"description": "服务器错误", "model": ErrorResponse},
     },
     summary="删除历史分析记录",
@@ -160,6 +161,15 @@ def delete_history_records(
             owner_user_id=_owner_user_id_from_dependency(current_user),
         )
         return DeleteHistoryResponse(deleted=deleted)
+    except AnalysisHistoryDeleteConflictError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error": "history_delete_conflict",
+                "message": str(exc),
+                "record_ids": exc.record_ids,
+            }
+        )
     except HTTPException:
         raise
     except Exception as e:

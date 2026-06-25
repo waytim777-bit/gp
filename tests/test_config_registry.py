@@ -9,8 +9,30 @@ import unittest
 
 from src.core.config_registry import (
     build_schema_response,
+    get_category_definitions,
     get_field_definition,
+    get_registered_field_keys,
 )
+from api.v1.schemas.system_config import SystemConfigSchemaResponse
+
+
+class TestConfigRegistrySchemaConsistency(unittest.TestCase):
+    """Registry categories must stay compatible with API schemas."""
+
+    def test_all_registered_field_categories_are_defined(self):
+        categories = {item["category"] for item in get_category_definitions()}
+        missing = []
+        for key in get_registered_field_keys():
+            field = get_field_definition(key)
+            if field["category"] not in categories:
+                missing.append((key, field["category"]))
+
+        self.assertEqual(missing, [])
+
+    def test_schema_response_validates_against_api_schema(self):
+        payload = build_schema_response()
+
+        SystemConfigSchemaResponse.model_validate(payload)
 
 
 class TestSlackFieldsRegistered(unittest.TestCase):

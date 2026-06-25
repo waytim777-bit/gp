@@ -212,7 +212,7 @@ export const FinancialRevenueGrowthSection: React.FC<FinancialRevenueGrowthSecti
               />
               <Bar
                 dataKey="revenueBillion"
-                fill="var(--home-action-report-text)"
+                fill="hsl(var(--primary))"
                 name="revenueBillion"
                 radius={[4, 4, 0, 0]}
               />

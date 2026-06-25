@@ -24,6 +24,8 @@ import {
 } from '../utils/chatFollowUp';
 import { isNearBottom } from '../utils/chatScroll';
 import { getReportText } from '../utils/reportLanguage';
+import NewConversationIconSvg from '../assets/new-conversation.svg?raw';
+import ConversationIconSvg from '../assets/conversation.svg?raw';
 
 // Quick question examples shown on empty state
 const QUICK_QUESTIONS = [
@@ -41,6 +43,8 @@ const ChatPage: React.FC = () => {
   const [skills, setSkills] = useState<SkillInfo[]>([]);
   const [selectedSkill, setSelectedSkill] = useState<string>('');
   const [showSkillDesc, setShowSkillDesc] = useState<string | null>(null);
+  const [showSkillMenu, setShowSkillMenu] = useState(false);
+  const [openSessionMenuId, setOpenSessionMenuId] = useState<string | null>(null);
   const [expandedThinking, setExpandedThinking] = useState<Set<string>>(new Set());
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -55,6 +59,8 @@ const ChatPage: React.FC = () => {
   const copyResetTimerRef = useRef<Partial<Record<string, number>>>({});
   const messagesViewportRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const skillMenuRef = useRef<HTMLDivElement>(null);
+  const sessionMenuRef = useRef<HTMLDivElement>(null);
   const isMountedRef = useRef(true);
   const sendToastTimerRef = useRef<number | null>(null);
   const followUpHydrationTokenRef = useRef(0);
@@ -183,15 +189,60 @@ const ChatPage: React.FC = () => {
 
   const availableSkillIds = new Set(skills.map((skill) => skill.id));
   const quickQuestions = QUICK_QUESTIONS.filter((question) => availableSkillIds.size === 0 || availableSkillIds.has(question.skill));
+  const skillOptions = [
+    {
+      id: '',
+      name: '通用分析',
+      description: '不限定策略，由 AI 根据问题选择合适的分析方式。',
+    },
+    ...skills.map((skill) => ({
+      id: skill.id,
+      name: skill.name,
+      description: skill.description,
+    })),
+  ];
+  const inlineSkillOptions = skillOptions.slice(0, 6);
+
+  useEffect(() => {
+    if (!showSkillMenu) return undefined;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!skillMenuRef.current?.contains(event.target as Node)) {
+        setShowSkillMenu(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+    };
+  }, [showSkillMenu]);
+
+  useEffect(() => {
+    if (!openSessionMenuId) return undefined;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!sessionMenuRef.current?.contains(event.target as Node)) {
+        setOpenSessionMenuId(null);
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+    };
+  }, [openSessionMenuId]);
 
   const handleStartNewChat = useCallback(() => {
     followUpContextRef.current = null;
+    setOpenSessionMenuId(null);
     requestScrollToBottom('auto');
     useAgentChatStore.getState().startNewChat();
     setSidebarOpen(false);
   }, [requestScrollToBottom]);
 
   const handleSwitchSession = useCallback((targetSessionId: string) => {
+    setOpenSessionMenuId(null);
     requestScrollToBottom('auto');
     switchSession(targetSessionId);
     setSidebarOpen(false);
@@ -430,7 +481,7 @@ const ChatPage: React.FC = () => {
 
   const sidebarContent = (
     <>
-      <div className="flex items-center justify-between border-b border-white/5 bg-white/2 p-3.5">
+      {/* <div className="flex items-center justify-between border-b border-white/5 bg-white/2 p-3.5">
         <h2 className="text-sm font-semibold text-cyan uppercase tracking-[0.2em] flex items-center gap-2">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -456,7 +507,17 @@ const ChatPage: React.FC = () => {
             />
           </svg>
         </button>
-      </div>
+      </div> */}
+      <button
+      onClick={handleStartNewChat}
+      className='flex py-5 px-6 gap-2 items-center bg-[var(--bg-card)] rounded-lg'>
+        <span
+          className="[&_svg]:block [&_svg]:h-7 [&_svg]:w-7"
+          aria-hidden="true"
+          dangerouslySetInnerHTML={{ __html: NewConversationIconSvg }}
+        />
+        <span className='text-while'>新对话</span>
+      </button>
       <ScrollArea testId="chat-session-list-scroll" viewportClassName="p-3">
         {sessionsLoading ? (
           <DashboardStateBlock
@@ -475,18 +536,31 @@ const ChatPage: React.FC = () => {
         ) : (
           <div className="space-y-2">
             {sessions.map((s) => (
-              <div key={s.session_id} className="session-item-row">
+              <div
+                key={s.session_id}
+                className={cn(
+                  'session-item-row',
+                  s.session_id === sessionId && 'active',
+                  openSessionMenuId === s.session_id && 'menu-open',
+                )}
+                ref={openSessionMenuId === s.session_id ? sessionMenuRef : undefined}
+              >
                 <button
                   type="button"
                   onClick={() => handleSwitchSession(s.session_id)}
-                  className={`session-item ${s.session_id === sessionId ? 'active' : ''}`}
+                  className="session-item"
                   aria-label={`切换到对话 ${s.title}`}
                   aria-current={s.session_id === sessionId ? 'page' : undefined}
                 >
-                  <div className="indicator" />
-                  <div className="content">
-                    <span className="title">{s.title}</span>
-                    <div className="mt-0.5 flex items-center gap-2">
+                  {/* <div className="indicator" /> */}
+                  <div className="content flex items-center gap-1">
+                    <span
+                      className="[&_svg]:block [&_svg]:h-6 [&_svg]:w-6 text-secondary"
+                      aria-hidden="true"
+                      dangerouslySetInnerHTML={{ __html: ConversationIconSvg }}
+                    />
+                    <span className={`title block truncate`}>{s.title}</span>
+                    {/* <div className="mt-0.5 flex items-center gap-2">
                       <span className="meta">
                         {s.message_count} 条对话
                       </span>
@@ -498,31 +572,52 @@ const ChatPage: React.FC = () => {
                           </span>
                         </>
                       )}
-                    </div>
+                    </div> */}
                   </div>
                 </button>
-                <button
-                  type="button"
-                  className="delete-btn"
-                  onClick={() => {
-                    setDeleteConfirmId(s.session_id);
-                  }}
-                  aria-label={`删除对话 ${s.title}`}
-                >
-                  <svg
-                    className="w-3.5 h-3.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                <div className="session-item-actions">
+                  <button
+                    type="button"
+                    className="session-item-more-btn"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setOpenSessionMenuId((current) => (
+                        current === s.session_id ? null : s.session_id
+                      ));
+                    }}
+                    aria-label={`更多操作 ${s.title}`}
+                    aria-expanded={openSessionMenuId === s.session_id}
+                    aria-haspopup="menu"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                    />
-                  </svg>
-                </button>
+                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="5" cy="12" r="1.6" />
+                      <circle cx="12" cy="12" r="1.6" />
+                      <circle cx="19" cy="12" r="1.6" />
+                    </svg>
+                  </button>
+                  {openSessionMenuId === s.session_id ? (
+                    <div className="session-item-menu" role="menu" aria-label={`会话操作 ${s.title}`}>
+                      <button
+                        type="button"
+                        className="session-item-menu-delete"
+                        role="menuitem"
+                        onClick={() => {
+                          setDeleteConfirmId(s.session_id);
+                          setOpenSessionMenuId(null);
+                        }}
+                        aria-label={`删除对话 ${s.title}`}
+                      >
+                        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M4 7h16" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 7V5.4C9 4.63 9.63 4 10.4 4h3.2c.77 0 1.4.63 1.4 1.4V7" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M18 7l-.72 11.2A2 2 0 0115.28 20H8.72a2 2 0 01-2-1.8L6 7" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M10 11v5M14 11v5" />
+                        </svg>
+                        <span>删除</span>
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
               </div>
             ))}
           </div>
@@ -534,10 +629,10 @@ const ChatPage: React.FC = () => {
   return (
     <div
       data-testid="chat-workspace"
-      className="flex h-[calc(100vh-5rem)] w-full min-w-0 gap-4 overflow-hidden sm:h-[calc(100vh-5.5rem)] lg:h-[calc(100vh-2rem)]"
+      className="flex h-full w-full min-w-0 gap-4 overflow-hidden"
     >
       {/* Desktop sidebar */}
-      <div className="hidden h-full w-64 flex-shrink-0 flex-col overflow-hidden rounded-[1.25rem] border border-white/8 bg-card/82 shadow-soft-card md:flex">
+      <div className="hidden h-full w-64 flex-shrink-0 flex-col overflow-hidden md:flex">
         {sidebarContent}
       </div>
 
@@ -570,8 +665,8 @@ const ChatPage: React.FC = () => {
       />
 
       {/* Main chat area */}
-      <div className="flex h-full min-w-0 flex-1 flex-col overflow-hidden">
-        <header className="mb-4 flex-shrink-0 space-y-3">
+      <div className="flex h-full min-w-0 flex-1 flex-col overflow-hidden border border-1 border-[hsl(var(--card))] rounded-lg">
+        <header className="mb-4 flex-shrink-0 space-y-3 p-6">
           <div className="flex items-start justify-between gap-4">
             <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
               <button
@@ -716,7 +811,7 @@ const ChatPage: React.FC = () => {
           ) : null}
         </header>
 
-        <div className="relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden border border-white/6 bg-card/78 glass-card">
+        <div className="relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden">
           {/* Messages */}
           <ScrollArea
             className="relative z-10 flex-1"
@@ -777,7 +872,7 @@ const ChatPage: React.FC = () => {
                   </div>
                   <div
                     className={cn(
-                      'group/message min-w-0 w-fit max-w-[min(100%,48rem)] overflow-hidden px-5 py-3.5 transition-colors',
+                      'group/message min-w-0 w-fit max-w-[min(100%,48rem)] overflow-hidden px-5 py-2 transition-colors',
                       msg.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-ai'
                     )}
                   >
@@ -901,7 +996,7 @@ const ChatPage: React.FC = () => {
           )}
 
           {/* Input area */}
-          <div className="border-t border-white/6 bg-card/88 p-4 md:p-6 relative z-20">
+          <div className="p-4 md:p-6 relative z-20">
             <div className="space-y-3">
               {chatError ? <ApiErrorAlert error={chatError} /> : null}
               {isFollowUpContextLoading ? (
@@ -912,82 +1007,123 @@ const ChatPage: React.FC = () => {
                   className="rounded-xl px-3 py-2 text-xs shadow-none"
                 />
               ) : null}
-            {skills.length > 0 && (
-              <div className="flex flex-wrap items-start gap-x-5 gap-y-2">
-                <span className="text-xs text-muted-text font-medium uppercase tracking-wider flex-shrink-0 mt-1">
-                  策略
-                </span>
-                <label className="flex items-center gap-1.5 text-sm cursor-pointer group mt-0.5">
-                  <input
-                    type="radio"
-                    name="skill"
-                    value=""
-                    checked={selectedSkill === ''}
-                    onChange={() => setSelectedSkill('')}
-                    className="chat-skill-radio"
-                  />
-                  <span
-                    className={`transition-colors text-sm ${selectedSkill === '' ? 'text-foreground font-medium' : 'text-secondary-text group-hover:text-foreground'}`}
-                  >
-                    通用分析
-                  </span>
-                </label>
-                {skills.map((s) => (
-                  <label
-                    key={s.id}
-                    className="flex items-center gap-1.5 cursor-pointer group relative mt-0.5"
-                    onMouseEnter={() => setShowSkillDesc(s.id)}
-                    onMouseLeave={() => setShowSkillDesc(null)}
-                  >
-                    <input
-                      type="radio"
-                      name="skill"
-                      value={s.id}
-                      checked={selectedSkill === s.id}
-                      onChange={() => setSelectedSkill(s.id)}
-                      className="chat-skill-radio"
-                    />
-                    <span
-                      className={`transition-colors text-sm ${selectedSkill === s.id ? 'text-foreground font-medium' : 'text-secondary-text group-hover:text-foreground'}`}
-                    >
-                      {s.name}
-                    </span>
-                    {showSkillDesc === s.id && s.description && (
-                      <div className="skill-desc-tooltip">
-                        <p className="skill-title">{s.name}</p>
-                        <p>{s.description}</p>
+              <div className="chat-input-panel" ref={skillMenuRef}>
+                <div className="chat-input-skill-row">
+                  {skills.length > 0 ? (
+                    <div className="flex min-w-0 flex-1 items-center gap-3">
+                      <span className="shrink-0 text-xs font-medium text-muted-text">策略</span>
+                      <div className="flex min-w-0 flex-1 items-center gap-4 overflow-hidden">
+                        {inlineSkillOptions.map((option) => {
+                          const isSelected = selectedSkill === option.id;
+                          return (
+                            <label
+                              key={option.id || 'general'}
+                              className="chat-skill-inline-option group"
+                              onMouseEnter={() => setShowSkillDesc(option.id || null)}
+                              onMouseLeave={() => setShowSkillDesc(null)}
+                            >
+                              <input
+                                type="radio"
+                                name="skill"
+                                value={option.id}
+                                checked={isSelected}
+                                onChange={() => setSelectedSkill(option.id)}
+                                className="chat-skill-radio"
+                              />
+                              <span className="truncate">{option.name}</span>
+                              {showSkillDesc === option.id && option.description && (
+                                <div className="skill-desc-tooltip">
+                                  <p className="skill-title">{option.name}</p>
+                                  <p>{option.description}</p>
+                                </div>
+                              )}
+                            </label>
+                          );
+                        })}
                       </div>
-                    )}
-                  </label>
-                ))}
-              </div>
-            )}
+                    </div>
+                  ) : null}
+                  {skills.length > 0 ? (
+                    <div className="relative shrink-0">
+                      <button
+                        type="button"
+                        className="chat-skill-more-button"
+                        onClick={() => setShowSkillMenu((current) => !current)}
+                        aria-expanded={showSkillMenu}
+                        aria-haspopup="listbox"
+                      >
+                        <span>更多</span>
+                        <svg
+                          className={cn('h-4 w-4 transition-transform', showSkillMenu ? 'rotate-180' : '')}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                      {showSkillMenu ? (
+                        <div className="chat-skill-menu" role="listbox" aria-label="选择分析策略">
+                          {skillOptions.map((option) => {
+                            const isSelected = selectedSkill === option.id;
+                            return (
+                              <button
+                                key={option.id || 'general-menu'}
+                                type="button"
+                                role="option"
+                                aria-selected={isSelected}
+                                className={cn('chat-skill-menu-item', isSelected && 'is-selected')}
+                                onClick={() => {
+                                  setSelectedSkill(option.id);
+                                  setShowSkillMenu(false);
+                                }}
+                              >
+                                <span className="flex items-center gap-1.5">
+                                  <span className={cn('chat-skill-menu-radio', isSelected && 'is-selected')} />
+                                  <span className="truncate">{option.name}</span>
+                                </span>
+                                {option.description ? (
+                                  <span className="chat-skill-menu-desc">{option.description}</span>
+                                ) : null}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </div>
 
-              <div className="flex items-end gap-3">
-                <textarea
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="例如：分析 600519 / 茅台现在适合买入吗？ (Enter 发送, Shift+Enter 换行)"
-                  disabled={loading}
-                  rows={1}
-                  className="input-surface input-focus-glow flex-1 min-h-[44px] max-h-[200px] rounded-xl border bg-transparent px-4 py-2.5 text-sm transition-all focus:outline-none resize-none disabled:cursor-not-allowed disabled:opacity-60"
-                  style={{ height: 'auto' }}
-                  onInput={(e) => {
-                    const t = e.target as HTMLTextAreaElement;
-                    t.style.height = 'auto';
-                    t.style.height = `${Math.min(t.scrollHeight, 200)}px`;
-                  }}
-                />
-                <Button
-                  variant="primary"
-                  onClick={() => handleSend()}
-                  disabled={!input.trim() || loading}
-                  isLoading={loading}
-                  className="btn-primary flex-shrink-0"
-                >
-                  发送
-                </Button>
+                <div className="chat-input-field-row">
+                  <textarea
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="例如：分析 600519 / 茅台现在适合买入吗？ (Enter 发送, Shift+Enter 换行)"
+                    disabled={loading}
+                    rows={1}
+                    className="chat-input-textarea"
+                    style={{ height: 'auto' }}
+                    onInput={(e) => {
+                      const t = e.target as HTMLTextAreaElement;
+                      t.style.height = 'auto';
+                      t.style.height = `${Math.min(t.scrollHeight, 200)}px`;
+                    }}
+                  />
+                </div>
+
+                <div className="flex w-full justify-end">
+                  <Button
+                    variant="primary"
+                    size="md"
+                    onClick={() => handleSend()}
+                    disabled={!input.trim() || loading}
+                    isLoading={loading}
+                    className="chat-input-send-button"
+                  >
+                    发送
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

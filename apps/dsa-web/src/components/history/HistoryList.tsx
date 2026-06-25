@@ -1,9 +1,9 @@
 import type React from 'react';
 import { useRef, useCallback, useEffect } from 'react';
+import { ScrollShadow } from '@heroui/react';
+import { History, Trash2 } from 'lucide-react';
 import type { HistoryItem } from '../../types/analysis';
-import { Badge, Button, ScrollArea } from '../common';
 import { DashboardPanelHeader, DashboardStateBlock } from '../dashboard';
-import { Checkbox } from '@heroui/react/checkbox';
 import { HistoryListItem } from './HistoryListItem';
 
 interface HistoryListProps {
@@ -12,21 +12,18 @@ interface HistoryListProps {
   isLoadingMore: boolean;
   hasMore: boolean;
   selectedId?: number;  // 当前选中的历史记录 ID
-  selectedIds: Set<number>;
   isDeleting?: boolean;
   isSharing?: boolean;
   onShareSelected?: () => void;
   onItemClick: (recordId: number) => void;  // 点击记录的回调
   onLoadMore: () => void;
-  onToggleItemSelection: (recordId: number) => void;
-  onToggleSelectAll: () => void;
   onDeleteSelected: () => void;
   className?: string;
 }
 
 /**
  * 历史记录列表组件 (升级版)
- * 使用新设计系统组件实现，支持批量选择和滚动加载
+ * 使用新设计系统组件实现，支持当前项操作和滚动加载
  */
 export const HistoryList: React.FC<HistoryListProps> = ({
   items,
@@ -34,23 +31,18 @@ export const HistoryList: React.FC<HistoryListProps> = ({
   isLoadingMore,
   hasMore,
   selectedId,
-  selectedIds,
   isDeleting = false,
   isSharing = false,
   onShareSelected,
   onItemClick,
   onLoadMore,
-  onToggleItemSelection,
-  onToggleSelectAll,
   onDeleteSelected,
   className = '',
 }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const loadMoreTriggerRef = useRef<HTMLDivElement>(null);
 
-  const selectedCount = items.filter((item) => selectedIds.has(item.id)).length;
-  const allVisibleSelected = items.length > 0 && selectedCount === items.length;
-  const someVisibleSelected = selectedCount > 0 && !allVisibleSelected;
+  const hasSelectedItem = selectedId !== undefined;
 
   // 使用 IntersectionObserver 检测滚动到底部
   const handleObserver = useCallback(
@@ -82,72 +74,46 @@ export const HistoryList: React.FC<HistoryListProps> = ({
   }, [handleObserver]);
 
   return (
-    // glass-card
-    <aside className={`overflow-hidden flex flex-col ${className}`}>
-      <ScrollArea
-        viewportRef={scrollContainerRef}
-        viewportClassName="p-4"
-        testId="home-history-list-scroll"
+    <aside className={`home-history-panel overflow-hidden flex flex-col ${className}`}>
+      <ScrollShadow
+        ref={scrollContainerRef}
+        data-testid="home-history-list-scroll"
+        hideScrollBar={true}
+        className="min-h-0 flex-1 overflow-y-auto custom-scrollbar p-0"
       >
-        <div className="mb-4 space-y-3">
+        <div className="mb-4 space-y-4">
           <DashboardPanelHeader
-            className="mb-1"
+            className="mb-0"
             title="历史分析"
-            titleClassName="text-sm font-medium"
+            titleClassName="text-base font-bold"
             leading={(
-              <svg className="h-4 w-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              <History className="h-6 w-6 text-primary" strokeWidth={1.8} />
             )}
             headingClassName="items-center"
             actions={
-              selectedCount > 0 ? (
-                <Badge variant="info" size="sm" className="history-selection-badge animate-in fade-in zoom-in duration-200">
-                  已选 {selectedCount}
-                </Badge>
+              items.length > 0 ? (
+                <div className="flex items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={onShareSelected}
+                    disabled={!hasSelectedItem || isDeleting || isSharing}
+                    className="history-text-action inline-flex items-center whitespace-nowrap text-primary disabled:opacity-40"
+                  >
+                    {isSharing ? '推荐中' : '推荐'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onDeleteSelected}
+                    disabled={!hasSelectedItem || isDeleting}
+                    className="history-text-action inline-flex items-center gap-1 whitespace-nowrap text-danger disabled:opacity-40"
+                  >
+                    <Trash2 className="h-4 w-4 shrink-0" strokeWidth={1.8} />
+                    {isDeleting ? '删除中' : '删除'}
+                  </button>
+                </div>
               ) : undefined
             }
           />
-
-          {items.length > 0 && (
-            <div className="flex items-center gap-2">
-              <Checkbox
-                isSelected={allVisibleSelected}
-                isIndeterminate={someVisibleSelected}
-                isDisabled={isDeleting}
-                onChange={onToggleSelectAll}
-                aria-label="全选当前已加载历史记录"
-                className="[&_[data-slot='checkbox-default-indicator--checkmark']]:size-4 [&_[data-slot='checkbox-default-indicator--indeterminate']]:size-4"
-              >
-                <Checkbox.Control className="size-5 rounded-md before:rounded-md">
-                  <Checkbox.Indicator />
-                </Checkbox.Control>
-                <Checkbox.Content>
-                  <span className="text-[11px] text-default-500 select-none">全选当前</span>
-                </Checkbox.Content>
-              </Checkbox>
-              <Button
-                variant="secondary"
-                size="xsm"
-                onClick={onShareSelected}
-                disabled={selectedCount !== 1 || isDeleting || isSharing}
-                isLoading={isSharing}
-                className="history-batch-share-button"
-              >
-                {isSharing ? '推荐中' : '推荐'}
-              </Button>
-              <Button
-                variant="danger-subtle"
-                size="xsm"
-                onClick={onDeleteSelected}
-                disabled={selectedCount === 0 || isDeleting}
-                isLoading={isDeleting}
-                className="history-batch-delete-button disabled:!border-transparent disabled:!bg-transparent"
-              >
-                {isDeleting ? '删除中' : '删除'}
-              </Button>
-            </div>
-          )}
         </div>
 
         {isLoading ? (
@@ -167,15 +133,12 @@ export const HistoryList: React.FC<HistoryListProps> = ({
             )}
           />
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-4">
             {items.map((item) => (
               <HistoryListItem
                 key={item.id}
                 item={item}
                 isViewing={selectedId === item.id}
-                isChecked={selectedIds.has(item.id)}
-                isDeleting={isDeleting}
-                onToggleChecked={onToggleItemSelection}
                 onClick={onItemClick}
               />
             ))}
@@ -196,7 +159,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
             )}
           </div>
         )}
-      </ScrollArea>
+      </ScrollShadow>
     </aside>
   );
 };

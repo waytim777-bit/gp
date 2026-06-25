@@ -6,7 +6,7 @@ import { FinancialRevenueGrowthSection } from '../FinancialRevenueGrowthSection'
 vi.mock('recharts', () => ({
   ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   BarChart: ({ children }: { children: React.ReactNode }) => <div data-testid="revenue-growth-chart">{children}</div>,
-  Bar: () => null,
+  Bar: ({ fill }: { fill?: string }) => <div data-testid="revenue-growth-bar" data-fill={fill} />,
   CartesianGrid: () => null,
   Tooltip: () => null,
   XAxis: () => null,
@@ -37,6 +37,7 @@ describe('FinancialRevenueGrowthSection', () => {
     expect(screen.getByText('同比增长率')).toBeInTheDocument();
     expect(screen.getByLabelText('营收增长数据图表')).toBeInTheDocument();
     expect(screen.getByTestId('revenue-growth-chart')).toBeInTheDocument();
+    expect(screen.getByTestId('revenue-growth-bar')).toHaveAttribute('data-fill', 'hsl(var(--primary))');
     expect(screen.getByText('2025')).toBeInTheDocument();
     expect(screen.getByText('150.00')).toBeInTheDocument();
     expect(screen.getByText('+12.50%')).toBeInTheDocument();

@@ -1382,7 +1382,10 @@
               "ai_model",
               "notification",
               "system",
+              "analysis",
+              "agent",
               "backtest",
+              "payment",
               "uncategorized"
             ],
             "description": "分类"

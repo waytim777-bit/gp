@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useStockPoolStore } from '../stores';
 
@@ -15,7 +14,6 @@ export function useHomeDashboardState() {
       error: state.error,
       isAnalyzing: state.isAnalyzing,
       historyItems: state.historyItems,
-      selectedHistoryIds: state.selectedHistoryIds,
       isDeletingHistory: state.isDeletingHistory,
       isSharingHistory: state.isSharingHistory,
       isLoadingHistory: state.isLoadingHistory,
@@ -34,8 +32,6 @@ export function useHomeDashboardState() {
       loadMoreHistory: state.loadMoreHistory,
       selectHistoryItem: state.selectHistoryItem,
       selectLatestHistoryItem: state.selectLatestHistoryItem,
-      toggleHistorySelection: state.toggleHistorySelection,
-      toggleSelectAllVisible: state.toggleSelectAllVisible,
       deleteSelectedHistory: state.deleteSelectedHistory,
       shareSelectedHistory: state.shareSelectedHistory,
       submitAnalysis: state.submitAnalysis,
@@ -48,15 +44,7 @@ export function useHomeDashboardState() {
     })),
   );
 
-  const selectedIds = useMemo(
-    () => new Set(dashboardState.selectedHistoryIds),
-    [dashboardState.selectedHistoryIds],
-  );
-
-  return {
-    ...dashboardState,
-    selectedIds,
-  };
+  return dashboardState;
 }
 
 export default useHomeDashboardState;

@@ -4,6 +4,7 @@ const categoryTitleMap: Record<string, string> = {
   ai_model: 'AI 模型',
   notification: '通知渠道',
   system: '系统设置',
+  analysis: '分析设置',
   agent: 'Agent 设置',
   payment: '付费与计费',
   backtest: '回测配置',

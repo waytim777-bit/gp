@@ -2,7 +2,6 @@ import React from 'react';
 import type { AnalysisResult, AnalysisReport } from '../../types/analysis';
 import type { BacktestResultItem } from '../../types/backtest';
 import { ReportOverview } from './ReportOverview';
-import { ReportStrategy } from './ReportStrategy';
 import { ReportNews } from './ReportNews';
 import { ReportDetails } from './ReportDetails';
 import { FinancialRevenueGrowthSection } from './FinancialRevenueGrowthSection';
@@ -27,6 +26,7 @@ import { getReportText, normalizeReportLanguage } from '../../utils/reportLangua
 interface ReportSummaryProps {
   data: AnalysisResult | AnalysisReport;
   isHistory?: boolean;
+  headerActions?: React.ReactNode;
 }
 
 /**
@@ -36,6 +36,7 @@ interface ReportSummaryProps {
 export const ReportSummary: React.FC<ReportSummaryProps> = ({
   data,
   isHistory = false,
+  headerActions,
 }) => {
   // 兼容 AnalysisResult 和 AnalysisReport 两种数据格式
   const report: AnalysisReport = 'report' in data ? data.report : data;
@@ -71,12 +72,14 @@ export const ReportSummary: React.FC<ReportSummaryProps> = ({
       <PredictionCycleBanner
         cycle={meta.predictionCycle}
         language={reportLanguage}
+        actions={headerActions}
       />
 
       {/* 概览区（首屏） */}
       <ReportOverview
         meta={meta}
         summary={summary}
+        strategy={strategy}
         details={details}
         isHistory={isHistory}
       />
@@ -154,9 +157,6 @@ export const ReportSummary: React.FC<ReportSummaryProps> = ({
         keyLevelsAnalysis={keyLevelsAnalysis}
         language={reportLanguage}
       />
-
-      {/* 策略点位区 */}
-      <ReportStrategy strategy={strategy} language={reportLanguage} />
 
       {/* 资讯区 */}
       <ReportNews recordId={recordId} limit={8} language={reportLanguage} />

@@ -8,7 +8,7 @@ vi.mock('recharts', () => ({
   AreaChart: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="profitability-chart">{children}</div>
   ),
-  Area: () => null,
+  Area: ({ stroke }: { stroke?: string }) => <div data-testid="profitability-area" data-stroke={stroke} />,
   CartesianGrid: () => null,
   Tooltip: () => null,
   XAxis: () => null,
@@ -29,10 +29,11 @@ describe('FinancialProfitabilitySection', () => {
             ],
           },
         }}
-        profitabilityAnalysis={{
+        financialFundamentalsAnalysis={{
           summary: '公司盈利能力持续提升，2025年毛利率达42.61%。',
           items: [
             {
+              dimension: 'profitability',
               title: '高端产品驱动',
               content: '高端产品占比提升带动毛利率改善。',
             },
@@ -44,11 +45,12 @@ describe('FinancialProfitabilitySection', () => {
     expect(screen.getByText('盈利能力')).toBeInTheDocument();
     expect(screen.queryByText('报告期')).not.toBeInTheDocument();
     expect(screen.getByText(/公司盈利能力持续提升/)).toBeInTheDocument();
-    expect(screen.getByText('高端产品驱动：')).toBeInTheDocument();
-    expect(screen.getByText('高端产品占比提升带动毛利率改善。')).toBeInTheDocument();
+    expect(screen.getByText('高端产品驱动')).toBeInTheDocument();
+    expect(screen.getByText(/高端产品占比提升带动毛利率改善/)).toBeInTheDocument();
     expect(screen.getByText('盈利能力趋势（毛利率）')).toBeInTheDocument();
     expect(screen.getByLabelText('盈利能力趋势毛利率图表')).toBeInTheDocument();
     expect(screen.getByTestId('profitability-chart')).toBeInTheDocument();
+    expect(screen.getByTestId('profitability-area')).toHaveAttribute('data-stroke', 'hsl(var(--primary))');
   });
 
   it('renders fallback metrics text when LLM profitability analysis is missing', () => {
