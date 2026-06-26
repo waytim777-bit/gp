@@ -1,5 +1,6 @@
 import type React from 'react';
 import { Badge } from '../common';
+import { Checkbox } from '@heroui/react/checkbox';
 import type { HistoryItem } from '../../types/analysis';
 import { getSentimentColor } from '../../types/analysis';
 import { formatDateTime } from '../../utils/format';
@@ -9,6 +10,9 @@ import { truncateStockName, isStockNameTruncated } from '../../utils/stockName';
 interface HistoryListItemProps {
   item: HistoryItem;
   isViewing: boolean; // Indicates if this report is currently being viewed in the right panel
+  isChecked: boolean; // Indicates if the checkbox is checked for bulk operations
+  isDeleting: boolean;
+  onToggleChecked: (recordId: number) => void;
   onClick: (recordId: number) => void;
 }
 
@@ -35,6 +39,9 @@ const getOperationBadgeLabel = (advice?: string) => {
 export const HistoryListItem: React.FC<HistoryListItemProps> = ({
   item,
   isViewing,
+  isChecked,
+  isDeleting,
+  onToggleChecked,
   onClick,
 }) => {
   const sentimentColor = item.sentimentScore !== undefined ? getSentimentColor(item.sentimentScore) : null;
@@ -42,11 +49,20 @@ export const HistoryListItem: React.FC<HistoryListItemProps> = ({
   const isTruncated = isStockNameTruncated(stockName);
 
   return (
-    <div
-      className={`home-history-row flex items-stretch gap-2 group ${
-        isViewing ? 'home-history-row-selected' : ''
-      }`}
-    >
+    <div className="flex items-start gap-2 group">
+      <div className="pt-4">
+        <Checkbox
+          isSelected={isChecked}
+          onChange={() => onToggleChecked(item.id)}
+          isDisabled={isDeleting}
+          aria-label={`选择 ${item.stockCode} 的记录`}
+          className="[&_[data-slot='checkbox-default-indicator--checkmark']]:size-4"
+        >
+          <Checkbox.Control className="size-5 rounded-md before:rounded-md">
+            <Checkbox.Indicator />
+          </Checkbox.Control>
+        </Checkbox>
+      </div>
       <button
         type="button"
         onClick={() => onClick(item.id)}

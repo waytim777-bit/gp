@@ -7,8 +7,11 @@ const baseProps = {
   isLoading: false,
   isLoadingMore: false,
   hasMore: false,
+  selectedIds: new Set<number>(),
   onItemClick: vi.fn(),
   onLoadMore: vi.fn(),
+  onToggleItemSelection: vi.fn(),
+  onToggleSelectAll: vi.fn(),
   onDeleteSelected: vi.fn(),
 };
 
@@ -44,7 +47,7 @@ describe('HistoryList', () => {
     expect(container.querySelector('.home-history-panel')).toBeTruthy();
   });
 
-  it('enables selected item actions and forwards item interactions', () => {
+  it('enables batch actions and forwards item interactions', () => {
     const onItemClick = vi.fn();
 
     render(
@@ -52,23 +55,23 @@ describe('HistoryList', () => {
         {...baseProps}
         items={items}
         selectedId={1}
+        selectedIds={new Set([1])}
         onItemClick={onItemClick}
       />,
     );
 
     expect(screen.getByText('买入 82')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '推荐' })).toBeEnabled();
+    expect(screen.getByText('已选 1')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '删除' })).toBeEnabled();
 
     fireEvent.click(screen.getByRole('button', { name: /贵州茅台/i }));
     expect(onItemClick).toHaveBeenCalledWith(1);
   });
 
-  it('disables actions when no history item is selected', () => {
+  it('disables delete when no history item is selected', () => {
     render(<HistoryList {...baseProps} items={items} />);
 
     expect(screen.getByRole('button', { name: '删除' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: '推荐' })).toBeDisabled();
   });
 
   it('truncates long stock names with trailing dot', () => {
@@ -87,11 +90,11 @@ describe('HistoryList', () => {
     expect(fullNameHidden).toHaveClass('hidden');
   });
 
-  it('does not render history selection checkboxes', () => {
+  it('renders history selection checkboxes', () => {
     render(
       <HistoryList {...baseProps} items={items} selectedId={1} />,
     );
 
-    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+    expect(screen.getAllByRole('checkbox')).toHaveLength(2);
   });
 });

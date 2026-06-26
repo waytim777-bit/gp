@@ -30,6 +30,7 @@ const HomePage: React.FC = () => {
     error,
     isAnalyzing,
     historyItems,
+    selectedHistoryIds,
     isDeletingHistory,
     isLoadingHistory,
     isLoadingMore,
@@ -60,7 +61,6 @@ const HomePage: React.FC = () => {
     removeTask,
     openMarkdownDrawer,
     closeMarkdownDrawer,
-    selectedIds,
     canRefreshIntel,
     searchStockCode,
     searchStockName,
@@ -98,6 +98,7 @@ const HomePage: React.FC = () => {
   }, [hasPushDestination, notify, setNotify]);
   const reportLanguage = normalizeReportLanguage(selectedReport?.meta.reportLanguage);
   const reportText = getReportText(reportLanguage);
+  const selectedHistoryIdSet = useMemo(() => new Set(selectedHistoryIds), [selectedHistoryIds]);
 
   useDashboardLifecycle({
     loadInitialHistory,
@@ -199,9 +200,12 @@ const HomePage: React.FC = () => {
           isLoadingMore={isLoadingMore}
           hasMore={hasMore}
           selectedId={selectedReport?.meta.id}
+          selectedIds={selectedHistoryIdSet}
           isDeleting={isDeletingHistory}
           onItemClick={handleHistoryItemClick}
           onLoadMore={() => void loadMoreHistory()}
+          onToggleItemSelection={toggleHistorySelection}
+          onToggleSelectAll={toggleSelectAllVisible}
           onDeleteSelected={() => setShowDeleteConfirm(true)}
           className="flex-1 overflow-hidden"
         />
@@ -216,7 +220,10 @@ const HomePage: React.FC = () => {
       isLoadingMore,
       handleHistoryItemClick,
       loadMoreHistory,
+      selectedHistoryIdSet,
       selectedReport?.meta.id,
+      toggleHistorySelection,
+      toggleSelectAllVisible,
     ],
   );
 
@@ -431,7 +438,11 @@ const HomePage: React.FC = () => {
       <ConfirmDialog
         isOpen={showDeleteConfirm}
         title="删除历史记录"
-        message="确认删除当前选中的历史记录吗？删除后将不可恢复。"
+        message={
+          selectedHistoryIds.length === 1
+            ? '确认删除这条历史记录吗？删除后将不可恢复。'
+            : `确认删除选中的 ${selectedHistoryIds.length} 条历史记录吗？删除后将不可恢复。`
+        }
         confirmText={isDeletingHistory ? '删除中...' : '确认删除'}
         cancelText="取消"
         isDanger={true}

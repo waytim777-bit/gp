@@ -1,8 +1,10 @@
 import type React from 'react';
 import { useRef, useCallback, useEffect } from 'react';
 import { ScrollShadow } from '@heroui/react';
-import { History, Trash2 } from 'lucide-react';
+import { Checkbox } from '@heroui/react/checkbox';
+import { History } from 'lucide-react';
 import type { HistoryItem } from '../../types/analysis';
+import { Button } from '../common';
 import { DashboardPanelHeader, DashboardStateBlock } from '../dashboard';
 import { HistoryListItem } from './HistoryListItem';
 
@@ -12,16 +14,19 @@ interface HistoryListProps {
   isLoadingMore: boolean;
   hasMore: boolean;
   selectedId?: number;  // 当前选中的历史记录 ID
+  selectedIds: Set<number>;
   isDeleting?: boolean;
   onItemClick: (recordId: number) => void;  // 点击记录的回调
   onLoadMore: () => void;
+  onToggleItemSelection: (recordId: number) => void;
+  onToggleSelectAll: () => void;
   onDeleteSelected: () => void;
   className?: string;
 }
 
 /**
  * 历史记录列表组件 (升级版)
- * 使用新设计系统组件实现，支持当前项操作和滚动加载
+ * 使用新设计系统组件实现，支持批量选择和滚动加载
  */
 export const HistoryList: React.FC<HistoryListProps> = ({
   items,
@@ -29,16 +34,21 @@ export const HistoryList: React.FC<HistoryListProps> = ({
   isLoadingMore,
   hasMore,
   selectedId,
+  selectedIds,
   isDeleting = false,
   onItemClick,
   onLoadMore,
+  onToggleItemSelection,
+  onToggleSelectAll,
   onDeleteSelected,
   className = '',
 }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const loadMoreTriggerRef = useRef<HTMLDivElement>(null);
 
-  const hasSelectedItem = selectedId !== undefined;
+  const selectedCount = items.filter((item) => selectedIds.has(item.id)).length;
+  const allVisibleSelected = items.length > 0 && selectedCount === items.length;
+  const someVisibleSelected = selectedCount > 0 && !allVisibleSelected;
 
   // 使用 IntersectionObserver 检测滚动到底部
   const handleObserver = useCallback(
@@ -87,26 +97,8 @@ export const HistoryList: React.FC<HistoryListProps> = ({
             )}
             headingClassName="items-center"
             actions={
-              items.length > 0 ? (
-                <div className="flex items-center gap-4">
-                  <button
-                    type="button"
-                    onClick={onShareSelected}
-                    disabled={!hasSelectedItem || isDeleting || isSharing}
-                    className="history-text-action inline-flex items-center whitespace-nowrap text-primary disabled:opacity-40"
-                  >
-                    {isSharing ? '推荐中' : '推荐'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={onDeleteSelected}
-                    disabled={!hasSelectedItem || isDeleting}
-                    className="history-text-action inline-flex items-center gap-1 whitespace-nowrap text-danger disabled:opacity-40"
-                  >
-                    <Trash2 className="h-4 w-4 shrink-0" strokeWidth={1.8} />
-                    {isDeleting ? '删除中' : '删除'}
-                  </button>
-                </div>
+              selectedCount > 0 ? (
+                <span className="text-xs font-medium text-primary">已选 {selectedCount}</span>
               ) : undefined
             }
           />
@@ -165,6 +157,9 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                 key={item.id}
                 item={item}
                 isViewing={selectedId === item.id}
+                isChecked={selectedIds.has(item.id)}
+                isDeleting={isDeleting}
+                onToggleChecked={onToggleItemSelection}
                 onClick={onItemClick}
               />
             ))}

@@ -193,20 +193,6 @@ const ChatPage: React.FC = () => {
 
   const availableSkillIds = new Set(skills.map((skill) => skill.id));
   const quickQuestions = QUICK_QUESTIONS.filter((question) => availableSkillIds.size === 0 || availableSkillIds.has(question.skill));
-  const skillOptions = [
-    {
-      id: '',
-      name: '通用分析',
-      description: '不限定策略，由 AI 根据问题选择合适的分析方式。',
-    },
-    ...skills.map((skill) => ({
-      id: skill.id,
-      name: skill.name,
-      description: skill.description,
-    })),
-  ];
-  const inlineSkillOptions = skillOptions.slice(0, 6);
-
   useEffect(() => {
     if (!showSkillMenu) return undefined;
 
@@ -238,7 +224,9 @@ const ChatPage: React.FC = () => {
   }, [openSessionMenuId]);
 
   const handleStartNewChat = useCallback(() => {
-    followUpContextRef.current = null;
+    setFollowUpContext(null);
+    setFollowUpInputPlaceholder(null);
+    setOpenSessionMenuId(null);
     requestScrollToBottom('auto');
     useAgentChatStore.getState().startNewChat();
     setSidebarOpen(false);
@@ -1114,7 +1102,10 @@ const ChatPage: React.FC = () => {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="例如：分析 600519 / 茅台现在适合买入吗？ (Enter 发送, Shift+Enter 换行)"
+                  placeholder={
+                    followUpInputPlaceholder
+                      ?? '例如：分析 600519 / 茅台现在适合买入吗？ (Enter 发送, Shift+Enter 换行)'
+                  }
                   disabled={loading}
                   rows={1}
                   className="input-surface input-focus-glow flex-1 min-h-[44px] max-h-[200px] rounded-xl border bg-transparent px-4 py-2.5 text-sm transition-all focus:outline-none resize-none disabled:cursor-not-allowed disabled:opacity-60"
