@@ -32,7 +32,7 @@ export const Shell: React.FC<ShellProps> = ({ children }) => {
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          'hidden shrink-0 backdrop-blur-sm transition-[width] duration-300 lg:flex lg:flex-col',
+          'relative z-50 hidden shrink-0 backdrop-blur-sm transition-[width] duration-300 lg:flex lg:flex-col',
           sidebarCollapsed ? 'w-[72px]' : 'w-[240px]'
         )}
       >
@@ -43,7 +43,7 @@ export const Shell: React.FC<ShellProps> = ({ children }) => {
       </aside>
 
       {/* Main area: header + content */}
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="relative z-0 flex min-w-0 flex-1 flex-col">
         <ShellHeader
           collapsed={sidebarCollapsed}
           onToggleSidebar={() => setSidebarCollapsed((v) => !v)}

@@ -342,7 +342,7 @@ const SubscriptionsPage: React.FC = () => {
       <Modal.Root isOpen={showAddDialog} onOpenChange={setShowAddDialog}>
         <Modal.Backdrop variant="blur">
           <Modal.Container size="lg" placement="center">
-            <Modal.Dialog className="w-full max-w-[620px] rounded-[22px] bg-[hsl(var(--card))] text-slate-100 shadow-2xl">
+            <Modal.Dialog className="w-full max-w-[620px] rounded-[22px] bg-[hsl(var(--card))] shadow-2xl">
               <Modal.Header className="px-6 pb-0 pt-6">
                 <Modal.Heading
                   id="add-subscription-title"
@@ -359,7 +359,7 @@ const SubscriptionsPage: React.FC = () => {
                   onChange={setStockInput}
                   onSubmit={handleStockSubmit}
                   placeholder="请输入股票代码"
-                  className="h-12 rounded-full border-0 bg-[#262936] px-6 text-[15px] font-normal text-slate-100 placeholder:text-[#6f778c] focus:ring-0"
+                  className="h-12 rounded-full border-0 bg-[var(--bg-hover)]! px-6 text-[15px] font-normal text-slate-100 placeholder:text-[#6f778c] focus:ring-0"
                 />
 
                 <div className="mt-7">
@@ -374,7 +374,7 @@ const SubscriptionsPage: React.FC = () => {
                           className={`h-[42px] rounded-[12px] border text-[15px] font-medium leading-5 transition-colors ${
                             selected
                               ? 'border-[#09bde6] bg-transparent text-[#02c7f3]'
-                              : 'border-transparent bg-[#292c38] text-foreground hover:bg-[#303342]'
+                              : 'border-transparent bg-[var(--bg-hover)] text-foreground hover:bg-[#303342]'
                           }`}
                           onClick={() => setIntervalDays(option.days)}
                         >
@@ -394,7 +394,7 @@ const SubscriptionsPage: React.FC = () => {
                     type="button"
                     disabled={creating}
                     onClick={() => void handleCreateSubscription()}
-                    className="h-11 w-full rounded-[12px] bg-[hsl(var(--primary))]/60 text-[15px] font-medium text-foreground transition-colors hover:bg-[var(--color-cyan-glow)] sm:w-[280px]"
+                    className="h-11 w-full rounded-[12px] bg-[hsl(var(--primary))] text-[15px] font-medium text-foreground transition-colors hover:bg-[var(--color-cyan-glow)] sm:w-[280px]"
                   >
                     {creating ? '添加中...' : '添加订阅'}
                   </button>
@@ -573,7 +573,7 @@ const SubscriptionsPage: React.FC = () => {
                     <div className="mt-24">
                       <button
                         type="button"
-                        className="flex h-10 w-full items-center justify-center rounded-[12px] bg-[hsl(var(--primary))]/50 px-4 text-[14px] font-medium leading-none text-foreground transition-colors hover:brightness-110"
+                        className="flex h-10 w-full items-center justify-center rounded-[12px] bg-[hsl(var(--primary))] px-4 text-[14px] font-medium leading-none text-foreground transition-colors hover:brightness-110"
                         onClick={() => void handleTogglePause(selectedSubscription)}
                       >
                         {selectedSubscription.status === 'active' ? '暂停订阅' : '恢复订阅'}

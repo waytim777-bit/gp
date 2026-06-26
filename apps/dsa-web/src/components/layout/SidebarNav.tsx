@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
-import { createAvatar } from '@dicebear/core';
-import { identicon } from '@dicebear/collection';
-import { Button, Popover } from '@heroui/react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Modal } from '@heroui/react';
 import { motion } from 'motion/react';
-import { BarChart3, BellRing, Coins, Home, LogOut, MessageSquareQuote, Share2, Unplug } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+import { BarChart3, BellRing, ChevronRight, History, Home, LogOut, MessageSquareQuote, Share2, Unplug, UserRound } from 'lucide-react';
+import { Link, NavLink } from 'react-router-dom';
 import { useAccount, useDisconnect } from 'wagmi';
+import { paymentApi, type DeductionHistoryItem, type DepositHistoryItem } from '../../api/payment';
+import creditIconSvg from '../../assets/creditIcon.svg?raw';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAgentChatStore } from '../../stores/agentChatStore';
+import { useCreditStore } from '../../stores/creditStore';
 import { cn } from '../../utils/cn';
+import { formatDate } from '../../utils/format';
+import { resolveUserAvatarUrl } from '../../utils/userAvatar';
 import { ConfirmDialog } from '../common/ConfirmDialog';
+import { DepositDialog } from '../payment/DepositDialog';
+import { ProfileDialog } from '../profile/ProfileDialog';
 import { StatusDot } from '../common/StatusDot';
 import { ThemeToggle } from '../theme/ThemeToggle';
 
@@ -28,36 +33,143 @@ type NavItem = {
   permission?: string;
 };
 
+type UsageHistoryRow = {
+  id: string;
+  detail: string;
+  type: string;
+  date: string;
+  credits: number;
+  createdAt: string;
+};
+
 const NAV_ITEMS: NavItem[] = [
   { key: 'home', label: '首页', to: '/', icon: Home, exact: true, permission: 'home' },
   { key: 'chat', label: '问股', to: '/chat', icon: MessageSquareQuote, badge: 'completion', permission: 'chat' },
   { key: 'backtest', label: '回测', to: '/backtest', icon: BarChart3, permission: 'backtest' },
   { key: 'subscriptions', label: '我的订阅', to: '/subscriptions', icon: BellRing, permission: 'subscriptions' },
   { key: 'prediction_reports', label: '预测报告', to: '/prediction-reports', icon: Share2, permission: 'prediction_reports' },
-  { key: 'payment', label: '积分', to: '/payment', icon: Coins, permission: 'payment' },
+  // { key: 'payment', label: '积分', to: '/payment', icon: Coins, permission: 'payment' },
 ];
 
 function formatAddress(address: string): string {
   return `${address.slice(0, 6)}****${address.slice(-4)}`;
 }
 
+function getCallTypeLabel(callType: string): string {
+  const labels: Record<string, string> = {
+    agent: '问股',
+    analysis: '分析',
+    analysis_probe: '分析预检',
+    consultation: '会诊',
+    market_review: '市场复盘',
+    prediction_report_purchase: '预测报告',
+    subscription_push: '订阅推送',
+  };
+  return labels[callType] ?? callType;
+}
+
 export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNavigate }) => {
   const { currentUser, logout } = useAuth();
   const completionBadge = useAgentChatStore((state) => state.completionBadge);
+  const {
+    balance, lifetimeCredits, claimedToday, claiming, creditsPerDollar, creditsPer1kTokens,
+    initialize, claimDailyCredits,
+  } = useCreditStore();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showDepositDialog, setShowDepositDialog] = useState(false);
+  const [showProfileDialog, setShowProfileDialog] = useState(false);
+  const [showUsageDialog, setShowUsageDialog] = useState(false);
+  const [usageHistoryLoading, setUsageHistoryLoading] = useState(false);
+  const [usageHistoryError, setUsageHistoryError] = useState<string | null>(null);
+  const [usageDeposits, setUsageDeposits] = useState<DepositHistoryItem[]>([]);
+  const [usageDeductions, setUsageDeductions] = useState<DeductionHistoryItem[]>([]);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuCloseTimerRef = useRef<number | null>(null);
   const { address, chain, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
 
-  const walletAvatar = React.useMemo(() => {
-    if (!address) return '';
-    return createAvatar(identicon, {
-      seed: address,
-      size: 64,
-      backgroundColor: ['f8fafc'],
-    }).toDataUri();
-  }, [address]);
+  const loadUsageHistory = useCallback(async () => {
+    setUsageHistoryLoading(true);
+    setUsageHistoryError(null);
+    try {
+      const history = await paymentApi.getHistory();
+      setUsageDeposits(history.deposits);
+      setUsageDeductions(history.deductions);
+    } catch {
+      setUsageHistoryError('交易记录加载失败，请稍后重试');
+    } finally {
+      setUsageHistoryLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (currentUser) {
+      void initialize();
+    }
+  }, [currentUser, initialize]);
+
+  useEffect(() => {
+    if (showUsageDialog) {
+      void loadUsageHistory();
+    }
+  }, [loadUsageHistory, showUsageDialog]);
+
+  useEffect(() => {
+    return () => {
+      if (userMenuCloseTimerRef.current !== null) {
+        window.clearTimeout(userMenuCloseTimerRef.current);
+      }
+    };
+  }, []);
+
+  const clearUserMenuCloseTimer = () => {
+    if (userMenuCloseTimerRef.current !== null) {
+      window.clearTimeout(userMenuCloseTimerRef.current);
+      userMenuCloseTimerRef.current = null;
+    }
+  };
+
+  const openUserMenu = () => {
+    clearUserMenuCloseTimer();
+    setUserMenuOpen(true);
+  };
+
+  const scheduleUserMenuClose = () => {
+    clearUserMenuCloseTimer();
+    userMenuCloseTimerRef.current = window.setTimeout(() => {
+      setUserMenuOpen(false);
+      userMenuCloseTimerRef.current = null;
+    }, 120);
+  };
 
   const shortAddress = address ? formatAddress(address) : '';
+  const displayBalance = Math.max(balance, 0).toLocaleString();
+  const displayLifetimeCredits = Math.max(lifetimeCredits ?? 0, 0).toLocaleString();
+  const usageRows = useMemo<UsageHistoryRow[]>(() => {
+    const depositRows = usageDeposits.map((item) => ({
+      id: `deposit-${item.id}`,
+      detail: item.reason || '积分充值',
+      type: '充值',
+      date: formatDate(item.createdAt),
+      credits: item.creditAmount,
+      createdAt: item.createdAt,
+    }));
+    const deductionRows = usageDeductions.map((item) => ({
+      id: `deduction-${item.id}`,
+      detail: getCallTypeLabel(item.callType),
+      type: '消费',
+      date: formatDate(item.createdAt),
+      credits: -Math.abs(item.creditsSpent),
+      createdAt: item.createdAt,
+    }));
+
+    return [...depositRows, ...deductionRows]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 8);
+  }, [usageDeposits, usageDeductions]);
+  const userAvatar = currentUser
+    ? resolveUserAvatarUrl(currentUser.id, currentUser.username, currentUser.avatarUrl, 40)
+    : null;
   const permissions = new Set(currentUser?.menuPermissions ?? []);
   const visibleItems = NAV_ITEMS.filter((item) => {
     if (currentUser?.isAdmin) {
@@ -128,61 +240,197 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
         ))}
       </nav>
 
-      <div className="mt-auto flex flex-col gap-2 px-2 pb-4">
-        <div className={cn('flex', collapsed ? 'justify-center' : 'px-3')}>
-          <ThemeToggle variant="nav" collapsed={collapsed} />
-        </div>
+      <div
+        className={cn(
+          'mt-auto flex w-full flex-col items-start pb-4',
+          collapsed ? 'px-1' : 'px-0'
+        )}
+      >
+        <Link
+          to="/payment"
+          onClick={onNavigate}
+          className={cn(
+            'group flex h-16 w-full items-center rounded-xl text-[hsl(var(--primary))]',
+            collapsed ? 'justify-center' : 'pl-5'
+          )}
+          title="积分余额"
+          aria-label={`积分余额 ${displayBalance}`}
+        >
+          <span
+            className={cn(
+              'flex h-10 min-w-0 items-center gap-1 rounded-xl px-2 transition-colors group-hover:bg-hover',
+              collapsed ? 'max-w-[64px]' : 'max-w-[180px]'
+            )}
+          >
+            <span
+              aria-hidden="true"
+              className="h-4 w-4 shrink-0 text-[hsl(var(--primary))] [&_svg]:h-full [&_svg]:w-full"
+              dangerouslySetInnerHTML={{ __html: creditIconSvg }}
+            />
+            <span className="truncate text-xs font-medium leading-none">{displayBalance}</span>
+          </span>
+        </Link>
 
-        {isConnected && address ? (
-          <Popover>
-            <Popover.Trigger
-              className={cn(
-                'flex h-10 w-full cursor-pointer select-none items-center gap-3 rounded-lg px-3 text-sm text-secondary-text transition-all hover:bg-hover hover:text-foreground',
-                collapsed && 'justify-center px-2'
-              )}
+        <div className={cn('flex h-16 w-full items-center rounded-xl', collapsed ? 'justify-center' : 'pl-5')}>
+          <div
+            className="relative z-[110] h-10 w-10"
+            onMouseEnter={openUserMenu}
+            onMouseLeave={scheduleUserMenuClose}
+          >
+            <button
+              type="button"
+              className="group flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full"
+              aria-label="用户菜单"
+              onFocus={openUserMenu}
+              onBlur={scheduleUserMenuClose}
             >
-              <img src={walletAvatar} alt="" className="h-7 w-7 shrink-0 rounded-full" />
-              {!collapsed ? <span className="truncate font-medium">{shortAddress}</span> : null}
-            </Popover.Trigger>
-            <Popover.Content
-              placement="right"
-              offset={4}
-            >
-              <Popover.Dialog className="w-56 space-y-3 p-3">
-                <div className="flex items-center gap-3">
-                  <img src={walletAvatar} alt="" className="h-9 w-9 rounded-full" />
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-semibold text-foreground">{shortAddress}</div>
-                    <div className="mt-0.5 truncate text-xs text-default-500">{chain?.name ?? 'Sepolia'}</div>
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] transition-shadow group-hover:ring-2 group-hover:ring-[hsl(var(--primary)/0.24)]">
+                {userAvatar ? (
+                  <img src={userAvatar} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  <UserRound className="h-5 w-5" />
+                )}
+              </span>
+            </button>
+
+            {userMenuOpen ? (
+              <>
+                <div className="absolute bottom-0 left-full h-10 w-3" aria-hidden="true" />
+                <div
+                  role="dialog"
+                  aria-label="用户菜单"
+                  className="absolute bottom-0 left-[calc(100%+10px)] z-[110] w-[300px] rounded-xl bg-elevated p-4 shadow-[0_10px_10px_rgba(0,0,0,0.10)]"
+                  onMouseEnter={openUserMenu}
+                  onMouseLeave={scheduleUserMenuClose}
+                >
+                  <div className="flex w-full flex-col gap-5 text-foreground">
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center justify-between">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUserMenuOpen(false);
+                            setShowProfileDialog(true);
+                          }}
+                          className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]"
+                          title="个人中心"
+                        >
+                          {userAvatar ? (
+                            <img src={userAvatar} alt="" className="h-full w-full object-cover" />
+                          ) : (
+                            <UserRound className="h-4 w-4" />
+                          )}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUserMenuOpen(false);
+                            setShowProfileDialog(true);
+                          }}
+                          className="flex h-6 items-center text-[13px] font-medium text-foreground"
+                        >
+                          个人中心
+                          <ChevronRight className="h-5 w-5 text-muted-text" />
+                        </button>
+                      </div>
+
+                      <div className="h-px w-full bg-border/70" />
+
+                      <div className="flex flex-col gap-3">
+                        <div className="flex h-8 items-center justify-between">
+                          <div className="flex min-w-0 items-center">
+                            <span
+                              aria-hidden="true"
+                              className="h-5 w-5 shrink-0 text-[hsl(var(--primary))] [&_svg]:h-full [&_svg]:w-full"
+                              dangerouslySetInnerHTML={{ __html: creditIconSvg }}
+                            />
+                            <span className="truncate text-lg font-bold leading-none text-foreground">
+                              {displayBalance}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setUserMenuOpen(false);
+                              setShowDepositDialog(true);
+                            }}
+                            className="flex h-8 w-[72px] items-center justify-center rounded-xl bg-[hsl(var(--primary))] text-sm font-bold leading-none text-[hsl(var(--primary-foreground))] transition-colors hover:bg-[hsl(var(--primary)/0.86)]"
+                          >
+                            充值
+                          </button>
+                        </div>
+
+                        <div className="flex flex-col">
+                          <div className="flex h-8 items-center justify-between">
+                            <span className="text-sm font-bold leading-none text-foreground">每日免费积分</span>
+                            <button
+                              type="button"
+                              disabled={claimedToday || claiming}
+                              onClick={() => {
+                                void claimDailyCredits();
+                              }}
+                              className={cn(
+                                'flex h-8 w-[72px] items-center justify-center rounded-xl border px-3 text-sm font-bold leading-none transition-colors',
+                                claimedToday
+                                  ? 'cursor-not-allowed border-border text-muted-text'
+                                  : 'border-border text-muted-text hover:border-[hsl(var(--primary)/0.45)] hover:text-[hsl(var(--primary))]'
+                              )}
+                            >
+                              {claiming ? '领取中' : claimedToday ? '已领' : '领取'}
+                            </button>
+                          </div>
+                          <p className="text-xs font-medium leading-5 text-muted-text">每天重置为100免费积分</p>
+                        </div>
+
+                        {isConnected && address ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              disconnect();
+                              setUserMenuOpen(false);
+                            }}
+                            className="flex items-center gap-2 text-xs font-medium text-muted-text transition-colors hover:text-foreground"
+                          >
+                            <Unplug className="h-4 w-4" />
+                            {shortAddress} · {chain?.name ?? 'Sepolia'}
+                          </button>
+                        ) : null}
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUserMenuOpen(false);
+                            setShowUsageDialog(true);
+                          }}
+                          className="flex h-6 w-full items-center justify-between text-sm font-bold leading-none text-foreground transition-colors hover:text-[hsl(var(--primary))]"
+                        >
+                          使用详情
+                          <ChevronRight className="h-5 w-5 text-muted-text" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUserMenuOpen(false);
+                        setShowLogoutConfirm(true);
+                      }}
+                      className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-hover text-sm font-bold leading-none text-foreground transition-colors hover:bg-[hsl(var(--foreground)/0.12)]"
+                    >
+                      <LogOut className="h-5 w-5" />
+                      退出
+                    </button>
                   </div>
                 </div>
-                <Button
-                  fullWidth
-                  className="h-9 justify-start"
-                  variant="danger-soft"
-                  onPress={() => {
-                    disconnect();
-                  }}
-                >
-                  <Unplug className="h-4 w-4" />
-                  断开连接
-                </Button>
-              </Popover.Dialog>
-            </Popover.Content>
-          </Popover>
-        ) : null}
+              </>
+            ) : null}
+          </div>
+        </div>
 
-        <button
-          type="button"
-          onClick={() => setShowLogoutConfirm(true)}
-          className={cn(
-            'flex h-9 w-full cursor-pointer select-none items-center gap-3 rounded-lg px-3 text-sm text-secondary-text transition-all hover:bg-hover hover:text-foreground',
-            collapsed && 'justify-center px-2'
-          )}
-        >
-          <LogOut className="h-4 w-4 shrink-0" />
-          {!collapsed ? <span>退出</span> : null}
-        </button>
+        <div className={cn('flex h-16 w-full items-center rounded-xl', collapsed ? 'justify-center' : 'pl-5')}>
+          <ThemeToggle variant="icon" collapsed={collapsed} />
+        </div>
       </div>
 
       <ConfirmDialog
@@ -199,6 +447,149 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
         }}
         onCancel={() => setShowLogoutConfirm(false)}
       />
+
+      <DepositDialog
+        isOpen={showDepositDialog}
+        creditsPerDollar={creditsPerDollar}
+        creditsPer1kTokens={creditsPer1kTokens}
+        onClose={(deposited) => {
+          setShowDepositDialog(false);
+          if (deposited) {
+            void initialize();
+            if (showUsageDialog) {
+              void loadUsageHistory();
+            }
+          }
+        }}
+      />
+
+      <ProfileDialog
+        isOpen={showProfileDialog}
+        onOpenChange={setShowProfileDialog}
+      />
+
+      <Modal.Root isOpen={showUsageDialog} onOpenChange={setShowUsageDialog}>
+        <Modal.Backdrop variant="blur">
+          <Modal.Container size="lg" placement="center">
+            <Modal.Dialog className="w-[calc(100vw-32px)] max-w-[560px] rounded-[18px] bg-elevated p-5 text-foreground shadow-2xl sm:p-6">
+              <Modal.Header className="mb-6 p-0">
+                <Modal.Heading className="text-lg font-bold leading-none">当前积分</Modal.Heading>
+                <Modal.CloseTrigger className="text-muted-text transition-colors hover:text-foreground" />
+              </Modal.Header>
+
+              <Modal.Body className="flex flex-col gap-8 p-0">
+                <section className="flex flex-col gap-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="min-w-0">
+                      <div className="flex min-w-0 items-center">
+                        <span
+                          aria-hidden="true"
+                          className="h-5 w-5 shrink-0 text-[hsl(var(--primary))] [&_svg]:h-full [&_svg]:w-full"
+                          dangerouslySetInnerHTML={{ __html: creditIconSvg }}
+                        />
+                        <span className="truncate text-xl font-bold leading-none text-[hsl(var(--primary))]">
+                          {displayBalance}
+                        </span>
+                      </div>
+                      <p className="mt-3 text-sm leading-none text-muted-text">
+                        累计充值 {displayLifetimeCredits} 积分
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowUsageDialog(false);
+                        setShowDepositDialog(true);
+                      }}
+                      className="flex h-8 w-20 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--primary))] text-sm font-bold leading-none text-[hsl(var(--primary-foreground))] transition-colors hover:bg-[hsl(var(--primary)/0.86)]"
+                    >
+                      充值
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-base font-bold leading-none text-foreground">每日免费积分</span>
+                    <button
+                      type="button"
+                      disabled={claimedToday || claiming}
+                      onClick={() => {
+                        void claimDailyCredits().then((success) => {
+                          if (success) {
+                            void loadUsageHistory();
+                          }
+                        });
+                      }}
+                      className={cn(
+                        'flex h-8 w-20 shrink-0 items-center justify-center rounded-xl border px-3 text-sm font-bold leading-none transition-colors',
+                        claimedToday
+                          ? 'cursor-not-allowed border-border text-muted-text'
+                          : 'border-border text-muted-text hover:border-[hsl(var(--primary)/0.45)] hover:text-[hsl(var(--primary))]'
+                      )}
+                    >
+                      {claiming ? '领取中' : claimedToday ? '已领取' : '领取'}
+                    </button>
+                  </div>
+                </section>
+
+                <section className="flex flex-col gap-4">
+                  <div>
+                    <h3 className="text-base font-bold leading-none text-foreground">交易记录</h3>
+                    <div className="mt-3 h-px w-full bg-[#343a4a]">
+                      <div className="h-[3px] w-9 rounded-full bg-[hsl(var(--primary))]" />
+                    </div>
+                  </div>
+
+                  <div className="overflow-hidden rounded-xl border border-[var(--border-dim)]">
+                    <div className="grid grid-cols-[1.2fr_1fr_1.1fr_0.9fr] bg-[var(--backtest-table-bg)] px-3 py-2.5 text-xs font-medium text-muted-text sm:text-sm">
+                      <span>明细</span>
+                      <span>交易类型</span>
+                      <span>日期</span>
+                      <span>积分消耗</span>
+                    </div>
+
+                    {usageHistoryLoading ? (
+                      <div className="flex h-28 items-center justify-center text-sm text-muted-text">加载中...</div>
+                    ) : usageHistoryError ? (
+                      <div className="flex h-28 flex-col items-center justify-center gap-3 px-4 text-center text-sm text-muted-text">
+                        <span>{usageHistoryError}</span>
+                        <button
+                          type="button"
+                          onClick={() => void loadUsageHistory()}
+                          className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-[hsl(var(--primary)/0.45)] hover:text-[hsl(var(--primary))]"
+                        >
+                          重新加载
+                        </button>
+                      </div>
+                    ) : usageRows.length > 0 ? (
+                      <div className="max-h-[300px] overflow-y-auto">
+                        {usageRows.map((row) => (
+                          <div
+                            key={row.id}
+                            className="grid grid-cols-[1.2fr_1fr_1.1fr_0.9fr] border-t border-[var(--border-dim)] px-3 py-3 text-sm font-bold leading-none text-foreground"
+                          >
+                            <span className="min-w-0 truncate pr-2">{row.detail}</span>
+                            <span className="min-w-0 truncate pr-2">{row.type}</span>
+                            <span className="min-w-0 truncate pr-2">{row.date}</span>
+                            <span className={cn('min-w-0 truncate', row.credits > 0 && 'text-emerald-400')}>
+                              {row.credits > 0 ? '+' : ''}
+                              {row.credits}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex h-28 flex-col items-center justify-center gap-2 px-4 text-center text-sm text-muted-text">
+                        <History className="h-8 w-8 text-muted-text" />
+                        <span>暂无交易记录</span>
+                      </div>
+                    )}
+                  </div>
+                </section>
+              </Modal.Body>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
+      </Modal.Root>
     </div>
   );
 };

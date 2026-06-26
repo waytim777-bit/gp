@@ -124,6 +124,21 @@ describe('StockAutocomplete', () => {
     expect(input).toBeInTheDocument();
   });
 
+  it('renders the home meta label beside the action button', () => {
+    render(
+      <StockAutocomplete
+        value="600519"
+        onChange={mockOnChange}
+        onSubmit={mockOnSubmit}
+        appearance="home"
+        metaLabel="100 /份"
+      />
+    );
+
+    expect(screen.getByText('100 /份')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'AI数据分析' })).toBeInTheDocument();
+  });
+
   it('renders a custom placeholder', () => {
     render(
       <StockAutocomplete

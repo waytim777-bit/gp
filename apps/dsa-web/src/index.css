@@ -31,7 +31,7 @@
   --popover: 0 0% 100%;
   --popover-foreground: 228 35% 12%;
   /* --primary: 193 100% 43%; */
-  --primary: 248 70% 43%;
+  --primary: 248 70% 43%;  
   --primary-foreground: 216 33% 97%;
   --secondary: 214 32% 91%;
   --secondary-foreground: 228 35% 16%;
@@ -313,7 +313,8 @@
   --card-foreground: 210 33% 98%;
   --popover: 230 24% 10%;
   --popover-foreground: 210 33% 98%;
-  --primary: 190 100% 50%;
+  /* --primary: 190 100% 50%; */
+  --primary: 190 100% 38%;
   --primary-foreground: 228 35% 8%;
   --secondary: 231 19% 15%;
   --secondary-foreground: 210 33% 94%;
@@ -1535,6 +1536,23 @@ textarea {
   gap: 1rem;
 }
 
+.chat-input-skill-options {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 1rem;
+  overflow: hidden;
+}
+
+.chat-input-skill-label {
+  flex-shrink: 0;
+  color: var(--text-muted-text);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
 .chat-skill-inline-option {
   position: relative;
   display: inline-flex;
@@ -1548,6 +1566,14 @@ textarea {
   font-weight: 500;
   line-height: 1;
   transition: color 0.2s ease;
+}
+
+.chat-skill-inline-option span {
+  display: block;
+  max-width: 8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .chat-skill-inline-option:hover {
@@ -1584,27 +1610,51 @@ textarea {
   color: var(--text-primary);
 }
 
+.chat-skill-more-button.has-overflow-selection {
+  color: hsl(var(--primary));
+}
+
+.chat-skill-more-button.has-overflow-selection:hover,
+.chat-skill-more-button.has-overflow-selection[aria-expanded="true"] {
+  color: hsl(var(--primary));
+}
+
+.chat-skill-more-button svg {
+  transition: transform 0.2s ease;
+}
+
+.chat-skill-more-button[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.chat-skill-menu-anchor {
+  position: relative;
+  flex-shrink: 0;
+}
+
 .chat-skill-menu {
   position: absolute;
   right: 0;
   bottom: calc(100% + 0.75rem);
   z-index: 60;
   display: flex;
-  width: min(25.3125rem, calc(100vw - 2rem));
-  max-height: min(27rem, calc(100vh - 10rem));
+  width: min(25.375rem, calc(100vw - 2rem));
+  height: 20rem;
+  /* max-height: min(27rem, calc(100vh - 10rem)); */
   flex-direction: column;
   gap: 1rem;
   overflow-y: auto;
   border-radius: 0.75rem;
-  border: 1px solid var(--input-surface-border);
   background: var(--bg-card);
   padding: 1rem 0.5rem;
   box-shadow: var(--shadow-soft-card-strong);
 }
 
 .chat-skill-menu-item {
+  /* Keep the selected row background from changing the title/description alignment. */
   display: flex;
   width: 100%;
+  /* min-height: 2.875rem; */
   cursor: pointer;
   flex-direction: column;
   align-items: flex-start;
@@ -1617,7 +1667,7 @@ textarea {
   color: var(--text-primary);
   font-size: 1rem;
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.35;
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
@@ -1630,6 +1680,21 @@ textarea {
 
 .chat-skill-menu-item.is-selected {
   color: hsl(var(--primary));
+}
+
+.chat-skill-menu-title {
+  display: inline-flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.chat-skill-menu-title span:last-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .chat-skill-menu-radio {
@@ -1658,28 +1723,22 @@ textarea {
 
 .chat-skill-menu-desc {
   display: block;
+  width: 100%;
+  min-width: 0;
   max-width: 100%;
   color: var(--text-muted-text);
   font-size: 0.75rem;
   font-weight: 500;
-  line-height: 1.35;
+  line-height: 1.42;
 }
 
 .chat-input-field-row {
   display: flex;
   width: 100%;
   min-width: 0;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.125rem;
   padding: 0.625rem;
-}
-
-.chat-input-caret-bar {
-  margin-top: 0.125rem;
-  height: 1.25rem;
-  width: 1px;
-  flex-shrink: 0;
-  background: hsl(var(--primary));
 }
 
 .chat-input-textarea {
@@ -1695,7 +1754,7 @@ textarea {
   color: var(--text-primary);
   font-size: 1rem;
   font-weight: 500;
-  line-height: 1.45;
+  line-height: 1.375;
   outline: none;
   box-shadow: none;
 }
@@ -1713,6 +1772,7 @@ textarea {
 .chat-input-send-button {
   height: 2.5rem;
   width: 5.9375rem;
+  align-self: flex-end;
   flex-shrink: 0;
   border-radius: 0.75rem;
   padding: 0.625rem 0.75rem;
@@ -1728,6 +1788,16 @@ textarea {
 
   .chat-input-skill-row {
     align-items: flex-start;
+  }
+
+  .chat-input-skill-options {
+    flex-wrap: wrap;
+    gap: 0.625rem 0.875rem;
+    overflow: visible;
+  }
+
+  .chat-skill-inline-option span {
+    max-width: 9rem;
   }
 
   .chat-skill-menu {

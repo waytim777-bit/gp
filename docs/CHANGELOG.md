@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 > For user-friendly release highlights, see the [GitHub Releases](https://github.com/ZhuLinsen/daily_stock_analysis/releases) page.
 
 ## [Unreleased]
+- [改进] Web 首页股票分析输入框按 Figma 设计稿优化为紧凑工具栏样式，合并积分提示与分析按钮。
+- [改进] Web 侧边栏用户菜单“个人中心”改为打开 HeroUI 弹窗，支持在弹窗内修改昵称、头像和登录密码。
+- [改进] Web 侧边栏用户菜单“使用详情”改为打开 HeroUI 积分使用详情弹窗，并展示余额、累计充值、每日免费积分和交易记录。
+- [改进] Web 侧边栏左下角按 Figma 设计稿新增积分余额、用户头像入口和深浅色切换图标区。
+- [改进] Web 充值弹窗按 Figma 设计稿重做支付方式、收费信息、积分档位和钱包连接区样式。
+- [改进] Web 问股输入区按 Figma 设计稿重做策略栏、输入面板、发送按钮和“更多”策略浮层样式。
 - [改进] Web 我的订阅页推送方式改为 Figma 风格弹窗，并保留邮箱、Webhook 与 Bearer Token 保存能力。
 - [改进] Web 我的订阅页订阅项改为点击打开详情弹窗，在弹窗内执行暂停/恢复和取消订阅操作。
 - [改进] Web 我的订阅页订阅列表按 Figma 设计稿优化为紧凑深色卡片样式。

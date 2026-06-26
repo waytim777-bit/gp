@@ -8,13 +8,11 @@ import { getParsedApiError, type ParsedApiError } from '../api/error';
 import { ApiErrorAlert, Button, EmptyState, InlineAlert } from '../components/common';
 import { ReportSummary } from '../components/report';
 import { useCreditStore } from '../stores/creditStore';
-import { backtestToneBorderClass } from '../utils/backtestDisplay';
 import { formatDateTime } from '../utils/format';
 import type { AnalysisReport } from '../types/analysis';
 import type { PredictionReportListingItem } from '../types/predictionReports';
 import {
   filterItemsByTab,
-  formatCycleVersionLabel,
   type PredictionReportTab,
 } from '../utils/predictionReportListings';
 
@@ -152,7 +150,7 @@ const PredictionReportsPage: React.FC = () => {
           className="flex h-12 w-full cursor-pointer items-center justify-center gap-2.5 rounded-full border-0 bg-[hsl(var(--primary))] px-5 text-base font-bold leading-none text-white transition hover:brightness-105 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60"
           onClick={() => void handlePurchase(item)}
         >
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-cyan">
+          <span className="flex h-6 w-6 items-center justify-center rounded-md bg-white text-cyan">
             <ShoppingBag className="h-4 w-4" />
           </span>
           {`购买（${item.purchaseCredits}积分）`}
@@ -184,7 +182,7 @@ const PredictionReportsPage: React.FC = () => {
             onClick={() => setActiveTab(tab.key)}
             className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
               activeTab === tab.key
-                ? 'bg-[hsl(var(--primary))]/70 text-white'
+                ? 'bg-[hsl(var(--primary))] text-white'
                 : 'bg-default-100 text-secondary-text hover:text-foreground'
             }`}
           >
@@ -212,78 +210,61 @@ const PredictionReportsPage: React.FC = () => {
                   ? '历史周期报告会保留在此，供已购用户回看。'
                   : '本周期暂无可购买的推荐报告，请稍后再来或自行分析生成新版本。'
           }
-          icon={<Share2 className="h-6 w-6" />}
-          action={activeTab === 'published' || activeTab === 'purchasable' ? (
-            <Button variant="secondary" onClick={() => navigate('/')}>
-              前往首页
-            </Button>
-          ) : undefined}
+          icon={<img src={new URL('../assets/report-empty.png',import.meta.url).href} className='w-35 h-[auto]' />}
+          // action={activeTab === 'published' || activeTab === 'purchasable' ? (
+          //   <Button variant="secondary" onClick={() => navigate('/')}>
+          //     前往首页
+          //   </Button>
+          // ) : undefined}
         />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,460px),1fr))] gap-5">
           {visibleItems.map((item) => {
             const actionButton = renderActionButton(item);
 
             return (
-              <Card key={item.id} className="border border-default-200 bg-surface/80 p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <div className="text-lg font-semibold text-foreground">{item.name}</div>
-                    <div className="mt-1 text-xs text-muted-text font-mono">{item.code}</div>
-                  </div>
-                  <div className="flex flex-col items-end gap-1">
-                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
-                      {formatCycleVersionLabel(item.cycleVersion)}
-                    </span>
-                    {item.isMine ? (
-                      <span className="rounded-full bg-cyan/10 px-2 py-0.5 text-xs text-cyan">我的推荐</span>
-                    ) : null}
-                    {item.hasPurchaseRecord ? (
-                      <span className="rounded-full bg-success/10 px-2 py-0.5 text-xs text-success">已购买</span>
-                    ) : null}
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-xs ${
-                        item.isCurrentCycle !== false
-                          ? 'bg-primary/10 text-primary'
-                          : 'bg-default-100 text-default-500'
-                      }`}
-                    >
-                      {item.isCurrentCycle !== false ? '本周期' : '已过期'}
-                    </span>
-                  </div>
-                </div>
+              <Card
+                key={item.id}
+                className={`flex flex-col rounded-xl border-0 bg-surface p-5 shadow-none ${
+                  actionButton ? 'min-h-[228px]' : 'min-h-[104px]'
+                }`}
+              >
+                <div className={`flex flex-1 flex-col ${actionButton ? 'justify-between gap-6' : 'gap-3'}`}>
+                  <div className="flex flex-col gap-3">
+                    <div className="flex min-w-0 items-center justify-between gap-4">
+                      <div className="flex min-w-0 items-center gap-2">
+                        <h3 className="truncate text-xl font-bold leading-none text-foreground">{item.name}</h3>
+                        <span className="rounded bg-default-100 px-2 py-1 text-xs font-medium leading-none text-foreground">
+                          {item.code}
+                        </span>
+                      </div>
+                      <span className="shrink-0 text-sm font-bold leading-none text-[hsl(var(--primary))]">
+                        {item.backtestPreview?.label || '未回测'}
+                      </span>
+                    </div>
 
-                <div className="mt-3 space-y-1 text-sm text-secondary-text">
-                  <div>推荐者：{item.sellerUsername}</div>
-                  <div>周期锚点：{formatCycleAnchorLabel(item)}</div>
-                  <div>购买次数：{item.purchaseCount ?? 0}</div>
-                  {!item.canViewFull && item.preview.analysisSummary ? (
-                    <p className="line-clamp-3 text-default-600">{item.preview.analysisSummary}</p>
+                    <div className="grid items-center gap-3 text-sm leading-none text-muted-text sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+                      <div className="min-w-0 truncate">分享者:{item.sellerUsername}</div>
+                      <div className="min-w-0 truncate">周期锚点:{formatCycleAnchorLabel(item)}</div>
+                      <button
+                        type="button"
+                        aria-busy={likingId === item.id || undefined}
+                        disabled={likingId === item.id}
+                        className={`flex shrink-0 items-center justify-end gap-1 px-2 py-0 text-sm leading-none transition disabled:pointer-events-none disabled:opacity-60 ${
+                          item.liked ? 'text-[hsl(var(--primary))]' : 'text-muted-text'
+                        }`}
+                        onClick={() => void handleLike(item)}
+                      >
+                        <ThumbsUp className={`h-5 w-5 ${item.liked ? 'fill-current' : ''}`} />
+                        {`点赞(${item.likeCount})`}
+                      </button>
+                    </div>
+                  </div>
+                  {actionButton ? (
+                    <div className="w-full">
+                      {actionButton}
+                    </div>
                   ) : null}
-                </div>
-
-                <div
-                  className={`mt-3 rounded-md border px-2.5 py-1.5 text-xs ${backtestToneBorderClass(item.backtestPreview?.tone)}`}
-                >
-                  <span className="font-medium text-foreground">
-                    {item.backtestPreview?.label || '未回测'}
-                  </span>
-                </div>
-
-                <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                  <Button
-                    size="xsm"
-                    variant="ghost"
-                    isLoading={likingId === item.id}
-                    className={item.liked ? 'text-[hsl(var(--primary))]' : 'text-secondary-text'}
-                    onClick={() => void handleLike(item)}
-                  >
-                    <ThumbsUp className={`h-4 w-4 ${item.liked ? 'fill-current' : ''}`} />
-                    {`点赞(${item.likeCount})`}
-                  </Button>
-                  <div className="min-w-[160px] flex-1 sm:flex-none">
-                    {actionButton}
-                  </div>
                 </div>
               </Card>
             );

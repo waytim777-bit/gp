@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { ChevronDown } from 'lucide-react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { cn } from '../utils/cn';
@@ -45,7 +46,6 @@ const ChatPage: React.FC = () => {
   const [input, setInput] = useState('');
   const [skills, setSkills] = useState<SkillInfo[]>([]);
   const [selectedSkill, setSelectedSkill] = useState<string>('');
-  const [showSkillDesc, setShowSkillDesc] = useState<string | null>(null);
   const [showSkillMenu, setShowSkillMenu] = useState(false);
   const [openSessionMenuId, setOpenSessionMenuId] = useState<string | null>(null);
   const [expandedThinking, setExpandedThinking] = useState<Set<string>>(new Set());
@@ -193,6 +193,17 @@ const ChatPage: React.FC = () => {
 
   const availableSkillIds = new Set(skills.map((skill) => skill.id));
   const quickQuestions = QUICK_QUESTIONS.filter((question) => availableSkillIds.size === 0 || availableSkillIds.has(question.skill));
+  const inlineSkills = skills.slice(0, 5);
+  const skillMenuOptions = [
+    { id: '', name: '通用分析', description: '' },
+    ...skills,
+  ];
+  // If the selected skill is hidden from the inline row, surface it in the "more" trigger.
+  const inlineSkillIds = new Set(['', ...inlineSkills.map((skill) => skill.id)]);
+  const selectedOverflowSkill = skills.find(
+    (skill) => skill.id === selectedSkill && !inlineSkillIds.has(skill.id)
+  );
+
   useEffect(() => {
     if (!showSkillMenu) return undefined;
 
@@ -1046,82 +1057,114 @@ const ChatPage: React.FC = () => {
                   className="rounded-xl px-3 py-2 text-xs shadow-none"
                 />
               ) : null}
-            {skills.length > 0 && (
-              <div className="flex flex-wrap items-start gap-x-5 gap-y-2">
-                <span className="text-xs text-muted-text font-medium uppercase tracking-wider flex-shrink-0 mt-1">
-                  策略
-                </span>
-                <label className="flex items-center gap-1.5 text-sm cursor-pointer group mt-0.5">
-                  <input
-                    type="radio"
-                    name="skill"
-                    value=""
-                    checked={selectedSkill === ''}
-                    onChange={() => setSelectedSkill('')}
-                    className="chat-skill-radio"
-                  />
-                  <span
-                    className={`transition-colors text-sm ${selectedSkill === '' ? 'text-foreground font-medium' : 'text-secondary-text group-hover:text-foreground'}`}
-                  >
-                    通用分析
-                  </span>
-                </label>
-                {skills.map((s) => (
-                  <label
-                    key={s.id}
-                    className="flex items-center gap-1.5 cursor-pointer group relative mt-0.5"
-                    onMouseEnter={() => setShowSkillDesc(s.id)}
-                    onMouseLeave={() => setShowSkillDesc(null)}
-                  >
-                    <input
-                      type="radio"
-                      name="skill"
-                      value={s.id}
-                      checked={selectedSkill === s.id}
-                      onChange={() => setSelectedSkill(s.id)}
-                      className="chat-skill-radio"
-                    />
-                    <span
-                      className={`transition-colors text-sm ${selectedSkill === s.id ? 'text-foreground font-medium' : 'text-secondary-text group-hover:text-foreground'}`}
-                    >
-                      {s.name}
-                    </span>
-                    {showSkillDesc === s.id && s.description && (
-                      <div className="skill-desc-tooltip">
-                        <p className="skill-title">{s.name}</p>
-                        <p>{s.description}</p>
-                      </div>
-                    )}
-                  </label>
-                ))}
-              </div>
-            )}
+              <div className="chat-input-panel">
+                {skills.length > 0 && (
+                  <div className="chat-input-skill-row">
+                    <div className="chat-input-skill-options">
+                      <span className="chat-input-skill-label">
+                        策略
+                      </span>
+                      <label className="chat-skill-inline-option">
+                        <input
+                          type="radio"
+                          name="skill"
+                          value=""
+                          checked={selectedSkill === ''}
+                          onChange={() => setSelectedSkill('')}
+                          className="chat-skill-radio"
+                        />
+                        <span>通用分析</span>
+                      </label>
+                      {inlineSkills.map((s) => (
+                        <label
+                          key={s.id}
+                          className="chat-skill-inline-option"
+                        >
+                          <input
+                            type="radio"
+                            name="skill"
+                            value={s.id}
+                            checked={selectedSkill === s.id}
+                            onChange={() => setSelectedSkill(s.id)}
+                            className="chat-skill-radio"
+                          />
+                          <span>{s.name}</span>
+                        </label>
+                      ))}
+                    </div>
 
-              <div className="flex items-end gap-3">
-                <textarea
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder={
-                    followUpInputPlaceholder
-                      ?? '例如：分析 600519 / 茅台现在适合买入吗？ (Enter 发送, Shift+Enter 换行)'
-                  }
-                  disabled={loading}
-                  rows={1}
-                  className="input-surface input-focus-glow flex-1 min-h-[44px] max-h-[200px] rounded-xl border bg-transparent px-4 py-2.5 text-sm transition-all focus:outline-none resize-none disabled:cursor-not-allowed disabled:opacity-60"
-                  style={{ height: 'auto' }}
-                  onInput={(e) => {
-                    const t = e.target as HTMLTextAreaElement;
-                    t.style.height = 'auto';
-                    t.style.height = `${Math.min(t.scrollHeight, 200)}px`;
-                  }}
-                />
+                    <div ref={skillMenuRef} className="chat-skill-menu-anchor">
+                      <button
+                        type="button"
+                        className={cn('chat-skill-more-button', selectedOverflowSkill && 'has-overflow-selection')}
+                        onClick={() => setShowSkillMenu((open) => !open)}
+                        aria-haspopup="listbox"
+                        aria-expanded={showSkillMenu}
+                      >
+                        <span>{selectedOverflowSkill?.name ?? '更多'}</span>
+                        <ChevronDown className="h-4 w-4" aria-hidden="true" />
+                      </button>
+
+                      {showSkillMenu && (
+                        <div className="chat-skill-menu" role="listbox" aria-label="选择分析策略">
+                          {skillMenuOptions.map((skill) => {
+                            const isSelected = selectedSkill === skill.id;
+                            return (
+                              <button
+                                key={skill.id || 'general'}
+                                type="button"
+                                className={cn('chat-skill-menu-item', isSelected && 'is-selected')}
+                                onClick={() => {
+                                  setSelectedSkill(skill.id);
+                                  setShowSkillMenu(false);
+                                }}
+                                role="option"
+                                aria-selected={isSelected}
+                              >
+                                <span className="chat-skill-menu-title">
+                                  <span className={cn('chat-skill-menu-radio', isSelected && 'is-selected')} />
+                                  <span>{skill.name}</span>
+                                </span>
+                                {skill.description ? (
+                                  <span className="chat-skill-menu-desc">
+                                    {skill.description}
+                                  </span>
+                                ) : null}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                <div className="chat-input-field-row">
+                  <textarea
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder={
+                      followUpInputPlaceholder
+                        ?? '例如：分析 600519 / 茅台现在适合买入吗？ (Enter 发送, Shift+Enter 换行)'
+                    }
+                    disabled={loading}
+                    rows={1}
+                    className="chat-input-textarea"
+                    style={{ height: 'auto' }}
+                    onInput={(e) => {
+                      const t = e.target as HTMLTextAreaElement;
+                      t.style.height = 'auto';
+                      t.style.height = `${Math.min(t.scrollHeight, 200)}px`;
+                    }}
+                  />
+                </div>
                 <Button
                   variant="primary"
                   onClick={() => handleSend()}
                   disabled={!input.trim() || loading}
                   isLoading={loading}
-                  className="btn-primary flex-shrink-0"
+                  className="btn-primary chat-input-send-button"
                 >
                   发送
                 </Button>
