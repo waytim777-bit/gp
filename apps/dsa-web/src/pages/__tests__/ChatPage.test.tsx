@@ -358,25 +358,24 @@ describe('ChatPage', () => {
       </MemoryRouter>
     );
 
-    expect(await screen.findByDisplayValue('请深入分析 贵州茅台(600519)')).toBeInTheDocument();
+    expect(await screen.findByPlaceholderText(/基于报告追问 贵州茅台\(600519\)/)).toBeInTheDocument();
+    expect(screen.getByText('正在加载首页分析报告；可直接选择快捷问题或输入追问。')).toBeInTheDocument();
 
-    const sendButton = screen.getByRole('button', { name: /发送|处理中\.\.\./ });
-    expect(sendButton).not.toBeDisabled();
-    expect(screen.getByText('正在加载历史分析上下文；现在可直接发送追问。')).toBeInTheDocument();
-
-    fireEvent.click(sendButton);
+    fireEvent.click(screen.getByRole('button', { name: '估值是否合理？' }));
 
     await waitFor(() => {
       expect(mockStartStream).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: '请深入分析 贵州茅台(600519)',
-          context: {
+          message: expect.stringContaining('估值'),
+          context: expect.objectContaining({
             stock_code: '600519',
             stock_name: '贵州茅台',
-          },
+            record_id: 1,
+            chat_mode: 'report_interpret',
+          }),
         }),
         expect.objectContaining({
-          skillName: '趋势分析',
+          skillName: '报告解读',
         }),
       );
     });
@@ -404,10 +403,10 @@ describe('ChatPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.queryByText('正在加载历史分析上下文；现在可直接发送追问。')).not.toBeInTheDocument();
+      expect(screen.queryByText('正在加载首页分析报告；可直接选择快捷问题或输入追问。')).not.toBeInTheDocument();
     });
 
-    fireEvent.change(screen.getByPlaceholderText(/分析 600519/), {
+    fireEvent.change(screen.getByPlaceholderText(/基于报告追问/), {
       target: { value: '继续分析成交量' },
     });
     fireEvent.click(screen.getByRole('button', { name: '发送' }));
@@ -416,10 +415,14 @@ describe('ChatPage', () => {
       expect(mockStartStream).toHaveBeenLastCalledWith(
         expect.objectContaining({
           message: '继续分析成交量',
-          context: undefined,
+          context: expect.objectContaining({
+            stock_code: '600519',
+            record_id: 1,
+            chat_mode: 'report_interpret',
+          }),
         }),
         expect.objectContaining({
-          skillName: '趋势分析',
+          skillName: '报告解读',
         }),
       );
     });
@@ -454,22 +457,23 @@ describe('ChatPage', () => {
       </MemoryRouter>
     );
 
-    expect(await screen.findByDisplayValue('请深入分析 贵州茅台(600519)')).toBeInTheDocument();
+    expect(await screen.findByPlaceholderText(/基于报告追问 贵州茅台\(600519\)/)).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(screen.queryByText('正在加载历史分析上下文；现在可直接发送追问。')).not.toBeInTheDocument();
+      expect(screen.queryByText('正在加载首页分析报告；可直接选择快捷问题或输入追问。')).not.toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: '发送' }));
+    fireEvent.click(screen.getByRole('button', { name: '估值是否合理？' }));
 
     await waitFor(() => {
       expect(mockStartStream).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: '请深入分析 贵州茅台(600519)',
+          message: expect.stringContaining('估值'),
           context: expect.objectContaining({
             stock_code: '600519',
             stock_name: '贵州茅台',
             record_id: 1,
+            chat_mode: 'report_interpret',
             previous_price: 1523.6,
             previous_change_pct: 1.8,
             previous_strategy: expect.objectContaining({
@@ -478,7 +482,7 @@ describe('ChatPage', () => {
           }),
         }),
         expect.objectContaining({
-          skillName: '趋势分析',
+          skillName: '报告解读',
         }),
       );
     });
@@ -491,18 +495,22 @@ describe('ChatPage', () => {
       </MemoryRouter>
     );
 
-    expect(await screen.findByDisplayValue('请深入分析 AAPL')).toBeInTheDocument();
+    expect(await screen.findByPlaceholderText(/分析 600519/)).toBeInTheDocument();
 
+    fireEvent.change(screen.getByPlaceholderText(/分析 600519/), {
+      target: { value: '分析 AAPL 趋势' },
+    });
     fireEvent.click(screen.getByRole('button', { name: '发送' }));
 
     await waitFor(() => {
       expect(mockStartStream).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: '请深入分析 AAPL',
-          context: {
+          message: '分析 AAPL 趋势',
+          context: expect.objectContaining({
             stock_code: 'AAPL',
             stock_name: null,
-          },
+            chat_mode: 'standard',
+          }),
         }),
         expect.objectContaining({
           skillName: '趋势分析',
@@ -541,12 +549,12 @@ describe('ChatPage', () => {
 
     render(<RouterProvider router={router} />);
 
-    expect(await screen.findByDisplayValue('请深入分析 贵州茅台(600519)')).toBeInTheDocument();
-    expect(screen.getByText('正在加载历史分析上下文；现在可直接发送追问。')).toBeInTheDocument();
+    expect(await screen.findByPlaceholderText(/基于报告追问 贵州茅台\(600519\)/)).toBeInTheDocument();
+    expect(screen.getByText('正在加载首页分析报告；可直接选择快捷问题或输入追问。')).toBeInTheDocument();
 
     await router.navigate('/chat?stock=AAPL&name=Apple&recordId=2');
 
-    expect(await screen.findByDisplayValue('请深入分析 Apple(AAPL)')).toBeInTheDocument();
+    expect(await screen.findByPlaceholderText(/基于报告追问 Apple\(AAPL\)/)).toBeInTheDocument();
 
     firstDeferred.resolve({
       meta: {
@@ -593,18 +601,20 @@ describe('ChatPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.queryByText('正在加载历史分析上下文；现在可直接发送追问。')).not.toBeInTheDocument();
+      expect(screen.queryByText('正在加载首页分析报告；可直接选择快捷问题或输入追问。')).not.toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: '发送' }));
+    fireEvent.click(screen.getByRole('button', { name: '主要风险有哪些？' }));
 
     await waitFor(() => {
       expect(mockStartStream).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: '请深入分析 Apple(AAPL)',
+          message: expect.stringContaining('风险'),
           context: expect.objectContaining({
             stock_code: 'AAPL',
             stock_name: 'Apple',
+            record_id: 2,
+            chat_mode: 'report_interpret',
             previous_price: 211.5,
             previous_change_pct: 2.4,
             previous_strategy: expect.objectContaining({
@@ -613,7 +623,7 @@ describe('ChatPage', () => {
           }),
         }),
         expect.objectContaining({
-          skillName: '趋势分析',
+          skillName: '报告解读',
         }),
       );
     });

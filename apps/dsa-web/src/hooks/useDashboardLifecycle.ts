@@ -6,6 +6,7 @@ type UseDashboardLifecycleOptions = {
   loadInitialHistory: () => Promise<void>;
   refreshHistory: (silent?: boolean) => Promise<void>;
   selectLatestHistoryItem?: () => Promise<void>;
+  handleAnalysisTaskCompleted?: (task: TaskInfo) => Promise<void>;
   syncTaskCreated: (task: TaskInfo) => void;
   syncTaskUpdated: (task: TaskInfo) => void;
   syncTaskFailed: (task: TaskInfo) => void;
@@ -17,6 +18,7 @@ export function useDashboardLifecycle({
   loadInitialHistory,
   refreshHistory,
   selectLatestHistoryItem,
+  handleAnalysisTaskCompleted,
   syncTaskCreated,
   syncTaskUpdated,
   syncTaskFailed,
@@ -82,7 +84,11 @@ export function useDashboardLifecycle({
     onTaskProgress: syncTaskUpdated,
     onTaskCompleted: (task) => {
       syncTaskUpdated(task);
-      void refreshHistory(true).then(() => selectLatestHistoryItem?.());
+      if (handleAnalysisTaskCompleted) {
+        void handleAnalysisTaskCompleted(task);
+      } else {
+        void refreshHistory(true).then(() => selectLatestHistoryItem?.());
+      }
       scheduleTaskRemoval(task.taskId, 2_000);
     },
     onTaskFailed: (task) => {

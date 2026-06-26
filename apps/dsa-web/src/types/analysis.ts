@@ -13,10 +13,23 @@ export interface AnalysisRequest {
   reportType?: 'simple' | 'detailed' | 'full' | 'brief';
   forceRefresh?: boolean;
   asyncMode?: boolean;
+  analysisMode?: 'full' | 'refresh_intel';
   stockName?: string;
   originalQuery?: string;
   selectionSource?: 'manual' | 'autocomplete' | 'import' | 'image';
   notify?: boolean;
+}
+
+export interface CycleReportLookup {
+  exists: boolean;
+  stockCode: string;
+  stockName?: string;
+  reportType: string;
+  historyId?: number;
+  sharedRunId?: number;
+  version?: number;
+  lastAnalyzedAt?: string;
+  predictionCycle: PredictionCycleMeta;
 }
 
 // ============ Report Types ============
@@ -741,6 +754,7 @@ export interface HistoryItem {
   reportType?: string;
   sentimentScore?: number;
   operationAdvice?: string;
+  cycleVersion?: number;
   createdAt: string;
 }
 

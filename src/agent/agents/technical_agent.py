@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 class TechnicalAgent(BaseAgent):
     agent_name = "technical"
-    max_steps = 6
+    max_steps = 10
     tool_names = [
         "get_realtime_quote",
         "get_daily_history",

@@ -13,8 +13,6 @@ interface HistoryListProps {
   hasMore: boolean;
   selectedId?: number;  // 当前选中的历史记录 ID
   isDeleting?: boolean;
-  isSharing?: boolean;
-  onShareSelected?: () => void;
   onItemClick: (recordId: number) => void;  // 点击记录的回调
   onLoadMore: () => void;
   onDeleteSelected: () => void;
@@ -32,8 +30,6 @@ export const HistoryList: React.FC<HistoryListProps> = ({
   hasMore,
   selectedId,
   isDeleting = false,
-  isSharing = false,
-  onShareSelected,
   onItemClick,
   onLoadMore,
   onDeleteSelected,
@@ -114,6 +110,36 @@ export const HistoryList: React.FC<HistoryListProps> = ({
               ) : undefined
             }
           />
+
+          {items.length > 0 && (
+            <div className="flex items-center gap-2">
+              <Checkbox
+                isSelected={allVisibleSelected}
+                isIndeterminate={someVisibleSelected}
+                isDisabled={isDeleting}
+                onChange={onToggleSelectAll}
+                aria-label="全选当前已加载历史记录"
+                className="[&_[data-slot='checkbox-default-indicator--checkmark']]:size-4 [&_[data-slot='checkbox-default-indicator--indeterminate']]:size-4"
+              >
+                <Checkbox.Control className="size-5 rounded-md before:rounded-md">
+                  <Checkbox.Indicator />
+                </Checkbox.Control>
+                <Checkbox.Content>
+                  <span className="text-[11px] text-default-500 select-none">全选当前</span>
+                </Checkbox.Content>
+              </Checkbox>
+              <Button
+                variant="danger-subtle"
+                size="xsm"
+                onClick={onDeleteSelected}
+                disabled={selectedCount === 0 || isDeleting}
+                isLoading={isDeleting}
+                className="history-batch-delete-button disabled:!border-transparent disabled:!bg-transparent"
+              >
+                {isDeleting ? '删除中' : '删除'}
+              </Button>
+            </div>
+          )}
         </div>
 
         {isLoading ? (

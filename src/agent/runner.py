@@ -25,6 +25,7 @@ from typing import Any, Callable, Dict, List, Optional
 
 from src.agent.llm_adapter import LLMToolAdapter
 from src.agent.tools.registry import ToolRegistry
+from src.config import AGENT_MAX_STEPS_DEFAULT
 from src.storage import persist_llm_usage as _persist_usage
 
 logger = logging.getLogger(__name__)
@@ -596,7 +597,10 @@ def run_agent_loop(
         total_tokens=total_tokens,
         provider=provider_used,
         models_used=models_used,
-        error=f"Agent exceeded max steps ({max_steps}). Try increasing AGENT_MAX_STEPS if analysis tasks are complex.",
+        error=(
+            f"Agent exceeded max steps ({max_steps}). "
+            f"Set AGENT_MAX_STEPS above {AGENT_MAX_STEPS_DEFAULT} to raise all sub-agents."
+        ),
         messages=messages,
     )
 

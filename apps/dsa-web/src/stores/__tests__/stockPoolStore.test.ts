@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { analysisApi, DuplicateTaskError } from '../../api/analysis';
+import { predictionReportsApi } from '../../api/predictionReports';
 import { historyApi } from '../../api/history';
 import { useStockPoolStore } from '../stockPoolStore';
 
@@ -17,9 +18,62 @@ vi.mock('../../api/analysis', async () => {
     ...actual,
     analysisApi: {
       analyzeAsync: vi.fn(),
+      lookupCycleReport: vi.fn(),
     },
   };
 });
+
+vi.mock('../../api/predictionReports', () => ({
+  predictionReportsApi: {
+    searchByCode: vi.fn(),
+    purchase: vi.fn(),
+  },
+}));
+
+const cycleLookupMiss = {
+  exists: false,
+  stockCode: '600519',
+  reportType: 'detailed',
+  predictionCycle: {
+    cycleAnchorDate: '2026-03-18',
+    predictionTargetDate: '2026-03-21',
+    dataAsOfDate: '2026-03-18',
+  },
+};
+
+const emptyMarketSearch = {
+  stockCode: '600519',
+  stockName: '贵州茅台',
+  items: [],
+  total: 0,
+  pricing: { purchaseCredits: 100, sellerRewardCredits: 90, platformCredits: 10 },
+  predictionCycle: cycleLookupMiss.predictionCycle,
+  cycleReport: { exists: false },
+  canRefreshIntel: false,
+};
+
+const marketListingItem = {
+  id: 11,
+  sellerUserId: 2,
+  sellerUsername: 'seller1',
+  code: '600519',
+  name: '贵州茅台',
+  market: 'cn',
+  cycleAnchorDate: '2026-03-18',
+  reportType: 'detailed',
+  purchaseCredits: 100,
+  sellerRewardCredits: 90,
+  isMine: false,
+  purchased: false,
+  canViewFull: false,
+  canPurchase: true,
+  isCurrentCycle: true,
+  hasPurchaseRecord: false,
+  preview: { analysisSummary: '预览摘要' },
+  likeCount: 0,
+  liked: false,
+  purchaseCount: 2,
+};
 
 const historyItem = {
   id: 1,
@@ -61,6 +115,7 @@ function createDeferred<T>() {
 describe('stockPoolStore', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(predictionReportsApi.searchByCode).mockResolvedValue(emptyMarketSearch);
     useStockPoolStore.getState().resetDashboardState();
   });
 
@@ -171,6 +226,10 @@ describe('stockPoolStore', () => {
   });
 
   it('surfaces duplicate task errors without replacing the dashboard error state', async () => {
+    vi.mocked(predictionReportsApi.searchByCode).mockResolvedValue({
+      ...emptyMarketSearch,
+      stockCode: '600519',
+    });
     vi.mocked(analysisApi.analyzeAsync).mockRejectedValue(
       new DuplicateTaskError('600519', 'task-1', '股票 600519 正在分析中'),
     );
@@ -196,6 +255,11 @@ describe('stockPoolStore', () => {
   });
 
   it('accepts HK suffix codes from autocomplete without local validation errors', async () => {
+    vi.mocked(predictionReportsApi.searchByCode).mockResolvedValue({
+      ...emptyMarketSearch,
+      stockCode: '00700.HK',
+      stockName: '腾讯控股',
+    });
     vi.mocked(analysisApi.analyzeAsync).mockResolvedValue({
       taskId: 'task-hk-1',
       stockCode: '00700.HK',
@@ -213,14 +277,54 @@ describe('stockPoolStore', () => {
     const state = useStockPoolStore.getState();
     expect(state.inputError).toBeUndefined();
     expect(state.isAnalyzing).toBe(false);
-    expect(analysisApi.analyzeAsync).toHaveBeenCalledWith({
-      stockCode: '00700.HK',
-      reportType: 'detailed',
-      stockName: '腾讯控股',
-      originalQuery: '00700',
-      selectionSource: 'autocomplete',
-      notify: true,
+    expect(analysisApi.analyzeAsync).toHaveBeenCalledWith(
+      expect.objectContaining({
+        stockCode: '00700.HK',
+        reportType: 'detailed',
+        stockName: '腾讯控股',
+        originalQuery: '00700',
+        selectionSource: 'autocomplete',
+        analysisMode: 'full',
+      }),
+    );
+  });
+
+  it('shows current-cycle market listings without auto-loading canonical report', async () => {
+    vi.mocked(predictionReportsApi.searchByCode).mockResolvedValue({
+      ...emptyMarketSearch,
+      items: [marketListingItem, { ...marketListingItem, id: 12, sellerUsername: 'seller2' }],
+      total: 2,
+      canRefreshIntel: true,
+      cycleReport: { exists: true, historyId: 1, version: 2 },
     });
+
+    useStockPoolStore.getState().setQuery('600519');
+    await useStockPoolStore.getState().submitAnalysis();
+
+    const state = useStockPoolStore.getState();
+    expect(analysisApi.analyzeAsync).not.toHaveBeenCalled();
+    expect(historyApi.getDetail).not.toHaveBeenCalled();
+    expect(state.marketListings).toHaveLength(2);
+    expect(state.selectedReport).toBeNull();
+    expect(state.canRefreshIntel).toBe(true);
+    expect(state.searchStockCode).toBe('600519');
+  });
+
+  it('loads own cycle report when no marketplace listings exist', async () => {
+    vi.mocked(predictionReportsApi.searchByCode).mockResolvedValue({
+      ...emptyMarketSearch,
+      cycleReport: { exists: true, historyId: 1, version: 2 },
+      canRefreshIntel: true,
+    });
+    vi.mocked(historyApi.getDetail).mockResolvedValue(historyReport);
+
+    useStockPoolStore.getState().setQuery('600519');
+    await useStockPoolStore.getState().submitAnalysis();
+
+    const state = useStockPoolStore.getState();
+    expect(analysisApi.analyzeAsync).not.toHaveBeenCalled();
+    expect(state.selectedReport?.meta.stockCode).toBe('600519');
+    expect(state.canRefreshIntel).toBe(true);
   });
 
   it('merges newly discovered history items during silent refresh', async () => {

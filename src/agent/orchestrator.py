@@ -759,9 +759,18 @@ class AgentOrchestrator:
 
     def _build_context(self, task: str, context: Optional[Dict[str, Any]] = None) -> AgentContext:
         """Seed an ``AgentContext`` from the user request."""
+        from src.agent.report_context_loader import (
+            apply_prefetch_to_agent_data,
+            hydrate_context_from_record,
+        )
+
         ctx = AgentContext(query=task)
 
         if context:
+            context = hydrate_context_from_record(context)
+            from src.services.macro_focus_brief_service import ensure_macro_focus_in_agent_context
+
+            context = ensure_macro_focus_in_agent_context(context)
             ctx.stock_code = context.get("stock_code", "")
             ctx.stock_name = context.get("stock_name", "")
             requested_skills = context.get("skills")
@@ -770,13 +779,10 @@ class AgentOrchestrator:
             ctx.meta["skills_requested"] = requested_skills or []
             ctx.meta["strategies_requested"] = requested_skills or []
             ctx.meta["report_language"] = normalize_report_language(context.get("report_language", "zh"))
+            if context.get("record_id") is not None:
+                ctx.meta["record_id"] = context.get("record_id")
 
-            # Pre-populate data fields that the caller already has
-            for data_key in ("realtime_quote", "daily_history", "chip_distribution",
-                             "trend_result", "news_context", "fundamental_context",
-                             "intel_comprehensive", "capital_flow", "stock_news"):
-                if context.get(data_key):
-                    ctx.set_data(data_key, context[data_key])
+            apply_prefetch_to_agent_data(ctx.data, context)
 
         # Try to extract stock code from the query text
         if not ctx.stock_code:

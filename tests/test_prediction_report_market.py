@@ -136,6 +136,95 @@ class PredictionReportMarketTestCase(unittest.TestCase):
         self.assertFalse(payload["items"][0]["purchased"])
 
     @patch("src.services.prediction_report_market_service.resolve_prediction_cycle")
+    def test_listing_includes_analyzed_at_and_purchase_count(self, mock_resolve) -> None:
+        mock_resolve.return_value = self.cycle
+
+        listing = self.service.share_report(
+            owner_user_id=self.seller_id,
+            history_id=self.history_id,
+        )
+        before = self.service.list_reports(viewer_user_id=self.buyer_id)
+        item = before["items"][0]
+        self.assertIsNotNone(item.get("analyzed_at"))
+        self.assertEqual(item.get("purchase_count"), 0)
+
+        self.service.purchase_report(
+            buyer_user_id=self.buyer_id,
+            listing_id=int(listing["id"]),
+        )
+        after = self.service.list_reports(viewer_user_id=self.buyer_id)
+        self.assertEqual(after["items"][0]["purchase_count"], 1)
+
+    @patch("src.services.prediction_report_market_service.resolve_prediction_cycle")
+    def test_search_current_cycle_matches_suffix_input_to_base_code_listing(
+        self,
+        mock_resolve,
+    ) -> None:
+        mock_resolve.return_value = self.cycle
+        db = DatabaseManager.get_instance()
+        with db.session_scope() as session:
+            history = AnalysisHistory(
+                query_id="gz-query",
+                owner_user_id=self.seller_id,
+                code="603043.SH",
+                name="广州酒家",
+                report_type="detailed",
+                sentiment_score=38,
+                operation_advice="减仓",
+                trend_prediction="震荡",
+                analysis_summary="gz summary",
+                raw_result='{"current_price": 7}',
+                news_content="https://news.example/gz",
+                created_at=datetime.now(),
+                shared_run_id=self.shared_run_id,
+            )
+            session.add(history)
+            session.flush()
+            gz_history_id = int(history.id)
+
+        db.create_prediction_report_listing(
+            seller_user_id=self.seller_id,
+            analysis_history_id=gz_history_id,
+            shared_run_id=self.shared_run_id,
+            code="603043.SH",
+            name="广州酒家",
+            market="cn",
+            cycle_anchor_date=self.cycle.cycle_anchor_date,
+            report_type="detailed",
+            purchase_credits=100,
+            seller_reward_credits=90,
+        )
+
+        payload = self.service.search_current_cycle(
+            code="603043",
+            viewer_user_id=self.buyer_id,
+            report_type="detailed",
+        )
+        self.assertEqual(payload["total"], 1)
+        self.assertEqual(payload["items"][0]["code"], "603043.SH")
+        self.assertFalse(payload["cycle_report"]["exists"])
+
+    @patch("src.services.prediction_report_market_service.resolve_prediction_cycle")
+    def test_search_current_cycle_returns_all_listings_for_code(
+        self,
+        mock_resolve,
+    ) -> None:
+        mock_resolve.return_value = self.cycle
+
+        listing = self.service.share_report(
+            owner_user_id=self.seller_id,
+            history_id=self.history_id,
+        )
+
+        payload = self.service.search_current_cycle(
+            code="600519",
+            viewer_user_id=self.buyer_id,
+        )
+        self.assertEqual(payload["total"], 1)
+        self.assertEqual(payload["items"][0]["id"], listing["id"])
+        self.assertFalse(payload["can_refresh_intel"])
+
+    @patch("src.services.prediction_report_market_service.resolve_prediction_cycle")
     def test_purchase_transfers_credits_and_clones_report(self, mock_resolve) -> None:
         mock_resolve.return_value = self.cycle
 
@@ -195,6 +284,14 @@ class PredictionReportMarketTestCase(unittest.TestCase):
             owner_user_id=self.buyer_id,
         )
         self.assertTrue(items)
+
+        # Purchased report clone cannot be recommended again (no reselling).
+        with self.assertRaises(PredictionReportMarketError) as ctx:
+            self.service.share_report(
+                owner_user_id=self.buyer_id,
+                history_id=int(result["buyer_history_id"]),
+            )
+        self.assertEqual(ctx.exception.code, "not_canonical")
 
     @patch("src.services.prediction_report_market_service.resolve_prediction_cycle")
     def test_purchase_rejects_insufficient_credits(self, mock_resolve) -> None:
@@ -266,6 +363,54 @@ class PredictionReportMarketTestCase(unittest.TestCase):
         unliked = self.service.like_report(listing_id=listing_id, user_id=self.buyer_id)
         self.assertFalse(unliked["liked"])
         self.assertEqual(unliked["like_count"], 0)
+
+    @patch("src.services.prediction_report_market_service.resolve_prediction_cycle")
+    def test_list_reports_returns_all_active_listings_per_stock(self, mock_resolve) -> None:
+        mock_resolve.return_value = self.cycle
+
+        first = self.service.share_report(
+            owner_user_id=self.seller_id,
+            history_id=self.history_id,
+        )
+        db = DatabaseManager.get_instance()
+        with db.session_scope() as session:
+            second_history = AnalysisHistory(
+                query_id="second-query",
+                owner_user_id=self.seller_id,
+                code="600519",
+                name="贵州茅台",
+                report_type="detailed",
+                sentiment_score=80,
+                operation_advice="买入",
+                trend_prediction="上涨",
+                analysis_summary="second listing summary",
+                raw_result='{"current_price": 1800}',
+                news_content="https://news.example/second",
+                created_at=datetime.now(),
+                shared_run_id=self.shared_run_id,
+            )
+            session.add(second_history)
+            session.flush()
+            second_history_id = int(second_history.id)
+
+        second_listing = db.create_prediction_report_listing(
+            seller_user_id=self.seller_id,
+            analysis_history_id=second_history_id,
+            shared_run_id=self.shared_run_id,
+            code="600519",
+            name="贵州茅台",
+            market="cn",
+            cycle_anchor_date=self.cycle.cycle_anchor_date,
+            report_type="detailed",
+            purchase_credits=100,
+            seller_reward_credits=90,
+        )
+
+        payload = self.service.list_reports(viewer_user_id=self.buyer_id)
+        listing_ids = {item["id"] for item in payload["items"]}
+        self.assertIn(int(first["id"]), listing_ids)
+        self.assertIn(int(second_listing.id), listing_ids)
+        self.assertEqual(len([item for item in payload["items"] if item["code"] == "600519"]), 2)
 
     @patch("src.services.prediction_report_market_service.resolve_prediction_cycle")
     def test_list_marks_current_and_expired_cycles(self, mock_resolve) -> None:

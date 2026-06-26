@@ -53,6 +53,9 @@ class PredictionReportListingItem(BaseModel):
     like_count: int = Field(default=0, alias="likeCount")
     liked: bool = False
     created_at: Optional[str] = Field(default=None, alias="createdAt")
+    analyzed_at: Optional[str] = Field(default=None, alias="analyzedAt")
+    purchase_count: int = Field(default=0, alias="purchaseCount")
+    cycle_version: int = Field(default=1, alias="cycleVersion")
     backtest_preview: Optional[PredictionReportBacktestPreview] = Field(
         default=None,
         alias="backtestPreview",
@@ -73,6 +76,29 @@ class PredictionReportListResponse(BaseModel):
     items: List[PredictionReportListingItem]
     total: int
     pricing: PredictionReportPricing
+
+
+class PredictionReportCycleReportMeta(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    exists: bool = False
+    history_id: Optional[int] = Field(default=None, alias="historyId")
+    version: Optional[int] = None
+    last_analyzed_at: Optional[str] = Field(default=None, alias="lastAnalyzedAt")
+    shared_run_id: Optional[int] = Field(default=None, alias="sharedRunId")
+
+
+class PredictionReportSearchResponse(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    stock_code: str = Field(alias="stockCode")
+    stock_name: Optional[str] = Field(default=None, alias="stockName")
+    items: List[PredictionReportListingItem]
+    total: int
+    pricing: PredictionReportPricing
+    prediction_cycle: Dict[str, Any] = Field(alias="predictionCycle")
+    cycle_report: PredictionReportCycleReportMeta = Field(alias="cycleReport")
+    can_refresh_intel: bool = Field(default=False, alias="canRefreshIntel")
 
 
 class SharePredictionReportRequest(BaseModel):

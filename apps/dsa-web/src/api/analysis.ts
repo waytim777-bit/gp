@@ -6,6 +6,7 @@ import type {
   AnalyzeResponse,
   AnalyzeAsyncResponse,
   AnalysisReport,
+  CycleReportLookup,
   TaskStatus,
   TaskListResponse,
 } from '../types/analysis';
@@ -13,6 +14,25 @@ import type {
 // ============ API Interfaces ============
 
 export const analysisApi = {
+  /**
+   * Lookup whether the current prediction cycle already has a canonical report.
+   */
+  lookupCycleReport: async (params: {
+    stockCode: string;
+    reportType?: AnalysisRequest['reportType'];
+  }): Promise<CycleReportLookup> => {
+    const response = await apiClient.get<Record<string, unknown>>(
+      '/api/v1/analysis/cycle-report',
+      {
+        params: {
+          code: params.stockCode,
+          report_type: params.reportType || 'detailed',
+        },
+      },
+    );
+    return toCamelCase<CycleReportLookup>(response.data);
+  },
+
   /**
    * Trigger stock analysis.
    * @param data Analysis request payload
@@ -28,6 +48,7 @@ export const analysisApi = {
       stock_name: data.stockName,
       original_query: data.originalQuery,
       selection_source: data.selectionSource,
+      ...(data.analysisMode && { analysis_mode: data.analysisMode }),
       ...(data.notify !== undefined && { notify: data.notify }),
     };
 
@@ -61,6 +82,7 @@ export const analysisApi = {
       stock_name: data.stockName,
       original_query: data.originalQuery,
       selection_source: data.selectionSource,
+      ...(data.analysisMode && { analysis_mode: data.analysisMode }),
       ...(data.notify !== undefined && { notify: data.notify }),
     };
 

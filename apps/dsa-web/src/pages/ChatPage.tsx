@@ -16,11 +16,14 @@ import {
 import { downloadSession, formatSessionAsMarkdown } from '../utils/chatExport';
 import type { ChatFollowUpContext } from '../utils/chatFollowUp';
 import {
-  buildFollowUpPrompt,
+  buildFollowUpInputPlaceholder,
+  formatFollowUpDisplayName,
   parseFollowUpRecordId,
+  REPORT_FOLLOW_UP_QUICK_QUESTIONS,
   resolveChatFollowUpContext,
   sanitizeFollowUpStockCode,
   sanitizeFollowUpStockName,
+  type ChatMode,
 } from '../utils/chatFollowUp';
 import { isNearBottom } from '../utils/chatScroll';
 import { getReportText } from '../utils/reportLanguage';
@@ -64,7 +67,8 @@ const ChatPage: React.FC = () => {
   const isMountedRef = useRef(true);
   const sendToastTimerRef = useRef<number | null>(null);
   const followUpHydrationTokenRef = useRef(0);
-  const followUpContextRef = useRef<ChatFollowUpContext | null>(null);
+  const [followUpContext, setFollowUpContext] = useState<ChatFollowUpContext | null>(null);
+  const [followUpInputPlaceholder, setFollowUpInputPlaceholder] = useState<string | null>(null);
   const shouldStickToBottomRef = useRef(true);
   const pendingScrollBehaviorRef = useRef<ScrollBehavior>('auto');
 
@@ -235,7 +239,6 @@ const ChatPage: React.FC = () => {
 
   const handleStartNewChat = useCallback(() => {
     followUpContextRef.current = null;
-    setOpenSessionMenuId(null);
     requestScrollToBottom('auto');
     useAgentChatStore.getState().startNewChat();
     setSidebarOpen(false);
@@ -275,11 +278,16 @@ const ChatPage: React.FC = () => {
     }
 
     const hydrationToken = ++followUpHydrationTokenRef.current;
-    setInput(buildFollowUpPrompt(stock, name));
-    followUpContextRef.current = {
+    setInput('');
+    setFollowUpInputPlaceholder(
+      recordId !== undefined ? buildFollowUpInputPlaceholder(stock, name) : null,
+    );
+    setFollowUpContext({
       stock_code: stock,
       stock_name: name,
-    };
+      chat_mode: recordId !== undefined ? 'report_interpret' : 'standard',
+      record_id: recordId,
+    });
     if (recordId !== undefined) {
       setIsFollowUpContextLoading(true);
     }
@@ -291,7 +299,7 @@ const ChatPage: React.FC = () => {
       if (!isMountedRef.current || followUpHydrationTokenRef.current !== hydrationToken) {
         return;
       }
-      followUpContextRef.current = context;
+      setFollowUpContext(context);
     }).finally(() => {
       if (isMountedRef.current && followUpHydrationTokenRef.current === hydrationToken) {
         setIsFollowUpContextLoading(false);
@@ -301,7 +309,11 @@ const ChatPage: React.FC = () => {
   }, [searchParams, setSearchParams]);
 
   const handleSend = useCallback(
-    async (overrideMessage?: string, overrideSkill?: string) => {
+    async (
+      overrideMessage?: string,
+      overrideSkill?: string,
+      overrideChatMode?: ChatMode,
+    ) => {
       const msgText = overrideMessage || input.trim();
       if (!msgText || loading) return;
       const usedSkill = overrideSkill || selectedSkill;
@@ -309,21 +321,31 @@ const ChatPage: React.FC = () => {
         skills.find((s) => s.id === usedSkill)?.name ||
         (usedSkill ? usedSkill : '通用');
 
+      const isReportInterpret =
+        followUpContext?.record_id !== undefined
+        && (overrideChatMode ?? followUpContext.chat_mode ?? 'report_interpret') !== 'incremental';
+
+      const contextPayload = followUpContext
+        ? {
+            ...followUpContext,
+            chat_mode: overrideChatMode ?? followUpContext.chat_mode ?? 'report_interpret',
+          }
+        : undefined;
+
       const payload = {
         message: msgText,
         session_id: sessionId,
-        skills: usedSkill ? [usedSkill] : undefined,
-        context: followUpContextRef.current ?? undefined,
+        skills: isReportInterpret ? undefined : (usedSkill ? [usedSkill] : undefined),
+        context: contextPayload,
       };
-      followUpHydrationTokenRef.current += 1;
-      followUpContextRef.current = null;
-      setIsFollowUpContextLoading(false);
 
       setInput('');
       requestScrollToBottom('smooth');
-      await startStream(payload, { skillName: usedSkillName });
+      await startStream(payload, {
+        skillName: isReportInterpret ? '报告解读' : usedSkillName,
+      });
     },
-    [input, loading, requestScrollToBottom, selectedSkill, skills, sessionId, startStream],
+    [input, loading, requestScrollToBottom, selectedSkill, skills, sessionId, startStream, followUpContext],
   );
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -336,6 +358,19 @@ const ChatPage: React.FC = () => {
   const handleQuickQuestion = (q: (typeof QUICK_QUESTIONS)[0]) => {
     setSelectedSkill(q.skill);
     handleSend(q.label, q.skill);
+  };
+
+  const isReportFollowUp =
+    followUpContext?.record_id !== undefined
+    && followUpContext.chat_mode !== 'incremental';
+
+  const followUpDisplayName = followUpContext
+    ? formatFollowUpDisplayName(followUpContext.stock_code, followUpContext.stock_name)
+    : '';
+
+  const handleFollowUpQuickQuestion = (question: (typeof REPORT_FOLLOW_UP_QUICK_QUESTIONS)[0]) => {
+    const message = question.buildMessage(followUpDisplayName);
+    handleSend(message, '', question.chat_mode);
   };
 
   const showSendFeedback = useCallback((nextToast: { type: 'success' | 'error'; message: string }, durationMs: number) => {
@@ -823,8 +858,12 @@ const ChatPage: React.FC = () => {
             {messages.length === 0 && !loading ? (
               <div className="flex h-full items-center justify-center">
                 <EmptyState
-                  title="开始问股"
-                  description="输入「分析 600519」或「茅台现在能买吗」，AI 将调用实时数据工具为您生成决策报告。"
+                  title={isReportFollowUp ? '基于报告继续追问' : '开始问股'}
+                  description={
+                    isReportFollowUp
+                      ? `将基于首页分析报告解读 ${followUpDisplayName}，不会重复跑完整分析。可选下方快捷问题，或自行输入追问。`
+                      : '输入「分析 600519」或「茅台现在能买吗」，AI 将调用实时数据工具为您生成决策报告。'
+                  }
                   className="max-w-2xl border-dashed bg-card/55"
                   icon={(
                     <svg
@@ -843,15 +882,27 @@ const ChatPage: React.FC = () => {
                   )}
                   action={(
                     <div className="flex max-w-lg flex-wrap justify-center gap-2">
-                      {quickQuestions.map((q, i) => (
-                        <button
-                          key={i}
-                          onClick={() => handleQuickQuestion(q)}
-                          className="quick-question-btn"
-                        >
-                          {q.label}
-                        </button>
-                      ))}
+                      {isReportFollowUp
+                        ? REPORT_FOLLOW_UP_QUICK_QUESTIONS.map((question) => (
+                            <button
+                              key={question.id}
+                              type="button"
+                              onClick={() => handleFollowUpQuickQuestion(question)}
+                              className="quick-question-btn"
+                            >
+                              {question.label}
+                            </button>
+                          ))
+                        : quickQuestions.map((q, i) => (
+                            <button
+                              key={i}
+                              type="button"
+                              onClick={() => handleQuickQuestion(q)}
+                              className="quick-question-btn"
+                            >
+                              {q.label}
+                            </button>
+                          ))}
                     </div>
                   )}
                 />
@@ -1003,127 +1054,86 @@ const ChatPage: React.FC = () => {
                 <InlineAlert
                   variant="info"
                   title="追问上下文加载中"
-                  message="正在加载历史分析上下文；现在可直接发送追问。"
+                  message="正在加载首页分析报告；可直接选择快捷问题或输入追问。"
                   className="rounded-xl px-3 py-2 text-xs shadow-none"
                 />
               ) : null}
-              <div className="chat-input-panel" ref={skillMenuRef}>
-                <div className="chat-input-skill-row">
-                  {skills.length > 0 ? (
-                    <div className="flex min-w-0 flex-1 items-center gap-3">
-                      <span className="shrink-0 text-xs font-medium text-muted-text">策略</span>
-                      <div className="flex min-w-0 flex-1 items-center gap-4 overflow-hidden">
-                        {inlineSkillOptions.map((option) => {
-                          const isSelected = selectedSkill === option.id;
-                          return (
-                            <label
-                              key={option.id || 'general'}
-                              className="chat-skill-inline-option group"
-                              onMouseEnter={() => setShowSkillDesc(option.id || null)}
-                              onMouseLeave={() => setShowSkillDesc(null)}
-                            >
-                              <input
-                                type="radio"
-                                name="skill"
-                                value={option.id}
-                                checked={isSelected}
-                                onChange={() => setSelectedSkill(option.id)}
-                                className="chat-skill-radio"
-                              />
-                              <span className="truncate">{option.name}</span>
-                              {showSkillDesc === option.id && option.description && (
-                                <div className="skill-desc-tooltip">
-                                  <p className="skill-title">{option.name}</p>
-                                  <p>{option.description}</p>
-                                </div>
-                              )}
-                            </label>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ) : null}
-                  {skills.length > 0 ? (
-                    <div className="relative shrink-0">
-                      <button
-                        type="button"
-                        className="chat-skill-more-button"
-                        onClick={() => setShowSkillMenu((current) => !current)}
-                        aria-expanded={showSkillMenu}
-                        aria-haspopup="listbox"
-                      >
-                        <span>更多</span>
-                        <svg
-                          className={cn('h-4 w-4 transition-transform', showSkillMenu ? 'rotate-180' : '')}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </button>
-                      {showSkillMenu ? (
-                        <div className="chat-skill-menu" role="listbox" aria-label="选择分析策略">
-                          {skillOptions.map((option) => {
-                            const isSelected = selectedSkill === option.id;
-                            return (
-                              <button
-                                key={option.id || 'general-menu'}
-                                type="button"
-                                role="option"
-                                aria-selected={isSelected}
-                                className={cn('chat-skill-menu-item', isSelected && 'is-selected')}
-                                onClick={() => {
-                                  setSelectedSkill(option.id);
-                                  setShowSkillMenu(false);
-                                }}
-                              >
-                                <span className="flex items-center gap-1.5">
-                                  <span className={cn('chat-skill-menu-radio', isSelected && 'is-selected')} />
-                                  <span className="truncate">{option.name}</span>
-                                </span>
-                                {option.description ? (
-                                  <span className="chat-skill-menu-desc">{option.description}</span>
-                                ) : null}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      ) : null}
-                    </div>
-                  ) : null}
-                </div>
-
-                <div className="chat-input-field-row">
-                  <textarea
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder="例如：分析 600519 / 茅台现在适合买入吗？ (Enter 发送, Shift+Enter 换行)"
-                    disabled={loading}
-                    rows={1}
-                    className="chat-input-textarea"
-                    style={{ height: 'auto' }}
-                    onInput={(e) => {
-                      const t = e.target as HTMLTextAreaElement;
-                      t.style.height = 'auto';
-                      t.style.height = `${Math.min(t.scrollHeight, 200)}px`;
-                    }}
+            {skills.length > 0 && (
+              <div className="flex flex-wrap items-start gap-x-5 gap-y-2">
+                <span className="text-xs text-muted-text font-medium uppercase tracking-wider flex-shrink-0 mt-1">
+                  策略
+                </span>
+                <label className="flex items-center gap-1.5 text-sm cursor-pointer group mt-0.5">
+                  <input
+                    type="radio"
+                    name="skill"
+                    value=""
+                    checked={selectedSkill === ''}
+                    onChange={() => setSelectedSkill('')}
+                    className="chat-skill-radio"
                   />
-                </div>
-
-                <div className="flex w-full justify-end">
-                  <Button
-                    variant="primary"
-                    size="md"
-                    onClick={() => handleSend()}
-                    disabled={!input.trim() || loading}
-                    isLoading={loading}
-                    className="chat-input-send-button"
+                  <span
+                    className={`transition-colors text-sm ${selectedSkill === '' ? 'text-foreground font-medium' : 'text-secondary-text group-hover:text-foreground'}`}
                   >
-                    发送
-                  </Button>
-                </div>
+                    通用分析
+                  </span>
+                </label>
+                {skills.map((s) => (
+                  <label
+                    key={s.id}
+                    className="flex items-center gap-1.5 cursor-pointer group relative mt-0.5"
+                    onMouseEnter={() => setShowSkillDesc(s.id)}
+                    onMouseLeave={() => setShowSkillDesc(null)}
+                  >
+                    <input
+                      type="radio"
+                      name="skill"
+                      value={s.id}
+                      checked={selectedSkill === s.id}
+                      onChange={() => setSelectedSkill(s.id)}
+                      className="chat-skill-radio"
+                    />
+                    <span
+                      className={`transition-colors text-sm ${selectedSkill === s.id ? 'text-foreground font-medium' : 'text-secondary-text group-hover:text-foreground'}`}
+                    >
+                      {s.name}
+                    </span>
+                    {showSkillDesc === s.id && s.description && (
+                      <div className="skill-desc-tooltip">
+                        <p className="skill-title">{s.name}</p>
+                        <p>{s.description}</p>
+                      </div>
+                    )}
+                  </label>
+                ))}
+              </div>
+            )}
+
+              <div className="flex items-end gap-3">
+                <textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="例如：分析 600519 / 茅台现在适合买入吗？ (Enter 发送, Shift+Enter 换行)"
+                  disabled={loading}
+                  rows={1}
+                  className="input-surface input-focus-glow flex-1 min-h-[44px] max-h-[200px] rounded-xl border bg-transparent px-4 py-2.5 text-sm transition-all focus:outline-none resize-none disabled:cursor-not-allowed disabled:opacity-60"
+                  style={{ height: 'auto' }}
+                  onInput={(e) => {
+                    const t = e.target as HTMLTextAreaElement;
+                    t.style.height = 'auto';
+                    t.style.height = `${Math.min(t.scrollHeight, 200)}px`;
+                  }}
+                />
+                <Button
+                  variant="primary"
+                  onClick={() => handleSend()}
+                  disabled={!input.trim() || loading}
+                  isLoading={loading}
+                  className="btn-primary flex-shrink-0"
+                >
+                  发送
+                </Button>
               </div>
             </div>
           </div>

@@ -72,6 +72,7 @@ class TaskInfo:
     original_query: Optional[str] = None
     selection_source: Optional[str] = None
     owner_user_id: Optional[int] = None
+    analysis_mode: str = "full"
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert task info into an API-friendly dictionary."""
@@ -90,6 +91,7 @@ class TaskInfo:
             "original_query": self.original_query,
             "selection_source": self.selection_source,
             "owner_user_id": self.owner_user_id,
+            "analysis_mode": self.analysis_mode,
         }
     
     def copy(self) -> 'TaskInfo':
@@ -110,6 +112,7 @@ class TaskInfo:
             original_query=self.original_query,
             selection_source=self.selection_source,
             owner_user_id=self.owner_user_id,
+            analysis_mode=self.analysis_mode,
         )
 
 
@@ -345,6 +348,7 @@ class AnalysisTaskQueue:
         selection_source: Optional[str] = None,
         report_type: str = "detailed",
         force_refresh: bool = False,
+        analysis_mode: str = "full",
         notify: bool = True,
         owner_user_id: Optional[int] = None,
     ) -> Tuple[List[TaskInfo], List[DuplicateTaskError]]:
@@ -388,6 +392,7 @@ class AnalysisTaskQueue:
                     original_query=original_query,
                     selection_source=selection_source,
                     owner_user_id=owner_user_id,
+                    analysis_mode=analysis_mode,
                 )
                 self._tasks[task_id] = task_info
                 self._analyzing_stocks[dedupe_key] = task_id
@@ -401,6 +406,7 @@ class AnalysisTaskQueue:
                         force_refresh,
                         notify,
                         owner_user_id,
+                        analysis_mode,
                     )
                 except Exception:
                     # Roll back the current batch to avoid partial submission.
@@ -554,6 +560,7 @@ class AnalysisTaskQueue:
         force_refresh: bool,
         notify: bool = True,
         owner_user_id: Optional[int] = None,
+        analysis_mode: str = "full",
     ) -> Optional[Dict[str, Any]]:
         """
         执行分析任务（在线程池中运行）
@@ -608,6 +615,7 @@ class AnalysisTaskQueue:
                     query_id=task_id,
                     send_notification=notify,
                     progress_callback=_on_progress,
+                    analysis_mode=analysis_mode,
                 )
             
             if result:

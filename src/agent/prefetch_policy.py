@@ -99,6 +99,14 @@ def _has_technical_prefetch(data: Dict[str, Any]) -> bool:
     return _has_daily_history(data) and _has_trend(data)
 
 
+def _has_report_context(data: Dict[str, Any]) -> bool:
+    return bool(data.get("_report_context_hydrated"))
+
+
+def _has_analysis_context(data: Dict[str, Any]) -> bool:
+    return _has_daily_history(data) and (_has_realtime(data) or _has_trend(data))
+
+
 def _has_fundamental(data: Dict[str, Any]) -> bool:
     fc = data.get("fundamental_context")
     if not isinstance(fc, dict):
@@ -120,6 +128,8 @@ FETCH_ONCE_TOOL_PREDICATES: Dict[str, PrefetchPredicate] = {
     "search_stock_news": _has_intel,
     "get_capital_flow": _has_capital_flow,
     "get_stock_info": _has_fundamental,
+    "get_report_context": _has_report_context,
+    "get_analysis_context": _has_analysis_context,
     # Trend is precomputed in pipeline Step 3 before agents start.
     "analyze_trend": _has_trend,
     # Derived technical tools should consume injected K-line / trend payloads.

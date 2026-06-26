@@ -152,7 +152,48 @@ async def get_strategies():
 def _exec_chat_with_user(current_user, executor, message, session_id, context):
     """Run executor.chat() in a thread with explicit user context."""
     with use_current_user(current_user):
-        return executor.chat(message=message, session_id=session_id, context=context)
+        return _run_agent_chat(
+            config=get_config(),
+            executor=executor,
+            message=message,
+            session_id=session_id,
+            context=context,
+        )
+
+
+def _run_agent_chat(
+    *,
+    config,
+    executor,
+    message: str,
+    session_id: str,
+    context: Optional[Dict[str, Any]] = None,
+    progress_callback=None,
+):
+    """Route chat to report interpretation or the standard agent executor."""
+    from src.agent.chat_routing import resolve_chat_execution_mode
+    from src.services.report_interpretation_service import ReportInterpretationService
+
+    ctx = dict(context or {})
+    mode = resolve_chat_execution_mode(ctx, message)
+
+    if mode == "report_interpret":
+        return ReportInterpretationService().chat(
+            message=message,
+            session_id=session_id,
+            context=ctx,
+            progress_callback=progress_callback,
+        )
+
+    if mode == "incremental":
+        ctx.setdefault("chat_mode", "incremental")
+
+    return executor.chat(
+        message=message,
+        session_id=session_id,
+        progress_callback=progress_callback,
+        context=ctx or None,
+    )
 
 
 @router.post("/chat", response_model=ChatResponse)
@@ -446,7 +487,9 @@ async def agent_chat_stream(
         with use_current_user(current_user):
             try:
                 executor = _build_executor(config, skills or None)
-                result = executor.chat(
+                result = _run_agent_chat(
+                    config=config,
+                    executor=executor,
                     message=request.message,
                     session_id=session_id,
                     progress_callback=progress_callback,

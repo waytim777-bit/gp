@@ -10,8 +10,13 @@ import uuid
 from datetime import date
 from typing import Any, Dict, List, Optional
 
+from data_provider.base import canonical_stock_code
 from src.core.prediction_cycle import resolve_prediction_cycle
 from src.core.trading_calendar import get_market_for_stock
+from src.enums import ReportType
+from src.services.prediction_report_listing_utils import pick_latest_listing_per_stock
+from src.services.shared_analysis_service import SharedAnalysisService
+from src.services.stock_code_utils import resolve_lookup_stock_code
 from src.services.credit_service import CreditService, InsufficientCreditsError
 from src.services.backtest_service import BacktestService
 from src.storage import DatabaseManager, PredictionReportListing
@@ -91,6 +96,7 @@ class PredictionReportMarketService:
                 has_purchase_record=False,
                 like_count=int(stats["like_count"]),
                 liked=bool(stats["liked"]),
+                purchase_count=db.count_prediction_report_purchases([int(existing.id)]).get(int(existing.id), 0),
             )
 
         pricing = self.get_pricing()
@@ -99,13 +105,21 @@ class PredictionReportMarketService:
             seller_user_id=int(owner_user_id),
             analysis_history_id=int(history.id),
             shared_run_id=int(shared_run.id),
-            code=history.code,
+            code=resolve_lookup_stock_code(history.code),
             name=history.name,
             market=market,
             cycle_anchor_date=cycle_anchor,
             report_type=history.report_type or "detailed",
             purchase_credits=pricing["purchase_credits"],
             seller_reward_credits=pricing["seller_reward_credits"],
+            cycle_version=int(getattr(history, "cycle_version", None) or shared_run.version or 1),
+        )
+        db.supersede_older_prediction_report_listings(
+            seller_user_id=int(owner_user_id),
+            code=listing.code,
+            cycle_anchor_date=cycle_anchor,
+            keep_listing_id=int(listing.id),
+            keep_version=int(listing.cycle_version),
         )
         logger.info(
             "Prediction report recommended: listing=%s user=%s code=%s anchor=%s",
@@ -141,6 +155,9 @@ class PredictionReportMarketService:
             [int(row.id) for row in rows],
             user_id=int(viewer_user_id),
         )
+        purchase_counts = db.count_prediction_report_purchases(
+            [int(row.id) for row in rows],
+        )
         items: List[Dict[str, Any]] = []
         for row in rows:
             purchase = db.get_prediction_report_purchase(
@@ -160,12 +177,113 @@ class PredictionReportMarketService:
                     has_purchase_record=has_purchase_record,
                     like_count=int(stats["like_count"]),
                     liked=bool(stats["liked"]),
+                    purchase_count=int(purchase_counts.get(int(row.id), 0)),
                 )
             )
         return {
             "items": items,
             "total": len(items),
             "pricing": pricing,
+        }
+
+    def search_current_cycle(
+        self,
+        *,
+        code: str,
+        viewer_user_id: int,
+        report_type: str = "detailed",
+    ) -> Dict[str, Any]:
+        """List marketplace reports for a stock in the current prediction cycle."""
+        normalized = resolve_lookup_stock_code(code)
+        market = get_market_for_stock(normalized) or "cn"
+        cycle = resolve_prediction_cycle(market)
+        db = DatabaseManager.get_instance()
+        pricing = self.get_pricing()
+        rows = db.list_prediction_report_listings_for_code_cycle(
+            code=normalized,
+            cycle_anchor_date=cycle.cycle_anchor_date,
+            status="active",
+        )
+
+        cycle_lookup = SharedAnalysisService.get_instance().lookup_cycle_report(
+            code=normalized,
+            report_type=ReportType.from_str(report_type),
+            owner_user_id=int(viewer_user_id),
+            materialize=False,
+        )
+        cycle_report_meta = {
+            "exists": bool(cycle_lookup.get("exists")),
+            "history_id": cycle_lookup.get("history_id"),
+            "version": cycle_lookup.get("version"),
+            "last_analyzed_at": cycle_lookup.get("last_analyzed_at"),
+            "shared_run_id": cycle_lookup.get("shared_run_id"),
+        }
+        can_refresh_intel = bool(cycle_lookup.get("exists"))
+
+        if not rows:
+            stock_name = cycle_lookup.get("stock_name") or normalized
+            return {
+                "stock_code": normalized,
+                "stock_name": stock_name,
+                "items": [],
+                "total": 0,
+                "pricing": pricing,
+                "prediction_cycle": cycle_lookup.get("prediction_cycle")
+                or {
+                    "cycle_anchor_date": cycle.cycle_anchor_date.isoformat(),
+                    "prediction_target_date": cycle.prediction_target_date.isoformat(),
+                    "data_as_of_date": cycle.data_as_of_date.isoformat(),
+                },
+                "cycle_report": cycle_report_meta,
+                "can_refresh_intel": can_refresh_intel,
+            }
+
+        like_stats = db.get_prediction_report_like_stats(
+            [int(row.id) for row in rows],
+            user_id=int(viewer_user_id),
+        )
+        purchase_counts = db.count_prediction_report_purchases(
+            [int(row.id) for row in rows],
+        )
+        items: List[Dict[str, Any]] = []
+        for row in rows:
+            purchase = db.get_prediction_report_purchase(
+                listing_id=int(row.id),
+                buyer_user_id=int(viewer_user_id),
+            )
+            is_seller = int(row.seller_user_id) == int(viewer_user_id)
+            has_purchase_record = purchase is not None
+            stats = like_stats.get(int(row.id), {"like_count": 0, "liked": False})
+            items.append(
+                self._serialize_listing(
+                    row,
+                    viewer_user_id=viewer_user_id,
+                    purchased=has_purchase_record or is_seller,
+                    can_view_full=has_purchase_record or is_seller,
+                    buyer_history_id=int(purchase.buyer_history_id) if purchase and purchase.buyer_history_id else None,
+                    has_purchase_record=has_purchase_record,
+                    like_count=int(stats["like_count"]),
+                    liked=bool(stats["liked"]),
+                    purchase_count=int(purchase_counts.get(int(row.id), 0)),
+                    is_current_cycle=True,
+                )
+            )
+
+        stock_name = rows[0].name or normalized
+        items = pick_latest_listing_per_stock(items)
+        return {
+            "stock_code": normalized,
+            "stock_name": stock_name,
+            "items": items,
+            "total": len(items),
+            "pricing": pricing,
+            "prediction_cycle": {
+                "cycle_anchor_date": cycle.cycle_anchor_date.isoformat(),
+                "prediction_target_date": cycle.prediction_target_date.isoformat(),
+                "data_as_of_date": cycle.data_as_of_date.isoformat(),
+            },
+            "cycle_report": cycle_report_meta,
+            "can_refresh_intel": can_refresh_intel,
         }
 
     def get_listing(self, *, listing_id: int, viewer_user_id: int) -> Dict[str, Any]:
@@ -189,6 +307,7 @@ class PredictionReportMarketService:
             [int(listing.id)],
             user_id=int(viewer_user_id),
         ).get(int(listing.id), {"like_count": 0, "liked": False})
+        purchase_count = db.count_prediction_report_purchases([int(listing.id)]).get(int(listing.id), 0)
         return self._serialize_listing(
             listing,
             viewer_user_id=viewer_user_id,
@@ -201,6 +320,7 @@ class PredictionReportMarketService:
             has_purchase_record=has_purchase_record,
             like_count=int(stats["like_count"]),
             liked=bool(stats["liked"]),
+            purchase_count=int(purchase_count),
         )
 
     def like_report(self, *, listing_id: int, user_id: int) -> Dict[str, Any]:
@@ -344,6 +464,15 @@ class PredictionReportMarketService:
                 "not_current_cycle",
                 "仅当前预测周期报告可分享",
             )
+
+        # Do not allow reselling purchased/cloned reports. Only the latest canonical
+        # history bound to the shared run may be recommended.
+        canonical_history_id = int(getattr(shared_run, "analysis_history_id", None) or 0)
+        if canonical_history_id <= 0 or int(history.id) != canonical_history_id:
+            raise PredictionReportMarketError(
+                "not_canonical",
+                "仅可推荐本周期最新分析结果（自动上架）；已购买报告不可再次推荐",
+            )
         return history, shared_run, cycle_anchor
 
     def _serialize_listing(
@@ -359,12 +488,29 @@ class PredictionReportMarketService:
         is_current_cycle: Optional[bool] = None,
         like_count: int = 0,
         liked: bool = False,
+        purchase_count: int = 0,
     ) -> Dict[str, Any]:
         db = DatabaseManager.get_instance()
+        shared_run = db.get_shared_analysis_run_by_id(int(listing.shared_run_id))
+        listing_history = db.get_analysis_history_by_id(
+            int(listing.analysis_history_id),
+            scoped=False,
+        )
         if history is None:
-            canonical = db.get_shared_analysis_run_by_id(int(listing.shared_run_id))
-            history_id = int(canonical.analysis_history_id) if canonical and canonical.analysis_history_id else int(listing.analysis_history_id)
+            history_id = (
+                int(shared_run.analysis_history_id)
+                if shared_run and shared_run.analysis_history_id
+                else int(listing.analysis_history_id)
+            )
             history = db.get_analysis_history_by_id(history_id, scoped=False)
+
+        analyzed_at = None
+        if listing_history is not None and getattr(listing_history, "created_at", None) is not None:
+            analyzed_at = listing_history.created_at
+        elif history is not None and getattr(history, "created_at", None) is not None:
+            analyzed_at = history.created_at
+        elif listing.created_at is not None:
+            analyzed_at = listing.created_at
 
         seller_name = db.get_user_username(int(listing.seller_user_id)) or f"user_{listing.seller_user_id}"
         preview = {
@@ -408,5 +554,8 @@ class PredictionReportMarketService:
             "like_count": int(like_count),
             "liked": bool(liked),
             "created_at": listing.created_at.isoformat() if listing.created_at else None,
+            "analyzed_at": analyzed_at.isoformat() if analyzed_at is not None else None,
+            "purchase_count": int(purchase_count),
+            "cycle_version": int(getattr(listing, "cycle_version", None) or 1),
             "backtest_preview": backtest_preview,
         }

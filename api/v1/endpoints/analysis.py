@@ -30,6 +30,7 @@ from api.deps import get_config_dep, get_current_user, require_min_balance
 from api.v1.schemas.analysis import (
     AnalyzeRequest,
     AnalysisResultResponse,
+    CycleReportLookupResponse,
     TaskAccepted,
     BatchTaskAcceptedResponse,
     BatchTaskAcceptedItem,
@@ -56,7 +57,8 @@ from src.services.prediction_cycle_meta import (
     prediction_cycle_meta_from_mapping,
 )
 from src.services.name_to_code_resolver import resolve_name_to_code
-from src.services.stock_code_utils import is_code_like
+from src.services.shared_analysis_service import SharedAnalysisService
+from src.services.stock_code_utils import is_code_like, resolve_lookup_stock_code
 from src.services.task_queue import (
     get_task_queue,
     DuplicateTaskError,
@@ -125,6 +127,42 @@ def _resolve_and_normalize_input(raw_value: str) -> str:
         return canonical_stock_code(resolved)
 
     raise _invalid_analysis_input_error()
+
+
+# ============================================================
+# GET /cycle-report - 查询本预测周期是否已有报告
+# ============================================================
+
+@router.get(
+    "/cycle-report",
+    response_model=CycleReportLookupResponse,
+    summary="查询本预测周期报告",
+    description="首页搜索前查询当前预测周期是否已有 canonical 分析报告。",
+)
+def lookup_cycle_report(
+    code: str = Query(..., description="股票代码或名称"),
+    report_type: str = Query("detailed", pattern="^(simple|detailed|full|brief)$"),
+    current_user: CurrentUser = Depends(get_current_user),
+) -> CycleReportLookupResponse:
+    from src.enums import ReportType
+
+    normalized = _resolve_and_normalize_input(code)
+    if not normalized:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "validation_error",
+                "message": "股票代码不能为空或仅包含空白字符",
+            },
+        )
+
+    payload = SharedAnalysisService.get_instance().lookup_cycle_report(
+        code=resolve_lookup_stock_code(normalized),
+        report_type=ReportType.from_str(report_type),
+        owner_user_id=current_user.id,
+        materialize=False,
+    )
+    return CycleReportLookupResponse(**payload)
 
 
 # ============================================================
@@ -272,6 +310,7 @@ def _handle_async_analysis_batch(
         selection_source=selection_source,
         report_type=request.report_type,
         force_refresh=request.force_refresh,
+        analysis_mode=request.analysis_mode,
         notify=notify,
         owner_user_id=current_user.id,
     )
@@ -356,6 +395,7 @@ def _handle_sync_analysis(
             force_refresh=request.force_refresh,
             query_id=query_id,
             send_notification=getattr(request, "notify", True),
+            analysis_mode=request.analysis_mode,
         )
 
         if result is None:

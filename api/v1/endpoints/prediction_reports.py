@@ -13,6 +13,7 @@ from api.v1.schemas.prediction_reports import (
     PredictionReportListResponse,
     PredictionReportListingItem,
     PredictionReportPricing,
+    PredictionReportSearchResponse,
     PurchasePredictionReportResponse,
     SharePredictionReportRequest,
 )
@@ -38,6 +39,37 @@ def list_prediction_reports(
 ) -> PredictionReportListResponse:
     payload = _service().list_reports(viewer_user_id=int(current_user.id))
     return PredictionReportListResponse.model_validate(payload)
+
+
+@router.get(
+    "/search",
+    response_model=PredictionReportSearchResponse,
+    summary="Search current-cycle prediction reports for a stock",
+)
+def search_prediction_reports(
+    code: str,
+    report_type: str = "detailed",
+    current_user: CurrentUser = Depends(get_current_user),
+) -> PredictionReportSearchResponse:
+    from api.v1.endpoints.analysis import _resolve_and_normalize_input
+    from src.services.stock_code_utils import resolve_lookup_stock_code
+
+    normalized = _resolve_and_normalize_input(code)
+    if not normalized:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "validation_error",
+                "message": "股票代码不能为空或仅包含空白字符",
+            },
+        )
+
+    payload = _service().search_current_cycle(
+        code=resolve_lookup_stock_code(normalized),
+        viewer_user_id=int(current_user.id),
+        report_type=report_type,
+    )
+    return PredictionReportSearchResponse.model_validate(payload)
 
 
 @router.get("/pricing", response_model=PredictionReportPricing, summary="Get marketplace pricing")

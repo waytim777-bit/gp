@@ -50,6 +50,8 @@
 - 订阅推送分析：`SubscriptionRunner.analyze_due` / `_ensure_shared_report`
 - 管理端推送管理：同上（`force_refresh` 可跳探测直接全量重跑）
 
+**同周期 in-flight 合并**：当 `(code, cycle_anchor_date, report_type)` 已有分析正在执行时，其他用户（或同用户）的后续请求会等待 leader 完成，再复用 canonical 报告（`clone_analysis_history_for_user`），避免并行重复跑 pipeline。`force_refresh=true` 不参与等待合并。
+
 ## 配置项
 
 | 变量 | 默认 | 说明 |

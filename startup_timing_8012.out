@@ -1,0 +1,21 @@
+2026-06-22 14:07:25 | INFO     | src\logging_config.py:153 | 日志系统初始化完成，日志目录: logs
+2026-06-22 14:07:25 | INFO     | src\logging_config.py:154 | 常规日志: logs\stock_analysis_20260622.log
+2026-06-22 14:07:25 | INFO     | src\logging_config.py:155 | 调试日志: logs\stock_analysis_debug_20260622.log
+2026-06-22 14:07:25 | INFO     | main.py:745 | ============================================================
+2026-06-22 14:07:25 | INFO     | main.py:746 | A股自选股智能分析系统 启动
+2026-06-22 14:07:25 | INFO     | main.py:747 | 运行时间: 2026-06-22 14:07:25
+2026-06-22 14:07:25 | INFO     | main.py:748 | ============================================================
+2026-06-22 14:07:25 | INFO     | src\webui_frontend.py:199 | 检测到可直接复用的前端静态产物，跳过运行时自动构建: E:\daily_stock_analysis-main\gp\static\index.html
+2026-06-22 14:07:25 | INFO     | main.py:623 | FastAPI 服务已启动: http://127.0.0.1:8012
+2026-06-22 14:07:25 | INFO     | main.py:796 | 模式: 仅 Web 服务
+2026-06-22 14:07:25 | INFO     | main.py:797 | Web 服务运行中: http://127.0.0.1:8012
+2026-06-22 14:07:25 | INFO     | main.py:798 | 通过 /api/v1/analysis/analyze 接口触发分析
+2026-06-22 14:07:25 | INFO     | main.py:799 | API 文档: http://127.0.0.1:8012/docs
+2026-06-22 14:07:25 | INFO     | main.py:800 | 按 Ctrl+C 退出...
+2026-06-22 14:07:32 | WARNING  | C:\Users\Win10\AppData\Local\Programs\Python\Python313\Lib\site-packages\litellm\litellm_core_utils\get_model_cost_map.py:271 | LiteLLM: Failed to fetch remote model cost map from https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: _ssl.c:1011: The handshake operation timed out. Falling back to local backup.
+2026-06-22 14:07:34 | INFO     | C:\Users\Win10\AppData\Local\Programs\Python\Python313\Lib\site-packages\uvicorn\server.py:92 | Started server process [576]
+2026-06-22 14:07:34 | INFO     | C:\Users\Win10\AppData\Local\Programs\Python\Python313\Lib\site-packages\uvicorn\lifespan\on.py:48 | Waiting for application startup.
+2026-06-22 14:07:34 | INFO     | C:\Users\Win10\AppData\Local\Programs\Python\Python313\Lib\site-packages\uvicorn\lifespan\on.py:62 | Application startup complete.
+2026-06-22 14:07:34 | INFO     | C:\Users\Win10\AppData\Local\Programs\Python\Python313\Lib\site-packages\uvicorn\server.py:224 | Uvicorn running on http://127.0.0.1:8012 (Press CTRL+C to quit)
+2026-06-22 14:07:35 | INFO     | C:\Users\Win10\AppData\Local\Programs\Python\Python313\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py:484 | 127.0.0.1:54757 - "GET /chat HTTP/1.1" 200
+2026-06-22 14:07:35 | INFO     | C:\Users\Win10\AppData\Local\Programs\Python\Python313\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py:484 | 127.0.0.1:54758 - "GET /chat HTTP/1.1" 200

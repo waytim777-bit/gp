@@ -4,9 +4,11 @@ import { predictionReportsApi } from '../api/predictionReports';
 import type { ParsedApiError } from '../api/error';
 import { getParsedApiError } from '../api/error';
 import { historyApi } from '../api/history';
-import type { AnalysisReport, HistoryItem, HistoryListResponse, TaskInfo } from '../types/analysis';
+import type { AnalysisReport, CycleReportLookup, HistoryItem, HistoryListResponse, TaskInfo } from '../types/analysis';
+import type { PredictionReportListingItem, PredictionReportSearchResponse } from '../types/predictionReports';
+import { useCreditStore } from './creditStore';
 import { getRecentStartDate, getTodayInShanghai } from '../utils/format';
-import { isObviouslyInvalidStockQuery, looksLikeStockCode, validateStockCode } from '../utils/validation';
+import { isObviouslyInvalidStockQuery, looksLikeStockCode, normalizeStockCodeForApi, validateStockCode } from '../utils/validation';
 
 const PAGE_SIZE = 20;
 
@@ -24,6 +26,7 @@ type SubmitAnalysisOptions = {
   originalQuery?: string;
   selectionSource?: SelectionSource;
   notify?: boolean;
+  analysisMode?: 'full' | 'refresh_intel';
 };
 
 let reportRequestSeq = 0;
@@ -42,12 +45,18 @@ export interface StockPoolState {
   historyItems: HistoryItem[];
   selectedHistoryIds: number[];
   isDeletingHistory: boolean;
-  isSharingHistory: boolean;
   isLoadingHistory: boolean;
   isLoadingMore: boolean;
   hasMore: boolean;
   currentPage: number;
   selectedReport: AnalysisReport | null;
+  currentCycleReport: CycleReportLookup | null;
+  canRefreshIntel: boolean;
+  searchStockCode: string | null;
+  searchStockName: string | null;
+  marketListings: PredictionReportListingItem[];
+  marketPurchaseCredits: number;
+  purchasingListingId: number | null;
   isLoadingReport: boolean;
   activeTasks: TaskInfo[];
   markdownDrawerOpen: boolean;
@@ -64,8 +73,13 @@ export interface StockPoolState {
   toggleHistorySelection: (recordId: number) => void;
   toggleSelectAllVisible: () => void;
   deleteSelectedHistory: () => Promise<void>;
-  shareSelectedHistory: () => Promise<number | null>;
   submitAnalysis: (options?: SubmitAnalysisOptions) => Promise<void>;
+  refreshIntelAnalysis: (options?: Pick<SubmitAnalysisOptions, 'notify'>) => Promise<void>;
+  refreshMarketListings: (stockCode?: string) => Promise<void>;
+  handleAnalysisTaskCompleted: (task: TaskInfo) => Promise<void>;
+  purchaseMarketListing: (item: PredictionReportListingItem) => Promise<void>;
+  openMarketListingReport: (item: PredictionReportListingItem) => Promise<void>;
+  clearMarketSearch: () => void;
   setNotify: (notify: boolean) => void;
   syncTaskCreated: (task: TaskInfo) => void;
   syncTaskUpdated: (task: TaskInfo) => void;
@@ -85,12 +99,18 @@ const initialState = {
   historyItems: [] as HistoryItem[],
   selectedHistoryIds: [] as number[],
   isDeletingHistory: false,
-  isSharingHistory: false,
   isLoadingHistory: false,
   isLoadingMore: false,
   hasMore: true,
   currentPage: 1,
   selectedReport: null as AnalysisReport | null,
+  currentCycleReport: null as CycleReportLookup | null,
+  canRefreshIntel: false,
+  searchStockCode: null as string | null,
+  searchStockName: null as string | null,
+  marketListings: [] as PredictionReportListingItem[],
+  marketPurchaseCredits: 100,
+  purchasingListingId: null as number | null,
   isLoadingReport: false,
   activeTasks: [] as TaskInfo[],
   markdownDrawerOpen: false,
@@ -102,6 +122,35 @@ function buildHistoryParams(page: number) {
     endDate: getTodayInShanghai(),
     page,
     limit: PAGE_SIZE,
+  };
+}
+
+function buildMarketSearchState(
+  searchResult: PredictionReportSearchResponse,
+  fallbackStockName?: string | null,
+): Pick<
+  StockPoolState,
+  'searchStockCode' | 'searchStockName' | 'marketListings' | 'marketPurchaseCredits' | 'currentCycleReport' | 'canRefreshIntel'
+> {
+  const cycleLookup: CycleReportLookup = {
+    exists: searchResult.cycleReport.exists,
+    stockCode: searchResult.stockCode,
+    stockName: searchResult.stockName || fallbackStockName || undefined,
+    reportType: 'detailed',
+    historyId: searchResult.cycleReport.historyId,
+    sharedRunId: searchResult.cycleReport.sharedRunId,
+    version: searchResult.cycleReport.version,
+    lastAnalyzedAt: searchResult.cycleReport.lastAnalyzedAt,
+    predictionCycle: searchResult.predictionCycle,
+  };
+
+  return {
+    searchStockCode: searchResult.stockCode,
+    searchStockName: searchResult.stockName || fallbackStockName || searchResult.stockCode,
+    marketListings: searchResult.items,
+    marketPurchaseCredits: searchResult.pricing.purchaseCredits,
+    currentCycleReport: cycleLookup,
+    canRefreshIntel: searchResult.canRefreshIntel,
   };
 }
 
@@ -235,6 +284,22 @@ export const useStockPoolStore = create<StockPoolState>((set, get) => ({
         error: null,
         isLoadingReport: false,
       });
+
+      try {
+        const cycleLookup = await analysisApi.lookupCycleReport({
+          stockCode: report.meta.stockCode,
+          reportType: report.meta.reportType,
+        });
+        if (requestId !== reportRequestSeq) {
+          return;
+        }
+        set({ currentCycleReport: cycleLookup });
+      } catch {
+        if (requestId !== reportRequestSeq) {
+          return;
+        }
+        set({ currentCycleReport: null });
+      }
     } catch (error) {
       if (requestId !== reportRequestSeq) {
         return;
@@ -320,34 +385,6 @@ export const useStockPoolStore = create<StockPoolState>((set, get) => ({
     }
   },
 
-  shareSelectedHistory: async () => {
-    const state = get();
-    const selectedReportId = state.selectedReport?.meta.id;
-    const selected = Array.from(new Set(
-      state.selectedHistoryIds.length > 0
-        ? state.selectedHistoryIds
-        : selectedReportId !== undefined
-          ? [selectedReportId]
-          : [],
-    ));
-    if (selected.length !== 1 || state.isSharingHistory) {
-      return null;
-    }
-
-    const recordId = selected[0];
-    set({ isSharingHistory: true, error: null });
-    try {
-      const listing = await predictionReportsApi.recommend(recordId);
-      set({ selectedHistoryIds: [] });
-      return listing.id;
-    } catch (error) {
-      set({ error: getParsedApiError(error) });
-      return null;
-    } finally {
-      set({ isSharingHistory: false });
-    }
-  },
-
   submitAnalysis: async (options) => {
     const state = get();
     const rawStockCode = options?.stockCode ?? state.query;
@@ -356,6 +393,7 @@ export const useStockPoolStore = create<StockPoolState>((set, get) => ({
     const selectionSource = options?.selectionSource ?? state.selectionSource;
     const originalQuery = (options?.originalQuery ?? state.query).trim();
     const notify = options?.notify ?? state.notify;
+    const analysisMode = options?.analysisMode ?? 'full';
 
     if (!stockCodeInput) {
       set({ inputError: '请输入股票代码', duplicateError: null });
@@ -375,6 +413,8 @@ export const useStockPoolStore = create<StockPoolState>((set, get) => ({
         return;
       }
       normalizedStockCode = normalized;
+    } else {
+      normalizedStockCode = normalizeStockCodeForApi(stockCodeInput);
     }
 
     set({
@@ -386,6 +426,34 @@ export const useStockPoolStore = create<StockPoolState>((set, get) => ({
 
     const requestId = ++analyzeRequestSeq;
     try {
+      if (analysisMode === 'full') {
+        const searchResult = await predictionReportsApi.searchByCode({
+          stockCode: normalizedStockCode,
+          reportType: 'detailed',
+        });
+
+        if (requestId !== analyzeRequestSeq) {
+          return;
+        }
+
+        set({
+          ...buildMarketSearchState(searchResult, stockName || normalizedStockCode),
+          selectedReport: null,
+          query: '',
+          selectionSource: 'manual',
+        });
+
+        if (searchResult.items.length > 0) {
+          return;
+        }
+
+        const cycleReport = get().currentCycleReport;
+        if (cycleReport?.exists && cycleReport.historyId != null) {
+          await get().selectHistoryItem(cycleReport.historyId);
+          return;
+        }
+      }
+
       await analysisApi.analyzeAsync({
         stockCode: normalizedStockCode,
         reportType: 'detailed',
@@ -393,6 +461,7 @@ export const useStockPoolStore = create<StockPoolState>((set, get) => ({
         originalQuery: originalQuery || stockCodeInput,
         selectionSource,
         notify,
+        analysisMode,
       });
 
       if (requestId !== analyzeRequestSeq) {
@@ -421,6 +490,130 @@ export const useStockPoolStore = create<StockPoolState>((set, get) => ({
         set({ isAnalyzing: false });
       }
     }
+  },
+
+  refreshIntelAnalysis: async (options) => {
+    const state = get();
+    const stockCode = state.selectedReport?.meta.stockCode ?? state.searchStockCode;
+    if (!stockCode || state.isAnalyzing || !state.canRefreshIntel) {
+      return;
+    }
+
+    set({
+      duplicateError: null,
+      error: null,
+      isAnalyzing: true,
+    });
+
+    const requestId = ++analyzeRequestSeq;
+    try {
+      await analysisApi.analyzeAsync({
+        stockCode,
+        reportType: state.selectedReport?.meta.reportType || 'detailed',
+        stockName: state.selectedReport?.meta.stockName ?? state.searchStockName ?? undefined,
+        analysisMode: 'refresh_intel',
+        notify: options?.notify ?? state.notify,
+        selectionSource: 'manual',
+      });
+    } catch (error) {
+      if (requestId !== analyzeRequestSeq) {
+        return;
+      }
+
+      if (error instanceof DuplicateTaskError) {
+        set({
+          duplicateError: `股票 ${error.stockCode} 正在分析中，请等待完成`,
+        });
+        return;
+      }
+
+      set({ error: getParsedApiError(error) });
+    } finally {
+      if (requestId === analyzeRequestSeq) {
+        set({ isAnalyzing: false });
+      }
+    }
+  },
+
+  refreshMarketListings: async (stockCode) => {
+    const code = stockCode ?? get().searchStockCode;
+    if (!code) {
+      return;
+    }
+
+    try {
+      const searchResult = await predictionReportsApi.searchByCode({
+        stockCode: code,
+        reportType: 'detailed',
+      });
+      set(buildMarketSearchState(searchResult, get().searchStockName));
+    } catch (error) {
+      set({ error: getParsedApiError(error) });
+    }
+  },
+
+  handleAnalysisTaskCompleted: async (task) => {
+    await get().refreshHistory(true);
+
+    const matchingItem = get().historyItems.find((item) => item.stockCode === task.stockCode);
+    if (matchingItem) {
+      await get().selectHistoryItem(matchingItem.id);
+    } else {
+      await get().selectLatestHistoryItem();
+    }
+
+    // Auto-recommend latest analysis result to marketplace (idempotent on backend).
+    const recordId = get().selectedReport?.meta.id;
+    if (recordId != null) {
+      try {
+        await predictionReportsApi.recommend(recordId);
+      } catch {
+        // Best effort: non-canonical/purchased reports are rejected; ignore.
+      }
+    }
+
+    const activeSearchCode = get().searchStockCode;
+    if (!activeSearchCode || activeSearchCode === task.stockCode) {
+      await get().refreshMarketListings(task.stockCode);
+    }
+  },
+
+  purchaseMarketListing: async (item) => {
+    set({ purchasingListingId: item.id, error: null });
+    try {
+      const result = await predictionReportsApi.purchase(item.id);
+      const searchResult = await predictionReportsApi.searchByCode({
+        stockCode: item.code,
+        reportType: item.reportType,
+      });
+      set(buildMarketSearchState(searchResult, get().searchStockName));
+      await useCreditStore.getState().refreshBalance();
+      const buyerHistoryId = result.buyerHistoryId ?? item.buyerHistoryId;
+      if (buyerHistoryId != null) {
+        await get().selectHistoryItem(buyerHistoryId);
+      }
+    } catch (error) {
+      set({ error: getParsedApiError(error) });
+    } finally {
+      set({ purchasingListingId: null });
+    }
+  },
+
+  openMarketListingReport: async (item) => {
+    if (!item.canViewFull || item.buyerHistoryId == null) {
+      return;
+    }
+    await get().selectHistoryItem(item.buyerHistoryId);
+  },
+
+  clearMarketSearch: () => {
+    set({
+      searchStockCode: null,
+      searchStockName: null,
+      marketListings: [],
+      canRefreshIntel: false,
+      purchasingListingId: null,
+    });
   },
 
   syncTaskCreated: (task) => {

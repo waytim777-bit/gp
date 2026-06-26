@@ -47,6 +47,7 @@ class AnalysisService:
         query_id: Optional[str] = None,
         send_notification: bool = True,
         progress_callback: Optional[Callable[[int, str], None]] = None,
+        analysis_mode: str = "full",
     ) -> Optional[Dict[str, Any]]:
         """
         执行股票分析
@@ -67,22 +68,27 @@ class AnalysisService:
         try:
             self.last_error = None
             from src.enums import ReportType
-            from src.services.shared_analysis_service import SharedAnalysisService
+            from src.services.shared_analysis_service import (
+                SharedAnalysisPurchaseRequiredError,
+                SharedAnalysisService,
+            )
 
             if query_id is None:
                 query_id = uuid.uuid4().hex
 
             rt = ReportType.from_str(report_type)
+            effective_mode = "refresh_intel" if analysis_mode == "refresh_intel" else "full"
             outcome = SharedAnalysisService.get_instance().get_or_create(
                 code=stock_code,
                 report_type=rt,
                 force_refresh=force_refresh,
                 query_id=query_id,
-                allow_intel_probe=not force_refresh,
-                charge_probe_credits=True,
+                allow_intel_probe=False,
+                charge_probe_credits=False,
                 single_stock_notify=send_notification,
                 progress_callback=progress_callback,
                 query_source="api",
+                analysis_mode=effective_mode,
             )
 
             if outcome.history_id is None:
@@ -113,6 +119,10 @@ class AnalysisService:
                 from_cache=False,
             )
 
+        except SharedAnalysisPurchaseRequiredError as exc:
+            self.last_error = str(exc)
+            logger.info("分析股票 %s 需先购买预测报告", stock_code)
+            return None
         except Exception as e:
             self.last_error = str(e)
             logger.error(f"分析股票 {stock_code} 失败: {e}", exc_info=True)

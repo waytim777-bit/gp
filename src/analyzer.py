@@ -590,7 +590,8 @@ class GeminiAnalyzer:
             "risk_alerts": ["风险点1：具体描述", "风险点2：具体描述"],
             "positive_catalysts": ["利好1：具体描述", "利好2：具体描述"],
             "earnings_outlook": "业绩预期分析（基于年报预告、业绩快报等）",
-            "sentiment_summary": "舆情情绪一句话总结"
+            "sentiment_summary": "舆情情绪一句话总结",
+            "macro_focus_impact_3d": "宏观焦点对未来1-3日股价影响：结论（偏多/偏空/中性）+ 1-2条传导路径 + 触发条件/观察点（必须引用焦点要闻中的具体条目，避免泛泛而谈）"
         },
 
         "battle_plan": {
@@ -740,7 +741,8 @@ class GeminiAnalyzer:
             "risk_alerts": ["风险点1：具体描述", "风险点2：具体描述"],
             "positive_catalysts": ["利好1：具体描述", "利好2：具体描述"],
             "earnings_outlook": "业绩预期分析（基于年报预告、业绩快报等）",
-            "sentiment_summary": "舆情情绪一句话总结"
+            "sentiment_summary": "舆情情绪一句话总结",
+            "macro_focus_impact_3d": "宏观焦点对未来1-3日股价影响：结论（偏多/偏空/中性）+ 1-2条传导路径 + 触发条件/观察点（必须引用焦点要闻中的具体条目，避免泛泛而谈）"
         },
 
         "battle_plan": {
@@ -2222,7 +2224,8 @@ Use 3-5 dynamic items. Do not invent flow numbers. If capital flow data is unava
 1. 🚨 **风险警报**：减持、处罚、利空
 2. 🎯 **利好催化**：业绩、合同、政策
 3. 📊 **业绩预期**：年报预告、业绩快报
-4. 🕒 **时间规则（强制）**：
+4. 🌐 **外部环境**：行业新闻、国际新闻、中国政策中的利空/监管/地缘/关税信号（见「行业新闻」「国际新闻」「中国政策」段落）
+5. 🕒 **时间规则（强制）**：
    - 输出到 `risk_alerts` / `positive_catalysts` / `latest_news` 的每一条都必须带具体日期（YYYY-MM-DD）
    - 超出近{news_window_days}日窗口的新闻一律忽略
    - 时间未知、无法确定发布日期的新闻一律忽略

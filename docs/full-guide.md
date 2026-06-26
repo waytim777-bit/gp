@@ -269,6 +269,17 @@ daily_stock_analysis/
 | `SERPAPI_API_KEYS` | SerpAPI 备用搜索 | 可选 |
 | `SOCIAL_SENTIMENT_API_KEY` | Stock Sentiment API Key（Reddit / X / Polymarket，可选） | 可选 |
 | `SOCIAL_SENTIMENT_API_URL` | Stock Sentiment API 地址（默认 `https://api.adanos.org`） | 可选 |
+| `POLYMARKET_GAMMA_API_BASE` | Polymarket Gamma API 基址（dsa-admin 宏观关注预览，默认 `https://gamma-api.polymarket.com`） | 可选 |
+| `POLYMARKET_REQUEST_TIMEOUT` | Polymarket Gamma API 请求超时（秒，默认 `8`） | 可选 |
+| `MACRO_FOCUS_BRIEF_ENABLED` | 是否注入新浪「焦点」宏观简报（默认 `true`；读取本地 `focus/tushare_focus_news_{date}.json`） | 可选 |
+| `MACRO_FOCUS_BRIEF_TTL_SECONDS` | 宏观焦点简报缓存秒数（默认 `1800`） | 可选 |
+| `MACRO_FOCUS_BRIEF_MAX_ITEMS` | 焦点要闻条数上限，`0` 表示推送文件内全部焦点（默认 `0`；硬上限 200 条防异常） | 可选 |
+| `MACRO_FOCUS_BRIEF_FILE` | 焦点 JSON 路径模板，相对仓库根目录；`{date}` 为 Asia/Shanghai 当日 `YYYYMMDD`（默认 `focus/tushare_focus_news_{date}.json`） | 可选 |
+| `MACRO_INDICATORS_BRIEF_ENABLED` | 是否注入 Tushare 结构化宏观指标（`cn_m`/`cn_gdp`/`us_trycr`，默认 `true`，需 `TUSHARE_TOKEN` 与对应宏观接口积分） | 可选 |
+| `MACRO_INDICATORS_BRIEF_TTL_SECONDS` | 结构化宏观指标缓存秒数（默认 `3600`） | 可选 |
+| `MACRO_INDICATORS_BRIEF_INCLUDE_CN_M` | 是否包含货币供应量 `cn_m`（默认 `true`） | 可选 |
+| `MACRO_INDICATORS_BRIEF_INCLUDE_CN_GDP` | 是否包含 GDP `cn_gdp`（默认 `true`） | 可选 |
+| `MACRO_INDICATORS_BRIEF_INCLUDE_US_TRYCR` | 是否包含美债实际收益率 `us_trycr`（默认 `true`） | 可选 |
 | `SEARXNG_BASE_URLS` | SearXNG 自建实例（无配额兜底，需在 settings.yml 启用 format: json）；留空时默认自动发现公共实例 | 可选 |
 | `SEARXNG_PUBLIC_INSTANCES_ENABLED` | 是否在 `SEARXNG_BASE_URLS` 为空时自动从 `searx.space` 获取公共实例（默认 `true`） | 可选 |
 | `NEWS_STRATEGY_PROFILE` | 新闻策略窗口档位：`ultra_short`(1天)/`short`(3天)/`medium`(7天)/`long`(30天)；实际窗口取与 `NEWS_MAX_AGE_DAYS` 的最小值 | 默认 `short` |

@@ -39,6 +39,9 @@ export type PredictionReportListingItem = {
   likeCount: number;
   liked: boolean;
   createdAt?: string | null;
+  analyzedAt?: string | null;
+  purchaseCount?: number;
+  cycleVersion?: number;
   backtestPreview?: PredictionReportBacktestPreview;
 };
 
@@ -46,6 +49,27 @@ export type PredictionReportPricing = {
   purchaseCredits: number;
   sellerRewardCredits: number;
   platformCredits: number;
+};
+
+export type PredictionReportSearchResponse = {
+  stockCode: string;
+  stockName?: string;
+  items: PredictionReportListingItem[];
+  total: number;
+  pricing: PredictionReportPricing;
+  predictionCycle: {
+    cycleAnchorDate?: string;
+    predictionTargetDate?: string;
+    dataAsOfDate?: string;
+  };
+  cycleReport: {
+    exists: boolean;
+    historyId?: number;
+    version?: number;
+    lastAnalyzedAt?: string;
+    sharedRunId?: number;
+  };
+  canRefreshIntel: boolean;
 };
 
 export type PredictionReportListResponse = {

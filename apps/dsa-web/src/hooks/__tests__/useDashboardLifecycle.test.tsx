@@ -92,6 +92,7 @@ describe('useDashboardLifecycle', () => {
 
   it('refreshes history and removes completed tasks after the grace window', () => {
     const refreshHistory = vi.fn().mockResolvedValue(undefined);
+    const handleAnalysisTaskCompleted = vi.fn().mockResolvedValue(undefined);
     const syncTaskUpdated = vi.fn();
     const removeTask = vi.fn();
 
@@ -99,6 +100,7 @@ describe('useDashboardLifecycle', () => {
       useDashboardLifecycle({
         loadInitialHistory: vi.fn().mockResolvedValue(undefined),
         refreshHistory,
+        handleAnalysisTaskCompleted,
         syncTaskCreated: vi.fn(),
         syncTaskUpdated,
         syncTaskFailed: vi.fn(),
@@ -114,7 +116,8 @@ describe('useDashboardLifecycle', () => {
     });
 
     expect(syncTaskUpdated).toHaveBeenCalledWith(completedTask);
-    expect(refreshHistory).toHaveBeenCalledWith(true);
+    expect(handleAnalysisTaskCompleted).toHaveBeenCalledWith(completedTask);
+    expect(refreshHistory).not.toHaveBeenCalled();
 
     act(() => {
       vi.advanceTimersByTime(2_000);
