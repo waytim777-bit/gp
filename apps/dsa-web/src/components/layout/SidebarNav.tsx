@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Modal } from '@heroui/react';
 import { motion } from 'motion/react';
 import { BarChart3, BellRing, ChevronRight, History, Home, LogOut, MessageSquareQuote, Share2, Unplug, UserRound } from 'lucide-react';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useAccount, useDisconnect } from 'wagmi';
 import { paymentApi, type DeductionHistoryItem, type DepositHistoryItem } from '../../api/payment';
 import creditIconSvg from '../../assets/creditIcon.svg?raw';
@@ -48,7 +48,6 @@ const NAV_ITEMS: NavItem[] = [
   { key: 'backtest', label: '回测', to: '/backtest', icon: BarChart3, permission: 'backtest' },
   { key: 'subscriptions', label: '我的订阅', to: '/subscriptions', icon: BellRing, permission: 'subscriptions' },
   { key: 'prediction_reports', label: '预测报告', to: '/prediction-reports', icon: Share2, permission: 'prediction_reports' },
-  // { key: 'payment', label: '积分', to: '/payment', icon: Coins, permission: 'payment' },
 ];
 
 function formatAddress(address: string): string {
@@ -246,9 +245,12 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
           collapsed ? 'px-1' : 'px-0'
         )}
       >
-        <Link
-          to="/payment"
-          onClick={onNavigate}
+        <button
+          type="button"
+          onClick={() => {
+            onNavigate?.();
+            setShowUsageDialog(true);
+          }}
           className={cn(
             'group flex h-16 w-full items-center rounded-xl text-[hsl(var(--primary))]',
             collapsed ? 'justify-center' : 'pl-5'
@@ -269,7 +271,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
             />
             <span className="truncate text-xs font-medium leading-none">{displayBalance}</span>
           </span>
-        </Link>
+        </button>
 
         <div className={cn('flex h-16 w-full items-center rounded-xl', collapsed ? 'justify-center' : 'pl-5')}>
           <div

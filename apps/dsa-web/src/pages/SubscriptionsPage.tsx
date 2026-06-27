@@ -209,7 +209,7 @@ const SubscriptionsPage: React.FC = () => {
       <div className="space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-xl font-bold text-foreground">我的订阅</h1>
+            {/* <h1 className="text-xl font-bold text-foreground">我的订阅</h1> */}
             <p className="mt-1 text-sm text-default-500">
               配置推送方式并订阅股票，系统将在交易日按设定间隔发送分析报告。
             </p>

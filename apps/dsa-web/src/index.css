@@ -1404,15 +1404,15 @@ textarea {
 }
 
 .home-history-row-selected {
-  padding-left: 0.75rem;
+  padding-left: 0.625rem;
 }
 
 .home-history-row-selected::before {
   content: "";
   position: absolute;
   left: 0;
-  top: 12%;
-  bottom: 12%;
+  top: 10%;
+  bottom: 10%;
   width: 4px;
   border-radius: 9999px;
   background: hsl(var(--primary));
@@ -1422,6 +1422,7 @@ textarea {
 .home-history-item {
   position: relative;
   overflow: hidden;
+  min-height: 4.75rem;
   border-radius: 0.75rem;
   border: 1px solid transparent;
   background: var(--home-history-item-bg);
@@ -1433,15 +1434,36 @@ textarea {
 }
 
 .home-history-item:hover {
-  background: var(--home-history-item-hover-bg);
+  /* background: var(--home-history-item-hover-bg); */
   transform: translateY(-1px);
 }
 
 .home-history-item-selected {
-  border-width: 1.5px;
-  border-color: hsl(var(--primary));
+  border-color: hsl(var(--primary) / 0.58);
   background: hsl(var(--primary) / 0.1);
-  box-shadow: 0 0 6px 0 hsl(var(--primary));
+  /* background: var(--home-history-item-selected-bg); */
+  box-shadow: var(--home-panel-selected-shadow);
+}
+
+.history-delete-entry {
+  line-height: 1.25rem;
+}
+
+.history-header-action-button {
+  height: 1.625rem;
+  border-radius: 0.5rem;
+  padding-left: 0.375rem;
+  padding-right: 0.375rem;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.history-selection-toolbar {
+  min-height: 1.75rem;
+  border-radius: 0.625rem;
+  border: 1px solid var(--home-divider-border);
+  background: var(--home-panel-subtle-bg);
+  padding: 0.25rem 0.5rem;
 }
 
 .home-surface-button {
@@ -1470,7 +1492,7 @@ textarea {
 .history-selection-badge {
   font-size: 11px;
   line-height: 1;
-  padding: 3px 8px;
+  padding: 3px 4px;
 }
 
 .history-batch-delete-button {

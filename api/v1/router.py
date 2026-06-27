@@ -79,7 +79,6 @@ router.include_router(
     payment.router,
     prefix="/payment",
     tags=["Payment"],
-    dependencies=[Depends(require_permission("payment"))],
 )
 
 router.include_router(

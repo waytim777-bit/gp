@@ -47,8 +47,9 @@ describe('HistoryList', () => {
     expect(container.querySelector('.home-history-panel')).toBeTruthy();
   });
 
-  it('enables batch actions and forwards item interactions', () => {
+  it('enables batch actions and selects items in delete mode', () => {
     const onItemClick = vi.fn();
+    const onToggleItemSelection = vi.fn();
 
     render(
       <HistoryList
@@ -57,20 +58,40 @@ describe('HistoryList', () => {
         selectedId={1}
         selectedIds={new Set([1])}
         onItemClick={onItemClick}
+        onToggleItemSelection={onToggleItemSelection}
       />,
     );
 
     expect(screen.getByText('买入 82')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /贵州茅台/i }).parentElement).toHaveClass('home-history-row-selected');
+
+    fireEvent.click(screen.getByRole('button', { name: '删除' }));
+
     expect(screen.getByText('已选 1')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '删除' })).toBeEnabled();
 
-    fireEvent.click(screen.getByRole('button', { name: /贵州茅台/i }));
-    expect(onItemClick).toHaveBeenCalledWith(1);
+    const historyItemButton = screen.getByRole('button', { name: /贵州茅台/i });
+    expect(historyItemButton.parentElement).not.toHaveClass('home-history-row-selected');
+
+    fireEvent.click(historyItemButton);
+    expect(onToggleItemSelection).toHaveBeenCalledWith(1);
+    expect(onItemClick).not.toHaveBeenCalled();
   });
 
-  it('disables delete when no history item is selected', () => {
+  it('does not show checkboxes before delete mode is opened', () => {
     render(<HistoryList {...baseProps} items={items} />);
 
+    expect(screen.getByRole('button', { name: '删除' })).toBeEnabled();
+    expect(screen.queryAllByRole('checkbox')).toHaveLength(0);
+  });
+
+  it('opens delete mode and renders selection checkboxes', () => {
+    render(<HistoryList {...baseProps} items={items} selectedId={1} />);
+
+    fireEvent.click(screen.getByRole('button', { name: '删除' }));
+
+    expect(screen.getByText('选择要删除的历史分析')).toBeInTheDocument();
+    expect(screen.getAllByRole('checkbox')).toHaveLength(2);
     expect(screen.getByRole('button', { name: '删除' })).toBeDisabled();
   });
 
@@ -90,11 +111,44 @@ describe('HistoryList', () => {
     expect(fullNameHidden).toHaveClass('hidden');
   });
 
-  it('renders history selection checkboxes', () => {
+  it('forwards selected delete from delete mode', () => {
+    const onDeleteSelected = vi.fn();
+
     render(
-      <HistoryList {...baseProps} items={items} selectedId={1} />,
+      <HistoryList
+        {...baseProps}
+        items={items}
+        selectedId={1}
+        selectedIds={new Set([1])}
+        onDeleteSelected={onDeleteSelected}
+      />,
     );
 
+    fireEvent.click(screen.getByRole('button', { name: '删除' }));
+    fireEvent.click(screen.getByRole('button', { name: '删除' }));
+
+    expect(onDeleteSelected).toHaveBeenCalledTimes(1);
+  });
+
+  it('cancels delete mode and clears visible selections', () => {
+    const onToggleItemSelection = vi.fn();
+
+    render(
+      <HistoryList
+        {...baseProps}
+        items={items}
+        selectedId={1}
+        selectedIds={new Set([1])}
+        onToggleItemSelection={onToggleItemSelection}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '删除' }));
+
     expect(screen.getAllByRole('checkbox')).toHaveLength(2);
+
+    fireEvent.click(screen.getByRole('button', { name: '取消删除选择' }));
+
+    expect(onToggleItemSelection).toHaveBeenCalledWith(1);
   });
 });

@@ -17,9 +17,9 @@ const TITLES: Record<string, string> = {
   '/chat': '问股',
   '/backtest': '回测',
   '/subscriptions': '我的订阅',
-  '/payment': '积分',
   '/settings': '设置',
   '/profile': '个人中心',
+  '/prediction-reports':'预测报告',
 };
 
 export const ShellHeader: React.FC<ShellHeaderProps> = ({
@@ -29,7 +29,7 @@ export const ShellHeader: React.FC<ShellHeaderProps> = ({
 }) => {
   const location = useLocation();
   const { currentUser } = useAuth();
-  const pageTitle = TITLES[location.pathname] ?? 'Daily Stock Analysis';
+  const pageTitle = TITLES[location.pathname] ?? '-';
 
   return (
     <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 px-4 backdrop-blur-xl sm:px-6">
@@ -59,7 +59,7 @@ export const ShellHeader: React.FC<ShellHeaderProps> = ({
       </div>
 
       {/* Right side: username + theme */}
-      <div className="flex items-center gap-2">
+      {/* <div className="flex items-center gap-2">
         <CreditBalanceBadge />
         {currentUser ? (
           <Link
@@ -80,8 +80,7 @@ export const ShellHeader: React.FC<ShellHeaderProps> = ({
             <span>{currentUser.username}</span>
           </Link>
         ) : null}
-        {/* <ThemeToggle /> */}
-      </div>
+      </div> */}
     </header>
   );
 };

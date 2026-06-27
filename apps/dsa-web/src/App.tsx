@@ -8,7 +8,6 @@ import SettingsPage from './pages/SettingsPage';
 import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ChatPage from './pages/ChatPage';
-import PaymentPage from './pages/PaymentPage';
 import PredictionReportsPage from './pages/PredictionReportsPage';
 import SharedReportPage from './pages/SharedReportPage';
 import ProfilePage from './pages/ProfilePage';
@@ -86,7 +85,6 @@ const AppContent: React.FC = () => {
     ['backtest', '/backtest'],
     ['subscriptions', '/subscriptions'],
     ['prediction_reports', '/prediction-reports'],
-    ['payment', '/payment'],
     ['settings', '/settings'],
   ].find(([key]) => hasPermission(key))?.[1];
 
@@ -106,7 +104,6 @@ const AppContent: React.FC = () => {
         <Route path="/chat" element={protectedElement('chat', <ChatPage />)} />
         <Route path="/portfolio" element={<Navigate to="/" replace />} />
         <Route path="/backtest" element={protectedElement('backtest', <BacktestPage />)} />
-        <Route path="/payment" element={protectedElement('payment', <PaymentPage />)} />
         <Route path="/subscriptions" element={protectedElement('subscriptions', <SubscriptionsPage />)} />
         <Route path="/prediction-reports" element={protectedElement('prediction_reports', <PredictionReportsPage />)} />
         <Route path="/profile" element={<ProfilePage />} />

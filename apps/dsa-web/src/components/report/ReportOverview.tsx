@@ -7,7 +7,7 @@ import type {
   ReportSummary as ReportSummaryType,
 } from '../../types/analysis';
 import basicViewIconSvg from '../../assets/basic-view.svg?raw';
-import { Badge, ScoreGauge } from '../common';
+import { ScoreGauge } from '../common';
 import { Card } from '@heroui/react/card';
 import { Modal, Separator } from "@heroui/react";
 import { formatDateTime } from '../../utils/format';
@@ -25,60 +25,16 @@ interface ReportOverviewProps {
   isHistory?: boolean;
 }
 
-type BoardStatus = 'leading' | 'lagging';
-
-type BoardSignal = {
-  status: BoardStatus;
-  changePct?: number;
+type SummaryTileProps = {
+  label: string;
+  value: string;
+  title: string;
+  icon: React.ReactNode;
+  valueClassName?: string;
 };
 
 const normalizeBoardName = (value?: string): string =>
   (value || '').trim().replace(/\s+/g, ' ');
-
-const coerceFiniteNumber = (value: unknown): number | undefined => {
-  if (typeof value === 'number') {
-    return Number.isFinite(value) ? value : undefined;
-  }
-  if (typeof value === 'string') {
-    const trimmed = value.trim().replace(/%$/, '');
-    if (!trimmed) {
-      return undefined;
-    }
-    const parsed = Number(trimmed);
-    return Number.isFinite(parsed) ? parsed : undefined;
-  }
-  return undefined;
-};
-
-const buildBoardSignalMap = (details?: ReportDetailsType): Map<string, BoardSignal> => {
-  const signalMap = new Map<string, BoardSignal>();
-  const topBoards = Array.isArray(details?.sectorRankings?.top) ? details.sectorRankings.top : [];
-  const bottomBoards = Array.isArray(details?.sectorRankings?.bottom) ? details.sectorRankings.bottom : [];
-
-  topBoards.forEach((item) => {
-    const normalizedName = normalizeBoardName(item?.name);
-    if (!normalizedName) {
-      return;
-    }
-    signalMap.set(normalizedName, {
-      status: 'leading',
-      changePct: coerceFiniteNumber(item.changePct),
-    });
-  });
-
-  bottomBoards.forEach((item) => {
-    const normalizedName = normalizeBoardName(item?.name);
-    if (!normalizedName) {
-      return;
-    }
-    signalMap.set(normalizedName, {
-      status: 'lagging',
-      changePct: coerceFiniteNumber(item.changePct),
-    });
-  });
-
-  return signalMap;
-};
 
 const getIndustryFromBoards = (details?: ReportDetailsType): string | undefined => {
   const boards = Array.isArray(details?.belongBoards) ? details.belongBoards : [];
@@ -113,6 +69,29 @@ const hasCompanyProfileValue = (details?: ReportDetailsType): boolean => {
   );
 };
 
+const SummaryTile: React.FC<SummaryTileProps> = ({
+  label,
+  value,
+  title,
+  icon,
+  valueClassName = 'text-foreground',
+}) => (
+  <div className="min-w-0 rounded-xl bg-card px-4 py-6 shadow-none">
+    <div className="flex min-h-[52px] items-center justify-between gap-4">
+      <div className="flex w-16 shrink-0 flex-col items-center">
+        <div className="h-8 w-8 shrink-0">{icon}</div>
+        <div className="mt-1 text-center text-sm leading-5 text-secondary-text">{label}</div>
+      </div>
+      <div
+        className={`min-w-0 flex-1 whitespace-normal break-words text-right text-xl font-semibold leading-7 ${valueClassName}`}
+        title={title}
+      >
+        {value}
+      </div>
+    </div>
+  </div>
+);
+
 /**
  * 鎶ュ憡姒傝鍖虹粍浠?- 缁堢椋庢牸
  */
@@ -128,7 +107,6 @@ export const ReportOverview: React.FC<ReportOverviewProps> = ({
   const relatedBoards = (Array.isArray(details?.belongBoards) ? details.belongBoards : [])
     .filter((board) => normalizeBoardName(board?.name).length > 0)
     .slice(0, 3);
-  const boardSignals = buildBoardSignalMap(details);
   const shouldShowCompanyBasics = hasCompanyProfileValue(details);
   const shouldShowBusinessModel = hasBusinessModelValue(details);
 
@@ -152,20 +130,6 @@ export const ReportOverview: React.FC<ReportOverviewProps> = ({
     if (changePct === undefined || changePct === null) return '--';
     const sign = changePct > 0 ? '+' : '';
     return `${sign}${changePct.toFixed(2)}%`;
-  };
-
-  const getBoardStatusLabel = (status: BoardStatus): string => {
-    if (status === 'leading') {
-      return text.leadingBoard;
-    }
-    return text.laggingBoard;
-  };
-
-  const getBoardStatusVariant = (status: BoardStatus): 'success' | 'danger' => {
-    if (status === 'leading') {
-      return 'success';
-    }
-    return 'danger';
   };
 
   return (
@@ -251,94 +215,55 @@ export const ReportOverview: React.FC<ReportOverviewProps> = ({
 
 
       <div className={`grid grid-cols-1 gap-5 ${relatedBoards.length > 0 ? 'lg:grid-cols-3' : 'md:grid-cols-2'}`}>
-        <Card>
-          <Card.Content className="flex h-[100px] items-center justify-between flex-row">
-            <div className="flex w-16 shrink-0 flex-col items-center">
-              <svg className="h-8 w-8 text-success" fill="none" stroke="currentColor" viewBox="0 0 32 32" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 6.5h14A2.5 2.5 0 0 1 25.5 9v14a2.5 2.5 0 0 1-2.5 2.5H9A2.5 2.5 0 0 1 6.5 23V9A2.5 2.5 0 0 1 9 6.5Z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 13.5h10M11 18.5l3 3 7-7" />
-              </svg>
-              <div className="mt-1 text-sm leading-5 text-secondary-text">{text.actionAdvice}</div>
-            </div>
-            <div
-              className="min-w-0 truncate text-right text-xl font-semibold leading-7 text-warning"
-              title={summary.operationAdvice || text.noAdvice}
-            >
-              {summary.operationAdvice || text.noAdvice}
-            </div>
-          </Card.Content>
-        </Card>
+        <SummaryTile
+          label={text.actionAdvice}
+          value={summary.operationAdvice || text.noAdvice}
+          title={summary.operationAdvice || text.noAdvice}
+          valueClassName="text-warning"
+          icon={(
+            <svg className="h-8 w-8 text-success" fill="none" stroke="currentColor" viewBox="0 0 32 32" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 6.5h14A2.5 2.5 0 0 1 25.5 9v14a2.5 2.5 0 0 1-2.5 2.5H9A2.5 2.5 0 0 1 6.5 23V9A2.5 2.5 0 0 1 9 6.5Z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 13.5h10M11 18.5l3 3 7-7" />
+            </svg>
+          )}
+        />
 
-        <Card>
-          <Card.Content className="flex h-[100px] items-center justify-between flex-row">
-            <div className="flex w-16 shrink-0 flex-col items-center">
-              <svg className="h-8 w-8 text-warning" fill="none" stroke="currentColor" viewBox="0 0 32 32" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 23h18M9 20l5-5 4 4 6-8" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11h5v5" />
-              </svg>
-              <div className="mt-1 text-sm leading-5 text-secondary-text">{text.trendPrediction}</div>
-            </div>
-            <div
-              className="min-w-0 truncate text-right text-xl font-semibold leading-7 text-foreground"
-              title={summary.trendPrediction || text.noPrediction}
-            >
-              {summary.trendPrediction || text.noPrediction}
-            </div>
-          </Card.Content>
-        </Card>
+        <SummaryTile
+          label={text.trendPrediction}
+          value={summary.trendPrediction || text.noPrediction}
+          title={summary.trendPrediction || text.noPrediction}
+          icon={(
+            <svg className="h-8 w-8 text-warning" fill="none" stroke="currentColor" viewBox="0 0 32 32" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 23h18M9 20l5-5 4 4 6-8" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11h5v5" />
+            </svg>
+          )}
+        />
 
         {relatedBoards.length > 0 && (
-          <Card>
-            <Card.Content className="flex h-[100px] flex-col justify-center gap-1.5 px-4 py-6">
-              <div className="flex items-center justify-between gap-4 text-xs leading-[17px] text-default-500">
-                <span>{text.boardLinkage}</span>
-                <span>{text.relatedBoards}</span>
+          <div className="min-w-0 rounded-xl bg-card px-4 py-6 shadow-none">
+            <div className="flex min-h-[52px] flex-col justify-center gap-1">
+              <div className="flex items-center justify-between gap-4 text-xs font-semibold leading-[17px]">
+                <span className="text-foreground">{text.boardLinkage}</span>
+                <span className="text-default-500">{text.relatedBoards}</span>
               </div>
-              <div className="grid grid-cols-3 items-center gap-4">
+              <div className="grid grid-cols-3 items-start gap-4 text-base font-medium leading-[22px] text-foreground">
                 {Array.from({ length: 3 }, (_, index) => {
                   const board = relatedBoards[index];
                   const boardName = normalizeBoardName(board?.name);
-                  const signal = boardSignals.get(boardName);
                   return (
                     <div
                       key={`${boardName || 'empty'}-${board?.code || index}`}
-                      className={`min-w-0 space-y-1 ${index === 0 ? 'text-left' : index === 2 ? 'text-right' : 'text-center'}`}
+                      className={`min-w-0 whitespace-normal break-words ${index === 0 ? 'text-left' : index === 2 ? 'text-right' : 'text-center'}`}
                       title={boardName}
                     >
-                      <div className="truncate text-base font-medium leading-[22px] text-foreground">
-                        {boardName}
-                      </div>
-                      {board ? (
-                        <div className={`flex min-h-5 flex-wrap items-center gap-1.5 ${index === 0 ? 'justify-start' : index === 2 ? 'justify-end' : 'justify-center'}`}>
-                          {board.type ? (
-                            <span className="rounded-full bg-default-100 px-1.5 py-0.5 text-[10px] leading-4 text-default-600">
-                              {board.type}
-                            </span>
-                          ) : null}
-                          {signal ? (
-                            <Badge
-                              variant={getBoardStatusVariant(signal.status)}
-                              className="px-1.5 py-0 text-[10px] leading-4 shadow-none"
-                            >
-                              {getBoardStatusLabel(signal.status)}
-                            </Badge>
-                          ) : null}
-                          {signal && signal.changePct !== undefined && signal.changePct !== null ? (
-                            <span
-                              className="text-[10px] font-mono leading-4"
-                              style={getPriceChangeStyle(signal.changePct)}
-                            >
-                              {formatChangePct(signal.changePct)}
-                            </span>
-                          ) : null}
-                        </div>
-                      ) : null}
+                      {boardName}
                     </div>
                   );
                 })}
               </div>
-            </Card.Content>
-          </Card>
+            </div>
+          </div>
         )}
       </div>
 

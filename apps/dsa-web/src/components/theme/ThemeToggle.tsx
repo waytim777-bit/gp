@@ -95,7 +95,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
           role="menu"
           aria-label="主题模式"
           className={cn(
-            'z-[100] min-w-[8rem] overflow-hidden rounded-2xl border border-border/70 bg-elevated p-1.5 shadow-[0_24px_48px_rgba(3,8,20,0.32)] backdrop-blur-xl',
+            'z-[299] min-w-[8rem] overflow-hidden rounded-2xl bg-elevated p-1.5 shadow-[0_24px_48px_rgba(3,8,20,0.32)] backdrop-blur-xl',
             isNavVariant || isIconVariant
               ? 'absolute bottom-full left-0 mb-2 w-max min-w-[9rem]'
               : 'absolute right-0 mt-2'

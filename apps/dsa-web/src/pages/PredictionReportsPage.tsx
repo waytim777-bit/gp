@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@heroui/react/card';
-import { ShoppingBag, Share2, ThumbsUp } from 'lucide-react';
+import { ShoppingBag, ThumbsUp } from 'lucide-react';
 import { predictionReportsApi } from '../api/predictionReports';
 import { historyApi } from '../api/history';
 import { getParsedApiError, type ParsedApiError } from '../api/error';
@@ -31,7 +31,7 @@ const formatCycleAnchorLabel = (item: PredictionReportListingItem): string => {
 };
 
 const PredictionReportsPage: React.FC = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { balance, refreshBalance } = useCreditStore();
   const [items, setItems] = useState<PredictionReportListingItem[]>([]);
   const [activeTab, setActiveTab] = useState<PredictionReportTab>('purchasable');
@@ -164,7 +164,7 @@ const PredictionReportsPage: React.FC = () => {
     <div className="mx-auto flex w-full max-w-[1760px] flex-col gap-5 px-4 py-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">预测报告</h1>
+          {/* <h1 className="text-2xl font-bold text-foreground">预测报告</h1> */}
           <p className="mt-1 text-sm text-muted-text">
             {activeTabMeta.description}。购买价格 {purchaseCredits} 积分/份。
           </p>

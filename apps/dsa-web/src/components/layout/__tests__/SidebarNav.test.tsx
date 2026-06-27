@@ -18,7 +18,7 @@ vi.mock('../../../contexts/AuthContext', () => ({
       username: 'demo',
       avatarUrl: null,
       isAdmin: true,
-      menuPermissions: ['home', 'chat', 'payment'],
+      menuPermissions: ['home', 'chat'],
     },
     logout: mockLogout,
   }),

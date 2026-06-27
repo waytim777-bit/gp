@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 > For user-friendly release highlights, see the [GitHub Releases](https://github.com/ZhuLinsen/daily_stock_analysis/releases) page.
 
 ## [Unreleased]
+- [修复] 普通用户无需独立 payment 菜单权限即可访问左下角积分弹窗相关接口。
+- [修复] Web 首页历史分析删除模式下点击历史项改为勾选记录，并隐藏当前查看项左侧选中标记。
+- [改进] Web 首页历史分析列表按 Figma 设计稿重做紧凑卡片样式，删除入口改为先进入勾选模式再批量删除。
+- [改进] Web 移除独立 `/payment` 积分页面与菜单权限入口，积分余额、充值和使用详情统一通过侧边栏弹窗承载。
 - [改进] Web 首页股票分析输入框按 Figma 设计稿优化为紧凑工具栏样式，合并积分提示与分析按钮。
 - [改进] Web 侧边栏用户菜单“个人中心”改为打开 HeroUI 弹窗，支持在弹窗内修改昵称、头像和登录密码。
 - [改进] Web 侧边栏用户菜单“使用详情”改为打开 HeroUI 积分使用详情弹窗，并展示余额、累计充值、每日免费积分和交易记录。
@@ -28,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - [改进] Web 首页报告概览按 Figma 设计稿优化“狙击点位”板块的深色容器、点位卡片和文字层级。
 - [改进] Web 首页报告概览将“狙击点位”移动到操作建议、趋势预测和关联板块三列摘要卡片下方。
 - [改进] Web 首页报告概览将操作建议、趋势预测和关联板块调整为 Figma 设计稿一致的三列摘要卡片布局。
+- [改进] Web 首页报告概览优化操作建议、趋势预测和板块联动卡片密度，长文案与板块名称改为完整换行展示。
 - [改进] Web 首页报告概览将公司基本信息移入弹窗，通过顶部“基本信息”按钮查看，减少概览页默认信息密度。
 - [改进] Web 首页历史分析与分析任务侧栏按 Figma 设计稿调整卡片密度、标题层级、任务进度和历史选中态，推荐/删除改为作用于当前选中的历史记录。
 - [文档] 新增 Figma 设计稿落地规范，约束 Web UI 先对齐整页布局，复用现有主题 token，并用 Tailwind 断点适配响应式。

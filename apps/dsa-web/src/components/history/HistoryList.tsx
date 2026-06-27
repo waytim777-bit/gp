@@ -1,11 +1,11 @@
 import type React from 'react';
-import { useRef, useCallback, useEffect } from 'react';
+import { useRef, useCallback, useEffect, useState } from 'react';
 import { ScrollShadow } from '@heroui/react';
 import { Checkbox } from '@heroui/react/checkbox';
-import { History } from 'lucide-react';
+import { History, Trash2, X } from 'lucide-react';
 import type { HistoryItem } from '../../types/analysis';
 import { Button } from '../common';
-import { DashboardPanelHeader, DashboardStateBlock } from '../dashboard';
+import { DashboardStateBlock } from '../dashboard';
 import { HistoryListItem } from './HistoryListItem';
 
 interface HistoryListProps {
@@ -45,10 +45,12 @@ export const HistoryList: React.FC<HistoryListProps> = ({
 }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const loadMoreTriggerRef = useRef<HTMLDivElement>(null);
+  const [hasOpenedSelectionMode, setHasOpenedSelectionMode] = useState(false);
 
   const selectedCount = items.filter((item) => selectedIds.has(item.id)).length;
   const allVisibleSelected = items.length > 0 && selectedCount === items.length;
   const someVisibleSelected = selectedCount > 0 && !allVisibleSelected;
+  const isSelectionMode = items.length > 0 && hasOpenedSelectionMode;
 
   // 使用 IntersectionObserver 检测滚动到底部
   const handleObserver = useCallback(
@@ -79,32 +81,88 @@ export const HistoryList: React.FC<HistoryListProps> = ({
     return () => observer.disconnect();
   }, [handleObserver]);
 
+  const handleEnterSelectionMode = useCallback(() => {
+    if (items.length > 0 && !isDeleting) {
+      setHasOpenedSelectionMode(true);
+    }
+  }, [isDeleting, items.length]);
+
+  const handleCancelSelectionMode = useCallback(() => {
+    items.forEach((item) => {
+      if (selectedIds.has(item.id)) {
+        onToggleItemSelection(item.id);
+      }
+    });
+    setHasOpenedSelectionMode(false);
+  }, [items, onToggleItemSelection, selectedIds]);
+
+  const handleDeleteSelected = useCallback(() => {
+    if (selectedCount > 0 && !isDeleting) {
+      onDeleteSelected();
+    }
+  }, [isDeleting, onDeleteSelected, selectedCount]);
+
   return (
     <aside className={`home-history-panel overflow-hidden flex flex-col ${className}`}>
       <ScrollShadow
         ref={scrollContainerRef}
         data-testid="home-history-list-scroll"
         hideScrollBar={true}
-        className="min-h-0 flex-1 overflow-y-auto custom-scrollbar p-0"
+        className="min-h-0 flex-1 overflow-y-auto custom-scrollbar p-0 pr-0.5"
       >
-        <div className="mb-4 space-y-4">
-          <DashboardPanelHeader
-            className="mb-0"
-            title="历史分析"
-            titleClassName="text-base font-bold"
-            leading={(
-              <History className="h-6 w-6 text-primary" strokeWidth={1.8} />
-            )}
-            headingClassName="items-center"
-            actions={
-              selectedCount > 0 ? (
-                <span className="text-xs font-medium text-primary">已选 {selectedCount}</span>
-              ) : undefined
-            }
-          />
+        <div className="mb-3 space-y-3">
+          <div className="flex min-h-6 items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-1.5">
+              <History className="h-5 w-5 shrink-0 text-primary" strokeWidth={1.9} />
+              <h2 className="truncate text-base font-bold leading-6 text-foreground">历史分析</h2>
+            </div>
 
-          {items.length > 0 && (
-            <div className="flex items-center gap-2">
+            {items.length > 0 && (
+              isSelectionMode ? (
+                <div className="flex shrink-0 items-center gap-1.5">
+                  <span className="history-selection-badge text-primary">
+                    已选 {selectedCount}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="xsm"
+                    onClick={handleCancelSelectionMode}
+                    disabled={isDeleting}
+                    className="history-header-action-button"
+                    aria-label="取消删除选择"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                    取消
+                  </Button>
+                  <Button
+                    variant="danger-subtle"
+                    size="xsm"
+                    onClick={handleDeleteSelected}
+                    disabled={selectedCount === 0 || isDeleting}
+                    isLoading={isDeleting}
+                    loadingText="删除中"
+                    className="history-header-action-button"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    删除
+                  </Button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleEnterSelectionMode}
+                  disabled={isDeleting}
+                  className="history-delete-entry inline-flex shrink-0 items-center gap-0.5 text-sm font-medium text-secondary-text transition-colors hover:text-danger disabled:pointer-events-none disabled:opacity-50"
+                >
+                  <Trash2 className="h-4 w-4" strokeWidth={1.8} />
+                  <span>删除</span>
+                </button>
+              )
+            )}
+          </div>
+
+          {items.length > 0 && isSelectionMode && (
+            <div className="flex items-center justify-between gap-2">
               <Checkbox
                 isSelected={allVisibleSelected}
                 isIndeterminate={someVisibleSelected}
@@ -113,23 +171,13 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                 aria-label="全选当前已加载历史记录"
                 className="[&_[data-slot='checkbox-default-indicator--checkmark']]:size-4 [&_[data-slot='checkbox-default-indicator--indeterminate']]:size-4"
               >
-                <Checkbox.Control className="size-5 rounded-md before:rounded-md">
+                <Checkbox.Control className="size-6 rounded-full before:rounded-md">
                   <Checkbox.Indicator />
                 </Checkbox.Control>
                 <Checkbox.Content>
-                  <span className="text-[11px] text-default-500 select-none">全选当前</span>
+                  <span className="text-md text-default-500 select-none">全选</span>
                 </Checkbox.Content>
               </Checkbox>
-              <Button
-                variant="danger-subtle"
-                size="xsm"
-                onClick={onDeleteSelected}
-                disabled={selectedCount === 0 || isDeleting}
-                isLoading={isDeleting}
-                className="history-batch-delete-button disabled:!border-transparent disabled:!bg-transparent"
-              >
-                {isDeleting ? '删除中' : '删除'}
-              </Button>
             </div>
           )}
         </div>
@@ -159,6 +207,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                 isViewing={selectedId === item.id}
                 isChecked={selectedIds.has(item.id)}
                 isDeleting={isDeleting}
+                selectionMode={isSelectionMode}
                 onToggleChecked={onToggleItemSelection}
                 onClick={onItemClick}
               />

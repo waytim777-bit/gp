@@ -128,7 +128,7 @@ describe('ReportOverview', () => {
     expect(screen.getAllByText('Baijiu').length).toBeGreaterThan(0);
   });
 
-  it('renders related boards with leading and lagging markers in the overview summary strip', () => {
+  it('renders related board names in the overview summary strip', () => {
     render(
       <ReportOverview
         meta={baseMeta}
@@ -151,11 +151,11 @@ describe('ReportOverview', () => {
     expect(screen.getAllByText('白酒').length).toBeGreaterThan(0);
     expect(screen.getByText('消费')).toBeInTheDocument();
     expect(screen.getByText('新能源')).toBeInTheDocument();
-    expect(screen.getByText('行业')).toBeInTheDocument();
-    expect(screen.getByText('领涨')).toBeInTheDocument();
-    expect(screen.getByText('+2.31%')).toBeInTheDocument();
-    expect(screen.getByText('领跌')).toBeInTheDocument();
-    expect(screen.getByText('-1.20%')).toBeInTheDocument();
+    expect(screen.queryByText('行业')).not.toBeInTheDocument();
+    expect(screen.queryByText('领涨')).not.toBeInTheDocument();
+    expect(screen.queryByText('+2.31%')).not.toBeInTheDocument();
+    expect(screen.queryByText('领跌')).not.toBeInTheDocument();
+    expect(screen.queryByText('-1.20%')).not.toBeInTheDocument();
     expect(screen.queryByText('中性')).not.toBeInTheDocument();
   });
 
@@ -215,7 +215,7 @@ describe('ReportOverview', () => {
     expect(screen.queryByText('狙击点位')).not.toBeInTheDocument();
   });
 
-  it('fails open on malformed ranking payloads in the overview summary strip', () => {
+  it('renders board names when ranking payloads are malformed in the overview summary strip', () => {
     render(
       <ReportOverview
         meta={baseMeta}
@@ -232,7 +232,7 @@ describe('ReportOverview', () => {
 
     expect(screen.getByText('关联板块')).toBeInTheDocument();
     expect(screen.getByText('白酒')).toBeInTheDocument();
-    expect(screen.getByText('领跌')).toBeInTheDocument();
-    expect(screen.getByText('-2.50%')).toBeInTheDocument();
+    expect(screen.queryByText('领跌')).not.toBeInTheDocument();
+    expect(screen.queryByText('-2.50%')).not.toBeInTheDocument();
   });
 });
