@@ -1,5 +1,4 @@
 import type React from 'react';
-import { Activity } from 'lucide-react';
 import { Card } from '@heroui/react/card';
 import type { ReportLanguage, TechnicalIndicatorsReport } from '../../types/analysis';
 import { normalizeReportLanguage } from '../../utils/reportLanguage';
@@ -39,7 +38,6 @@ export const TechnicalIndicatorsSection: React.FC<TechnicalIndicatorsSectionProp
   const boll = technicalIndicators.boll;
   const volume = technicalIndicators.volume;
   const levels = technicalIndicators.levels;
-  const signal = technicalIndicators.signal;
 
   const hasContent = Boolean(
     technicalIndicators.asOfPrice
@@ -57,7 +55,6 @@ export const TechnicalIndicatorsSection: React.FC<TechnicalIndicatorsSectionProp
 
   const copy = reportLanguage === 'en'
     ? {
-      eyebrow: 'TECHNICAL ANALYSIS',
       title: 'Indicator Snapshot',
       trend: 'Trend',
       price: 'Price',
@@ -72,13 +69,10 @@ export const TechnicalIndicatorsSection: React.FC<TechnicalIndicatorsSectionProp
       boll: 'BOLL Upper/Mid/Lower',
       bollSignal: 'BOLL %B / Status',
       volume: 'Volume / 5D Ratio',
-      support: 'Support Levels',
-      resistance: 'Resistance Levels',
-      system: 'System Score / Signal',
+      support: 'Support',
       source: 'Source',
     }
     : {
-      eyebrow: '技术分析',
       title: '技术指标快照',
       trend: '趋势',
       price: '现价',
@@ -94,8 +88,6 @@ export const TechnicalIndicatorsSection: React.FC<TechnicalIndicatorsSectionProp
       bollSignal: 'BOLL %B / 状态',
       volume: '量能 / 5日量比',
       support: '支撑位',
-      resistance: '阻力位',
-      system: '系统评分 / 信号',
       source: '数据源',
     };
 
@@ -142,32 +134,14 @@ export const TechnicalIndicatorsSection: React.FC<TechnicalIndicatorsSectionProp
       label: copy.support,
       value: formatLevels(levels?.supportLevels ?? levels?.support_levels),
     },
-    {
-      label: copy.resistance,
-      value: formatLevels(levels?.resistanceLevels ?? levels?.resistance_levels),
-    },
-    {
-      label: copy.system,
-      value: `${signal?.score ?? '--'} / ${signal?.buySignal ?? signal?.buy_signal ?? '--'}`,
-    },
   ];
 
   const content = (
     <>
       <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <Activity className="h-4 w-4 text-default-500" aria-hidden="true" />
-          <div>
-            {!compact ? (
-              <div className="text-[11px] font-medium uppercase tracking-wider text-default-500">
-                {copy.eyebrow}
-              </div>
-            ) : null}
-            <h3 className="text-base font-semibold text-foreground">{copy.title}</h3>
-          </div>
-        </div>
+        <h3 className="text-lg font-semibold leading-none text-foreground">{copy.title}</h3>
         {technicalIndicators.source ? (
-          <span className="rounded-md bg-default-100 px-2 py-1 text-[11px] text-default-500">
+          <span className="shrink-0 truncate text-xs font-medium text-secondary-text">
             {copy.source}: {technicalIndicators.source}
           </span>
         ) : null}
@@ -176,10 +150,13 @@ export const TechnicalIndicatorsSection: React.FC<TechnicalIndicatorsSectionProp
       <div className="overflow-x-auto">
         <table className="min-w-full table-fixed text-left text-sm">
           <tbody>
-            {rows.map((row) => (
-              <tr key={row.label} className="border-b border-subtle last:border-b-0">
-                <td className="w-2/5 px-2 py-2 text-default-600">{row.label}</td>
-                <td className="px-2 py-2 text-right font-mono text-foreground">{row.value}</td>
+            {rows.map((row, index) => (
+              <tr
+                key={row.label}
+                className={index === 0 ? 'rounded-md bg-default-100/70' : ''}
+              >
+                <td className="w-[42%] px-3 py-2.5 text-muted-text">{row.label}</td>
+                <td className="px-3 py-2.5 text-right font-semibold text-foreground">{row.value}</td>
               </tr>
             ))}
           </tbody>
@@ -189,8 +166,8 @@ export const TechnicalIndicatorsSection: React.FC<TechnicalIndicatorsSectionProp
   );
 
   return (
-    <Card className="text-left">
-      <Card.Content className={compact ? 'space-y-3' : 'space-y-4'}>
+    <Card className="h-full rounded-xl border-0 bg-surface text-left shadow-none">
+      <Card.Content className={compact ? 'space-y-4 py-4' : 'space-y-5 py-5'}>
         {content}
       </Card.Content>
     </Card>

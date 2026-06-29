@@ -3,6 +3,7 @@ import { useState } from 'react';
 import type {
   ReportDetails as ReportDetailsType,
   ReportMeta,
+  ModelOpinionsPayload,
   ReportStrategy as ReportStrategyType,
   ReportSummary as ReportSummaryType,
 } from '../../types/analysis';
@@ -15,6 +16,7 @@ import { hasBusinessModelValue } from '../../utils/businessModel';
 import { getReportText, normalizeReportLanguage } from '../../utils/reportLanguage';
 import { BusinessModelSection } from './BusinessModelSection';
 import { CompanyProfileSection } from './CompanyProfileSection';
+import { ModelOpinionsPanel } from './ModelOpinionsPanel';
 import { ReportStrategy } from './ReportStrategy';
 
 interface ReportOverviewProps {
@@ -22,6 +24,7 @@ interface ReportOverviewProps {
   summary: ReportSummaryType;
   strategy?: ReportStrategyType;
   details?: ReportDetailsType;
+  modelOpinions?: ModelOpinionsPayload | Record<string, unknown> | null;
   isHistory?: boolean;
 }
 
@@ -100,6 +103,7 @@ export const ReportOverview: React.FC<ReportOverviewProps> = ({
   summary,
   strategy,
   details,
+  modelOpinions,
 }) => {
   const [companyBasicsDialogOpen, setCompanyBasicsDialogOpen] = useState(false);
   const reportLanguage = normalizeReportLanguage(meta.reportLanguage);
@@ -268,6 +272,11 @@ export const ReportOverview: React.FC<ReportOverviewProps> = ({
       </div>
 
       <ReportStrategy strategy={strategy} language={reportLanguage} />
+
+      <ModelOpinionsPanel
+        modelOpinions={modelOpinions}
+        language={reportLanguage}
+      />
 
       {shouldShowBusinessModel && (
         <>

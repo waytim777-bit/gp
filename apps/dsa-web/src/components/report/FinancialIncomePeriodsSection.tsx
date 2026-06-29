@@ -1,10 +1,7 @@
 import type React from 'react';
-import { LineChart } from 'lucide-react';
 import { Card } from '@heroui/react/card';
 import type { FinancialReport, IncomePeriodRow, ReportLanguage, DimensionAnalysisReport } from '../../types/analysis';
 import { normalizeReportLanguage } from '../../utils/reportLanguage';
-import { DimensionAnalysisBlock } from './DimensionAnalysisBlock';
-import { pickDimensionAnalysis } from '../../utils/dimensionAnalysis';
 import {
   coerceFiniteNumber,
   formatAmountBillion,
@@ -47,16 +44,14 @@ const getRows = (financialReport?: FinancialReport): IncomePeriodRow[] => {
 
 export const FinancialIncomePeriodsSection: React.FC<FinancialIncomePeriodsSectionProps> = ({
   financialReport,
-  financialFundamentalsAnalysis,
   language,
   compact = false,
 }) => {
   const reportLanguage = normalizeReportLanguage(language);
   const rows = getRows(financialReport);
-  const dimensionAnalysis = pickDimensionAnalysis(financialFundamentalsAnalysis, 'income_periods');
   const report = financialReport?.incomePeriods ?? financialReport?.income_periods;
 
-  if (rows.length === 0 && !dimensionAnalysis) {
+  if (rows.length === 0) {
     return null;
   }
 
@@ -67,8 +62,7 @@ export const FinancialIncomePeriodsSection: React.FC<FinancialIncomePeriodsSecti
       period: 'Period',
       revenue: 'Revenue (100M)',
       revenueYoy: 'Revenue YoY',
-      netProfit: 'Net Profit (100M)',
-      rdExp: 'R&D (100M)',
+      profitAndRd: 'Net Profit / R&D (100M)',
       source: 'Source',
     }
     : {
@@ -77,68 +71,47 @@ export const FinancialIncomePeriodsSection: React.FC<FinancialIncomePeriodsSecti
       period: '报告期',
       revenue: '营业收入（亿）',
       revenueYoy: '营收同比',
-      netProfit: '归母净利润（亿）',
-      rdExp: '研发费用（亿）',
+      profitAndRd: '归母净利润/研发费用（亿）',
       source: '数据源',
     };
 
   const content = (
     <>
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <LineChart className="h-4 w-4 text-default-500" aria-hidden="true" />
-          <div>
-            {!compact ? (
-              <div className="text-[11px] font-medium uppercase tracking-wider text-default-500">
-                {copy.eyebrow}
-              </div>
-            ) : null}
-            <h3 className="text-base font-semibold text-foreground">{copy.title}</h3>
-          </div>
-        </div>
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="shrink-0 text-lg font-semibold leading-none text-foreground">{copy.title}</h3>
         {report?.source ? (
-          <span className="rounded-md bg-default-100 px-2 py-1 text-[11px] text-default-500">
+          <span className="shrink-0 truncate text-xs font-medium text-secondary-text">
             {copy.source}: {report.source}
           </span>
         ) : null}
       </div>
 
-      <DimensionAnalysisBlock
-        analysis={dimensionAnalysis}
-        dimension="income_periods"
-        language={reportLanguage}
-      />
-
       {rows.length > 0 ? (
-      <div className="overflow-x-auto">
-        <table className="min-w-full table-fixed text-left text-sm">
+      <div className="overflow-x-auto pb-1">
+        <table className="min-w-full table-fixed text-left">
           <thead>
-            <tr className="border-b border-subtle text-[11px] font-medium uppercase tracking-wide text-default-500">
-              <th className="px-2 py-2">{copy.period}</th>
-              <th className="px-2 py-2 text-right">{copy.revenue}</th>
-              <th className="px-2 py-2 text-right">{copy.revenueYoy}</th>
-              <th className="px-2 py-2 text-right">{copy.netProfit}</th>
-              <th className="px-2 py-2 text-right">{copy.rdExp}</th>
+            <tr className="text-xs font-medium text-secondary-text">
+              <th className="w-[22%] pb-4">{copy.period}</th>
+              <th className="w-[24%] pb-4 text-left">{copy.revenue}</th>
+              <th className="w-[34%] pb-4 text-left">{copy.profitAndRd}</th>
+              <th className="w-[20%] pb-4 text-right">{copy.revenueYoy}</th>
             </tr>
           </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row.period} className="border-b border-subtle last:border-b-0">
-                <td className="px-2 py-2 font-mono text-foreground">{row.period}</td>
-                <td className="px-2 py-2 text-right font-mono text-foreground">
+          <tbody className="text-sm font-semibold text-foreground">
+            {rows.slice(0, 8).map((row, index) => (
+              <tr key={`${row.period}-${index}`}>
+                <td className="py-2.5 pr-3 font-mono">{row.period}</td>
+                <td className="py-2.5 pr-3 font-mono">
                   {formatAmountBillion(row.revenue)}
                 </td>
+                <td className="py-2.5 pr-3 font-mono">
+                  {formatAmountBillion(row.netProfit)}/{formatAmountBillion(row.rdExp)}
+                </td>
                 <td
-                  className="px-2 py-2 text-right font-mono font-semibold"
+                  className="py-2.5 text-right font-mono"
                   style={getGrowthStyle(row.revenueYoy)}
                 >
                   {formatGrowthPct(row.revenueYoy)}
-                </td>
-                <td className="px-2 py-2 text-right font-mono text-foreground">
-                  {formatAmountBillion(row.netProfit)}
-                </td>
-                <td className="px-2 py-2 text-right font-mono text-foreground">
-                  {formatAmountBillion(row.rdExp)}
                 </td>
               </tr>
             ))}
@@ -150,8 +123,8 @@ export const FinancialIncomePeriodsSection: React.FC<FinancialIncomePeriodsSecti
   );
 
   return (
-    <Card className="text-left">
-      <Card.Content className={compact ? 'space-y-3' : 'space-y-4'}>
+    <Card className="h-full rounded-xl border-0 bg-surface text-left shadow-none">
+      <Card.Content className={`space-y-5 ${compact ? 'py-4' : 'py-5'}`}>
         {content}
       </Card.Content>
     </Card>

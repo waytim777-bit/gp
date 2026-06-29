@@ -1,5 +1,5 @@
 import type React from 'react';
-import { AlertTriangle, Users } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import { Card } from '@heroui/react/card';
 import type {
   ModelOpinionDivergence,
@@ -12,6 +12,7 @@ import { normalizeReportLanguage } from '../../utils/reportLanguage';
 interface ModelOpinionsPanelProps {
   modelOpinions?: ModelOpinionsPayload | Record<string, unknown> | null;
   language?: ReportLanguage;
+  variant?: 'default' | 'fullReport';
 }
 
 const normalizeDivergence = (raw: unknown): ModelOpinionDivergence | undefined => {
@@ -122,10 +123,13 @@ const isOutlier = (
   return false;
 };
 
+const scoreText = (score?: number): string => (score == null ? '--' : String(score));
+
 const DivergenceBanner: React.FC<{
   divergence: ModelOpinionDivergence;
   language: ReportLanguage;
-}> = ({ divergence, language }) => {
+  variant?: 'default' | 'fullReport';
+}> = ({ divergence, language, variant = 'default' }) => {
   const isEn = language === 'en';
   const spread = divergence.scoreSpread ?? 0;
   const label = isEn
@@ -133,30 +137,57 @@ const DivergenceBanner: React.FC<{
     : divergence.alignmentLabelZh;
 
   const toneClass = divergence.alignment === 'low'
-    ? 'border-warning/40 bg-warning/10 text-warning-700 dark:text-warning'
+    ? 'border-warning/45 bg-warning/10 text-foreground'
     : divergence.alignment === 'moderate'
-      ? 'border-primary/30 bg-primary/5 text-foreground'
-      : 'border-subtle bg-content2 text-default-600';
+      ? 'border-[#00a1c2]/35 bg-[#00a1c2]/5 text-foreground'
+      : 'border-subtle bg-surface/40 text-foreground';
 
   if (spread === 0 && divergence.alignment === 'insufficient') {
     return null;
   }
 
+  if (variant === 'fullReport') {
+    return (
+      <div className={`rounded-xl border px-4 py-3 text-sm ${toneClass}`}>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+          <span className="font-semibold text-foreground">
+            {isEn ? 'Score spread' : '评分跨度'}: {divergence.scoreMin ?? '--'}-{divergence.scoreMax ?? '--'}
+            {spread > 0 && ` (Δ${spread})`}
+          </span>
+          {label && (
+            <span className="inline-flex items-center gap-1 text-xs font-medium text-secondary-text">
+              {divergence.alignment === 'low' && <AlertTriangle className="h-3.5 w-3.5" />}
+              {label}
+            </span>
+          )}
+          {divergence.primaryScore != null && (
+            <span className="text-xs text-secondary-text">
+              {isEn ? 'Primary' : '主模型'}: {divergence.primaryScore}
+              {divergence.scoreMedian != null && (
+                <> · {isEn ? 'Median' : '中位'}: {divergence.scoreMedian}</>
+              )}
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className={`rounded-lg border px-4 py-3 text-sm ${toneClass}`}>
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-        <span className="font-medium">
-          {isEn ? 'Score spread' : '评分跨度'}: {divergence.scoreMin ?? '--'}–{divergence.scoreMax ?? '--'}
+    <div className={`rounded-xl border px-3 py-2.5 text-sm ${toneClass}`}>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <span className="font-semibold">
+          {isEn ? 'Score spread' : '评分跨度'}: {divergence.scoreMin ?? '--'}-{divergence.scoreMax ?? '--'}
           {spread > 0 && ` (Δ${spread})`}
         </span>
         {label && (
-          <span className="flex items-center gap-1">
+          <span className="flex items-center gap-1 text-secondary-text">
             {divergence.alignment === 'low' && <AlertTriangle className="h-4 w-4" />}
             {label}
           </span>
         )}
         {divergence.primaryScore != null && (
-          <span className="text-default-500">
+          <span className="text-secondary-text">
             {isEn ? 'Primary' : '主模型'}: {divergence.primaryScore}
             {divergence.scoreMedian != null && (
               <> · {isEn ? 'Median' : '中位'}: {divergence.scoreMedian}</>
@@ -172,31 +203,113 @@ const OpinionCard: React.FC<{
   item: ModelOpinionItem;
   language: ReportLanguage;
   highlight?: boolean;
-}> = ({ item, language, highlight = false }) => {
+  variant?: 'default' | 'fullReport';
+}> = ({ item, language, highlight = false, variant = 'default' }) => {
   const isEn = language === 'en';
   const borderClass = item.role === 'primary'
-    ? 'border-primary/40 bg-primary/5'
+    ? 'border-transparent bg-[#00a1c2]/10'
     : highlight
-      ? 'border-warning/50 bg-warning/5 ring-1 ring-warning/30'
-      : 'border-subtle bg-content1';
+      ? 'border-warning/50 bg-warning/5 ring-1 ring-warning/25'
+      : 'border-subtle bg-surface/35';
+  const fullReportBorderClass = item.role === 'primary'
+    ? 'border-transparent bg-[#00a1c2]/10'
+    : highlight
+      ? 'border-warning/45 bg-warning/5 ring-1 ring-warning/20'
+      : 'border-subtle bg-surface/30';
+
+  if (variant === 'fullReport') {
+    return (
+      <Card className={`rounded-xl border p-4 shadow-none ${fullReportBorderClass}`}>
+        <div className="mb-3 space-y-2">
+          <p className="text-xs font-semibold text-secondary-text">
+            {roleLabel(item.role, language)}
+          </p>
+          <div className="flex min-w-0 items-center justify-between gap-3">
+            <p className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">
+              {shortModelName(item.model)}
+            </p>
+            <span className="shrink-0 text-sm font-semibold tabular-nums text-secondary-text">
+              {scoreText(item.sentimentScore)}
+            </span>
+          </div>
+          {highlight && (
+            <span className="inline-flex rounded-full bg-warning/10 px-2 py-0.5 text-[11px] font-medium text-warning">
+              {isEn ? 'Diverges from primary' : '与主模型偏离'}
+            </span>
+          )}
+        </div>
+
+        {!item.success ? (
+          <p className="text-sm text-danger">{item.error || (isEn ? 'Consultation failed' : '会诊失败')}</p>
+        ) : (
+          <div className="space-y-2.5 text-sm leading-6">
+            {item.operationAdvice && (
+              <p className="text-foreground">
+                <span className="font-semibold">{isEn ? 'Advice: ' : '建议：'}</span>
+                <span className="text-foreground">{item.operationAdvice}</span>
+              </p>
+            )}
+            {item.trendPrediction && (
+              <p className="text-foreground">
+                <span className="font-semibold">{isEn ? 'Trend: ' : '趋势：'}</span>
+                <span className="text-foreground">{item.trendPrediction}</span>
+              </p>
+            )}
+            {item.confidence && (
+              <p className="text-foreground">
+                <span className="font-semibold">{isEn ? 'Confidence: ' : '置信：'}</span>
+                <span className="text-foreground">{item.confidence}</span>
+              </p>
+            )}
+            {item.bullCase && (
+              <p className="rounded-lg bg-success/5 px-2.5 py-1.5 leading-6 text-foreground">
+                <span className="font-medium text-success">{isEn ? 'Bull: ' : '看多：'}</span>
+                {item.bullCase}
+              </p>
+            )}
+            {item.bearCase && (
+              <p className="rounded-lg bg-danger/5 px-2.5 py-1.5 leading-6 text-foreground">
+                <span className="font-medium text-danger">{isEn ? 'Bear: ' : '看空/风险：'}</span>
+                {item.bearCase}
+              </p>
+            )}
+            {item.summary && (
+              <p className="leading-relaxed text-foreground">{item.summary}</p>
+            )}
+            {item.dissentNote && (
+              <p className="italic text-secondary-text">
+                <span className="not-italic font-medium">{isEn ? 'Dissent: ' : '分歧视角：'}</span>
+                {item.dissentNote}
+              </p>
+            )}
+            {item.reasoning && item.reasoning !== item.summary && (
+              <p className="text-secondary-text">{item.reasoning}</p>
+            )}
+          </div>
+        )}
+      </Card>
+    );
+  }
 
   return (
-    <Card className={`border p-4 ${borderClass}`}>
-      <div className="mb-3 flex items-start justify-between gap-2">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-default-500">
+    <Card className={`rounded-xl border p-3 shadow-none ${borderClass}`}>
+      <div className="mb-3 space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-xs font-semibold text-secondary-text">
             {roleLabel(item.role, language)}
-            {highlight && (
-              <span className="ml-2 normal-case text-warning">
-                {isEn ? '· diverges from primary' : '· 与主模型偏离'}
-              </span>
-            )}
           </p>
-          <p className="text-sm font-semibold text-foreground">{shortModelName(item.model)}</p>
+          <span className="shrink-0 text-sm font-semibold tabular-nums text-secondary-text">
+            {scoreText(item.sentimentScore)}
+          </span>
         </div>
-        {item.sentimentScore != null && (
-          <span className="rounded-md bg-default-100 px-2 py-1 text-sm font-semibold text-foreground">
-            {item.sentimentScore}
+        <div className="flex min-w-0 items-center">
+          <p className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">
+            {shortModelName(item.model)}
+          </p>
+        </div>
+        {highlight && (
+          <span className="inline-flex rounded-full bg-warning/10 px-2 py-0.5 text-[11px] font-medium text-warning">
+            {isEn ? 'Diverges from primary' : '与主模型偏离'}
           </span>
         )}
       </div>
@@ -204,33 +317,33 @@ const OpinionCard: React.FC<{
       {!item.success ? (
         <p className="text-sm text-danger">{item.error || (isEn ? 'Consultation failed' : '会诊失败')}</p>
       ) : (
-        <div className="space-y-2 text-sm">
+        <div className="space-y-2 text-sm leading-6">
           {item.operationAdvice && (
-            <p>
-              <span className="text-default-500">{isEn ? 'Advice: ' : '建议：'}</span>
+            <p className="text-foreground">
+              <span className="font-semibold">{isEn ? 'Advice: ' : '建议：'}</span>
               <span className="font-medium text-foreground">{item.operationAdvice}</span>
             </p>
           )}
           {item.trendPrediction && (
-            <p>
-              <span className="text-default-500">{isEn ? 'Trend: ' : '趋势：'}</span>
+            <p className="text-foreground">
+              <span className="font-semibold">{isEn ? 'Trend: ' : '趋势：'}</span>
               <span className="text-foreground">{item.trendPrediction}</span>
             </p>
           )}
           {item.confidence && (
-            <p>
-              <span className="text-default-500">{isEn ? 'Confidence: ' : '置信：'}</span>
+            <p className="text-foreground">
+              <span className="font-semibold">{isEn ? 'Confidence: ' : '置信：'}</span>
               <span className="text-foreground">{item.confidence}</span>
             </p>
           )}
           {item.bullCase && (
-            <p className="rounded-md bg-success/5 px-2 py-1 leading-relaxed text-foreground">
+            <p className="rounded-lg bg-success/5 px-2.5 py-1.5 leading-6 text-foreground">
               <span className="font-medium text-success">{isEn ? 'Bull: ' : '看多：'}</span>
               {item.bullCase}
             </p>
           )}
           {item.bearCase && (
-            <p className="rounded-md bg-danger/5 px-2 py-1 leading-relaxed text-foreground">
+            <p className="rounded-lg bg-danger/5 px-2.5 py-1.5 leading-6 text-foreground">
               <span className="font-medium text-danger">{isEn ? 'Bear: ' : '看空/风险：'}</span>
               {item.bearCase}
             </p>
@@ -239,13 +352,13 @@ const OpinionCard: React.FC<{
             <p className="leading-relaxed text-foreground">{item.summary}</p>
           )}
           {item.dissentNote && (
-            <p className="italic text-default-500">
+            <p className="italic text-secondary-text">
               <span className="not-italic font-medium">{isEn ? 'Dissent: ' : '分歧视角：'}</span>
               {item.dissentNote}
             </p>
           )}
           {item.reasoning && item.reasoning !== item.summary && (
-            <p className="text-default-500">{item.reasoning}</p>
+            <p className="text-secondary-text">{item.reasoning}</p>
           )}
         </div>
       )}
@@ -256,6 +369,7 @@ const OpinionCard: React.FC<{
 export const ModelOpinionsPanel: React.FC<ModelOpinionsPanelProps> = ({
   modelOpinions,
   language,
+  variant = 'default',
 }) => {
   const reportLanguage = normalizeReportLanguage(language);
   const payload = normalizePayload(modelOpinions);
@@ -266,16 +380,16 @@ export const ModelOpinionsPanel: React.FC<ModelOpinionsPanelProps> = ({
   const isEn = reportLanguage === 'en';
   const consultCount = payload.opinions.filter((item) => item.role === 'consultation').length;
   const displayOpinions = sortOpinionsForDisplay(payload.opinions);
+  const isFullReport = variant === 'fullReport';
 
   return (
-    <section className="space-y-3">
-      <div className="flex items-center gap-2">
-        <Users className="h-5 w-5 text-primary" />
-        <h3 className="text-lg font-semibold text-foreground">
+    <section className={`home-divider rounded-xl border border-subtle bg-surface/50 shadow-none ${isFullReport ? 'p-5' : 'p-4'}`}>
+      <div className={`${isFullReport ? 'mb-5' : 'mb-4'} flex flex-wrap items-center justify-between gap-2`}>
+        <h3 className={`${isFullReport ? 'text-lg' : 'text-base md:text-lg'} font-semibold text-foreground`}>
           {isEn ? 'Multi-Model Consultation' : '多模型会诊'}
         </h3>
         {consultCount > 0 && (
-          <span className="text-xs text-default-500">
+          <span className="text-xs text-secondary-text">
             {isEn
               ? `Independent read on shared facts · ${consultCount} model(s) · consult first`
               : `独立会诊 · 共享事实 · ${consultCount} 个模型 · 先阅会诊后看主模型`}
@@ -283,19 +397,26 @@ export const ModelOpinionsPanel: React.FC<ModelOpinionsPanelProps> = ({
         )}
       </div>
 
-      {payload.divergence && (
-        <DivergenceBanner divergence={payload.divergence} language={reportLanguage} />
-      )}
-
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {displayOpinions.map((item) => (
-          <OpinionCard
-            key={`${item.role}-${item.model}`}
-            item={item}
+      <div className={isFullReport ? 'space-y-5' : 'space-y-4'}>
+        {payload.divergence && (
+          <DivergenceBanner
+            divergence={payload.divergence}
             language={reportLanguage}
-            highlight={isOutlier(item, payload.divergence)}
+            variant={variant}
           />
-        ))}
+        )}
+
+        <div className={isFullReport ? 'space-y-4' : 'grid gap-3 md:grid-cols-2 xl:grid-cols-3'}>
+          {displayOpinions.map((item) => (
+            <OpinionCard
+              key={`${item.role}-${item.model}`}
+              item={item}
+              language={reportLanguage}
+              highlight={isOutlier(item, payload.divergence)}
+              variant={variant}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

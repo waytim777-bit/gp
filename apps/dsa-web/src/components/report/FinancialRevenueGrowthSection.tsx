@@ -1,5 +1,5 @@
+import { Fragment } from 'react';
 import type React from 'react';
-import { BarChart3 } from 'lucide-react';
 import { Card } from '@heroui/react/card';
 import {
   Bar,
@@ -12,14 +12,13 @@ import {
 } from 'recharts';
 import type { FinancialReport, ReportLanguage, RevenueGrowthRow, DimensionAnalysisReport } from '../../types/analysis';
 import { normalizeReportLanguage } from '../../utils/reportLanguage';
-import { DimensionAnalysisBlock } from './DimensionAnalysisBlock';
-import { pickDimensionAnalysis } from '../../utils/dimensionAnalysis';
 
 interface FinancialRevenueGrowthSectionProps {
   financialReport?: FinancialReport;
   financialFundamentalsAnalysis?: DimensionAnalysisReport;
   language?: ReportLanguage;
   compact?: boolean;
+  variant?: 'default' | 'fullReport';
 }
 
 type RevenueChartPoint = {
@@ -54,22 +53,9 @@ const formatGrowthPct = (value?: number | null): string => {
   return `${sign}${value.toFixed(2)}%`;
 };
 
-const getGrowthStyle = (value?: number | null): React.CSSProperties | undefined => {
-  if (value === undefined || value === null || !Number.isFinite(value)) {
-    return undefined;
-  }
-  if (value > 0) {
-    return { color: 'var(--home-price-up)' };
-  }
-  if (value < 0) {
-    return { color: 'var(--home-price-down)' };
-  }
-  return undefined;
-};
-
 const toChartData = (rows: RevenueGrowthRow[]): RevenueChartPoint[] => rows
   .slice()
-  .sort((left, right) => Number(left.fiscalYear) - Number(right.fiscalYear))
+  .sort((left, right) => Number(right.fiscalYear) - Number(left.fiscalYear))
   .map((row) => ({
     fiscalYear: String(row.fiscalYear),
     revenueBillion: Number(row.revenue) / 100000000,
@@ -79,21 +65,16 @@ const toChartData = (rows: RevenueGrowthRow[]): RevenueChartPoint[] => rows
 
 export const FinancialRevenueGrowthSection: React.FC<FinancialRevenueGrowthSectionProps> = ({
   financialReport,
-  financialFundamentalsAnalysis,
   language,
   compact = false,
+  variant = 'default',
 }) => {
   const reportLanguage = normalizeReportLanguage(language);
   const rows = getRevenueRows(financialReport);
-  const dimensionAnalysis = pickDimensionAnalysis(
-    financialFundamentalsAnalysis,
-    'revenue_growth',
-  );
-  if (rows.length === 0 && !dimensionAnalysis) {
+  const chartData = toChartData(rows);
+  if (chartData.length === 0) {
     return null;
   }
-
-  const chartData = toChartData(rows);
   const copy = reportLanguage === 'en'
     ? {
       eyebrow: 'FINANCIAL DATA',
@@ -116,78 +97,49 @@ export const FinancialRevenueGrowthSection: React.FC<FinancialRevenueGrowthSecti
 
   const content = (
     <>
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <BarChart3 className="h-4 w-4 text-default-500" aria-hidden="true" />
-          <div>
-            {!compact ? (
-              <div className="text-[11px] font-medium uppercase tracking-wider text-default-500">
-                {copy.eyebrow}
-              </div>
-            ) : null}
-            <h3 className="text-base font-semibold text-foreground">{copy.title}</h3>
-          </div>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <h3 className="shrink-0 text-lg font-semibold leading-none text-foreground">{copy.title}</h3>
         </div>
         {financialReport?.revenueGrowth?.source ? (
-          <span className="rounded-md bg-default-100 px-2 py-1 text-[11px] text-default-500">
+          <span className="shrink-0 truncate text-xs font-medium text-secondary-text">
             {copy.source}: {financialReport.revenueGrowth.source}
           </span>
         ) : null}
       </div>
 
-      <DimensionAnalysisBlock
-        analysis={dimensionAnalysis}
-        dimension="revenue_growth"
-        language={reportLanguage}
-      />
-
-      {rows.length > 0 ? (
-      <>
-      <div className="overflow-x-auto">
-        <table className="min-w-full table-fixed text-left text-sm">
-          <thead>
-            <tr className="border-b border-subtle text-[11px] font-medium uppercase tracking-wide text-default-500">
-              <th className="w-1/3 px-2 py-2">{copy.year}</th>
-              <th className="w-1/3 px-2 py-2 text-right">{copy.revenue}</th>
-              <th className="w-1/3 px-2 py-2 text-right">{copy.yoy}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row.fiscalYear} className="border-b border-subtle last:border-b-0">
-                <td className="px-2 py-2 font-mono text-foreground">{row.fiscalYear}</td>
-                <td className="px-2 py-2 text-right font-mono text-foreground">
-                  {formatRevenueBillion(row.revenue)}
-                </td>
-                <td className="px-2 py-2 text-right font-mono font-semibold" style={getGrowthStyle(row.revenueYoy)}>
-                  {formatGrowthPct(row.revenueYoy)}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
       {chartData.length > 0 ? (
         <div
-          className="h-56 min-w-0 rounded-lg border border-subtle bg-background/35 px-2 py-3 print:break-inside-avoid"
+          className="h-[300px] min-w-0 print:break-inside-avoid"
           aria-label={copy.chartLabel}
         >
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-              <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
+            <BarChart
+              data={chartData}
+              layout="vertical"
+              margin={{ top: 8, right: 24, left: 0, bottom: 0 }}
+              barCategoryGap="34%"
+            >
+              <CartesianGrid
+                stroke="hsl(var(--border))"
+                strokeDasharray="3 3"
+                horizontal={false}
+                vertical
+              />
               <XAxis
+                type="number"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                tickFormatter={(value) => Number(value).toFixed(2)}
+              />
+              <YAxis
+                type="category"
                 dataKey="fiscalYear"
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
-              />
-              <YAxis
-                axisLine={false}
-                tickLine={false}
-                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
-                tickFormatter={(value) => formatRevenueBillion(Number(value) * 100000000)}
-                width={56}
+                width={42}
               />
               <RechartsTooltip
                 cursor={{ fill: 'hsl(var(--hover))' }}
@@ -212,26 +164,145 @@ export const FinancialRevenueGrowthSection: React.FC<FinancialRevenueGrowthSecti
               />
               <Bar
                 dataKey="revenueBillion"
-                fill="hsl(var(--primary))"
+                fill="#00a1c2"
                 name="revenueBillion"
-                radius={[4, 4, 0, 0]}
+                radius={[0, 0, 0, 0]}
+                label={{
+                  position: 'right',
+                  fill: 'hsl(var(--foreground))',
+                  fontSize: 14,
+                  fontWeight: 600,
+                  formatter: (value: unknown) => (
+                    typeof value === 'number' && Number.isFinite(value)
+                      ? value.toFixed(2)
+                      : String(value ?? '--')
+                  ),
+                }}
               />
             </BarChart>
           </ResponsiveContainer>
         </div>
       ) : null}
-      </>
-      ) : null}
     </>
   );
 
-  if (compact) {
-    return <div className="space-y-3">{content}</div>;
+  if (variant === 'fullReport') {
+    return (
+      <Card className="rounded-xl border border-subtle bg-surface/50 text-left shadow-none">
+        <Card.Content className="space-y-5 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className="text-lg font-semibold leading-6 text-foreground">{copy.title}</h3>
+            {financialReport?.revenueGrowth?.source ? (
+              <span className="text-xs font-medium text-secondary-text">
+                {copy.source}: {financialReport.revenueGrowth.source}
+              </span>
+            ) : null}
+          </div>
+
+          <div
+            className="h-[260px] min-w-0 print:break-inside-avoid"
+            aria-label={copy.chartLabel}
+          >
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={chartData}
+                layout="vertical"
+                margin={{ top: 8, right: 48, left: 0, bottom: 0 }}
+                barCategoryGap="42%"
+              >
+                <CartesianGrid
+                  stroke="hsl(var(--border))"
+                  strokeDasharray="3 3"
+                  horizontal={false}
+                  vertical
+                />
+                <XAxis
+                  type="number"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+                  tickFormatter={(value) => Number(value).toFixed(2)}
+                />
+                <YAxis
+                  type="category"
+                  dataKey="fiscalYear"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                  width={42}
+                />
+                <RechartsTooltip
+                  cursor={{ fill: 'hsl(var(--hover))' }}
+                  formatter={(value, name, item) => {
+                    if (name === 'revenueBillion') {
+                      const payload = item.payload as RevenueChartPoint;
+                      return [
+                        `${formatRevenueBillion(Number(value) * 100000000)} / ${formatGrowthPct(payload.revenueYoy)}`,
+                        copy.revenue,
+                      ];
+                    }
+                    return [String(value), String(name)];
+                  }}
+                  labelFormatter={(label) => `${copy.year}: ${label}`}
+                  contentStyle={{
+                    background: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 8,
+                    color: 'hsl(var(--foreground))',
+                  }}
+                  labelStyle={{ color: 'hsl(var(--foreground))' }}
+                />
+                <Bar
+                  dataKey="revenueBillion"
+                  fill="#00a1c2"
+                  name="revenueBillion"
+                  radius={[0, 0, 0, 0]}
+                  label={{
+                    position: 'right',
+                    fill: 'hsl(var(--foreground))',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    formatter: (value: unknown) => (
+                      typeof value === 'number' && Number.isFinite(value)
+                        ? value.toFixed(2)
+                        : String(value ?? '--')
+                    ),
+                  }}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="grid grid-cols-[1fr_1.4fr_1fr] gap-x-4 gap-y-4 text-sm">
+            <div className="text-secondary-text">{copy.year}</div>
+            <div className="text-secondary-text">{copy.revenue}</div>
+            <div className="text-right text-secondary-text">{copy.yoy}</div>
+            {chartData.map((row) => (
+              <Fragment key={row.fiscalYear}>
+                <div className="font-semibold text-foreground">{row.fiscalYear}</div>
+                <div className="font-semibold text-foreground">{row.revenueBillion.toFixed(2)}</div>
+                <div
+                  className={`text-right font-semibold ${
+                    row.revenueYoy == null
+                      ? 'text-secondary-text'
+                      : row.revenueYoy < 0
+                        ? 'text-danger'
+                        : 'text-success'
+                  }`}
+                >
+                  {formatGrowthPct(row.revenueYoy)}
+                </div>
+              </Fragment>
+            ))}
+          </div>
+        </Card.Content>
+      </Card>
+    );
   }
 
   return (
-    <Card className="text-left">
-      <Card.Content className="space-y-3">
+    <Card className="h-full rounded-xl border-0 bg-surface text-left shadow-none">
+      <Card.Content className={`space-y-4 ${compact ? 'py-4' : 'py-5'}`}>
         {content}
       </Card.Content>
     </Card>

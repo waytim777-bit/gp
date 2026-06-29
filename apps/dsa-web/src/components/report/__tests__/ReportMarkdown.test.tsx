@@ -99,6 +99,47 @@ describe('ReportMarkdown', () => {
     expect(screen.getByRole('heading', { name: 'Full report' })).toBeInTheDocument();
   });
 
+  it('renders important info speed read above company basics without duplicating it', async () => {
+    vi.mocked(historyApi.getMarkdown).mockResolvedValue([
+      '# Full report',
+      '',
+      '### 📰 重要信息速览',
+      '',
+      '**💭 舆情情绪**: 偏积极',
+      '',
+      '### 后续章节',
+      '',
+      '其他完整报告内容。',
+    ].join('\n'));
+
+    render(
+      <ReportMarkdown
+        recordId={1}
+        stockName="Apple"
+        stockCode="AAPL"
+        reportLanguage="zh"
+        details={{
+          companyProfile: {
+            fullName: '苹果公司',
+            industry: '消费电子',
+          },
+        }}
+        onClose={() => {}}
+      />,
+    );
+
+    const importantInfoHeading = await screen.findByText(/重要信息速览/);
+    const companyBasicsHeading = screen.getByText('基本信息');
+
+    expect(
+      importantInfoHeading.compareDocumentPosition(companyBasicsHeading)
+        & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(screen.getAllByText(/重要信息速览/)).toHaveLength(1);
+    expect(screen.getByText(/偏积极/)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '后续章节' })).toBeInTheDocument();
+  });
+
   it('renders business model before markdown content', async () => {
     vi.mocked(historyApi.getMarkdown).mockResolvedValue('# Full report');
 

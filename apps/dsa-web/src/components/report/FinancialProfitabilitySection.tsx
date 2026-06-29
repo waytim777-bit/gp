@@ -1,5 +1,4 @@
 import type React from 'react';
-import { Percent } from 'lucide-react';
 import { Card } from '@heroui/react/card';
 import {
   Area,
@@ -12,21 +11,19 @@ import {
 } from 'recharts';
 import type {
   FinancialReport,
-  ProfitabilityAnalysisReport,
   ProfitabilityRow,
   ReportLanguage,
   DimensionAnalysisReport,
 } from '../../types/analysis';
 import { normalizeReportLanguage } from '../../utils/reportLanguage';
-import { pickDimensionAnalysis } from '../../utils/dimensionAnalysis';
-import { DimensionAnalysisBlock } from './DimensionAnalysisBlock';
 
 interface FinancialProfitabilitySectionProps {
   financialReport?: FinancialReport;
-  profitabilityAnalysis?: ProfitabilityAnalysisReport;
+  profitabilityAnalysis?: unknown;
   financialFundamentalsAnalysis?: DimensionAnalysisReport;
   language?: ReportLanguage;
   compact?: boolean;
+  variant?: 'default' | 'fullReport';
 }
 
 type ProfitabilityRowPayload = ProfitabilityRow & {
@@ -108,18 +105,6 @@ const formatPercent = (value?: number | null): string => {
 const getPeriodLabel = (row: ProfitabilityRow): string =>
   String(row.period || row.reportDate || '--').replace(/ 00:00:00$/, '');
 
-const cleanText = (value?: string | null): string => (value || '').trim();
-
-const getAnalysisItems = (analysis?: ProfitabilityAnalysisReport) => {
-  const items = Array.isArray(analysis?.items) ? analysis.items : [];
-  return items
-    .map((item) => ({
-      title: cleanText(item?.title),
-      content: cleanText(item?.content),
-    }))
-    .filter((item) => item.title || item.content);
-};
-
 const toChartData = (rows: ProfitabilityRow[]): ProfitabilityChartPoint[] => rows
   .filter((row) => hasFiniteMetric(row.grossMargin))
   .slice()
@@ -131,16 +116,17 @@ const toChartData = (rows: ProfitabilityRow[]): ProfitabilityChartPoint[] => row
     roe: row.roe,
   }));
 
-const buildFallbackSummary = (
-  rows: ProfitabilityRow[],
+const getLatestRow = (rows: ProfitabilityRow[]): ProfitabilityRow | undefined =>
+  rows
+    .slice()
+    .sort((left, right) => getPeriodLabel(left).localeCompare(getPeriodLabel(right)))
+    .at(-1);
+
+const buildMetricSummary = (
+  latest: ProfitabilityRow | undefined,
   reportLanguage: ReportLanguage,
 ): string => {
-  const latest = rows[0];
-  if (!latest) {
-    return '';
-  }
-
-  const period = getPeriodLabel(latest);
+  if (!latest) return '';
   const metrics = [
     hasFiniteMetric(latest.grossMargin)
       ? `${reportLanguage === 'en' ? 'gross margin' : '毛利率'} ${formatPercent(latest.grossMargin)}`
@@ -158,30 +144,24 @@ const buildFallbackSummary = (
   }
 
   return reportLanguage === 'en'
-    ? `Latest profitability metrics for ${period}: ${metrics.join(', ')}.`
-    : `${period} 盈利能力指标：${metrics.join('，')}。`;
+    ? `Profitability metrics: ${metrics.join(', ')}`
+    : `盈利能力指标：${metrics.join('，')}`;
 };
 
 export const FinancialProfitabilitySection: React.FC<FinancialProfitabilitySectionProps> = ({
   financialReport,
-  profitabilityAnalysis,
-  financialFundamentalsAnalysis,
   language,
   compact = false,
+  variant = 'default',
 }) => {
   const reportLanguage = normalizeReportLanguage(language);
   const rows = getProfitabilityRows(financialReport);
-  const mergedAnalysis = pickDimensionAnalysis(
-    financialFundamentalsAnalysis,
-    'profitability',
-    profitabilityAnalysis,
-  );
-  const fallbackSummary = buildFallbackSummary(rows, reportLanguage);
-  const analysisSummary = cleanText(mergedAnalysis?.summary) || fallbackSummary;
-  const analysisItems = getAnalysisItems(mergedAnalysis);
   const chartData = toChartData(rows);
+  const latestRow = getLatestRow(rows);
+  const latestPeriod = latestRow ? getPeriodLabel(latestRow) : '';
+  const metricSummary = buildMetricSummary(latestRow, reportLanguage);
 
-  if (!analysisSummary && analysisItems.length === 0 && chartData.length === 0) {
+  if (chartData.length === 0) {
     return null;
   }
 
@@ -193,7 +173,6 @@ export const FinancialProfitabilitySection: React.FC<FinancialProfitabilitySecti
       netMargin: 'Net Margin',
       roe: 'ROE',
       source: 'Source',
-      chartTitle: 'Profitability Trend (Gross Margin)',
       chartLabel: 'Profitability trend gross margin chart',
       period: 'Period',
     }
@@ -204,55 +183,132 @@ export const FinancialProfitabilitySection: React.FC<FinancialProfitabilitySecti
       netMargin: '净利率',
       roe: 'ROE',
       source: '数据源',
-      chartTitle: '盈利能力趋势（毛利率）',
       chartLabel: '盈利能力趋势毛利率图表',
       period: '报告期',
     };
 
   const content = (
     <>
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <Percent className="h-4 w-4 text-default-500" aria-hidden="true" />
-          <div>
-            {!compact ? (
-              <div className="text-[11px] font-medium uppercase tracking-wider text-default-500">
-                {copy.eyebrow}
-              </div>
-            ) : null}
-            <h3 className="text-base font-semibold text-foreground">{copy.title}</h3>
-          </div>
-        </div>
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="shrink-0 text-lg font-semibold leading-none text-foreground">{copy.title}</h3>
         {financialReport?.profitability?.source ? (
-          <span className="rounded-md bg-default-100 px-2 py-1 text-[11px] text-default-500">
+          <span className="shrink-0 truncate text-xs font-medium text-secondary-text">
             {copy.source}: {financialReport.profitability.source}
           </span>
         ) : null}
       </div>
 
-      {(mergedAnalysis?.summary || mergedAnalysis?.items?.length || analysisSummary) ? (
-        <DimensionAnalysisBlock
-          analysis={mergedAnalysis ?? { summary: analysisSummary, items: analysisItems }}
-          dimension="profitability"
-          language={reportLanguage}
-        />
+      {(latestPeriod || metricSummary) ? (
+        <div className="flex flex-col items-end gap-2 text-right">
+          {latestPeriod ? (
+            <p className="text-base font-semibold text-secondary-text">{latestPeriod}</p>
+          ) : null}
+          {metricSummary ? (
+            <p className="text-xs font-semibold leading-5 text-foreground">{metricSummary}</p>
+          ) : null}
+        </div>
       ) : null}
 
       {chartData.length > 0 ? (
         <div
-          className="min-w-0 rounded-lg border border-subtle bg-background/35 print:break-inside-avoid"
+          className="h-[244px] min-w-0 print:break-inside-avoid"
           aria-label={copy.chartLabel}
         >
-          <div className="border-b border-subtle px-3 py-2 text-xs font-medium text-default-600">
-            {copy.chartTitle}
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData} margin={{ top: 8, right: 4, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="profitabilityGrossMargin" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#00a1c2" stopOpacity={0.28} />
+                  <stop offset="95%" stopColor="#00a1c2" stopOpacity={0.08} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
+              <XAxis
+                dataKey="period"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+                minTickGap={12}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+                tickFormatter={(value) => formatPercent(Number(value))}
+                width={56}
+              />
+              <RechartsTooltip
+                cursor={{ stroke: '#00a1c2', strokeOpacity: 0.35 }}
+                formatter={(value, name, item) => {
+                  if (name === 'grossMargin') {
+                    const payload = item.payload as ProfitabilityChartPoint;
+                    return [
+                      `${formatPercent(Number(value))} / ${copy.netMargin} ${formatPercent(payload.netMargin)} / ${copy.roe} ${formatPercent(payload.roe)}`,
+                      copy.grossMargin,
+                    ];
+                  }
+                  return [String(value), String(name)];
+                }}
+                labelFormatter={(label) => `${copy.period}: ${label}`}
+                contentStyle={{
+                  background: 'hsl(var(--card))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 8,
+                  color: 'hsl(var(--foreground))',
+                }}
+                labelStyle={{ color: 'hsl(var(--foreground))' }}
+              />
+              <Area
+                type="monotone"
+                dataKey="grossMargin"
+                stroke="#00d9ff"
+                strokeWidth={2}
+                fill="url(#profitabilityGrossMargin)"
+                name="grossMargin"
+                dot={{ r: 3, strokeWidth: 2, fill: 'hsl(var(--card))', stroke: '#00d9ff' }}
+                activeDot={{ r: 4 }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      ) : null}
+    </>
+  );
+
+  if (variant === 'fullReport') {
+    return (
+      <Card className="rounded-xl border border-subtle bg-surface/50 text-left shadow-none">
+        <Card.Content className="space-y-5 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className="text-lg font-semibold leading-6 text-foreground">{copy.title}</h3>
+            {financialReport?.profitability?.source ? (
+              <span className="text-xs font-medium text-secondary-text">
+                {copy.source}: {financialReport.profitability.source}
+              </span>
+            ) : null}
           </div>
-          <div className="h-56 px-2 py-3">
+
+          {(latestPeriod || metricSummary) ? (
+            <div className="flex flex-col items-end gap-1.5 text-right">
+              {latestPeriod ? (
+                <p className="text-base font-semibold text-secondary-text">{latestPeriod}</p>
+              ) : null}
+              {metricSummary ? (
+                <p className="text-xs font-semibold leading-5 text-foreground">{metricSummary}</p>
+              ) : null}
+            </div>
+          ) : null}
+
+          <div
+            className="h-[260px] min-w-0 print:break-inside-avoid"
+            aria-label={copy.chartLabel}
+          >
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+              <AreaChart data={chartData} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
                 <defs>
-                  <linearGradient id="profitabilityGrossMargin" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.26} />
-                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.04} />
+                  <linearGradient id="profitabilityGrossMarginFullReport" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#00a1c2" stopOpacity={0.28} />
+                    <stop offset="95%" stopColor="#00a1c2" stopOpacity={0.08} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
@@ -260,17 +316,18 @@ export const FinancialProfitabilitySection: React.FC<FinancialProfitabilitySecti
                   dataKey="period"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+                  minTickGap={12}
                 />
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
                   tickFormatter={(value) => formatPercent(Number(value))}
                   width={56}
                 />
                 <RechartsTooltip
-                  cursor={{ stroke: 'hsl(var(--primary))', strokeOpacity: 0.35 }}
+                  cursor={{ stroke: '#00a1c2', strokeOpacity: 0.35 }}
                   formatter={(value, name, item) => {
                     if (name === 'grossMargin') {
                       const payload = item.payload as ProfitabilityChartPoint;
@@ -293,28 +350,24 @@ export const FinancialProfitabilitySection: React.FC<FinancialProfitabilitySecti
                 <Area
                   type="monotone"
                   dataKey="grossMargin"
-                  stroke="hsl(var(--primary))"
+                  stroke="#00d9ff"
                   strokeWidth={2}
-                  fill="url(#profitabilityGrossMargin)"
+                  fill="url(#profitabilityGrossMarginFullReport)"
                   name="grossMargin"
-                  dot={{ r: 3, strokeWidth: 2 }}
+                  dot={{ r: 3, strokeWidth: 2, fill: 'hsl(var(--primary))', stroke: '#00d9ff' }}
                   activeDot={{ r: 4 }}
                 />
               </AreaChart>
             </ResponsiveContainer>
           </div>
-        </div>
-      ) : null}
-    </>
-  );
-
-  if (compact) {
-    return <div className="space-y-3">{content}</div>;
+        </Card.Content>
+      </Card>
+    );
   }
 
   return (
-    <Card className="text-left">
-      <Card.Content className="space-y-3">
+    <Card className="h-full rounded-xl border-0 bg-surface text-left shadow-none">
+      <Card.Content className={`space-y-4 ${compact ? 'py-4' : 'py-5'}`}>
         {content}
       </Card.Content>
     </Card>

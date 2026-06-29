@@ -1,10 +1,7 @@
 import type React from 'react';
-import { Zap } from 'lucide-react';
 import { Card } from '@heroui/react/card';
 import type { ExpressReportRow, FinancialReport, ReportLanguage, DimensionAnalysisReport } from '../../types/analysis';
 import { normalizeReportLanguage } from '../../utils/reportLanguage';
-import { DimensionAnalysisBlock } from './DimensionAnalysisBlock';
-import { pickDimensionAnalysis } from '../../utils/dimensionAnalysis';
 import {
   coerceFiniteNumber,
   formatAmountBillion,
@@ -52,108 +49,75 @@ const getRows = (financialReport?: FinancialReport): ExpressReportRow[] => {
 
 export const FinancialExpressSection: React.FC<FinancialExpressSectionProps> = ({
   financialReport,
-  financialFundamentalsAnalysis,
   language,
   compact = false,
 }) => {
   const reportLanguage = normalizeReportLanguage(language);
   const rows = getRows(financialReport);
-  const dimensionAnalysis = pickDimensionAnalysis(financialFundamentalsAnalysis, 'express_report');
   const report = financialReport?.expressReport ?? financialReport?.express_report;
 
-  if (rows.length === 0 && !dimensionAnalysis) {
+  if (rows.length === 0) {
     return null;
   }
 
   const copy = reportLanguage === 'en'
     ? {
-      eyebrow: 'FINANCIAL DATA',
       title: 'Earnings Express',
-      period: 'Period',
-      announced: 'Announced',
-      revenue: 'Revenue (100M)',
-      netProfit: 'Net Profit (100M)',
+      periodAndAnnounced: 'Period / Announced',
+      revenueAndNetProfit: 'Revenue / Net Profit (100M)',
+      roeAndEps: 'Diluted ROE / EPS',
       netProfitYoy: 'Net Profit YoY',
-      dilutedRoe: 'Diluted ROE',
-      dilutedEps: 'Diluted EPS',
       source: 'Source',
     }
     : {
-      eyebrow: '财务数据分析',
       title: '业绩快报',
-      period: '报告期',
-      announced: '公告日',
-      revenue: '营业收入（亿）',
-      netProfit: '净利润（亿）',
+      periodAndAnnounced: '报告期/公告日',
+      revenueAndNetProfit: '营业收入/净利润（亿）',
+      roeAndEps: '摊薄ROE/摊薄EPS',
       netProfitYoy: '净利同比',
-      dilutedRoe: '摊薄ROE',
-      dilutedEps: '摊薄EPS',
       source: '数据源',
     };
 
   const content = (
     <>
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <Zap className="h-4 w-4 text-default-500" aria-hidden="true" />
-          <div>
-            {!compact ? (
-              <div className="text-[11px] font-medium uppercase tracking-wider text-default-500">
-                {copy.eyebrow}
-              </div>
-            ) : null}
-            <h3 className="text-base font-semibold text-foreground">{copy.title}</h3>
-          </div>
-        </div>
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="shrink-0 text-lg font-semibold leading-none text-foreground">{copy.title}</h3>
         {report?.source ? (
-          <span className="rounded-md bg-default-100 px-2 py-1 text-[11px] text-default-500">
+          <span className="shrink-0 truncate text-xs font-medium text-secondary-text">
             {copy.source}: {report.source}
           </span>
         ) : null}
       </div>
 
-      <DimensionAnalysisBlock
-        analysis={dimensionAnalysis}
-        dimension="express_report"
-        language={reportLanguage}
-      />
-
       {rows.length > 0 ? (
-      <div className="overflow-x-auto">
-        <table className="min-w-full table-fixed text-left text-sm">
+      <div className="overflow-x-auto pb-1">
+        <table className="min-w-full table-fixed text-left">
           <thead>
-            <tr className="border-b border-subtle text-[11px] font-medium uppercase tracking-wide text-default-500">
-              <th className="px-2 py-2">{copy.period}</th>
-              <th className="px-2 py-2">{copy.announced}</th>
-              <th className="px-2 py-2 text-right">{copy.revenue}</th>
-              <th className="px-2 py-2 text-right">{copy.netProfit}</th>
-              <th className="px-2 py-2 text-right">{copy.netProfitYoy}</th>
-              <th className="px-2 py-2 text-right">{copy.dilutedRoe}</th>
-              <th className="px-2 py-2 text-right">{copy.dilutedEps}</th>
+            <tr className="text-[11px] font-medium text-secondary-text">
+              <th className="w-[24%] pb-4">{copy.periodAndAnnounced}</th>
+              <th className="w-[30%] pb-4 text-left">{copy.revenueAndNetProfit}</th>
+              <th className="w-[26%] pb-4 text-left">{copy.roeAndEps}</th>
+              <th className="w-[20%] pb-4 text-right">{copy.netProfitYoy}</th>
             </tr>
           </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={`${row.period}-${row.announcementDate ?? ''}`} className="border-b border-subtle last:border-b-0">
-                <td className="px-2 py-2 font-mono text-foreground">{row.period}</td>
-                <td className="px-2 py-2 font-mono text-default-600">{row.announcementDate ?? '--'}</td>
-                <td className="px-2 py-2 text-right font-mono text-foreground">
-                  {formatAmountBillion(row.revenue)}
+          <tbody className="text-xs font-semibold text-foreground">
+            {rows.slice(0, 3).map((row, index) => (
+              <tr key={`${row.period}-${row.announcementDate ?? index}`}>
+                <td className="py-3 pr-3 font-mono leading-5">
+                  <span className="block">{row.period}</span>
+                  <span className="block">{row.announcementDate ?? '--'}</span>
                 </td>
-                <td className="px-2 py-2 text-right font-mono text-foreground">
-                  {formatAmountBillion(row.netProfit)}
+                <td className="py-3 pr-3 font-mono">
+                  {formatAmountBillion(row.revenue)}/{formatAmountBillion(row.netProfit)}
+                </td>
+                <td className="py-3 pr-3 font-mono">
+                  {formatRatio(row.dilutedRoe, '%')}/{formatRatio(row.dilutedEps)}
                 </td>
                 <td
-                  className="px-2 py-2 text-right font-mono font-semibold"
+                  className="py-3 text-right font-mono"
                   style={getGrowthStyle(row.netProfitYoy)}
                 >
                   {formatGrowthPct(row.netProfitYoy)}
-                </td>
-                <td className="px-2 py-2 text-right font-mono text-foreground">
-                  {formatRatio(row.dilutedRoe, '%')}
-                </td>
-                <td className="px-2 py-2 text-right font-mono text-foreground">
-                  {formatRatio(row.dilutedEps)}
                 </td>
               </tr>
             ))}
@@ -165,8 +129,8 @@ export const FinancialExpressSection: React.FC<FinancialExpressSectionProps> = (
   );
 
   return (
-    <Card className="text-left">
-      <Card.Content className={compact ? 'space-y-3' : 'space-y-4'}>
+    <Card className="h-full rounded-xl border-0 bg-surface text-left shadow-none">
+      <Card.Content className={`space-y-5 ${compact ? 'p-4' : 'p-5'}`}>
         {content}
       </Card.Content>
     </Card>

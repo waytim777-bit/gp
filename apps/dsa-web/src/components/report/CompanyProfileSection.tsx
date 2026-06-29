@@ -19,12 +19,18 @@ interface CompanyProfileSectionProps {
   details?: ReportDetails;
   language?: ReportLanguage;
   className?: string;
+  variant?: 'default' | 'fullReport';
+  stockName?: string;
+  stockCode?: string;
 }
 
 export const CompanyProfileSection: React.FC<CompanyProfileSectionProps> = ({
   details,
   language,
   className = '',
+  variant = 'default',
+  stockName,
+  stockCode,
 }) => {
   const reportLanguage = normalizeReportLanguage(language);
   const text = getReportText(reportLanguage);
@@ -60,6 +66,110 @@ export const CompanyProfileSection: React.FC<CompanyProfileSectionProps> = ({
     { label: text.generalManager, value: profile?.manager || '--' },
     { label: text.boardSecretary, value: profile?.boardSecretary || '--' },
   ];
+
+  if (variant === 'fullReport') {
+    const isEn = reportLanguage === 'en';
+    const displayName = stockName || profile?.fullName || stockCode || '--';
+    const displayCode = stockCode || '--';
+
+    return (
+      <section className={className}>
+        <div className="space-y-5">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold leading-6 text-foreground">
+              {isEn ? 'Stock Basics' : '股票基本信息'}
+            </h3>
+            <div className="space-y-1.5">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="text-2xl font-semibold leading-8 text-foreground">
+                  {displayName}
+                </p>
+                <span className="rounded-md bg-default-100 px-2 py-1 font-mono text-xs font-medium text-foreground">
+                  {displayCode}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="h-px w-full bg-border/70" />
+
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Building2 className="h-4 w-4 text-secondary-text" aria-hidden="true" />
+              <h4 className="text-base font-semibold leading-6 text-foreground">
+                {text.companyBasics}
+              </h4>
+            </div>
+            <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2 xl:grid-cols-3">
+              {companyBasics.map((item) => (
+                <div key={item.label} className="min-w-0">
+                  <div className="text-sm leading-5 text-secondary-text">
+                    {item.label}
+                  </div>
+                  <div className="mt-1 truncate text-sm leading-5 text-foreground" title={item.value}>
+                    {item.value}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {companyIntro && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4 text-secondary-text" aria-hidden="true" />
+                <h4 className="text-base font-semibold leading-6 text-foreground">
+                  {text.companyIntro}
+                </h4>
+              </div>
+              <p className="whitespace-pre-wrap text-sm leading-6 text-foreground">
+                {companyIntro}
+              </p>
+            </div>
+          )}
+
+          <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-sm leading-5">
+            <span className="text-foreground">{text.website}</span>
+            {profile?.website && websiteHref ? (
+              <a
+                href={websiteHref}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex max-w-full items-center gap-1 text-primary hover:text-primary-600"
+                title={profile.website}
+              >
+                <span className="truncate">{profile.website}</span>
+                <ExternalLink className="h-3.5 w-3.5 flex-shrink-0" aria-hidden="true" />
+              </a>
+            ) : (
+              <span className="text-foreground">--</span>
+            )}
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <UsersRound className="h-4 w-4 text-secondary-text" aria-hidden="true" />
+              <h4 className="text-base font-semibold leading-6 text-foreground">
+                {text.coreManagement}
+              </h4>
+            </div>
+            <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-3">
+              {coreManagement.map((item) => (
+                <div key={item.label} className="min-w-0">
+                  <div className="text-sm leading-5 text-secondary-text">
+                    {item.label}
+                  </div>
+                  <div className="mt-1 truncate text-sm leading-5 text-foreground" title={item.value}>
+                    {item.value}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <div className={className}>

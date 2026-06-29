@@ -20,7 +20,6 @@ import { KeyLevelsSection } from './KeyLevelsSection';
 import { ChipDistributionSection } from './ChipDistributionSection';
 import { PredictionCycleBanner } from './PredictionCycleBanner';
 import { BacktestReportSection } from './BacktestReportSection';
-import { ModelOpinionsPanel } from './ModelOpinionsPanel';
 import { getReportText, normalizeReportLanguage } from '../../utils/reportLanguage';
 
 interface ReportSummaryProps {
@@ -66,6 +65,10 @@ export const ReportSummary: React.FC<ReportSummaryProps> = ({
   const shouldShowModel = Boolean(
     modelUsed && !['unknown', 'error', 'none', 'null', 'n/a'].includes(modelUsed.toLowerCase()),
   );
+  const hasKlineContent = Boolean(klineSeries?.rows?.length || weeklyKlineSeries?.rows?.length);
+  const hasKeyLevelsContent = Boolean(keyLevels);
+  const hasTechnicalIndicatorsContent = Boolean(technicalIndicators);
+  const hasTechnicalLayout = hasKlineContent || hasKeyLevelsContent || hasTechnicalIndicatorsContent;
 
   return (
     <div className="space-y-5 pb-8 animate-fade-in">
@@ -81,66 +84,84 @@ export const ReportSummary: React.FC<ReportSummaryProps> = ({
         summary={summary}
         strategy={strategy}
         details={details}
+        modelOpinions={modelOpinions}
         isHistory={isHistory}
       />
 
       {/* 财务数据分析区 */}
-      <FinancialRevenueGrowthSection
-        financialReport={details?.financialReport}
-        financialFundamentalsAnalysis={financialFundamentalsAnalysis}
-        language={reportLanguage}
-      />
-      <FinancialProfitabilitySection
-        financialReport={details?.financialReport}
-        profitabilityAnalysis={details?.profitabilityAnalysis}
-        financialFundamentalsAnalysis={financialFundamentalsAnalysis}
-        language={reportLanguage}
-      />
-      <FinancialIncomePeriodsSection
-        financialReport={details?.financialReport}
-        financialFundamentalsAnalysis={financialFundamentalsAnalysis}
-        language={reportLanguage}
-      />
-      <FinancialBalanceSheetSection
-        financialReport={details?.financialReport}
-        financialFundamentalsAnalysis={financialFundamentalsAnalysis}
-        language={reportLanguage}
-      />
-      <FinancialCashFlowSection
-        financialReport={details?.financialReport}
-        financialFundamentalsAnalysis={financialFundamentalsAnalysis}
-        language={reportLanguage}
-      />
-      <FinancialExpressSection
-        financialReport={details?.financialReport}
-        financialFundamentalsAnalysis={financialFundamentalsAnalysis}
-        language={reportLanguage}
-      />
+      <div className="grid gap-4 lg:grid-cols-2">
+        <FinancialRevenueGrowthSection
+          financialReport={details?.financialReport}
+          financialFundamentalsAnalysis={financialFundamentalsAnalysis}
+          language={reportLanguage}
+        />
+        <FinancialProfitabilitySection
+          financialReport={details?.financialReport}
+          profitabilityAnalysis={details?.profitabilityAnalysis}
+          financialFundamentalsAnalysis={financialFundamentalsAnalysis}
+          language={reportLanguage}
+        />
+      </div>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <FinancialIncomePeriodsSection
+          financialReport={details?.financialReport}
+          financialFundamentalsAnalysis={financialFundamentalsAnalysis}
+          language={reportLanguage}
+        />
+        <FinancialBalanceSheetSection
+          financialReport={details?.financialReport}
+          financialFundamentalsAnalysis={financialFundamentalsAnalysis}
+          language={reportLanguage}
+        />
+      </div>
+      <div className="grid gap-4 lg:grid-cols-2 [&>*:only-child]:lg:col-span-2">
+        <FinancialCashFlowSection
+          financialReport={details?.financialReport}
+          financialFundamentalsAnalysis={financialFundamentalsAnalysis}
+          language={reportLanguage}
+        />
+        <FinancialExpressSection
+          financialReport={details?.financialReport}
+          financialFundamentalsAnalysis={financialFundamentalsAnalysis}
+          language={reportLanguage}
+        />
+      </div>
 
       {/* 技术分析区 */}
       <PriceTrendAnalysisSection
         priceTrendAnalysis={priceTrendAnalysis}
         language={reportLanguage}
       />
-      <KlineChartSection
-        klineSeries={klineSeries}
-        language={reportLanguage}
-      />
+      {hasTechnicalLayout ? (
+        <div className="grid gap-4 lg:grid-cols-2 lg:items-stretch [&>*:only-child]:lg:col-span-2">
+          {hasKlineContent || hasKeyLevelsContent ? (
+            <div className="flex min-w-0 flex-col gap-4">
+              <KlineChartSection
+                klineSeries={klineSeries}
+                weeklyKlineSeries={weeklyKlineSeries}
+                language={reportLanguage}
+              />
+              <KeyLevelsSection
+                keyLevels={keyLevels}
+                keyLevelsAnalysis={keyLevelsAnalysis}
+                language={reportLanguage}
+              />
+            </div>
+          ) : null}
+          {hasTechnicalIndicatorsContent ? (
+            <TechnicalIndicatorsSection
+              technicalIndicators={technicalIndicators}
+              language={reportLanguage}
+            />
+          ) : null}
+        </div>
+      ) : null}
       <WeeklyTrendAnalysisSection
         weeklyTrendAnalysis={weeklyTrendAnalysis}
         language={reportLanguage}
       />
-      <KlineChartSection
-        klineSeries={weeklyKlineSeries}
-        language={reportLanguage}
-        variant="weekly"
-      />
       <TechnicalAnalysisSection
         technicalAnalysisReport={technicalAnalysisReport}
-        language={reportLanguage}
-      />
-      <TechnicalIndicatorsSection
-        technicalIndicators={technicalIndicators}
         language={reportLanguage}
       />
       <ChipDistributionSection
@@ -152,23 +173,12 @@ export const ReportSummary: React.FC<ReportSummaryProps> = ({
         capitalFlowAnalysis={capitalFlowAnalysis}
         language={reportLanguage}
       />
-      <KeyLevelsSection
-        keyLevels={keyLevels}
-        keyLevelsAnalysis={keyLevelsAnalysis}
-        language={reportLanguage}
-      />
 
       {/* 资讯区 */}
       <ReportNews recordId={recordId} limit={8} language={reportLanguage} />
 
       {/* 透明度与追溯区 */}
       <ReportDetails details={details} recordId={recordId} language={reportLanguage} />
-
-      {/* 多模型会诊（主模型 + 只读会诊） */}
-      <ModelOpinionsPanel
-        modelOpinions={modelOpinions}
-        language={reportLanguage}
-      />
 
       {/* 回测报告（仅已完成评估时展示） */}
       <BacktestReportSection

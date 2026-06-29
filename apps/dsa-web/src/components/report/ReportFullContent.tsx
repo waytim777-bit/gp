@@ -32,6 +32,87 @@ interface ReportFullContentProps {
   showPrintHeader?: boolean;
 }
 
+const MARKDOWN_PROSE_CLASS_NAME = `home-markdown-prose prose prose-invert prose-sm max-w-none
+  prose-headings:text-foreground prose-headings:font-semibold prose-headings:mt-4 prose-headings:mb-2
+  prose-h1:text-xl
+  prose-h2:text-lg
+  prose-h3:text-base
+  prose-p:leading-relaxed prose-p:mb-3 prose-p:last:mb-0
+  prose-strong:text-foreground prose-strong:font-semibold
+  prose-ul:my-2 prose-ol:my-2 prose-li:my-1
+  prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
+  prose-pre:border
+  prose-table:border-collapse
+  prose-hr:my-4
+  prose-a:no-underline hover:prose-a:underline
+  prose-blockquote:text-secondary-text
+  whitespace-pre-line break-words
+`;
+
+const IMPORTANT_INFO_TITLES = ['重要信息速览', 'Key Updates'];
+
+const headingPattern = /^\s{0,3}(#{1,6})\s+(.+?)\s*$/;
+
+const splitImportantInfoMarkdown = (
+  source: string,
+): { priorityMarkdown?: string; remainingMarkdown: string } => {
+  const lines = source.split('\n');
+  let startIndex = -1;
+  let headingLevel = 0;
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const match = headingPattern.exec(lines[index] || '');
+    if (!match) {
+      continue;
+    }
+
+    const title = match[2] || '';
+    if (IMPORTANT_INFO_TITLES.some((importantTitle) => title.includes(importantTitle))) {
+      startIndex = index;
+      headingLevel = match[1]?.length || 0;
+      break;
+    }
+  }
+
+  if (startIndex < 0 || headingLevel === 0) {
+    return { remainingMarkdown: source };
+  }
+
+  let endIndex = lines.length;
+  for (let index = startIndex + 1; index < lines.length; index += 1) {
+    const match = headingPattern.exec(lines[index] || '');
+    if (match && (match[1]?.length || 0) <= headingLevel) {
+      endIndex = index;
+      break;
+    }
+  }
+
+  const priorityMarkdown = lines.slice(startIndex, endIndex).join('\n').trim();
+  const remainingMarkdown = [
+    ...lines.slice(0, startIndex),
+    ...lines.slice(endIndex),
+  ].join('\n').replace(/\n{3,}/g, '\n\n').trim();
+
+  return {
+    priorityMarkdown: priorityMarkdown || undefined,
+    remainingMarkdown,
+  };
+};
+
+const MarkdownContent: React.FC<{ markdown: string }> = ({ markdown }) => {
+  if (!markdown.trim()) {
+    return null;
+  }
+
+  return (
+    <div className={MARKDOWN_PROSE_CLASS_NAME}>
+      <Markdown remarkPlugins={[remarkGfm]}>
+        {markdown}
+      </Markdown>
+    </div>
+  );
+};
+
 export const ReportFullContent: React.FC<ReportFullContentProps> = ({
   stockName,
   stockCode,
@@ -57,6 +138,11 @@ export const ReportFullContent: React.FC<ReportFullContentProps> = ({
   const capitalFlow = details?.capitalFlow ?? details?.capital_flow;
   const capitalFlowAnalysis = details?.capitalFlowAnalysis ?? details?.capital_flow_analysis;
   const modelOpinions = details?.modelOpinions ?? details?.model_opinions;
+  const hasKlineContent = Boolean(klineSeries?.rows?.length || weeklyKlineSeries?.rows?.length);
+  const hasKeyLevelsContent = Boolean(keyLevels);
+  const hasTechnicalIndicatorsContent = Boolean(technicalIndicators);
+  const hasTechnicalLayout = hasKlineContent || hasKeyLevelsContent || hasTechnicalIndicatorsContent;
+  const { priorityMarkdown, remainingMarkdown } = splitImportantInfoMarkdown(markdown);
 
   return (
     <div className="space-y-5" data-report-print-root>
@@ -66,11 +152,17 @@ export const ReportFullContent: React.FC<ReportFullContentProps> = ({
           <p className="text-sm text-muted-text">{text.fullReport}</p>
         </div>
       ) : null}
+      {priorityMarkdown ? (
+        <MarkdownContent markdown={priorityMarkdown} />
+      ) : null}
       {hasCompanyProfileValue(details) ? (
         <CompanyProfileSection
           details={details}
           language={normalizedLanguage}
-          className="home-divider rounded-xl border border-subtle bg-surface/50 p-4"
+          className="home-divider rounded-xl border border-subtle bg-surface/50 p-5"
+          variant="fullReport"
+          stockName={stockName}
+          stockCode={stockCode}
         />
       ) : null}
       {hasBusinessModelValue(details) ? (
@@ -85,6 +177,7 @@ export const ReportFullContent: React.FC<ReportFullContentProps> = ({
         financialFundamentalsAnalysis={financialFundamentalsAnalysis}
         language={normalizedLanguage}
         compact
+        variant="fullReport"
       />
       <FinancialProfitabilitySection
         financialReport={details?.financialReport}
@@ -92,59 +185,75 @@ export const ReportFullContent: React.FC<ReportFullContentProps> = ({
         financialFundamentalsAnalysis={financialFundamentalsAnalysis}
         language={normalizedLanguage}
         compact
+        variant="fullReport"
       />
-      <FinancialIncomePeriodsSection
-        financialReport={details?.financialReport}
-        financialFundamentalsAnalysis={financialFundamentalsAnalysis}
-        language={normalizedLanguage}
-        compact
-      />
-      <FinancialBalanceSheetSection
-        financialReport={details?.financialReport}
-        financialFundamentalsAnalysis={financialFundamentalsAnalysis}
-        language={normalizedLanguage}
-        compact
-      />
-      <FinancialCashFlowSection
-        financialReport={details?.financialReport}
-        financialFundamentalsAnalysis={financialFundamentalsAnalysis}
-        language={normalizedLanguage}
-        compact
-      />
-      <FinancialExpressSection
-        financialReport={details?.financialReport}
-        financialFundamentalsAnalysis={financialFundamentalsAnalysis}
-        language={normalizedLanguage}
-        compact
-      />
+      <div className="grid gap-4 xl:grid-cols-2">
+        <FinancialIncomePeriodsSection
+          financialReport={details?.financialReport}
+          financialFundamentalsAnalysis={financialFundamentalsAnalysis}
+          language={normalizedLanguage}
+          compact
+        />
+        <FinancialBalanceSheetSection
+          financialReport={details?.financialReport}
+          financialFundamentalsAnalysis={financialFundamentalsAnalysis}
+          language={normalizedLanguage}
+          compact
+        />
+      </div>
+      <div className="grid gap-4 xl:grid-cols-2 [&>*:only-child]:xl:col-span-2">
+        <FinancialCashFlowSection
+          financialReport={details?.financialReport}
+          financialFundamentalsAnalysis={financialFundamentalsAnalysis}
+          language={normalizedLanguage}
+          compact
+        />
+        <FinancialExpressSection
+          financialReport={details?.financialReport}
+          financialFundamentalsAnalysis={financialFundamentalsAnalysis}
+          language={normalizedLanguage}
+          compact
+        />
+      </div>
       <PriceTrendAnalysisSection
         priceTrendAnalysis={priceTrendAnalysis}
         language={normalizedLanguage}
         compact
       />
-      <KlineChartSection
-        klineSeries={klineSeries}
-        language={normalizedLanguage}
-        compact
-      />
+      {hasTechnicalLayout ? (
+        <div className="grid gap-4 xl:grid-cols-2 xl:items-stretch [&>*:only-child]:xl:col-span-2">
+          {hasKlineContent || hasKeyLevelsContent ? (
+            <div className="flex min-w-0 flex-col gap-4">
+              <KlineChartSection
+                klineSeries={klineSeries}
+                weeklyKlineSeries={weeklyKlineSeries}
+                language={normalizedLanguage}
+                compact
+              />
+              <KeyLevelsSection
+                keyLevels={keyLevels}
+                keyLevelsAnalysis={keyLevelsAnalysis}
+                language={normalizedLanguage}
+                compact
+              />
+            </div>
+          ) : null}
+          {hasTechnicalIndicatorsContent ? (
+            <TechnicalIndicatorsSection
+              technicalIndicators={technicalIndicators}
+              language={normalizedLanguage}
+              compact
+            />
+          ) : null}
+        </div>
+      ) : null}
       <WeeklyTrendAnalysisSection
         weeklyTrendAnalysis={weeklyTrendAnalysis}
         language={normalizedLanguage}
         compact
       />
-      <KlineChartSection
-        klineSeries={weeklyKlineSeries}
-        language={normalizedLanguage}
-        variant="weekly"
-        compact
-      />
       <TechnicalAnalysisSection
         technicalAnalysisReport={technicalAnalysisReport}
-        language={normalizedLanguage}
-        compact
-      />
-      <TechnicalIndicatorsSection
-        technicalIndicators={technicalIndicators}
         language={normalizedLanguage}
         compact
       />
@@ -159,38 +268,12 @@ export const ReportFullContent: React.FC<ReportFullContentProps> = ({
         language={normalizedLanguage}
         compact
       />
-      <KeyLevelsSection
-        keyLevels={keyLevels}
-        keyLevelsAnalysis={keyLevelsAnalysis}
-        language={normalizedLanguage}
-        compact
-      />
       <ModelOpinionsPanel
         modelOpinions={modelOpinions}
         language={normalizedLanguage}
+        variant="fullReport"
       />
-      <div
-        className="home-markdown-prose prose prose-invert prose-sm max-w-none
-          prose-headings:text-foreground prose-headings:font-semibold prose-headings:mt-4 prose-headings:mb-2
-          prose-h1:text-xl
-          prose-h2:text-lg
-          prose-h3:text-base
-          prose-p:leading-relaxed prose-p:mb-3 prose-p:last:mb-0
-          prose-strong:text-foreground prose-strong:font-semibold
-          prose-ul:my-2 prose-ol:my-2 prose-li:my-1
-          prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
-          prose-pre:border
-          prose-table:border-collapse
-          prose-hr:my-4
-          prose-a:no-underline hover:prose-a:underline
-          prose-blockquote:text-secondary-text
-          whitespace-pre-line break-words
-        "
-      >
-        <Markdown remarkPlugins={[remarkGfm]}>
-          {markdown}
-        </Markdown>
-      </div>
+      <MarkdownContent markdown={remainingMarkdown} />
     </div>
   );
 };

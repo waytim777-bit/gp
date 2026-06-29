@@ -1,0 +1,1067 @@
+2026-06-29 09:45:01 | INFO     | src/logging_config.py:153 | 日志系统初始化完成，日志目录: .
+2026-06-29 09:45:01 | INFO     | src/logging_config.py:154 | 常规日志: stock_analysis_20260629.log
+2026-06-29 09:45:01 | INFO     | src/logging_config.py:155 | 调试日志: stock_analysis_debug_20260629.log
+2026-06-29 09:45:01 | INFO     | main.py:745 | ============================================================
+2026-06-29 09:45:01 | INFO     | main.py:746 | A股自选股智能分析系统 启动
+2026-06-29 09:45:01 | INFO     | main.py:747 | 运行时间: 2026-06-29 09:45:01
+2026-06-29 09:45:01 | INFO     | main.py:748 | ============================================================
+2026-06-29 09:45:01 | INFO     | src/webui_frontend.py:230 | 前端构建检查结果: needs_install=False, needs_build=True, artifact=/Users/taurus/developer/outlets/gp/static/index.html
+2026-06-29 09:45:01 | INFO     | src/webui_frontend.py:111 | 执行前端命令: /Users/taurus/.nvm/versions/node/v24.13.1/bin/npm run build
+2026-06-29 09:45:04 | ERROR    | src/webui_frontend.py:117 | 前端命令执行失败（exit_code=2）: /Users/taurus/.nvm/versions/node/v24.13.1/bin/npm run build
+2026-06-29 09:45:04 | WARNING  | main.py:784 | 前端静态资源未就绪，继续启动 FastAPI 服务（Web 页面可能不可用）
+2026-06-29 09:45:05 | INFO     | main.py:623 | FastAPI 服务已启动: http://0.0.0.0:8000
+2026-06-29 09:45:05 | INFO     | main.py:796 | 模式: 仅 Web 服务
+2026-06-29 09:45:05 | INFO     | main.py:797 | Web 服务运行中: http://0.0.0.0:8000
+2026-06-29 09:45:05 | INFO     | main.py:798 | 通过 /api/v1/analysis/analyze 接口触发分析
+2026-06-29 09:45:05 | INFO     | main.py:799 | API 文档: http://0.0.0.0:8000/docs
+2026-06-29 09:45:05 | INFO     | main.py:800 | 按 Ctrl+C 退出...
+2026-06-29 09:45:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:92 | Started server process [88158]
+2026-06-29 09:45:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:48 | Waiting for application startup.
+2026-06-29 09:45:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:62 | Application startup complete.
+2026-06-29 09:45:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:224 | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-06-29 09:45:24 | INFO     | src/storage.py:1143 | 数据库初始化完成: postgresql+psycopg://dsa:dsa123@localhost:5435/daily_stock_analysis
+2026-06-29 09:45:24 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64676 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 09:45:24 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64679 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 09:45:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64683 - "POST /api/v1/auth/login HTTP/1.1" 200
+2026-06-29 09:45:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64684 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 09:45:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64695 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 09:45:29 | INFO     | src/services/task_queue.py:181 | [TaskQueue] 初始化完成，最大并发: 3
+2026-06-29 09:45:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64690 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 09:45:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64699 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-29 09:45:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64689 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 09:45:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64696 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:45:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64700 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 09:45:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64703 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 09:45:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64713 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:45:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64712 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 09:45:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64716 - "GET /api/v1/history/20 HTTP/1.1" 200
+2026-06-29 09:45:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64719 - "GET /api/v1/analysis/cycle-report?code=600006&report_type=full HTTP/1.1" 200
+2026-06-29 09:45:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64722 - "GET /api/v1/history/20/news?limit=8 HTTP/1.1" 200
+2026-06-29 09:45:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64725 - "GET /api/v1/history/20/news?limit=8 HTTP/1.1" 200
+2026-06-29 09:45:42 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64746 - "GET /api/v1/prediction-reports/search?code=601138&report_type=detailed HTTP/1.1" 200
+2026-06-29 09:45:42 | INFO     | src/services/task_queue.py:419 | [TaskQueue] 任务已提交: 601138 -> d46b7b31dcda4320bbdbd38ff62735fc
+2026-06-29 09:45:42 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64749 - "POST /api/v1/analysis/analyze HTTP/1.1" 202
+2026-06-29 09:45:42 | INFO     | data_provider/tushare_fetcher.py:169 | Tushare API 初始化成功
+2026-06-29 09:45:42 | INFO     | data_provider/tushare_fetcher.py:200 | ✅ 检测到 TUSHARE_TOKEN 且 API 初始化成功，Tushare 数据源优先级提升为最高 (Priority -1)
+2026-06-29 09:45:42 | INFO     | data_provider/base.py:915 | 已初始化 7 个数据源（按优先级）: TushareFetcher(P-1), EfinanceFetcher(P0), AkshareFetcher(P1), PytdxFetcher(P2), BaostockFetcher(P3), YfinanceFetcher(P4), LongbridgeFetcher(P5)
+2026-06-29 09:45:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:784 | Routing strategy: simple-shuffle
+2026-06-29 09:45:43 | INFO     | src/analyzer.py:974 | Analyzer LLM: Router initialized from channels/YAML — 3 deployment(s), models: ['openai/gpt-5.4-nano', 'openai/deepseek-v3.2', 'openai/qwen3-max-2026-01-23']
+2026-06-29 09:45:43 | INFO     | src/notification.py:173 | 已配置 1 个通知渠道：邮件
+2026-06-29 09:45:43 | INFO     | src/search_service.py:2200 | 已配置 SearXNG 搜索，共 1 个自建实例
+2026-06-29 09:45:43 | INFO     | src/search_service.py:2218 | 新闻时效策略已启用: profile=short, profile_days=3, NEWS_MAX_AGE_DAYS=3, effective_window=3
+2026-06-29 09:45:43 | INFO     | src/core/pipeline.py:137 | 调度器初始化完成，最大并发数: 3
+2026-06-29 09:45:43 | INFO     | src/core/pipeline.py:138 | 已启用技术分析引擎（均线/趋势/量价指标）
+2026-06-29 09:45:43 | INFO     | src/core/pipeline.py:143 | 实时行情已禁用，将使用历史收盘价
+2026-06-29 09:45:43 | INFO     | src/core/pipeline.py:147 | 筹码分布分析已禁用
+2026-06-29 09:45:43 | INFO     | src/core/pipeline.py:151 | 搜索服务已启用
+2026-06-29 09:45:43 | INFO     | src/core/pipeline.py:1827 | ========== 开始处理 601138 ==========
+2026-06-29 09:45:43 | INFO     | src/core/pipeline.py:232 | 工业富联(601138) 开始从数据源获取数据...
+2026-06-29 09:45:43 | INFO     | data_provider/base.py:1023 | [数据源尝试 1/7] [TushareFetcher] 获取 601138...
+2026-06-29 09:45:43 | INFO     | data_provider/base.py:364 | [TushareFetcher] 开始获取 601138 日线数据: 范围=2025-09-02 ~ 2026-06-29
+2026-06-29 09:45:43 | INFO     | data_provider/base.py:383 | [TushareFetcher] 601138 获取成功: 范围=2025-09-02 ~ 2026-06-29, rows=195, elapsed=0.13s
+2026-06-29 09:45:43 | INFO     | data_provider/base.py:1035 | [数据源完成] 601138 使用 [TushareFetcher] 获取成功: rows=195, elapsed=0.13s
+2026-06-29 09:45:43 | INFO     | src/storage.py:4289 | 保存 601138 数据成功，新增 195 条
+2026-06-29 09:45:43 | INFO     | src/core/pipeline.py:240 | 工业富联(601138) 数据保存成功（来源: TushareFetcher，新增 195 条）
+2026-06-29 09:45:43 | INFO     | src/core/pipeline.py:293 | 工业富联(601138) 实时行情已禁用，使用历史收盘价继续分析
+2026-06-29 09:45:43 | INFO     | data_provider/base.py:2236 | [company_profile] start stock_code=601138 market=cn provider=tushare_stock_company timeout_seconds=5.000
+2026-06-29 09:45:44 | INFO     | data_provider/base.py:2257 | [company_profile] finished stock_code=601138 market=cn provider=tushare_stock_company status=ok duration_ms=757 fields=['area', 'board_secretary', 'business_scope', 'chairman', 'city', 'company_intro', 'email', 'employee_count', 'exchange', 'float_share_capital', 'full_name', 'industry', 'legal_representative', 'listing_date', 'main_business', 'manager', 'market', 'office_address', 'province', 'registered_capital', 'setup_date', 'short_name', 'total_share_capital', 'website']
+2026-06-29 09:45:46 | INFO     | data_provider/tushare_fetcher.py:1046 | [Tushare] 当前时间 09:45 可能无法获取当天筹码分布，尝试获取前一个交易日的数据 20260626
+2026-06-29 09:45:46 | INFO     | data_provider/tushare_fetcher.py:1083 | [Tushare] ts.pro_api().moneyflow_ind_ths 获取板块排行(同花顺)...
+2026-06-29 09:45:46 | INFO     | data_provider/base.py:3092 | [TushareFetcher] 获取板块排行成功
+2026-06-29 09:45:48 | INFO     | data_provider/efinance_fetcher.py:1109 | [API调用] ef.stock.get_belong_board(stock_code=601138) 获取所属板块...
+2026-06-29 09:45:49 | INFO     | data_provider/efinance_fetcher.py:1118 | [API返回] ef.stock.get_belong_board 成功: 返回 34 个板块, 耗时 0.23s
+2026-06-29 09:45:49 | INFO     | data_provider/base.py:1549 | [EfinanceFetcher] 获取所属板块成功: 601138, count=34
+2026-06-29 09:45:49 | INFO     | src/core/pipeline.py:382 | 工业富联(601138) K线回填跳过：本地 DB 已有 115 条
+2026-06-29 09:45:49 | INFO     | src/core/pipeline.py:392 | 工业富联(601138) 趋势分析: 弱势多头, 买入信号=持有, 评分=49
+2026-06-29 09:45:49 | INFO     | src/core/pipeline.py:398 | 工业富联(601138) 启用 Agent 模式进行分析
+2026-06-29 09:45:49 | INFO     | src/agent/factory.py:171 | [AgentFactory] ToolRegistry cached (19 tools)
+2026-06-29 09:45:49 | INFO     | src/agent/skills/base.py:360 | Loaded 11 built-in skills from /Users/taurus/developer/outlets/gp/strategies
+2026-06-29 09:45:49 | INFO     | src/agent/factory.py:213 | [AgentFactory] SkillManager prototype cached (11 skills)
+2026-06-29 09:45:49 | INFO     | src/agent/skills/base.py:431 | Activated skills: ['bull_trend']
+2026-06-29 09:45:49 | INFO     | src/agent/factory.py:257 | [AgentFactory] Activated skills: ['bull_trend']
+2026-06-29 09:45:49 | INFO     | src/agent/factory.py:302 | [AgentFactory] Resolved skill prompt state: skills=['bull_trend'] (arch=single, explicit=False, legacy_default_prompt=True)
+2026-06-29 09:45:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:784 | Routing strategy: simple-shuffle
+2026-06-29 09:45:49 | INFO     | src/agent/llm_adapter.py:194 | Agent LLM: Router initialized from channels/YAML — 3 deployment(s), models: ['openai/gpt-5.4-nano', 'openai/deepseek-v3.2', 'openai/qwen3-max-2026-01-23']
+2026-06-29 09:45:49 | INFO     | src/core/pipeline.py:1164 | 工业富联(601138) Agent 预取：基本面阶段未获有效资金流，单独补拉
+2026-06-29 09:45:49 | INFO     | src/core/pipeline.py:1269 | 工业富联(601138) Agent 模式：开始一次性多维度情报采集
+2026-06-29 09:45:49 | INFO     | src/search_service.py:3132 | [情报搜索] 外部环境维度启用: 工业富联(601138) subject=通信设备 industry=通信设备
+2026-06-29 09:45:49 | INFO     | src/search_service.py:3154 | 开始多维度情报搜索: 工业富联(601138), 时间范围: 近3天 (profile=short, NEWS_MAX_AGE_DAYS=3), 目标条数=3, provider请求条数=6
+2026-06-29 09:45:49 | INFO     | src/search_service.py:3183 | [情报搜索] 最新消息: 使用 SearXNG
+2026-06-29 09:45:51 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 09:45:51 | WARNING  | src/search_service.py:3221 | [情报搜索] 最新消息: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 09:45:52 | INFO     | src/search_service.py:3183 | [情报搜索] 风险排查: 使用 SearXNG
+2026-06-29 09:45:53 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 09:45:53 | WARNING  | src/search_service.py:3221 | [情报搜索] 风险排查: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 09:45:53 | INFO     | src/search_service.py:3183 | [情报搜索] 行业新闻: 使用 SearXNG
+2026-06-29 09:45:54 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 09:45:54 | WARNING  | src/search_service.py:3221 | [情报搜索] 行业新闻: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 09:45:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64827 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:45:55 | INFO     | src/search_service.py:3183 | [情报搜索] 国际新闻: 使用 SearXNG
+2026-06-29 09:45:56 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 09:45:56 | WARNING  | src/search_service.py:3221 | [情报搜索] 国际新闻: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 09:45:56 | INFO     | src/search_service.py:3183 | [情报搜索] 中国政策: 使用 SearXNG
+2026-06-29 09:45:57 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 09:45:57 | WARNING  | src/search_service.py:3221 | [情报搜索] 中国政策: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 09:45:57 | INFO     | src/search_service.py:3183 | [情报搜索] 公司公告: 使用 SearXNG
+2026-06-29 09:45:58 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 09:45:58 | WARNING  | src/search_service.py:3221 | [情报搜索] 公司公告: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 09:45:58 | INFO     | src/search_service.py:3183 | [情报搜索] 机构分析: 使用 SearXNG
+2026-06-29 09:45:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64837 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:45:59 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 09:45:59 | WARNING  | src/search_service.py:3221 | [情报搜索] 机构分析: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 09:45:59 | INFO     | src/search_service.py:3183 | [情报搜索] 业绩预期: 使用 SearXNG
+2026-06-29 09:46:00 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 09:46:00 | WARNING  | src/search_service.py:3221 | [情报搜索] 业绩预期: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 09:46:00 | INFO     | src/search_service.py:3183 | [情报搜索] 行业分析: 使用 SearXNG
+2026-06-29 09:46:01 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 09:46:01 | WARNING  | src/search_service.py:3221 | [情报搜索] 行业分析: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 09:46:01 | INFO     | src/core/pipeline.py:1292 | 工业富联(601138) Agent 模式：情报采集完成，共 0 条结果
+2026-06-29 09:46:02 | INFO     | src/agent/runner.py:453 | Agent step 1/10
+2026-06-29 09:46:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-29 09:46:04 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:1656 | Wrapper: Completed Call, calling success_handler
+2026-06-29 09:46:04 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-29 09:46:04 | INFO     | src/agent/runner.py:496 | Agent requesting 4 tool call(s): ['get_report_context', 'get_chip_distribution', 'get_market_indices', 'get_sector_rankings']
+2026-06-29 09:46:04 | WARNING  | src/agent/runner.py:648 | Tool 'get_report_context' failed: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+2026-06-29 09:46:04 | INFO     | data_provider/tushare_fetcher.py:169 | Tushare API 初始化成功
+2026-06-29 09:46:04 | INFO     | data_provider/tushare_fetcher.py:169 | Tushare API 初始化成功
+2026-06-29 09:46:04 | INFO     | data_provider/tushare_fetcher.py:169 | Tushare API 初始化成功
+2026-06-29 09:46:04 | INFO     | data_provider/tushare_fetcher.py:200 | ✅ 检测到 TUSHARE_TOKEN 且 API 初始化成功，Tushare 数据源优先级提升为最高 (Priority -1)
+2026-06-29 09:46:04 | INFO     | data_provider/tushare_fetcher.py:200 | ✅ 检测到 TUSHARE_TOKEN 且 API 初始化成功，Tushare 数据源优先级提升为最高 (Priority -1)
+2026-06-29 09:46:04 | INFO     | data_provider/tushare_fetcher.py:200 | ✅ 检测到 TUSHARE_TOKEN 且 API 初始化成功，Tushare 数据源优先级提升为最高 (Priority -1)
+2026-06-29 09:46:04 | INFO     | data_provider/base.py:915 | 已初始化 7 个数据源（按优先级）: TushareFetcher(P-1), EfinanceFetcher(P0), AkshareFetcher(P1), PytdxFetcher(P2), BaostockFetcher(P3), YfinanceFetcher(P4), LongbridgeFetcher(P5)
+2026-06-29 09:46:04 | INFO     | data_provider/base.py:915 | 已初始化 7 个数据源（按优先级）: TushareFetcher(P-1), EfinanceFetcher(P0), AkshareFetcher(P1), PytdxFetcher(P2), BaostockFetcher(P3), YfinanceFetcher(P4), LongbridgeFetcher(P5)
+2026-06-29 09:46:04 | INFO     | data_provider/base.py:915 | 已初始化 7 个数据源（按优先级）: TushareFetcher(P-1), EfinanceFetcher(P0), AkshareFetcher(P1), PytdxFetcher(P2), BaostockFetcher(P3), YfinanceFetcher(P4), LongbridgeFetcher(P5)
+2026-06-29 09:46:04 | INFO     | data_provider/tushare_fetcher.py:1046 | [Tushare] 当前时间 09:46 可能无法获取当天筹码分布，尝试获取前一个交易日的数据 20260626
+2026-06-29 09:46:04 | INFO     | data_provider/tushare_fetcher.py:1083 | [Tushare] ts.pro_api().moneyflow_ind_ths 获取板块排行(同花顺)...
+2026-06-29 09:46:05 | INFO     | data_provider/base.py:3092 | [TushareFetcher] 获取板块排行成功
+2026-06-29 09:46:05 | INFO     | data_provider/base.py:1661 | [TushareFetcher] 获取指数行情成功
+2026-06-29 09:46:05 | INFO     | src/agent/runner.py:453 | Agent step 2/10
+2026-06-29 09:46:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-29 09:46:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:1656 | Wrapper: Completed Call, calling success_handler
+2026-06-29 09:46:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-29 09:46:07 | INFO     | src/agent/runner.py:496 | Agent requesting 1 tool call(s): ['get_report_context']
+2026-06-29 09:46:07 | WARNING  | src/agent/runner.py:648 | Tool 'get_report_context' failed: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+2026-06-29 09:46:07 | INFO     | src/agent/runner.py:453 | Agent step 3/10
+2026-06-29 09:46:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-29 09:46:20 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:1656 | Wrapper: Completed Call, calling success_handler
+2026-06-29 09:46:20 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-29 09:46:20 | INFO     | src/agent/runner.py:566 | Agent completed in 3 steps (18.7s, 16089 tokens)
+2026-06-29 09:46:20 | INFO     | src/analyzer.py:267 | [price_position] Filled placeholder fields from computed data
+2026-06-29 09:46:20 | INFO     | src/core/pipeline.py:1851 | [601138] 分析完成: 观望, 评分 38
+2026-06-29 09:46:20 | INFO     | src/core/pipeline.py:1866 | [601138] [MacroFocusImpact] 宏观数据为背景：指数偏弱（上证、深成、创业板均下跌），且市场风险偏好可能偏谨慎；对个股短线更应依赖自身量价与均线结构。
+2026-06-29 09:46:20 | INFO     | src/services/task_queue.py:639 | [TaskQueue] 任务完成: d46b7b31dcda4320bbdbd38ff62735fc (601138)
+2026-06-29 09:46:20 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64886 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:46:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64889 - "GET /api/v1/history/21 HTTP/1.1" 200
+2026-06-29 09:46:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64892 - "GET /api/v1/analysis/cycle-report?code=601138&report_type=full HTTP/1.1" 200
+2026-06-29 09:46:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64895 - "GET /api/v1/history/21/news?limit=8 HTTP/1.1" 200
+2026-06-29 09:46:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64898 - "GET /api/v1/history/21/news?limit=8 HTTP/1.1" 200
+2026-06-29 09:46:21 | INFO     | src/services/prediction_report_market_service.py:124 | Prediction report recommended: listing=6 user=2 code=601138 anchor=2026-06-26
+2026-06-29 09:46:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64901 - "POST /api/v1/prediction-reports/recommend HTTP/1.1" 200
+2026-06-29 09:46:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64904 - "GET /api/v1/prediction-reports/search?code=601138&report_type=detailed HTTP/1.1" 200
+2026-06-29 09:46:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64910 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:46:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64999 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:47:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65029 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:47:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65075 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:47:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65076 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 09:48:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65082 - "POST /api/v1/auth/login HTTP/1.1" 401
+2026-06-29 09:48:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65096 - "POST /api/v1/auth/login HTTP/1.1" 200
+2026-06-29 09:48:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65099 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 09:48:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65108 - "GET /api/v1/admin/menus HTTP/1.1" 200
+2026-06-29 09:48:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65109 - "GET /api/v1/admin/settings HTTP/1.1" 200
+2026-06-29 09:48:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65110 - "GET /api/v1/admin/roles HTTP/1.1" 200
+2026-06-29 09:48:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65111 - "GET /api/v1/admin/users HTTP/1.1" 200
+2026-06-29 09:48:11 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65115 - "GET /api/v1/admin/polymarket/watchlist HTTP/1.1" 200
+2026-06-29 09:48:11 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65118 - "GET /api/v1/admin/polymarket/watchlist HTTP/1.1" 200
+2026-06-29 09:48:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65151 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:48:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65181 - "GET /api/v1/system/config?include_schema=true HTTP/1.1" 200
+2026-06-29 09:48:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65186 - "GET /api/v1/agent/skills HTTP/1.1" 200
+2026-06-29 09:48:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65187 - "GET /api/v1/agent/models HTTP/1.1" 200
+2026-06-29 09:49:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65279 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:50:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65414 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:51:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65505 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:52:29 | INFO     | main.py:805 | 
+用户中断，程序退出
+2026-06-29 09:52:31 | INFO     | src/logging_config.py:153 | 日志系统初始化完成，日志目录: .
+2026-06-29 09:52:31 | INFO     | src/logging_config.py:154 | 常规日志: stock_analysis_20260629.log
+2026-06-29 09:52:31 | INFO     | src/logging_config.py:155 | 调试日志: stock_analysis_debug_20260629.log
+2026-06-29 09:52:31 | INFO     | main.py:745 | ============================================================
+2026-06-29 09:52:31 | INFO     | main.py:746 | A股自选股智能分析系统 启动
+2026-06-29 09:52:31 | INFO     | main.py:747 | 运行时间: 2026-06-29 09:52:31
+2026-06-29 09:52:31 | INFO     | main.py:748 | ============================================================
+2026-06-29 09:52:31 | INFO     | src/webui_frontend.py:230 | 前端构建检查结果: needs_install=False, needs_build=True, artifact=/Users/taurus/developer/outlets/gp/static/index.html
+2026-06-29 09:52:31 | INFO     | src/webui_frontend.py:111 | 执行前端命令: /Users/taurus/.nvm/versions/node/v24.13.1/bin/npm run build
+2026-06-29 09:52:35 | ERROR    | src/webui_frontend.py:117 | 前端命令执行失败（exit_code=2）: /Users/taurus/.nvm/versions/node/v24.13.1/bin/npm run build
+2026-06-29 09:52:35 | WARNING  | main.py:784 | 前端静态资源未就绪，继续启动 FastAPI 服务（Web 页面可能不可用）
+2026-06-29 09:52:35 | INFO     | main.py:623 | FastAPI 服务已启动: http://0.0.0.0:8000
+2026-06-29 09:52:35 | INFO     | main.py:796 | 模式: 仅 Web 服务
+2026-06-29 09:52:35 | INFO     | main.py:797 | Web 服务运行中: http://0.0.0.0:8000
+2026-06-29 09:52:35 | INFO     | main.py:798 | 通过 /api/v1/analysis/analyze 接口触发分析
+2026-06-29 09:52:35 | INFO     | main.py:799 | API 文档: http://0.0.0.0:8000/docs
+2026-06-29 09:52:35 | INFO     | main.py:800 | 按 Ctrl+C 退出...
+2026-06-29 09:52:37 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:92 | Started server process [342]
+2026-06-29 09:52:37 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:48 | Waiting for application startup.
+2026-06-29 09:52:37 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:62 | Application startup complete.
+2026-06-29 09:52:37 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:224 | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-06-29 09:53:22 | INFO     | src/storage.py:1143 | 数据库初始化完成: postgresql+psycopg://dsa:dsa123@localhost:5435/daily_stock_analysis
+2026-06-29 09:53:22 | INFO     | src/services/task_queue.py:181 | [TaskQueue] 初始化完成，最大并发: 3
+2026-06-29 09:53:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49255 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-29 09:53:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49281 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:54:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49490 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:55:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49589 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:56:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49654 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:57:41 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49716 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:57:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49734 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 09:57:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49735 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 09:57:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49740 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 09:57:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49742 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-29 09:57:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49737 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 09:57:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49736 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 09:57:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49747 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 09:57:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49741 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:57:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49752 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 09:57:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49755 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 09:57:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49758 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:57:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49761 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 09:57:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49764 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 09:57:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49767 - "GET /api/v1/history/21 HTTP/1.1" 200
+2026-06-29 09:57:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49770 - "GET /api/v1/analysis/cycle-report?code=601138&report_type=full HTTP/1.1" 200
+2026-06-29 09:57:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49773 - "GET /api/v1/history/21/news?limit=8 HTTP/1.1" 200
+2026-06-29 09:57:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49776 - "GET /api/v1/history/21/news?limit=8 HTTP/1.1" 200
+2026-06-29 09:57:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49787 - "DELETE /api/v1/history HTTP/1.1" 409
+2026-06-29 09:57:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49795 - "GET /api/v1/prediction-reports/search?code=000630&report_type=detailed HTTP/1.1" 200
+2026-06-29 09:57:59 | INFO     | src/services/task_queue.py:419 | [TaskQueue] 任务已提交: 000630 -> 3e6a134f5508436f961f22dce8eb8d79
+2026-06-29 09:57:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49798 - "POST /api/v1/analysis/analyze HTTP/1.1" 202
+2026-06-29 09:57:59 | INFO     | data_provider/tushare_fetcher.py:169 | Tushare API 初始化成功
+2026-06-29 09:57:59 | INFO     | data_provider/tushare_fetcher.py:200 | ✅ 检测到 TUSHARE_TOKEN 且 API 初始化成功，Tushare 数据源优先级提升为最高 (Priority -1)
+2026-06-29 09:57:59 | INFO     | data_provider/base.py:915 | 已初始化 7 个数据源（按优先级）: TushareFetcher(P-1), EfinanceFetcher(P0), AkshareFetcher(P1), PytdxFetcher(P2), BaostockFetcher(P3), YfinanceFetcher(P4), LongbridgeFetcher(P5)
+2026-06-29 09:57:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:784 | Routing strategy: simple-shuffle
+2026-06-29 09:57:59 | INFO     | src/analyzer.py:974 | Analyzer LLM: Router initialized from channels/YAML — 3 deployment(s), models: ['openai/gpt-5.4-nano', 'openai/deepseek-v3.2', 'openai/qwen3-max-2026-01-23']
+2026-06-29 09:57:59 | INFO     | src/notification.py:173 | 已配置 1 个通知渠道：邮件
+2026-06-29 09:57:59 | INFO     | src/search_service.py:2200 | 已配置 SearXNG 搜索，共 1 个自建实例
+2026-06-29 09:57:59 | INFO     | src/search_service.py:2218 | 新闻时效策略已启用: profile=short, profile_days=3, NEWS_MAX_AGE_DAYS=3, effective_window=3
+2026-06-29 09:57:59 | INFO     | src/core/pipeline.py:137 | 调度器初始化完成，最大并发数: 3
+2026-06-29 09:57:59 | INFO     | src/core/pipeline.py:138 | 已启用技术分析引擎（均线/趋势/量价指标）
+2026-06-29 09:57:59 | INFO     | src/core/pipeline.py:143 | 实时行情已禁用，将使用历史收盘价
+2026-06-29 09:57:59 | INFO     | src/core/pipeline.py:147 | 筹码分布分析已禁用
+2026-06-29 09:57:59 | INFO     | src/core/pipeline.py:151 | 搜索服务已启用
+2026-06-29 09:57:59 | INFO     | src/core/pipeline.py:1827 | ========== 开始处理 000630 ==========
+2026-06-29 09:57:59 | INFO     | src/core/pipeline.py:232 | 铜陵有色(000630) 开始从数据源获取数据...
+2026-06-29 09:57:59 | INFO     | data_provider/base.py:1023 | [数据源尝试 1/7] [TushareFetcher] 获取 000630...
+2026-06-29 09:57:59 | INFO     | data_provider/base.py:364 | [TushareFetcher] 开始获取 000630 日线数据: 范围=2025-09-02 ~ 2026-06-29
+2026-06-29 09:57:59 | INFO     | data_provider/base.py:383 | [TushareFetcher] 000630 获取成功: 范围=2025-09-02 ~ 2026-06-29, rows=195, elapsed=0.13s
+2026-06-29 09:57:59 | INFO     | data_provider/base.py:1035 | [数据源完成] 000630 使用 [TushareFetcher] 获取成功: rows=195, elapsed=0.13s
+2026-06-29 09:57:59 | INFO     | src/storage.py:4289 | 保存 000630 数据成功，新增 195 条
+2026-06-29 09:57:59 | INFO     | src/core/pipeline.py:240 | 铜陵有色(000630) 数据保存成功（来源: TushareFetcher，新增 195 条）
+2026-06-29 09:57:59 | INFO     | src/core/pipeline.py:293 | 铜陵有色(000630) 实时行情已禁用，使用历史收盘价继续分析
+2026-06-29 09:57:59 | INFO     | data_provider/base.py:2236 | [company_profile] start stock_code=000630 market=cn provider=tushare_stock_company timeout_seconds=5.000
+2026-06-29 09:58:00 | INFO     | data_provider/base.py:2257 | [company_profile] finished stock_code=000630 market=cn provider=tushare_stock_company status=ok duration_ms=1056 fields=['area', 'board_secretary', 'business_scope', 'chairman', 'city', 'company_intro', 'email', 'employee_count', 'exchange', 'float_share_capital', 'full_name', 'industry', 'legal_representative', 'listing_date', 'main_business', 'manager', 'market', 'office_address', 'province', 'registered_capital', 'setup_date', 'short_name', 'total_share_capital', 'website']
+2026-06-29 09:58:02 | INFO     | data_provider/tushare_fetcher.py:1046 | [Tushare] 当前时间 09:58 可能无法获取当天筹码分布，尝试获取前一个交易日的数据 20260626
+2026-06-29 09:58:02 | INFO     | data_provider/tushare_fetcher.py:1083 | [Tushare] ts.pro_api().moneyflow_ind_ths 获取板块排行(同花顺)...
+2026-06-29 09:58:02 | INFO     | data_provider/base.py:3092 | [TushareFetcher] 获取板块排行成功
+2026-06-29 09:58:05 | INFO     | data_provider/efinance_fetcher.py:1109 | [API调用] ef.stock.get_belong_board(stock_code=000630) 获取所属板块...
+2026-06-29 09:58:06 | INFO     | data_provider/efinance_fetcher.py:1118 | [API返回] ef.stock.get_belong_board 成功: 返回 24 个板块, 耗时 0.35s
+2026-06-29 09:58:06 | INFO     | data_provider/base.py:1549 | [EfinanceFetcher] 获取所属板块成功: 000630, count=24
+2026-06-29 09:58:06 | INFO     | src/core/pipeline.py:382 | 铜陵有色(000630) K线回填跳过：本地 DB 已有 115 条
+2026-06-29 09:58:06 | INFO     | src/core/pipeline.py:392 | 铜陵有色(000630) 趋势分析: 弱势空头, 买入信号=观望, 评分=39
+2026-06-29 09:58:06 | INFO     | src/core/pipeline.py:398 | 铜陵有色(000630) 启用 Agent 模式进行分析
+2026-06-29 09:58:06 | INFO     | src/agent/factory.py:171 | [AgentFactory] ToolRegistry cached (19 tools)
+2026-06-29 09:58:06 | INFO     | src/agent/skills/base.py:360 | Loaded 11 built-in skills from /Users/taurus/developer/outlets/gp/strategies
+2026-06-29 09:58:06 | INFO     | src/agent/factory.py:213 | [AgentFactory] SkillManager prototype cached (11 skills)
+2026-06-29 09:58:06 | INFO     | src/agent/skills/base.py:431 | Activated skills: ['bull_trend']
+2026-06-29 09:58:06 | INFO     | src/agent/factory.py:257 | [AgentFactory] Activated skills: ['bull_trend']
+2026-06-29 09:58:06 | INFO     | src/agent/factory.py:302 | [AgentFactory] Resolved skill prompt state: skills=['bull_trend'] (arch=single, explicit=False, legacy_default_prompt=True)
+2026-06-29 09:58:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:784 | Routing strategy: simple-shuffle
+2026-06-29 09:58:06 | INFO     | src/agent/llm_adapter.py:194 | Agent LLM: Router initialized from channels/YAML — 3 deployment(s), models: ['openai/gpt-5.4-nano', 'openai/deepseek-v3.2', 'openai/qwen3-max-2026-01-23']
+2026-06-29 09:58:06 | INFO     | src/core/pipeline.py:1164 | 铜陵有色(000630) Agent 预取：基本面阶段未获有效资金流，单独补拉
+2026-06-29 09:58:06 | INFO     | src/core/pipeline.py:1269 | 铜陵有色(000630) Agent 模式：开始一次性多维度情报采集
+2026-06-29 09:58:06 | INFO     | src/search_service.py:3132 | [情报搜索] 外部环境维度启用: 铜陵有色(000630) subject=铜 industry=铜
+2026-06-29 09:58:06 | INFO     | src/search_service.py:3154 | 开始多维度情报搜索: 铜陵有色(000630), 时间范围: 近3天 (profile=short, NEWS_MAX_AGE_DAYS=3), 目标条数=3, provider请求条数=6
+2026-06-29 09:58:06 | INFO     | src/search_service.py:3183 | [情报搜索] 最新消息: 使用 SearXNG
+2026-06-29 09:58:08 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 09:58:08 | WARNING  | src/search_service.py:3221 | [情报搜索] 最新消息: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 09:58:08 | INFO     | src/search_service.py:3183 | [情报搜索] 风险排查: 使用 SearXNG
+2026-06-29 09:58:09 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 09:58:09 | WARNING  | src/search_service.py:3221 | [情报搜索] 风险排查: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 09:58:10 | INFO     | src/search_service.py:3183 | [情报搜索] 行业新闻: 使用 SearXNG
+2026-06-29 09:58:10 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 09:58:10 | WARNING  | src/search_service.py:3221 | [情报搜索] 行业新闻: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 09:58:11 | INFO     | src/search_service.py:3183 | [情报搜索] 国际新闻: 使用 SearXNG
+2026-06-29 09:58:12 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 09:58:12 | WARNING  | src/search_service.py:3221 | [情报搜索] 国际新闻: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 09:58:13 | INFO     | src/search_service.py:3183 | [情报搜索] 中国政策: 使用 SearXNG
+2026-06-29 09:58:13 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 09:58:13 | WARNING  | src/search_service.py:3221 | [情报搜索] 中国政策: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 09:58:13 | INFO     | src/search_service.py:3183 | [情报搜索] 公司公告: 使用 SearXNG
+2026-06-29 09:58:14 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 09:58:14 | WARNING  | src/search_service.py:3221 | [情报搜索] 公司公告: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 09:58:14 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49904 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:58:14 | INFO     | src/search_service.py:3183 | [情报搜索] 机构分析: 使用 SearXNG
+2026-06-29 09:58:14 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 09:58:14 | WARNING  | src/search_service.py:3221 | [情报搜索] 机构分析: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 09:58:15 | INFO     | src/search_service.py:3183 | [情报搜索] 业绩预期: 使用 SearXNG
+2026-06-29 09:58:15 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 09:58:15 | WARNING  | src/search_service.py:3221 | [情报搜索] 业绩预期: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 09:58:16 | INFO     | src/search_service.py:3183 | [情报搜索] 行业分析: 使用 SearXNG
+2026-06-29 09:58:16 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 09:58:16 | WARNING  | src/search_service.py:3221 | [情报搜索] 行业分析: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 09:58:16 | INFO     | src/core/pipeline.py:1292 | 铜陵有色(000630) Agent 模式：情报采集完成，共 0 条结果
+2026-06-29 09:58:17 | INFO     | src/agent/runner.py:453 | Agent step 1/10
+2026-06-29 09:58:17 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-29 09:58:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:1656 | Wrapper: Completed Call, calling success_handler
+2026-06-29 09:58:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-29 09:58:21 | INFO     | src/agent/runner.py:496 | Agent requesting 1 tool call(s): ['get_chip_distribution']
+2026-06-29 09:58:21 | INFO     | data_provider/tushare_fetcher.py:169 | Tushare API 初始化成功
+2026-06-29 09:58:21 | INFO     | data_provider/tushare_fetcher.py:200 | ✅ 检测到 TUSHARE_TOKEN 且 API 初始化成功，Tushare 数据源优先级提升为最高 (Priority -1)
+2026-06-29 09:58:21 | INFO     | data_provider/base.py:915 | 已初始化 7 个数据源（按优先级）: TushareFetcher(P-1), EfinanceFetcher(P0), AkshareFetcher(P1), PytdxFetcher(P2), BaostockFetcher(P3), YfinanceFetcher(P4), LongbridgeFetcher(P5)
+2026-06-29 09:58:21 | INFO     | src/agent/runner.py:453 | Agent step 2/10
+2026-06-29 09:58:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-29 09:58:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:1656 | Wrapper: Completed Call, calling success_handler
+2026-06-29 09:58:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-29 09:58:23 | INFO     | src/agent/runner.py:496 | Agent requesting 1 tool call(s): ['get_report_context']
+2026-06-29 09:58:23 | INFO     | src/agent/runner.py:453 | Agent step 3/10
+2026-06-29 09:58:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-29 09:58:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:1656 | Wrapper: Completed Call, calling success_handler
+2026-06-29 09:58:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-29 09:58:25 | INFO     | src/agent/runner.py:496 | Agent requesting 1 tool call(s): ['get_report_context']
+2026-06-29 09:58:25 | WARNING  | src/agent/runner.py:648 | Tool 'get_report_context' failed: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+2026-06-29 09:58:25 | INFO     | src/agent/runner.py:453 | Agent step 4/10
+2026-06-29 09:58:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-29 09:58:27 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:1656 | Wrapper: Completed Call, calling success_handler
+2026-06-29 09:58:27 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-29 09:58:27 | INFO     | src/agent/runner.py:496 | Agent requesting 1 tool call(s): ['get_market_indices']
+2026-06-29 09:58:27 | INFO     | data_provider/tushare_fetcher.py:169 | Tushare API 初始化成功
+2026-06-29 09:58:27 | INFO     | data_provider/tushare_fetcher.py:200 | ✅ 检测到 TUSHARE_TOKEN 且 API 初始化成功，Tushare 数据源优先级提升为最高 (Priority -1)
+2026-06-29 09:58:27 | INFO     | data_provider/base.py:915 | 已初始化 7 个数据源（按优先级）: TushareFetcher(P-1), EfinanceFetcher(P0), AkshareFetcher(P1), PytdxFetcher(P2), BaostockFetcher(P3), YfinanceFetcher(P4), LongbridgeFetcher(P5)
+2026-06-29 09:58:28 | INFO     | data_provider/base.py:1661 | [TushareFetcher] 获取指数行情成功
+2026-06-29 09:58:28 | INFO     | src/agent/runner.py:453 | Agent step 5/10
+2026-06-29 09:58:28 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-29 09:58:30 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:1656 | Wrapper: Completed Call, calling success_handler
+2026-06-29 09:58:30 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-29 09:58:30 | INFO     | src/agent/runner.py:496 | Agent requesting 1 tool call(s): ['get_sector_rankings']
+2026-06-29 09:58:30 | INFO     | data_provider/tushare_fetcher.py:169 | Tushare API 初始化成功
+2026-06-29 09:58:30 | INFO     | data_provider/tushare_fetcher.py:200 | ✅ 检测到 TUSHARE_TOKEN 且 API 初始化成功，Tushare 数据源优先级提升为最高 (Priority -1)
+2026-06-29 09:58:30 | INFO     | data_provider/base.py:915 | 已初始化 7 个数据源（按优先级）: TushareFetcher(P-1), EfinanceFetcher(P0), AkshareFetcher(P1), PytdxFetcher(P2), BaostockFetcher(P3), YfinanceFetcher(P4), LongbridgeFetcher(P5)
+2026-06-29 09:58:30 | INFO     | data_provider/tushare_fetcher.py:1046 | [Tushare] 当前时间 09:58 可能无法获取当天筹码分布，尝试获取前一个交易日的数据 20260626
+2026-06-29 09:58:30 | INFO     | data_provider/tushare_fetcher.py:1083 | [Tushare] ts.pro_api().moneyflow_ind_ths 获取板块排行(同花顺)...
+2026-06-29 09:58:30 | INFO     | data_provider/base.py:3092 | [TushareFetcher] 获取板块排行成功
+2026-06-29 09:58:30 | INFO     | src/agent/runner.py:453 | Agent step 6/10
+2026-06-29 09:58:30 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-29 09:58:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49993 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:58:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:1656 | Wrapper: Completed Call, calling success_handler
+2026-06-29 09:58:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-29 09:58:45 | INFO     | src/agent/runner.py:566 | Agent completed in 6 steps (27.7s, 27790 tokens)
+2026-06-29 09:58:45 | INFO     | src/analyzer.py:267 | [price_position] Filled placeholder fields from computed data
+2026-06-29 09:58:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:784 | Routing strategy: simple-shuffle
+2026-06-29 09:58:45 | INFO     | src/agent/llm_adapter.py:194 | Agent LLM: Router initialized from channels/YAML — 3 deployment(s), models: ['openai/gpt-5.4-nano', 'openai/deepseek-v3.2', 'openai/qwen3-max-2026-01-23']
+2026-06-29 09:58:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= qwen3-max-2026-01-23; provider = openai
+2026-06-29 09:58:57 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:1656 | Wrapper: Completed Call, calling success_handler
+2026-06-29 09:58:57 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/qwen3-max-2026-01-23)[32m 200 OK[0m
+2026-06-29 09:58:57 | WARNING  | src/storage.py:5036 | [LLM usage] failed to persist usage record: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+2026-06-29 09:58:57 | INFO     | src/core/pipeline.py:1851 | [000630] 分析完成: 观望, 评分 36
+2026-06-29 09:58:57 | INFO     | src/core/pipeline.py:1866 | [000630] [MacroFocusImpact] 关注金属价格与风险偏好变化；同时A股整体指数当前偏弱（上证/深成/创业板与沪深300均走弱），对周期股短线情绪偏不利。
+2026-06-29 09:58:57 | INFO     | src/services/task_queue.py:639 | [TaskQueue] 任务完成: 3e6a134f5508436f961f22dce8eb8d79 (000630)
+2026-06-29 09:58:57 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50014 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:58:57 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50017 - "GET /api/v1/history/22 HTTP/1.1" 200
+2026-06-29 09:58:57 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50020 - "GET /api/v1/analysis/cycle-report?code=000630&report_type=full HTTP/1.1" 200
+2026-06-29 09:58:57 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50023 - "GET /api/v1/history/22/news?limit=8 HTTP/1.1" 200
+2026-06-29 09:58:57 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50026 - "GET /api/v1/history/22/news?limit=8 HTTP/1.1" 200
+2026-06-29 09:58:57 | INFO     | src/services/prediction_report_market_service.py:124 | Prediction report recommended: listing=7 user=2 code=000630 anchor=2026-06-26
+2026-06-29 09:58:57 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50029 - "POST /api/v1/prediction-reports/recommend HTTP/1.1" 200
+2026-06-29 09:58:57 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50032 - "GET /api/v1/prediction-reports/search?code=000630&report_type=detailed HTTP/1.1" 200
+2026-06-29 09:59:14 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50045 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:59:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50082 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 09:59:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50083 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 09:59:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50088 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 09:59:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50090 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-29 09:59:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50087 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 09:59:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50086 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 09:59:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50089 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:59:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50093 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 09:59:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50096 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 09:59:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50105 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 09:59:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50101 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 09:59:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50102 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 09:59:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50108 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 09:59:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50111 - "GET /api/v1/history/22 HTTP/1.1" 200
+2026-06-29 09:59:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50114 - "GET /api/v1/analysis/cycle-report?code=000630&report_type=full HTTP/1.1" 200
+2026-06-29 09:59:34 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50117 - "GET /api/v1/history/22/news?limit=8 HTTP/1.1" 200
+2026-06-29 09:59:34 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50120 - "GET /api/v1/history/22/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:00:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50182 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:00:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50226 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:01:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50260 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:01:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50284 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:02:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50312 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:02:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50332 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:03:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50362 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:03:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50396 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:04:04 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50440 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:04:17 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50453 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:04:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50509 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:05:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50539 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:05:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50571 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:06:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50593 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:06:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50621 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:07:01 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50675 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:07:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50679 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:07:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50709 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:08:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50743 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:08:34 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50799 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:08:37 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50803 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:08:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50959 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:09:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50975 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:09:11 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50988 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:09:14 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50992 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:09:17 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50996 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:09:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51026 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:09:41 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51041 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:10:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51073 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:10:20 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51115 - "GET /api/v1/history/22/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:10:20 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51116 - "GET /api/v1/history/22/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:10:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51125 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:10:29 | INFO     | src/services/credit_service.py:126 | Credits added: user=2 amount=1000 operator=2 reason=daily_claim
+2026-06-29 10:10:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51133 - "POST /api/v1/payment/claim HTTP/1.1" 200
+2026-06-29 10:10:30 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51140 - "GET /api/v1/payment/history HTTP/1.1" 200
+2026-06-29 10:10:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51150 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:10:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51161 - "GET /api/v1/payment/deposit/config HTTP/1.1" 200
+2026-06-29 10:11:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51206 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 10:11:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51207 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 10:11:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51213 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 10:11:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51217 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-29 10:11:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51212 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 10:11:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51208 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 10:11:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51218 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 10:11:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51214 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:11:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51221 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 10:11:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51224 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 10:11:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51230 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 10:11:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51227 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:11:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51233 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 10:11:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51236 - "GET /api/v1/history/22 HTTP/1.1" 200
+2026-06-29 10:11:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51239 - "GET /api/v1/analysis/cycle-report?code=000630&report_type=full HTTP/1.1" 200
+2026-06-29 10:11:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51242 - "GET /api/v1/history/22/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:11:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51245 - "GET /api/v1/history/22/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:11:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51281 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:12:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51303 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:12:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51325 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:13:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51377 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:13:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51489 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:13:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51509 - "GET /api/v1/history/22/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:13:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51510 - "GET /api/v1/history/22/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:13:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51530 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:14:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51551 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:14:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51575 - "GET /api/v1/history/22/markdown HTTP/1.1" 200
+2026-06-29 10:14:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51580 - "GET /api/v1/history/22/markdown HTTP/1.1" 200
+2026-06-29 10:14:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51611 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:14:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51631 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:14:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51656 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:15:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51668 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:15:16 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51683 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:15:30 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51694 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:15:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51702 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:15:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51711 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:16:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51734 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:16:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51738 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:16:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51758 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:16:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51777 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:17:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51785 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:17:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51811 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:17:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51814 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:18:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51880 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:18:04 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51883 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:18:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51913 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:18:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51937 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:19:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51948 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:19:16 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51955 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:19:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51965 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:19:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51986 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:19:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51989 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:19:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52032 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:20:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52044 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:20:08 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52054 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:20:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52088 - "GET /api/v1/history/22/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:20:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52091 - "GET /api/v1/history/22/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:20:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52095 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:21:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52169 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:21:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52337 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:22:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52459 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:22:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52499 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:22:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52509 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:23:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52525 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:23:14 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52533 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:23:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52566 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:24:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52604 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:24:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52662 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:24:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52685 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:25:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52705 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:25:30 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52742 - "GET /api/v1/history/22/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:25:30 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52743 - "GET /api/v1/history/22/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:25:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52753 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:26:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52801 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:26:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52828 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:26:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52832 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:26:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52852 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:26:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52862 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:27:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52892 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:27:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52972 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:27:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52980 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:27:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52984 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:27:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53000 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 10:27:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53001 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 10:27:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53004 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 10:27:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53008 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-29 10:27:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53003 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 10:27:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53002 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 10:27:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53011 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 10:27:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53007 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:27:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53014 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 10:27:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53017 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 10:27:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53023 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 10:27:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53020 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:27:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53026 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 10:27:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53029 - "GET /api/v1/history/22 HTTP/1.1" 200
+2026-06-29 10:27:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53032 - "GET /api/v1/analysis/cycle-report?code=000630&report_type=full HTTP/1.1" 200
+2026-06-29 10:27:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53035 - "GET /api/v1/history/22/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:27:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53038 - "GET /api/v1/history/22/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:28:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53074 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:28:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53154 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:29:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53190 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:29:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53227 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 10:29:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53228 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 10:29:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53231 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 10:29:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53235 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-29 10:29:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53230 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 10:29:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53232 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:29:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53229 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 10:29:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53238 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 10:29:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53241 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 10:29:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53247 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 10:29:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53244 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:29:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53250 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 10:29:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53253 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 10:29:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53256 - "GET /api/v1/history/22 HTTP/1.1" 200
+2026-06-29 10:29:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53259 - "GET /api/v1/analysis/cycle-report?code=000630&report_type=full HTTP/1.1" 200
+2026-06-29 10:29:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53262 - "GET /api/v1/history/22/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:29:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53265 - "GET /api/v1/history/22/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:29:56 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53311 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:30:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53397 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:30:56 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53443 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:31:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53500 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:31:56 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53534 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:32:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53558 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:33:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53594 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:33:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53597 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:33:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53617 - "GET /api/v1/prediction-reports/search?code=002639&report_type=detailed HTTP/1.1" 200
+2026-06-29 10:33:21 | INFO     | src/services/task_queue.py:419 | [TaskQueue] 任务已提交: 002639 -> 2219fc7a7dca49d9a73c54c60b3d0035
+2026-06-29 10:33:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53620 - "POST /api/v1/analysis/analyze HTTP/1.1" 202
+2026-06-29 10:33:21 | INFO     | data_provider/tushare_fetcher.py:169 | Tushare API 初始化成功
+2026-06-29 10:33:21 | INFO     | data_provider/tushare_fetcher.py:200 | ✅ 检测到 TUSHARE_TOKEN 且 API 初始化成功，Tushare 数据源优先级提升为最高 (Priority -1)
+2026-06-29 10:33:21 | INFO     | data_provider/base.py:915 | 已初始化 7 个数据源（按优先级）: TushareFetcher(P-1), EfinanceFetcher(P0), AkshareFetcher(P1), PytdxFetcher(P2), BaostockFetcher(P3), YfinanceFetcher(P4), LongbridgeFetcher(P5)
+2026-06-29 10:33:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:784 | Routing strategy: simple-shuffle
+2026-06-29 10:33:21 | INFO     | src/analyzer.py:974 | Analyzer LLM: Router initialized from channels/YAML — 3 deployment(s), models: ['openai/gpt-5.4-nano', 'openai/deepseek-v3.2', 'openai/qwen3-max-2026-01-23']
+2026-06-29 10:33:21 | INFO     | src/notification.py:173 | 已配置 1 个通知渠道：邮件
+2026-06-29 10:33:21 | INFO     | src/search_service.py:2200 | 已配置 SearXNG 搜索，共 1 个自建实例
+2026-06-29 10:33:21 | INFO     | src/search_service.py:2218 | 新闻时效策略已启用: profile=short, profile_days=3, NEWS_MAX_AGE_DAYS=3, effective_window=3
+2026-06-29 10:33:21 | INFO     | src/core/pipeline.py:137 | 调度器初始化完成，最大并发数: 3
+2026-06-29 10:33:21 | INFO     | src/core/pipeline.py:138 | 已启用技术分析引擎（均线/趋势/量价指标）
+2026-06-29 10:33:21 | INFO     | src/core/pipeline.py:143 | 实时行情已禁用，将使用历史收盘价
+2026-06-29 10:33:21 | INFO     | src/core/pipeline.py:147 | 筹码分布分析已禁用
+2026-06-29 10:33:21 | INFO     | src/core/pipeline.py:151 | 搜索服务已启用
+2026-06-29 10:33:21 | INFO     | src/core/pipeline.py:1827 | ========== 开始处理 002639 ==========
+2026-06-29 10:33:21 | INFO     | src/core/pipeline.py:232 | 雪人集团(002639) 开始从数据源获取数据...
+2026-06-29 10:33:21 | INFO     | data_provider/base.py:1023 | [数据源尝试 1/7] [TushareFetcher] 获取 002639...
+2026-06-29 10:33:21 | INFO     | data_provider/base.py:364 | [TushareFetcher] 开始获取 002639 日线数据: 范围=2025-09-02 ~ 2026-06-29
+2026-06-29 10:33:21 | INFO     | data_provider/base.py:383 | [TushareFetcher] 002639 获取成功: 范围=2025-09-02 ~ 2026-06-29, rows=195, elapsed=0.14s
+2026-06-29 10:33:21 | INFO     | data_provider/base.py:1035 | [数据源完成] 002639 使用 [TushareFetcher] 获取成功: rows=195, elapsed=0.14s
+2026-06-29 10:33:21 | INFO     | src/storage.py:4289 | 保存 002639 数据成功，新增 195 条
+2026-06-29 10:33:21 | INFO     | src/core/pipeline.py:240 | 雪人集团(002639) 数据保存成功（来源: TushareFetcher，新增 195 条）
+2026-06-29 10:33:21 | INFO     | src/core/pipeline.py:293 | 雪人集团(002639) 实时行情已禁用，使用历史收盘价继续分析
+2026-06-29 10:33:21 | INFO     | data_provider/base.py:2236 | [company_profile] start stock_code=002639 market=cn provider=tushare_stock_company timeout_seconds=5.000
+2026-06-29 10:33:22 | INFO     | data_provider/base.py:2257 | [company_profile] finished stock_code=002639 market=cn provider=tushare_stock_company status=ok duration_ms=822 fields=['area', 'board_secretary', 'business_scope', 'chairman', 'city', 'company_intro', 'email', 'employee_count', 'exchange', 'float_share_capital', 'full_name', 'industry', 'legal_representative', 'listing_date', 'main_business', 'manager', 'market', 'office_address', 'province', 'registered_capital', 'setup_date', 'short_name', 'total_share_capital', 'website']
+2026-06-29 10:33:24 | INFO     | data_provider/tushare_fetcher.py:1046 | [Tushare] 当前时间 10:33 可能无法获取当天筹码分布，尝试获取前一个交易日的数据 20260626
+2026-06-29 10:33:24 | INFO     | data_provider/tushare_fetcher.py:1083 | [Tushare] ts.pro_api().moneyflow_ind_ths 获取板块排行(同花顺)...
+2026-06-29 10:33:24 | INFO     | data_provider/base.py:3092 | [TushareFetcher] 获取板块排行成功
+2026-06-29 10:33:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53676 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:33:27 | INFO     | data_provider/efinance_fetcher.py:1109 | [API调用] ef.stock.get_belong_board(stock_code=002639) 获取所属板块...
+2026-06-29 10:33:27 | INFO     | data_provider/efinance_fetcher.py:1118 | [API返回] ef.stock.get_belong_board 成功: 返回 28 个板块, 耗时 0.40s
+2026-06-29 10:33:27 | INFO     | data_provider/base.py:1549 | [EfinanceFetcher] 获取所属板块成功: 002639, count=28
+2026-06-29 10:33:27 | INFO     | src/core/pipeline.py:382 | 雪人集团(002639) K线回填跳过：本地 DB 已有 115 条
+2026-06-29 10:33:27 | INFO     | src/core/pipeline.py:392 | 雪人集团(002639) 趋势分析: 强势空头, 买入信号=观望, 评分=30
+2026-06-29 10:33:27 | INFO     | src/core/pipeline.py:398 | 雪人集团(002639) 启用 Agent 模式进行分析
+2026-06-29 10:33:27 | INFO     | src/agent/skills/base.py:431 | Activated skills: ['bull_trend']
+2026-06-29 10:33:27 | INFO     | src/agent/factory.py:257 | [AgentFactory] Activated skills: ['bull_trend']
+2026-06-29 10:33:27 | INFO     | src/agent/factory.py:302 | [AgentFactory] Resolved skill prompt state: skills=['bull_trend'] (arch=single, explicit=False, legacy_default_prompt=True)
+2026-06-29 10:33:27 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:784 | Routing strategy: simple-shuffle
+2026-06-29 10:33:27 | INFO     | src/agent/llm_adapter.py:194 | Agent LLM: Router initialized from channels/YAML — 3 deployment(s), models: ['openai/gpt-5.4-nano', 'openai/deepseek-v3.2', 'openai/qwen3-max-2026-01-23']
+2026-06-29 10:33:27 | INFO     | src/core/pipeline.py:1164 | 雪人集团(002639) Agent 预取：基本面阶段未获有效资金流，单独补拉
+2026-06-29 10:33:28 | INFO     | src/core/pipeline.py:1269 | 雪人集团(002639) Agent 模式：开始一次性多维度情报采集
+2026-06-29 10:33:28 | INFO     | src/search_service.py:3132 | [情报搜索] 外部环境维度启用: 雪人集团(002639) subject=专用机械 industry=专用机械
+2026-06-29 10:33:28 | INFO     | src/search_service.py:3154 | 开始多维度情报搜索: 雪人集团(002639), 时间范围: 近3天 (profile=short, NEWS_MAX_AGE_DAYS=3), 目标条数=3, provider请求条数=6
+2026-06-29 10:33:28 | INFO     | src/search_service.py:3183 | [情报搜索] 最新消息: 使用 SearXNG
+2026-06-29 10:33:29 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 10:33:29 | WARNING  | src/search_service.py:3221 | [情报搜索] 最新消息: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 10:33:30 | INFO     | src/search_service.py:3183 | [情报搜索] 风险排查: 使用 SearXNG
+2026-06-29 10:33:30 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 10:33:30 | WARNING  | src/search_service.py:3221 | [情报搜索] 风险排查: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 10:33:30 | INFO     | src/search_service.py:3183 | [情报搜索] 行业新闻: 使用 SearXNG
+2026-06-29 10:33:31 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 10:33:31 | WARNING  | src/search_service.py:3221 | [情报搜索] 行业新闻: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 10:33:31 | INFO     | src/search_service.py:3183 | [情报搜索] 国际新闻: 使用 SearXNG
+2026-06-29 10:33:31 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 10:33:31 | WARNING  | src/search_service.py:3221 | [情报搜索] 国际新闻: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 10:33:32 | INFO     | src/search_service.py:3183 | [情报搜索] 中国政策: 使用 SearXNG
+2026-06-29 10:33:32 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 10:33:32 | WARNING  | src/search_service.py:3221 | [情报搜索] 中国政策: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 10:33:32 | INFO     | src/search_service.py:3183 | [情报搜索] 公司公告: 使用 SearXNG
+2026-06-29 10:33:33 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 10:33:33 | WARNING  | src/search_service.py:3221 | [情报搜索] 公司公告: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 10:33:33 | INFO     | src/search_service.py:3183 | [情报搜索] 机构分析: 使用 SearXNG
+2026-06-29 10:33:33 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 10:33:33 | WARNING  | src/search_service.py:3221 | [情报搜索] 机构分析: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 10:33:34 | INFO     | src/search_service.py:3183 | [情报搜索] 业绩预期: 使用 SearXNG
+2026-06-29 10:33:34 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 10:33:34 | WARNING  | src/search_service.py:3221 | [情报搜索] 业绩预期: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 10:33:35 | INFO     | src/search_service.py:3183 | [情报搜索] 行业分析: 使用 SearXNG
+2026-06-29 10:33:35 | WARNING  | src/search_service.py:2072 | [SearXNG] 实例 http://localhost:7088/search?q=test&format=json 搜索失败: 响应JSON解析失败
+2026-06-29 10:33:35 | WARNING  | src/search_service.py:3221 | [情报搜索] 行业分析: 搜索失败 - http://localhost:7088/search?q=test&format=json: 响应JSON解析失败
+2026-06-29 10:33:35 | INFO     | src/core/pipeline.py:1292 | 雪人集团(002639) Agent 模式：情报采集完成，共 0 条结果
+2026-06-29 10:33:35 | INFO     | src/agent/runner.py:453 | Agent step 1/10
+2026-06-29 10:33:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-29 10:33:38 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:1656 | Wrapper: Completed Call, calling success_handler
+2026-06-29 10:33:38 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-29 10:33:38 | INFO     | src/agent/runner.py:496 | Agent requesting 1 tool call(s): ['get_market_indices']
+2026-06-29 10:33:38 | INFO     | data_provider/tushare_fetcher.py:169 | Tushare API 初始化成功
+2026-06-29 10:33:38 | INFO     | data_provider/tushare_fetcher.py:200 | ✅ 检测到 TUSHARE_TOKEN 且 API 初始化成功，Tushare 数据源优先级提升为最高 (Priority -1)
+2026-06-29 10:33:38 | INFO     | data_provider/base.py:915 | 已初始化 7 个数据源（按优先级）: TushareFetcher(P-1), EfinanceFetcher(P0), AkshareFetcher(P1), PytdxFetcher(P2), BaostockFetcher(P3), YfinanceFetcher(P4), LongbridgeFetcher(P5)
+2026-06-29 10:33:38 | INFO     | data_provider/base.py:1661 | [TushareFetcher] 获取指数行情成功
+2026-06-29 10:33:38 | INFO     | src/agent/runner.py:453 | Agent step 2/10
+2026-06-29 10:33:38 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-29 10:33:41 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:1656 | Wrapper: Completed Call, calling success_handler
+2026-06-29 10:33:41 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-29 10:33:41 | INFO     | src/agent/runner.py:496 | Agent requesting 1 tool call(s): ['get_report_context']
+2026-06-29 10:33:41 | INFO     | src/agent/runner.py:453 | Agent step 3/10
+2026-06-29 10:33:41 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-29 10:33:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:1656 | Wrapper: Completed Call, calling success_handler
+2026-06-29 10:33:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-29 10:33:44 | INFO     | src/agent/runner.py:496 | Agent requesting 1 tool call(s): ['get_chip_distribution']
+2026-06-29 10:33:44 | INFO     | src/agent/runner.py:453 | Agent step 4/10
+2026-06-29 10:33:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= gpt-5.4-nano; provider = openai
+2026-06-29 10:33:56 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53753 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:33:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:1656 | Wrapper: Completed Call, calling success_handler
+2026-06-29 10:33:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/gpt-5.4-nano)[32m 200 OK[0m
+2026-06-29 10:33:58 | INFO     | src/agent/runner.py:566 | Agent completed in 4 steps (22.3s, 19699 tokens)
+2026-06-29 10:33:58 | INFO     | src/analyzer.py:267 | [price_position] Filled placeholder fields from computed data
+2026-06-29 10:33:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:784 | Routing strategy: simple-shuffle
+2026-06-29 10:33:58 | INFO     | src/agent/llm_adapter.py:194 | Agent LLM: Router initialized from channels/YAML — 3 deployment(s), models: ['openai/gpt-5.4-nano', 'openai/deepseek-v3.2', 'openai/qwen3-max-2026-01-23']
+2026-06-29 10:33:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:3995 | 
+LiteLLM completion() model= qwen3-max-2026-01-23; provider = openai
+2026-06-29 10:34:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/utils.py:1656 | Wrapper: Completed Call, calling success_handler
+2026-06-29 10:34:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/litellm/router.py:1515 | litellm.completion(model=openai/qwen3-max-2026-01-23)[32m 200 OK[0m
+2026-06-29 10:34:10 | WARNING  | src/storage.py:5036 | [LLM usage] failed to persist usage record: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+2026-06-29 10:34:10 | INFO     | src/core/pipeline.py:1851 | [002639] 分析完成: 观望, 评分 28
+2026-06-29 10:34:10 | INFO     | src/core/pipeline.py:1866 | [002639] [MacroFocusImpact] 市场整体偏弱背景下（沪深300、创业板指下跌），在缺少趋势确认前不宜进攻。
+2026-06-29 10:34:10 | INFO     | src/services/task_queue.py:639 | [TaskQueue] 任务完成: 2219fc7a7dca49d9a73c54c60b3d0035 (002639)
+2026-06-29 10:34:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53774 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:34:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53777 - "GET /api/v1/history/23 HTTP/1.1" 200
+2026-06-29 10:34:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53780 - "GET /api/v1/analysis/cycle-report?code=002639&report_type=full HTTP/1.1" 200
+2026-06-29 10:34:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53783 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:34:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53786 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:34:10 | INFO     | src/services/prediction_report_market_service.py:124 | Prediction report recommended: listing=8 user=2 code=002639 anchor=2026-06-26
+2026-06-29 10:34:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53789 - "POST /api/v1/prediction-reports/recommend HTTP/1.1" 200
+2026-06-29 10:34:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53792 - "GET /api/v1/prediction-reports/search?code=002639&report_type=detailed HTTP/1.1" 200
+2026-06-29 10:34:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53820 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:34:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53840 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:34:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53867 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 10:34:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53868 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 10:34:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53873 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 10:34:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53875 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-29 10:34:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53872 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 10:34:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53869 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 10:34:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53874 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:34:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53878 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 10:34:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53881 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 10:34:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53886 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 10:34:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53887 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:34:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53890 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 10:34:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53893 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 10:34:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53896 - "GET /api/v1/history/23 HTTP/1.1" 200
+2026-06-29 10:34:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53899 - "GET /api/v1/analysis/cycle-report?code=002639&report_type=full HTTP/1.1" 200
+2026-06-29 10:34:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53902 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:34:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53905 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:35:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53945 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:35:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53956 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:35:37 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53980 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:35:38 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53983 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:36:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54017 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:36:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54028 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:36:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54052 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:36:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54068 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:37:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54081 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:37:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54113 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:37:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54126 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:37:57 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54138 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:38:04 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54150 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:38:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54156 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:38:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54177 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:38:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54213 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:38:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54234 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:38:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54235 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:38:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54241 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:39:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54263 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:39:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54313 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:40:04 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54352 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:40:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54356 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:40:37 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54396 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:41:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54466 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:41:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54618 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:42:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54695 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:42:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54698 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:42:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54725 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:43:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54747 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:43:37 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54807 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:44:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54919 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:44:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54946 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:44:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54947 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:45:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55023 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:46:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55073 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:46:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55076 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:46:37 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55094 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:47:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55128 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:47:14 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55133 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:47:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55140 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:47:37 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55162 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:48:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55184 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:48:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55365 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:49:00 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55381 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:49:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55386 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:49:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55484 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:50:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55631 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:50:11 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55668 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:50:11 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55667 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:50:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55823 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:51:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55987 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:51:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56147 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:52:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56295 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:52:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56387 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:53:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56411 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:53:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56433 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:54:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56487 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:54:16 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56524 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:54:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56623 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:55:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56785 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:55:37 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56941 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:55:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56952 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:56:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57023 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:56:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57075 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:57:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57133 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:57:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57155 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:58:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57191 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:58:19 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57200 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:58:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57230 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:59:01 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57256 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:59:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57259 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 10:59:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57262 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 10:59:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57330 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:00:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57401 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:00:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57440 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:00:48 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57461 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 11:01:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57495 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:01:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57498 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:01:27 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57537 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:01:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57554 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:01:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57558 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:01:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57564 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 11:01:48 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57568 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 11:01:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57571 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 11:01:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57574 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 11:01:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57577 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 11:01:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57580 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 11:01:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57583 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 11:01:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57586 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 11:01:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57589 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 11:01:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57592 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 11:01:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57596 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 11:01:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57599 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 11:02:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57611 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:02:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57667 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:03:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57775 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:03:37 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57950 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:03:42 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57975 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:03:46 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57997 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:04:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58098 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:04:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58266 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:05:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58424 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:05:11 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58452 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:05:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58489 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:06:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58530 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:06:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58561 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:07:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58605 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:07:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58637 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:08:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58675 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:08:34 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58791 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:08:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58795 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:08:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58815 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 11:08:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58818 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 11:09:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58825 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:09:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58831 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:09:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58841 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:09:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58869 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:09:42 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58881 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:09:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58894 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:10:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58909 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:10:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58943 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:10:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58970 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:10:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58982 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:11:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59036 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:11:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59125 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:12:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59183 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:12:37 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59351 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:12:42 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59355 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:13:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59390 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:13:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59449 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:13:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59453 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:14:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59494 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:14:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59498 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:14:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59564 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:15:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59609 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:15:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59624 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:15:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59670 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:16:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59704 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:16:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59734 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:17:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59763 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:17:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59826 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:17:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59860 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:17:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59876 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:18:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59901 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:18:28 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59936 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:18:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59952 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:18:57 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59980 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:19:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59997 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:19:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60036 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:19:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60052 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 11:19:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60055 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 11:20:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60067 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:20:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60073 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:20:37 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60108 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:20:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60116 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:21:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60170 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:21:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60240 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:21:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60260 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:22:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60273 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:22:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60305 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:22:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60316 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:22:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60325 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:22:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60329 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:23:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60346 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:23:37 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60375 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:24:38 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60450 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:25:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60568 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:25:56 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60592 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:26:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60610 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:26:37 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60658 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:26:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60681 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:27:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60696 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:27:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60741 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 11:27:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60742 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 11:27:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60759 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 11:27:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60750 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 11:27:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60749 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 11:27:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60758 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 11:27:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60757 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 11:27:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60765 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 11:27:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60764 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:27:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60770 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 11:27:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60774 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 11:27:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60771 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 11:27:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60777 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 11:27:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60785 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-29 11:27:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60783 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 11:27:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60780 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:27:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60788 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 11:28:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60846 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:28:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60849 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:28:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60901 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:29:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60922 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:29:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60926 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:29:11 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60929 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 11:29:11 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60932 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 11:29:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60964 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:29:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60967 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:29:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60986 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:30:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61001 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:30:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61032 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:31:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61060 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:31:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61095 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:32:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61192 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:33:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61298 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:34:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61410 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:34:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61415 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:34:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61419 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 11:34:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61422 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 11:35:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61447 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:35:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61479 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:36:41 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61561 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:37:42 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61612 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:38:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61662 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:38:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61665 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:38:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61683 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:39:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61802 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:39:38 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61833 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:39:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61837 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:39:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61840 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 11:39:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61843 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 11:40:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61888 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:40:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61895 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:40:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62011 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:41:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62056 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:41:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62131 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:42:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62208 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:43:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62253 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:44:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62348 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:45:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62411 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:46:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62440 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:46:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62449 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:46:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62467 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:46:28 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62473 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:46:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62478 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:46:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62524 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:47:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62566 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:47:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62601 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:48:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62662 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:49:24 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62705 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:49:24 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62708 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:49:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62751 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:50:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62787 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:50:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62788 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:50:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62821 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:50:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62852 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:51:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62866 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:51:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62999 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:52:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63145 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 11:52:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63146 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 11:52:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63153 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 11:52:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63147 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 11:52:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63148 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 11:52:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63155 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 11:52:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63154 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:52:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63161 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 11:52:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63170 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 11:52:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63174 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-29 11:52:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63171 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:52:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63175 - "GET /api/v1/history/23 HTTP/1.1" 200
+2026-06-29 11:52:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63176 - "GET /api/v1/analysis/cycle-report?code=002639&report_type=full HTTP/1.1" 200
+2026-06-29 11:52:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63182 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 11:52:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63179 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 11:52:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63191 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 11:52:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63192 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 11:52:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63342 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:53:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63484 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:53:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63584 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:53:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63641 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:54:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63819 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:54:24 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63927 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:54:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63990 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:55:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64291 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:55:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64430 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:56:37 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64639 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:57:38 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64710 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:58:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64772 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 11:59:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64829 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 12:00:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64905 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 12:00:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64906 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-06-29 12:00:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64917 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 12:00:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64921 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-06-29 12:00:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64912 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 12:00:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64911 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 12:00:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64922 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-06-29 12:00:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64920 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 12:00:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64925 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-06-29 12:00:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64928 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-06-29 12:00:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64931 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 12:00:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64934 - "GET /api/v1/history/23 HTTP/1.1" 200
+2026-06-29 12:00:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64937 - "GET /api/v1/analysis/cycle-report?code=002639&report_type=full HTTP/1.1" 200
+2026-06-29 12:00:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64940 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 12:00:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64943 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-06-29 12:01:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65030 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 12:06:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65084 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 12:07:19 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65120 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 12:08:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65145 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 12:13:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65182 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 12:14:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65204 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 12:36:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65394 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 12:54:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49157 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:12:08 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49263 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:13:08 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49325 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:14:08 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49362 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:15:08 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49387 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:16:08 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49412 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:17:08 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49447 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:32:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49572 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:32:32 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49586 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:32:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49609 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:32:41 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49616 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 13:32:41 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49619 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 13:33:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49654 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:33:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49691 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:34:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49734 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:34:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49776 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:35:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50029 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:36:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50081 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:36:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50084 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:36:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50113 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:36:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50141 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:37:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50150 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:37:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50154 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:37:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50198 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:38:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50227 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:38:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50263 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:39:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50281 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:39:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50313 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:40:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50339 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:40:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50365 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:41:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50415 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:41:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50441 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:42:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50791 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:43:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50986 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:44:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51043 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:45:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51096 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:46:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51169 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:46:27 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51172 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:46:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51180 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:47:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51230 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:47:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51274 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:48:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51302 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:48:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51348 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:49:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51370 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:49:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51396 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:50:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51416 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:50:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51440 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:51:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51468 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:51:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51490 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:52:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51507 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:52:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51535 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:53:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51592 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:53:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51612 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:53:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51624 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:54:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51648 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:55:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51723 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:56:01 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51750 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:56:01 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51753 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:56:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51758 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:56:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51780 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200
+2026-06-29 13:56:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51787 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 13:56:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51790 - "GET /api/v1/history/23/markdown HTTP/1.1" 200
+2026-06-29 13:57:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51808 - "GET /api/v1/history?page=1&limit=20&start_date=2026-05-30&end_date=2026-06-29 HTTP/1.1" 200

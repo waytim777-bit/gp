@@ -14,7 +14,7 @@ describe('ReportNews', () => {
     vi.clearAllMocks();
   });
 
-  it('renders news items and refreshes with preserved subpanel styling', async () => {
+  it('renders news items and refreshes with compact report styling', async () => {
     vi.mocked(historyApi.getNews).mockResolvedValue({
       total: 1,
       items: [
@@ -26,12 +26,12 @@ describe('ReportNews', () => {
       ],
     });
 
-    const { container } = render(<ReportNews recordId={1} />);
+    render(<ReportNews recordId={1} />);
 
     expect(await screen.findByText('茅台发布最新经营数据')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: '跳转' })).toHaveAttribute('href', 'https://example.com/news');
-    expect(container.querySelector('.home-panel-card')).toBeTruthy();
-    expect(container.querySelector('.home-subpanel')).toBeTruthy();
+    expect(screen.getByText('01')).toBeInTheDocument();
+    expect(screen.getByText('公司披露季度经营情况，市场关注度提升。')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: '刷新' }));
 
