@@ -89,7 +89,7 @@ export const ReportSummary: React.FC<ReportSummaryProps> = ({
       />
 
       {/* 财务数据分析区 */}
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2 [&>*:only-child]:lg:col-span-2">
         <FinancialRevenueGrowthSection
           financialReport={details?.financialReport}
           financialFundamentalsAnalysis={financialFundamentalsAnalysis}
@@ -102,7 +102,7 @@ export const ReportSummary: React.FC<ReportSummaryProps> = ({
           language={reportLanguage}
         />
       </div>
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2 [&>*:only-child]:lg:col-span-2">
         <FinancialIncomePeriodsSection
           financialReport={details?.financialReport}
           financialFundamentalsAnalysis={financialFundamentalsAnalysis}
@@ -135,17 +135,23 @@ export const ReportSummary: React.FC<ReportSummaryProps> = ({
       {hasTechnicalLayout ? (
         <div className="grid gap-4 lg:grid-cols-2 lg:items-stretch [&>*:only-child]:lg:col-span-2">
           {hasKlineContent || hasKeyLevelsContent ? (
-            <div className="flex min-w-0 flex-col gap-4">
-              <KlineChartSection
-                klineSeries={klineSeries}
-                weeklyKlineSeries={weeklyKlineSeries}
-                language={reportLanguage}
-              />
-              <KeyLevelsSection
-                keyLevels={keyLevels}
-                keyLevelsAnalysis={keyLevelsAnalysis}
-                language={reportLanguage}
-              />
+            <div className="flex h-full min-w-0 flex-col gap-4">
+              {hasKlineContent ? (
+                <KlineChartSection
+                  klineSeries={klineSeries}
+                  weeklyKlineSeries={weeklyKlineSeries}
+                  language={reportLanguage}
+                />
+              ) : null}
+              {hasKeyLevelsContent ? (
+                <div className="flex flex-1 flex-col [&>*]:h-full">
+                  <KeyLevelsSection
+                    keyLevels={keyLevels}
+                    keyLevelsAnalysis={keyLevelsAnalysis}
+                    language={reportLanguage}
+                  />
+                </div>
+              ) : null}
             </div>
           ) : null}
           {hasTechnicalIndicatorsContent ? (

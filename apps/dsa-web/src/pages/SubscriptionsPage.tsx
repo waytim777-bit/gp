@@ -18,6 +18,11 @@ import {
   type SubscriptionPushLogItem,
 } from '../types/subscriptions';
 import { hasSubscriptionPushDestination } from '../utils/subscriptionPush';
+import subEmpty from '../assets/sub-empty.png';
+import subEmptyDark from '../assets/sub-empty-dark.png';
+import pushEmpty from '../assets/push-empty.png';
+import pushEmptyDark from '../assets/push-empty-dark.png';
+import pushIconSvg from '../assets/push.svg?raw';
 
 const SubscriptionsPage: React.FC = () => {
   const { balance, refreshBalance } = useCreditStore();
@@ -259,7 +264,8 @@ const SubscriptionsPage: React.FC = () => {
             </div>
             {items.length === 0 ? (
               <div className="flex-1 flex flex-col items-center justify-center text-slate-500 text-xs gap-2">
-                <img src={new URL('../assets/sub-empty.png', import.meta.url).href} className="w-35 h-auto" alt="" />
+                <img src={subEmpty} className="h-auto w-35 dark:hidden" alt="" />
+                <img src={subEmptyDark} className="hidden h-auto w-35 dark:block" alt="" />
                 <p>暂无订阅</p>
               </div>
             ) : (
@@ -269,7 +275,7 @@ const SubscriptionsPage: React.FC = () => {
                   <button
                     type="button"
                     key={item.id}
-                    className="grid w-full grid-cols-[minmax(0,1fr)_86px] gap-x-3 gap-y-3 rounded-[12px] bg-transparent px-3 py-3 text-left transition-colors hover:bg-[var(--bg-hover)] focus-visible:bg-[var(--bg-hover)] focus-visible:outline-none"
+                    className="grid w-full grid-cols-[minmax(0,1fr)_86px] gap-x-3 gap-y-3 rounded-[12px] bg-transparent px-3 py-3 text-left transition-colors hover:bg-[hsl(var(--card-foreground))] focus-visible:bg-[hsl(var(--card-foreground))] focus-visible:outline-none"
                     onClick={() => setSelectedSubscription(item)}
                   >
                     <p className="min-w-0 truncate text-[16px] font-semibold leading-none text-foreground">
@@ -306,15 +312,21 @@ const SubscriptionsPage: React.FC = () => {
             <span className="text-sm font-medium">最近推送记录</span>
             <button
               type="button"
-              className="text-xs text-slate-400 flex items-center gap-1 hover:text-slate-200"
+              className="flex items-center gap-1 text-xs text-black transition-colors hover:opacity-75 dark:text-white"
               onClick={() => setShowPushDialog(true)}
             >
-              ✉️ 推送方式
+              <span
+                aria-hidden="true"
+                className="h-6 w-6 shrink-0 [&_svg]:h-full [&_svg]:w-full"
+                dangerouslySetInnerHTML={{ __html: pushIconSvg }}
+              />
+              推送方式
             </button>
           </div>
           {pushLogs.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-slate-500 text-xs gap-2">
-              <img src={new URL('../assets/push-empty.png', import.meta.url).href} className="w-35 h-auto" alt="" />
+              <img src={pushEmpty} className="h-auto w-35 dark:hidden" alt="" />
+              <img src={pushEmptyDark} className="hidden h-auto w-35 dark:block" alt="" />
               <p>暂无推送记录</p>
             </div>
           ) : (
@@ -359,7 +371,7 @@ const SubscriptionsPage: React.FC = () => {
                   onChange={setStockInput}
                   onSubmit={handleStockSubmit}
                   placeholder="请输入股票代码"
-                  className="h-12 rounded-full border-0 bg-[var(--bg-hover)]! px-6 text-[15px] font-normal text-slate-100 placeholder:text-[#6f778c] focus:ring-0"
+                  className="h-12 rounded-full border-0 bg-[hsl(var(--card-foreground))]! px-6 text-[15px] font-normal text-slate-100 placeholder:text-[#6f778c] focus:ring-0"
                 />
 
                 <div className="mt-7">
@@ -374,7 +386,7 @@ const SubscriptionsPage: React.FC = () => {
                           className={`h-[42px] rounded-[12px] border text-[15px] font-medium leading-5 transition-colors ${
                             selected
                               ? 'border-[#09bde6] bg-transparent text-[#02c7f3]'
-                              : 'border-transparent bg-[var(--bg-hover)] text-foreground hover:bg-[#303342]'
+                              : 'border-transparent bg-[hsl(var(--card-foreground))] text-foreground hover:bg-[#303342]'
                           }`}
                           onClick={() => setIntervalDays(option.days)}
                         >
@@ -408,7 +420,7 @@ const SubscriptionsPage: React.FC = () => {
       <Modal.Root isOpen={showPushDialog} onOpenChange={setShowPushDialog}>
         <Modal.Backdrop variant="blur">
           <Modal.Container size="lg" placement="center">
-            <Modal.Dialog className="w-full max-w-[620px] rounded-[22px] bg-[hsl(var(--card))] text-slate-100 shadow-2xl">
+            <Modal.Dialog className="w-full max-w-[620px] rounded-[22px] bg-[hsl(var(--card))] shadow-2xl">
               <Modal.Header className="px-5 pb-0 pt-5">
                 <div>
                   <div className="flex items-center gap-2.5">
@@ -421,7 +433,7 @@ const SubscriptionsPage: React.FC = () => {
                     邮件由平台统一发送，您只需填写收件邮箱;也可选填Webhook接收推送。
                   </p>
                 </div>
-                <Modal.CloseTrigger className="text-[#697087] transition-colors hover:text-slate-100" />
+                <Modal.CloseTrigger className="text-[#697087] transition-colors hover:text-foreground" />
               </Modal.Header>
 
               <Modal.Body className="px-5 pb-5 pt-8">
@@ -432,7 +444,7 @@ const SubscriptionsPage: React.FC = () => {
                     value={notificationEmail}
                     onChange={(event) => setNotificationEmail(event.target.value)}
                     placeholder="your@email.com"
-                    className="mt-3 h-10 w-full rounded-[12px] border-0 bg-[var(--bg-hover)] px-3 text-[14px] font-medium text-foreground outline-none transition-colors placeholder:text-[#697087] focus:ring-2 focus:ring-[#00a1c2]/40"
+                    className="mt-3 h-10 w-full rounded-[12px] border-0 bg-[hsl(var(--card-foreground))] px-3 text-[14px] font-medium text-foreground outline-none transition-colors placeholder:text-[#697087] focus:ring-2 focus:ring-[#00a1c2]/40"
                   />
                 </label>
 
@@ -458,7 +470,7 @@ const SubscriptionsPage: React.FC = () => {
                     onChange={(event) => setWebhookUrls(event.target.value)}
                     placeholder="请输入第三方推送链接"
                     rows={2}
-                    className="mt-3 min-h-10 w-full resize-none rounded-[12px] border-0 bg-[var(--bg-hover)] px-3 py-3 text-[14px] font-medium text-foreground outline-none transition-colors placeholder:text-[#697087] focus:ring-2 focus:ring-[#00a1c2]/40"
+                    className="mt-3 min-h-10 w-full resize-none rounded-[12px] border-0 bg-[hsl(var(--card-foreground))] px-3 py-3 text-[14px] font-medium text-foreground outline-none transition-colors placeholder:text-[#697087] focus:ring-2 focus:ring-[#00a1c2]/40"
                   />
                 </label>
 
@@ -470,7 +482,7 @@ const SubscriptionsPage: React.FC = () => {
                       value={webhookBearerToken}
                       onChange={(event) => setWebhookBearerToken(event.target.value)}
                       placeholder={profile?.hasWebhookBearerToken ? '已保存，留空则不修改' : '请输入'}
-                      className="mt-3 h-10 w-full rounded-[12px] border-0 bg-[var(--bg-hover)] px-3 text-[14px] font-medium text-foreground outline-none transition-colors placeholder:text-[#697087] focus:ring-2 focus:ring-[#00a1c2]/40"
+                      className="mt-3 h-10 w-full rounded-[12px] border-0 bg-[hsl(var(--card-foreground))] px-3 text-[14px] font-medium text-foreground outline-none transition-colors placeholder:text-[#697087] focus:ring-2 focus:ring-[#00a1c2]/40"
                     />
                   </label>
                 ) : null}
@@ -533,7 +545,7 @@ const SubscriptionsPage: React.FC = () => {
 
                       <button
                         type="button"
-                        className="flex h-10 shrink-0 items-center justify-center gap-1 rounded-[12px] bg-[#ff5151] px-3 text-[14px] font-semibold leading-none text-foreground transition-colors hover:bg-[#ff6666]"
+                        className="flex h-10 shrink-0 items-center justify-center gap-1 rounded-[12px] bg-[#ff5151]/10 px-3 text-[14px] text-[#ff5151] font-semibold leading-none hover:text-foreground transition-colors hover:bg-[#ff6666]"
                         onClick={() => {
                           setPendingDelete(selectedSubscription);
                           setSelectedSubscription(null);
@@ -554,8 +566,8 @@ const SubscriptionsPage: React.FC = () => {
                               key={option.days}
                               className={`flex h-10 items-center justify-center rounded-[12px] border px-2 text-[14px] font-medium leading-none ${
                                 selected
-                                  ? 'border-[#00a1c2] bg-[var(--bg-hover)] text-[#00c8f5]'
-                                  : 'border-transparent bg-[var(--bg-hover)] text-foreground'
+                                  ? 'border-[#00a1c2] bg-[hsl(var(--card-foreground))] text-[#00c8f5]'
+                                  : 'border-transparent bg-[hsl(var(--card-foreground))] text-foreground'
                               }`}
                             >
                               {option.label}

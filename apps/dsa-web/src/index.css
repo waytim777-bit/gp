@@ -27,7 +27,7 @@
   --background: 216 33% 97%;
   --foreground: 228 35% 12%;
   --card: 0 0% 100%;
-  --card-foreground: 228 35% 12%;
+  --card-foreground: 0 0% 96%;
   --popover: 0 0% 100%;
   --popover-foreground: 228 35% 12%;
   /* --primary: 193 100% 43%; */
@@ -322,7 +322,7 @@
   --background: 220 15% 8%;
   --foreground: 210 33% 98%;
   --card: 223 16% 13%; 
-  --card-foreground: 210 33% 98%;
+  --card-foreground: 229 14% 17%;
   --popover: 230 24% 10%;
   --popover-foreground: 210 33% 98%;
   /* --primary: 190 100% 50%; */
@@ -1447,7 +1447,8 @@ textarea {
   min-height: 4.75rem;
   border-radius: 0.75rem;
   border: 1px solid transparent;
-  background: var(--home-history-item-bg);
+  background: var(--surface);
+  /* background: var(--home-history-item-bg); */
   transition:
     border-color 0.2s ease,
     background-color 0.2s ease,
@@ -1928,7 +1929,9 @@ textarea {
     box-shadow 0.2s ease,
     transform 0.2s ease;
 }
-
+.card{
+  border-radius: 0.75rem !important
+}
 .chat-skill-radio:hover {
   border-color: hsl(var(--primary) / 0.45);
   background: hsl(var(--primary) / 0.04);

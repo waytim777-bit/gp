@@ -11,6 +11,8 @@ import { useCreditStore } from '../stores/creditStore';
 import { formatDateTime } from '../utils/format';
 import type { AnalysisReport } from '../types/analysis';
 import type { PredictionReportListingItem } from '../types/predictionReports';
+import reportEmpty from '../assets/report-empty.png';
+import reportEmptyDark from '../assets/report-empty-dark.png';
 import {
   filterItemsByTab,
   type PredictionReportTab,
@@ -213,7 +215,12 @@ const PredictionReportsPage: React.FC = () => {
                   ? '历史周期报告会保留在此，供已购用户回看。'
                   : '本周期暂无可购买的推荐报告，请稍后再来或自行分析生成新版本。'
           }
-          icon={<img src={new URL('../assets/report-empty.png',import.meta.url).href} className='w-35 h-[auto]' />}
+          icon={(
+            <>
+              <img src={reportEmpty} className="h-auto w-35 dark:hidden" alt="" />
+              <img src={reportEmptyDark} className="hidden h-auto w-35 dark:block" alt="" />
+            </>
+          )}
           // action={activeTab === 'published' || activeTab === 'purchasable' ? (
           //   <Button variant="secondary" onClick={() => navigate('/')}>
           //     前往首页
@@ -229,10 +236,10 @@ const PredictionReportsPage: React.FC = () => {
               <Card
                 key={item.id}
                 className={`flex flex-col rounded-xl border-0 bg-surface p-5 shadow-none ${
-                  actionButton ? 'min-h-[228px]' : 'min-h-[104px]'
-                }`}
+                  actionButton ? 'min-h-[228px] md:min-h-[104px]' : 'min-h-[104px]'
+                } ${actionButton ? 'group' : ''}`}
               >
-                <div className={`flex flex-1 flex-col ${actionButton ? 'justify-between gap-6' : 'gap-3'}`}>
+                <div className={`flex flex-1 flex-col ${actionButton ? 'gap-6 transition-[gap] duration-200 md:gap-0 md:group-hover:gap-6 md:group-focus-within:gap-6' : 'gap-3'}`}>
                   <div className="flex flex-col gap-3">
                     <div className="flex min-w-0 items-center justify-between gap-4">
                       <div className="flex min-w-0 items-center gap-2">
@@ -264,8 +271,10 @@ const PredictionReportsPage: React.FC = () => {
                     </div>
                   </div>
                   {actionButton ? (
-                    <div className="w-full">
-                      {actionButton}
+                    <div className="grid w-full transition-[grid-template-rows,opacity,transform] duration-200 md:pointer-events-none md:grid-rows-[0fr] md:translate-y-1 md:opacity-0 md:group-hover:pointer-events-auto md:group-hover:grid-rows-[1fr] md:group-hover:translate-y-0 md:group-hover:opacity-100 md:group-focus-within:pointer-events-auto md:group-focus-within:grid-rows-[1fr] md:group-focus-within:translate-y-0 md:group-focus-within:opacity-100">
+                      <div className="min-h-0 overflow-hidden">
+                        {actionButton}
+                      </div>
                     </div>
                   ) : null}
                 </div>

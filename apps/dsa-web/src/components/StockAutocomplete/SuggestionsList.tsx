@@ -56,7 +56,10 @@ export function SuggestionsList({
             "hover:bg-[var(--autocomplete-hover-bg)]/25",
             index === highlightedIndex && "bg-[var(--autocomplete-hover-bg)]/25"
           )}
-          onClick={() => onSelect(suggestion)}
+          onMouseDown={(event) => {
+            event.preventDefault();
+            onSelect(suggestion);
+          }}
           onMouseEnter={() => onMouseEnter(index)}
         >
           <div className="flex items-center gap-3">

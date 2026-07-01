@@ -1,11 +1,16 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Modal, Pagination } from '@heroui/react';
 import { motion } from 'motion/react';
-import { BarChart3, BellRing, ChevronRight, History, Home, LogOut, MessageSquareQuote, Share2, Unplug, UserRound } from 'lucide-react';
+import { BarChart3, ChevronRight, History, LogOut, Unplug, UserRound } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useAccount, useDisconnect } from 'wagmi';
 import { paymentApi, type PaymentHistoryItem } from '../../api/payment';
 import creditIconSvg from '../../assets/creditIcon.svg?raw';
+import navBacktestIcon from '../../assets/navbar/backtest.svg?raw';
+import navChatIcon from '../../assets/navbar/chat.svg?raw';
+import navHomeIcon from '../../assets/navbar/index.svg?raw';
+import navPredictionReportsIcon from '../../assets/navbar/predictionreports.svg?raw';
+import navSubscriptionsIcon from '../../assets/navbar/subscriptions.svg?raw';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAgentChatStore } from '../../stores/agentChatStore';
 import { useCreditStore } from '../../stores/creditStore';
@@ -27,7 +32,7 @@ type NavItem = {
   key: string;
   label: string;
   to: string;
-  icon: React.ComponentType<{ className?: string }>;
+  iconSvg: string;
   exact?: boolean;
   badge?: 'completion';
   permission?: string;
@@ -43,11 +48,11 @@ type UsageHistoryRow = {
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { key: 'home', label: '首页', to: '/', icon: Home, exact: true, permission: 'home' },
-  { key: 'chat', label: '问股', to: '/chat', icon: MessageSquareQuote, badge: 'completion', permission: 'chat' },
-  { key: 'backtest', label: '回测', to: '/backtest', icon: BarChart3, permission: 'backtest' },
-  { key: 'subscriptions', label: '我的订阅', to: '/subscriptions', icon: BellRing, permission: 'subscriptions' },
-  { key: 'prediction_reports', label: '预测报告', to: '/prediction-reports', icon: Share2, permission: 'prediction_reports' },
+  { key: 'home', label: '首页', to: '/', iconSvg: navHomeIcon, exact: true, permission: 'home' },
+  { key: 'chat', label: '问股', to: '/chat', iconSvg: navChatIcon, badge: 'completion', permission: 'chat' },
+  { key: 'backtest', label: '回测', to: '/backtest', iconSvg: navBacktestIcon, permission: 'backtest' },
+  { key: 'subscriptions', label: '我的订阅', to: '/subscriptions', iconSvg: navSubscriptionsIcon, permission: 'subscriptions' },
+  { key: 'prediction_reports', label: '预测报告', to: '/prediction-reports', iconSvg: navPredictionReportsIcon, permission: 'prediction_reports' },
 ];
 
 const USAGE_HISTORY_PAGE_SIZE = 8;
@@ -95,6 +100,14 @@ function getUsagePageNumbers(page: number, totalPages: number): Array<number | '
   pages.push(totalPages);
   return pages;
 }
+
+const NavSvgIcon: React.FC<{ svg: string; className?: string }> = ({ svg, className }) => (
+  <span
+    aria-hidden="true"
+    className={cn('inline-flex shrink-0 [&>svg]:h-full [&>svg]:w-full', className)}
+    dangerouslySetInnerHTML={{ __html: svg }}
+  />
+);
 
 export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNavigate }) => {
   const { currentUser, logout } = useAuth();
@@ -220,7 +233,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
       </div>
 
       <nav className="flex flex-1 flex-col gap-1 px-2" aria-label="主导航">
-        {visibleItems.map(({ key, label, to, icon: Icon, exact, badge }) => (
+        {visibleItems.map(({ key, label, to, iconSvg, exact, badge }) => (
           <NavLink
             key={key}
             to={to}
@@ -229,7 +242,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
             aria-label={label}
             className={({ isActive }) =>
               cn(
-                'group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all',
+                'group relative flex items-center gap-3.5 rounded-lg px-3 py-3 text-[15px] transition-all',
                 collapsed && 'justify-center px-2',
                 isActive
                   ? 'bg-primary/10 text-[hsl(var(--primary))] font-medium'
@@ -248,7 +261,10 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
                     transition={{ duration: 0.2 }}
                   />
                 )}
-                <Icon className={cn('h-5 w-5 shrink-0', isActive && 'text-[hsl(var(--primary))]')} />
+                <NavSvgIcon
+                  svg={iconSvg}
+                  className={cn('h-6 w-6', isActive && 'text-[hsl(var(--primary))]')}
+                />
                 {!collapsed ? <span className="truncate">{label}</span> : null}
                 {badge === 'completion' && completionBadge ? (
                   <StatusDot

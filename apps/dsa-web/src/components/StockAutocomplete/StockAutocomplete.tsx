@@ -363,6 +363,7 @@ function StockAutocompleteInner({
     </>
   );
 
+  const dropdownPortalTarget = inputRef.current?.closest('[role="dialog"]') ?? document.body;
   const dropdown = isOpen && dropdownStyle ? createPortal(
     <SuggestionsList
       suggestions={suggestions}
@@ -378,7 +379,7 @@ function StockAutocompleteInner({
       onMouseEnter={(index) => setHighlightedIndex(index)}
       style={{ position: 'fixed', ...dropdownStyle }}
     />,
-    document.body
+    dropdownPortalTarget
   ) : null;
 
   if (appearance === 'home') {

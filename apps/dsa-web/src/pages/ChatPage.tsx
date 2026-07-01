@@ -552,7 +552,7 @@ const ChatPage: React.FC = () => {
         />
         <span className='text-while'>新对话</span>
       </button>
-      <ScrollArea testId="chat-session-list-scroll" viewportClassName="p-3">
+      <ScrollArea testId="chat-session-list-scroll" viewportClassName="py-3">
         {sessionsLoading ? (
           <DashboardStateBlock
             loading
@@ -1106,7 +1106,7 @@ const ChatPage: React.FC = () => {
                       </button>
 
                       {showSkillMenu && (
-                        <div className="chat-skill-menu" role="listbox" aria-label="选择分析策略">
+                        <div className="chat-skill-menu -translate-y-6" role="listbox" aria-label="选择分析策略">
                           {skillMenuOptions.map((skill) => {
                             const isSelected = selectedSkill === skill.id;
                             return (

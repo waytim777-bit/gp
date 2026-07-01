@@ -83,7 +83,7 @@ const LoginPage: React.FC = () => {
     ? '使用用户名注册独立账号，数据会与其他用户隔离。'
     : '每日股票分析引擎';
   const inputClassName =
-    'h-12 rounded-full pl-12 pr-12 text-sm font-medium shadow-none';
+    'h-[52px] rounded-full pl-12 pr-12 text-sm font-medium shadow-none';
 
   return (
     <div className="relative flex min-h-screen overflow-hidden bg-[var(--login-bg-main)] px-5 py-10 font-sans selection:bg-[var(--login-accent-soft)] sm:px-8 lg:px-12">
@@ -101,7 +101,7 @@ const LoginPage: React.FC = () => {
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.35 }}
-          className="relative w-full max-w-[460px] overflow-hidden rounded-2xl border border-[var(--login-border-card)] p-7 shadow-[0_24px_64px_rgba(0,0,0,0.22)] backdrop-blur-xl dark:shadow-[0_24px_64px_rgba(0,0,0,0.34)] sm:p-8"
+          className="relative w-full max-w-[500px] overflow-hidden rounded-2xl border border-[var(--login-border-card)] p-8 shadow-[0_24px_64px_rgba(0,0,0,0.22)] backdrop-blur-xl dark:shadow-[0_24px_64px_rgba(0,0,0,0.34)] sm:p-9"
         >
           <div className="absolute inset-0 z-0 bg-white/50 dark:bg-[#161922]/50" />
           <div className="relative z-10">
@@ -115,7 +115,7 @@ const LoginPage: React.FC = () => {
             ) : (
               <div className="mb-7 space-y-3">
                 <div className="flex items-center gap-2.5">
-                  <img src={loginLogo} alt="" className="h-11 w-11 rounded-xl" />
+                  <img src={loginLogo} alt="" className="h-11 w-11" />
                   <span className="text-[28px] font-bold leading-none tracking-normal text-[var(--login-text-primary)]">DSA</span>
                 </div>
                 <div className="flex items-end justify-between gap-4">
@@ -176,7 +176,7 @@ const LoginPage: React.FC = () => {
                 />
               )}
 
-              {!isRegistering && (
+              {/* {!isRegistering && (
                 <div className="flex justify-end py-1">
                   <button
                     type="button"
@@ -185,7 +185,7 @@ const LoginPage: React.FC = () => {
                     忘记密码？
                   </button>
                 </div>
-              )}
+              )} */}
             </div>
 
             {error && (
@@ -201,7 +201,7 @@ const LoginPage: React.FC = () => {
               type="submit"
               variant="primary"
               size="lg"
-              className="h-12 w-full rounded-full border-0 bg-[#00a1c2] text-base font-bold text-white shadow-[0_18px_26px_rgba(0,161,194,0.22)] transition-colors hover:bg-[#10b4d3]"
+              className="h-[52px] w-full rounded-full border-0 bg-[#00a1c2] text-base font-bold text-white shadow-[0_18px_26px_rgba(0,161,194,0.22)] transition-colors hover:bg-[#10b4d3]"
               disabled={isSubmitting}
             >
               <span className="flex items-center justify-center gap-2">

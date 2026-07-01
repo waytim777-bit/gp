@@ -431,6 +431,42 @@ describe('StockAutocomplete', () => {
       expect(mockOnChange).toHaveBeenCalledWith('00700');
       expect(mockOnSubmit).toHaveBeenCalledWith('00700.HK', '腾讯控股', 'autocomplete');
     });
+
+    it('selects a suggestion on mouse down before the input blur closes the list', () => {
+      autocompleteHookImpl = () => ({
+        query: '',
+        setQuery: vi.fn(),
+        suggestions: mockSuggestions,
+        isOpen: true,
+        highlightedIndex: -1,
+        setHighlightedIndex: vi.fn(),
+        highlightPrevious: vi.fn(),
+        highlightNext: vi.fn(),
+        handleSelect: vi.fn(),
+        close: vi.fn(),
+        reset: vi.fn(),
+        isComposing: false,
+        setIsComposing: vi.fn(),
+        runtimeFallback: false,
+        error: null,
+      });
+
+      render(
+        <div role="dialog">
+          <StockAutocomplete
+            value="6005"
+            onChange={mockOnChange}
+            onSubmit={mockOnSubmit}
+          />
+        </div>
+      );
+
+      fireEvent.focus(screen.getByDisplayValue('6005'));
+      fireEvent.mouseDown(screen.getByRole('option'));
+
+      expect(mockOnChange).toHaveBeenCalledWith('600519');
+      expect(mockOnSubmit).toHaveBeenCalledWith('600519.SH', '贵州茅台', 'autocomplete');
+    });
   });
 
   describe('runtime boundary', () => {

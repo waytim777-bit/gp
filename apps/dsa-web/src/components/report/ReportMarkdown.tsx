@@ -136,7 +136,7 @@ export const ReportMarkdown: React.FC<ReportMarkdownProps> = ({
                     <img
                       src={reportFullIcon}
                       alt=""
-                      className="h-12 w-12 shrink-0 rounded-xl"
+                      className="h-12 w-12 shrink-0"
                       aria-hidden="true"
                     />
                     <h2 className="truncate text-[32px] font-semibold leading-none text-foreground">
