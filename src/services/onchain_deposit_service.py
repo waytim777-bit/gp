@@ -11,7 +11,7 @@ import os
 import time
 from typing import Any
 from urllib import request as urlrequest
-from urllib.error import URLError
+from urllib.error import HTTPError, URLError
 
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -26,6 +26,7 @@ TOKEN_DECIMALS = 18
 CONFIRMATION_TIMEOUT_SECONDS = 180
 CONFIRMATION_POLL_SECONDS = 6
 TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+DEPOSIT_TOPIC = "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c"
 
 
 class DepositConfigError(ValueError):
@@ -86,6 +87,12 @@ class OnchainDepositService:
     def get_receiver_address(self) -> str:
         return _normalize_address(self._get_setting("DEPOSIT_RECEIVER_ADDRESS"))
 
+    def get_contract_address(self) -> str:
+        configured = self._get_setting("DEPOSIT_CONTRACT_ADDRESS")
+        if not configured:
+            raise DepositConfigError("DEPOSIT_CONTRACT_ADDRESS is not configured")
+        return _normalize_address(configured)
+
     def get_token_address(self) -> str:
         return _normalize_address(self._get_setting("DEPOSIT_TOKEN_ADDRESS"))
 
@@ -95,25 +102,27 @@ class OnchainDepositService:
             raise DepositConfigError("DEPOSIT_RPC_URL is not configured")
         return rpc_url
 
-    def get_public_config(self) -> dict[str, str]:
+    def get_public_config(self) -> dict[str, Any]:
+        contract_address = self.get_contract_address()
         return {
-            "chain_id": str(SEPOLIA_CHAIN_ID),
-            "receiver_address": self.get_receiver_address(),
+            "chain_id": SEPOLIA_CHAIN_ID,
+            "receiver_address": contract_address,
             "token_address": self.get_token_address(),
+            "contract_address": contract_address,
         }
 
     def submit_deposit(self, user_id: int, wallet_address: str, tx_hash: str) -> dict[str, Any]:
         wallet = _normalize_address(wallet_address)
         tx = _normalize_hash(tx_hash)
         token_address = self.get_token_address()
-        receiver_address = self.get_receiver_address()
+        contract_address = self.get_contract_address()
 
         deposit = self._get_or_create_pending_deposit(
             user_id=user_id,
             wallet_address=wallet,
             tx_hash=tx,
             token_address=token_address,
-            receiver_address=receiver_address,
+            contract_address=contract_address,
         )
         if deposit.status == "succeeded":
             return self._response(deposit)
@@ -127,7 +136,7 @@ class OnchainDepositService:
             user_id=user_id,
             wallet_address=wallet,
             token_address=token_address,
-            receiver_address=receiver_address,
+            contract_address=contract_address,
             tx_hash=tx,
             receipt=receipt,
         )
@@ -146,7 +155,7 @@ class OnchainDepositService:
                 user_id = deposit.user_id
                 wallet_address = deposit.wallet_address
                 token_address = deposit.token_address
-                receiver_address = deposit.receiver_address
+                contract_address = self.get_contract_address()
 
             receipt = self._rpc("eth_getTransactionReceipt", [tx])
             if receipt is not None:
@@ -156,7 +165,7 @@ class OnchainDepositService:
                         user_id=user_id,
                         wallet_address=wallet_address,
                         token_address=token_address,
-                        receiver_address=receiver_address,
+                        contract_address=contract_address,
                         tx_hash=tx,
                         receipt=receipt,
                     )
@@ -172,15 +181,15 @@ class OnchainDepositService:
         user_id: int,
         wallet_address: str,
         token_address: str,
-        receiver_address: str,
+        contract_address: str,
         tx_hash: str,
         receipt: dict[str, Any],
     ) -> dict[str, Any]:
-        amount_raw = self._extract_transfer_amount(
+        amount_raw = self._extract_contract_deposit_amount(
             receipt=receipt,
             token_address=token_address,
-            from_address=wallet_address,
-            receiver_address=receiver_address,
+            wallet_address=wallet_address,
+            contract_address=contract_address,
         )
         credit_amount = self._amount_to_credits(amount_raw)
         if credit_amount <= 0:
@@ -191,7 +200,7 @@ class OnchainDepositService:
             user_id=user_id,
             wallet_address=wallet_address,
             token_address=token_address,
-            receiver_address=receiver_address,
+            contract_address=contract_address,
             amount_raw=amount_raw,
             credit_amount=credit_amount,
             tx_hash=tx_hash,
@@ -212,7 +221,7 @@ class OnchainDepositService:
         wallet_address: str,
         tx_hash: str,
         token_address: str,
-        receiver_address: str,
+        contract_address: str,
     ) -> OnchainDeposit:
         with self.db.session_scope() as session:
             existing = session.execute(
@@ -230,7 +239,7 @@ class OnchainDepositService:
                 tx_hash=tx_hash,
                 chain_id=SEPOLIA_CHAIN_ID,
                 token_address=token_address,
-                receiver_address=receiver_address,
+                receiver_address=contract_address,
                 status="pending",
             )
             session.add(deposit)
@@ -246,45 +255,71 @@ class OnchainDepositService:
         req = urlrequest.Request(
             self.get_rpc_url(),
             data=payload,
-            headers={"Content-Type": "application/json"},
+            headers={
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "User-Agent": "dsa-web/1.0",
+            },
             method="POST",
         )
         try:
             with urlrequest.urlopen(req, timeout=20) as resp:
                 body = json.loads(resp.read().decode("utf-8"))
+        except HTTPError as exc:
+            raise DepositVerificationError(f"Failed to query chain RPC: HTTP {exc.code}") from exc
         except URLError as exc:
-            raise DepositVerificationError("Failed to query chain RPC") from exc
+            reason = getattr(exc, "reason", None)
+            raise DepositVerificationError(f"Failed to query chain RPC: {reason or exc}") from exc
 
         if body.get("error"):
             raise DepositVerificationError(str(body["error"]))
         return body.get("result")
 
-    def _extract_transfer_amount(
+    def _extract_contract_deposit_amount(
         self,
         receipt: dict[str, Any],
         token_address: str,
-        from_address: str,
-        receiver_address: str,
+        wallet_address: str,
+        contract_address: str,
     ) -> int:
         if _hex_to_int(receipt.get("status")) != 1:
             raise DepositVerificationError("Transaction failed on chain")
 
-        from_topic = _address_topic(from_address)
-        receiver_topic = _address_topic(receiver_address)
-        total = 0
+        wallet_topic = _address_topic(wallet_address)
+        contract_topic = _address_topic(contract_address)
+        deposit_total = 0
+        transfer_total = 0
         for log in receipt.get("logs") or []:
             topics = [str(topic).lower() for topic in (log.get("topics") or [])]
-            if len(topics) < 3:
+            if not topics:
                 continue
-            if str(log.get("address", "")).lower() != token_address:
-                continue
-            if topics[0] != TRANSFER_TOPIC or topics[1] != from_topic or topics[2] != receiver_topic:
-                continue
-            total += _hex_to_int(log.get("data"))
 
-        if total <= 0:
+            log_address = str(log.get("address", "")).lower()
+            if (
+                len(topics) >= 2
+                and log_address == contract_address
+                and topics[0] == DEPOSIT_TOPIC
+                and topics[1] == wallet_topic
+            ):
+                deposit_total += _hex_to_int(log.get("data"))
+                continue
+
+            if (
+                len(topics) >= 3
+                and log_address == token_address
+                and topics[0] == TRANSFER_TOPIC
+                and topics[1] == wallet_topic
+                and topics[2] == contract_topic
+            ):
+                transfer_total += _hex_to_int(log.get("data"))
+
+        if deposit_total <= 0:
+            raise DepositVerificationError("Matching deposit event was not found")
+        if transfer_total <= 0:
             raise DepositVerificationError("Matching ERC20 transfer was not found")
-        return total
+        if transfer_total != deposit_total:
+            raise DepositVerificationError("Deposit event amount does not match token transfer")
+        return deposit_total
 
     def _amount_to_credits(self, amount_raw: int) -> int:
         getcontext().prec = 60
@@ -298,7 +333,7 @@ class OnchainDepositService:
         user_id: int,
         wallet_address: str,
         token_address: str,
-        receiver_address: str,
+        contract_address: str,
         amount_raw: int,
         credit_amount: int,
         tx_hash: str,
@@ -341,7 +376,7 @@ class OnchainDepositService:
 
             deposit.wallet_address = wallet_address
             deposit.token_address = token_address
-            deposit.receiver_address = receiver_address
+            deposit.receiver_address = contract_address
             deposit.token_amount_raw = str(amount_raw)
             deposit.credit_amount = credit_amount
             deposit.credit_transaction_id = credit_tx.id

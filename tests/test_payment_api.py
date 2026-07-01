@@ -21,6 +21,7 @@ except ModuleNotFoundError:
 
 import src.auth as auth
 from api.app import create_app
+from api.v1.endpoints.payment import get_onchain_deposit_service
 from src.config import Config
 from src.storage import CreditDeduction, CreditTransaction, DatabaseManager
 
@@ -170,6 +171,33 @@ class PaymentApiAuthTestCase(unittest.TestCase):
         self.assertEqual(body["items"][0]["kind"], "deposit")
         self.assertEqual(body["items"][0]["reason"], "oldest-deposit")
         self.assertEqual(body["items"][0]["credit_amount"], 100)
+
+    def test_deposit_config_returns_contract_address(self) -> None:
+        class StubDepositService:
+            def get_public_config(self) -> dict[str, object]:
+                return {
+                    "chain_id": 11155111,
+                    "receiver_address": "0x3333333333333333333333333333333333333333",
+                    "token_address": "0x2222222222222222222222222222222222222222",
+                    "contract_address": "0x3333333333333333333333333333333333333333",
+                }
+
+        self.app.dependency_overrides[get_onchain_deposit_service] = lambda: StubDepositService()
+        try:
+            response = self.client.get("/api/v1/payment/deposit/config")
+        finally:
+            self.app.dependency_overrides.pop(get_onchain_deposit_service, None)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {
+                "chain_id": 11155111,
+                "receiver_address": "0x3333333333333333333333333333333333333333",
+                "token_address": "0x2222222222222222222222222222222222222222",
+                "contract_address": "0x3333333333333333333333333333333333333333",
+            },
+        )
 
 
 if __name__ == "__main__":

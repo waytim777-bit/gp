@@ -21,6 +21,7 @@ export type DepositConfigResponse = {
   chainId: number;
   receiverAddress: string;
   tokenAddress: string;
+  contractAddress: string;
 };
 
 export type DepositResponse = {

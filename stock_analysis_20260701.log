@@ -153,3 +153,1210 @@
 2026-07-01 10:59:16 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54233 - "GET /api/v1/auth/status HTTP/1.1" 200
 2026-07-01 10:59:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54276 - "GET /api/v1/auth/status HTTP/1.1" 200
 2026-07-01 10:59:40 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54277 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:11:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55505 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:15:13 | INFO     | main.py:805 | 
+用户中断，程序退出
+2026-07-01 11:15:19 | INFO     | src/logging_config.py:153 | 日志系统初始化完成，日志目录: .
+2026-07-01 11:15:19 | INFO     | src/logging_config.py:154 | 常规日志: stock_analysis_20260701.log
+2026-07-01 11:15:19 | INFO     | src/logging_config.py:155 | 调试日志: stock_analysis_debug_20260701.log
+2026-07-01 11:15:19 | INFO     | main.py:745 | ============================================================
+2026-07-01 11:15:19 | INFO     | main.py:746 | A股自选股智能分析系统 启动
+2026-07-01 11:15:19 | INFO     | main.py:747 | 运行时间: 2026-07-01 11:15:19
+2026-07-01 11:15:19 | INFO     | main.py:748 | ============================================================
+2026-07-01 11:15:19 | INFO     | src/webui_frontend.py:230 | 前端构建检查结果: needs_install=False, needs_build=True, artifact=/Users/taurus/developer/outlets/gp/static/index.html
+2026-07-01 11:15:19 | INFO     | src/webui_frontend.py:111 | 执行前端命令: /Users/taurus/.nvm/versions/node/v24.13.1/bin/npm run build
+2026-07-01 11:15:23 | ERROR    | src/webui_frontend.py:117 | 前端命令执行失败（exit_code=2）: /Users/taurus/.nvm/versions/node/v24.13.1/bin/npm run build
+2026-07-01 11:15:23 | WARNING  | main.py:784 | 前端静态资源未就绪，继续启动 FastAPI 服务（Web 页面可能不可用）
+2026-07-01 11:15:23 | INFO     | main.py:623 | FastAPI 服务已启动: http://0.0.0.0:8000
+2026-07-01 11:15:23 | INFO     | main.py:796 | 模式: 仅 Web 服务
+2026-07-01 11:15:23 | INFO     | main.py:797 | Web 服务运行中: http://0.0.0.0:8000
+2026-07-01 11:15:23 | INFO     | main.py:798 | 通过 /api/v1/analysis/analyze 接口触发分析
+2026-07-01 11:15:23 | INFO     | main.py:799 | API 文档: http://0.0.0.0:8000/docs
+2026-07-01 11:15:23 | INFO     | main.py:800 | 按 Ctrl+C 退出...
+2026-07-01 11:15:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:92 | Started server process [30726]
+2026-07-01 11:15:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:48 | Waiting for application startup.
+2026-07-01 11:15:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:62 | Application startup complete.
+2026-07-01 11:15:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:224 | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-07-01 11:15:33 | INFO     | src/storage.py:1144 | 数据库初始化完成: postgresql+psycopg://dsa:dsa123@localhost:5435/daily_stock_analysis
+2026-07-01 11:15:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55791 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:15:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55793 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:15:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55828 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:15:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55829 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:15:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55839 - "POST /api/v1/auth/login HTTP/1.1" 400
+2026-07-01 11:15:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55845 - "POST /api/v1/auth/login HTTP/1.1" 200
+2026-07-01 11:15:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55848 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:15:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55863 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-01 11:15:54 | INFO     | src/services/task_queue.py:181 | [TaskQueue] 初始化完成，最大并发: 3
+2026-07-01 11:15:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55862 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:15:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55867 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-01 11:15:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55859 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:15:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55868 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-01 11:15:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55864 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:15:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55872 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:15:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55875 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:15:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55878 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:15:55 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55881 - "GET /api/v1/history/24 HTTP/1.1" 200
+2026-07-01 11:15:55 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55884 - "GET /api/v1/analysis/cycle-report?code=000007&report_type=full HTTP/1.1" 200
+2026-07-01 11:15:55 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55887 - "GET /api/v1/history/24/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:15:55 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55890 - "GET /api/v1/history/24/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:15:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55906 - "GET /api/v1/payment/deposit/config HTTP/1.1" 200
+2026-07-01 11:16:24 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56015 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:16:48 | ERROR    | api/middlewares/error_handler.py:116 | 未处理的异常: (psycopg.errors.UndefinedColumn) column onchain_deposits.contract_address does not exist
+LINE 1: ...token_address, onchain_deposits.receiver_address, onchain_de...
+                                                             ^
+[SQL: SELECT onchain_deposits.id, onchain_deposits.user_id, onchain_deposits.wallet_address, onchain_deposits.tx_hash, onchain_deposits.chain_id, onchain_deposits.token_address, onchain_deposits.receiver_address, onchain_deposits.contract_address, onchain_deposits.token_amount_raw, onchain_deposits.credit_amount, onchain_deposits.credit_transaction_id, onchain_deposits.status, onchain_deposits.error, onchain_deposits.created_at, onchain_deposits.confirmed_at 
+FROM onchain_deposits 
+WHERE onchain_deposits.tx_hash = %(tx_hash_1)s::VARCHAR]
+[parameters: {'tx_hash_1': '0x2ac78ee87a0199e4b64e589fd04cdfebf5c91034f2b53aa2274b7563671cb410'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+请求路径: /api/v1/payment/deposit
+堆栈: Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/opt/homebrew/lib/python3.11/site-packages/psycopg/cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedColumn: column onchain_deposits.contract_address does not exist
+LINE 1: ...token_address, onchain_deposits.receiver_address, onchain_de...
+                                                             ^
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/middlewares/auth.py", line 88, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1620, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1629, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1218, in handle
+    await app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 143, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 129, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 683, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 339, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2592, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/v1/endpoints/payment.py", line 200, in deposit_credits
+    result = deposit_service.submit_deposit(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/onchain_deposit_service.py", line 119, in submit_deposit
+    deposit = self._get_or_create_pending_deposit(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/onchain_deposit_service.py", line 226, in _get_or_create_pending_deposit
+    existing = session.execute(
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2373, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2271, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1421, in execute
+    return meth(
+           ^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1643, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1848, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1988, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2365, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/opt/homebrew/lib/python3.11/site-packages/psycopg/cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedColumn) column onchain_deposits.contract_address does not exist
+LINE 1: ...token_address, onchain_deposits.receiver_address, onchain_de...
+                                                             ^
+[SQL: SELECT onchain_deposits.id, onchain_deposits.user_id, onchain_deposits.wallet_address, onchain_deposits.tx_hash, onchain_deposits.chain_id, onchain_deposits.token_address, onchain_deposits.receiver_address, onchain_deposits.contract_address, onchain_deposits.token_amount_raw, onchain_deposits.credit_amount, onchain_deposits.credit_transaction_id, onchain_deposits.status, onchain_deposits.error, onchain_deposits.created_at, onchain_deposits.confirmed_at 
+FROM onchain_deposits 
+WHERE onchain_deposits.tx_hash = %(tx_hash_1)s::VARCHAR]
+[parameters: {'tx_hash_1': '0x2ac78ee87a0199e4b64e589fd04cdfebf5c91034f2b53aa2274b7563671cb410'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+
+2026-07-01 11:16:48 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56052 - "POST /api/v1/payment/deposit HTTP/1.1" 500
+2026-07-01 11:16:48 | ERROR    | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:426 | Exception in ASGI application
+Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/opt/homebrew/lib/python3.11/site-packages/psycopg/cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedColumn: column onchain_deposits.contract_address does not exist
+LINE 1: ...token_address, onchain_deposits.receiver_address, onchain_de...
+                                                             ^
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py", line 421, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/uvicorn/middleware/proxy_headers.py", line 62, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/applications.py", line 1162, in __call__
+    await super().__call__(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/middlewares/auth.py", line 88, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1620, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1629, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1218, in handle
+    await app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 143, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 129, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 683, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 339, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2592, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/v1/endpoints/payment.py", line 200, in deposit_credits
+    result = deposit_service.submit_deposit(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/onchain_deposit_service.py", line 119, in submit_deposit
+    deposit = self._get_or_create_pending_deposit(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/onchain_deposit_service.py", line 226, in _get_or_create_pending_deposit
+    existing = session.execute(
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2373, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2271, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1421, in execute
+    return meth(
+           ^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1643, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1848, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1988, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2365, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/opt/homebrew/lib/python3.11/site-packages/psycopg/cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedColumn) column onchain_deposits.contract_address does not exist
+LINE 1: ...token_address, onchain_deposits.receiver_address, onchain_de...
+                                                             ^
+[SQL: SELECT onchain_deposits.id, onchain_deposits.user_id, onchain_deposits.wallet_address, onchain_deposits.tx_hash, onchain_deposits.chain_id, onchain_deposits.token_address, onchain_deposits.receiver_address, onchain_deposits.contract_address, onchain_deposits.token_amount_raw, onchain_deposits.credit_amount, onchain_deposits.credit_transaction_id, onchain_deposits.status, onchain_deposits.error, onchain_deposits.created_at, onchain_deposits.confirmed_at 
+FROM onchain_deposits 
+WHERE onchain_deposits.tx_hash = %(tx_hash_1)s::VARCHAR]
+[parameters: {'tx_hash_1': '0x2ac78ee87a0199e4b64e589fd04cdfebf5c91034f2b53aa2274b7563671cb410'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-07-01 11:16:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56062 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:17:24 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56206 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:17:31 | ERROR    | api/middlewares/error_handler.py:116 | 未处理的异常: (psycopg.errors.UndefinedColumn) column onchain_deposits.contract_address does not exist
+LINE 1: ...token_address, onchain_deposits.receiver_address, onchain_de...
+                                                             ^
+[SQL: SELECT onchain_deposits.id, onchain_deposits.user_id, onchain_deposits.wallet_address, onchain_deposits.tx_hash, onchain_deposits.chain_id, onchain_deposits.token_address, onchain_deposits.receiver_address, onchain_deposits.contract_address, onchain_deposits.token_amount_raw, onchain_deposits.credit_amount, onchain_deposits.credit_transaction_id, onchain_deposits.status, onchain_deposits.error, onchain_deposits.created_at, onchain_deposits.confirmed_at 
+FROM onchain_deposits 
+WHERE onchain_deposits.tx_hash = %(tx_hash_1)s::VARCHAR]
+[parameters: {'tx_hash_1': '0x2ac78ee87a0199e4b64e589fd04cdfebf5c91034f2b53aa2274b7563671cb410'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+请求路径: /api/v1/payment/deposit
+堆栈: Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/opt/homebrew/lib/python3.11/site-packages/psycopg/cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedColumn: column onchain_deposits.contract_address does not exist
+LINE 1: ...token_address, onchain_deposits.receiver_address, onchain_de...
+                                                             ^
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/middlewares/auth.py", line 88, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1620, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1629, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1218, in handle
+    await app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 143, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 129, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 683, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 339, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2592, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/v1/endpoints/payment.py", line 200, in deposit_credits
+    result = deposit_service.submit_deposit(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/onchain_deposit_service.py", line 119, in submit_deposit
+    deposit = self._get_or_create_pending_deposit(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/onchain_deposit_service.py", line 226, in _get_or_create_pending_deposit
+    existing = session.execute(
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2373, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2271, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1421, in execute
+    return meth(
+           ^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1643, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1848, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1988, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2365, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/opt/homebrew/lib/python3.11/site-packages/psycopg/cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedColumn) column onchain_deposits.contract_address does not exist
+LINE 1: ...token_address, onchain_deposits.receiver_address, onchain_de...
+                                                             ^
+[SQL: SELECT onchain_deposits.id, onchain_deposits.user_id, onchain_deposits.wallet_address, onchain_deposits.tx_hash, onchain_deposits.chain_id, onchain_deposits.token_address, onchain_deposits.receiver_address, onchain_deposits.contract_address, onchain_deposits.token_amount_raw, onchain_deposits.credit_amount, onchain_deposits.credit_transaction_id, onchain_deposits.status, onchain_deposits.error, onchain_deposits.created_at, onchain_deposits.confirmed_at 
+FROM onchain_deposits 
+WHERE onchain_deposits.tx_hash = %(tx_hash_1)s::VARCHAR]
+[parameters: {'tx_hash_1': '0x2ac78ee87a0199e4b64e589fd04cdfebf5c91034f2b53aa2274b7563671cb410'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+
+2026-07-01 11:17:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56273 - "POST /api/v1/payment/deposit HTTP/1.1" 500
+2026-07-01 11:17:31 | ERROR    | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:426 | Exception in ASGI application
+Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/opt/homebrew/lib/python3.11/site-packages/psycopg/cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedColumn: column onchain_deposits.contract_address does not exist
+LINE 1: ...token_address, onchain_deposits.receiver_address, onchain_de...
+                                                             ^
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py", line 421, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/uvicorn/middleware/proxy_headers.py", line 62, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/applications.py", line 1162, in __call__
+    await super().__call__(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/middlewares/auth.py", line 88, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1620, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1629, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1218, in handle
+    await app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 143, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 129, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 683, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 339, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2592, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/v1/endpoints/payment.py", line 200, in deposit_credits
+    result = deposit_service.submit_deposit(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/onchain_deposit_service.py", line 119, in submit_deposit
+    deposit = self._get_or_create_pending_deposit(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/onchain_deposit_service.py", line 226, in _get_or_create_pending_deposit
+    existing = session.execute(
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2373, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2271, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1421, in execute
+    return meth(
+           ^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1643, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1848, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1988, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2365, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/opt/homebrew/lib/python3.11/site-packages/psycopg/cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedColumn) column onchain_deposits.contract_address does not exist
+LINE 1: ...token_address, onchain_deposits.receiver_address, onchain_de...
+                                                             ^
+[SQL: SELECT onchain_deposits.id, onchain_deposits.user_id, onchain_deposits.wallet_address, onchain_deposits.tx_hash, onchain_deposits.chain_id, onchain_deposits.token_address, onchain_deposits.receiver_address, onchain_deposits.contract_address, onchain_deposits.token_amount_raw, onchain_deposits.credit_amount, onchain_deposits.credit_transaction_id, onchain_deposits.status, onchain_deposits.error, onchain_deposits.created_at, onchain_deposits.confirmed_at 
+FROM onchain_deposits 
+WHERE onchain_deposits.tx_hash = %(tx_hash_1)s::VARCHAR]
+[parameters: {'tx_hash_1': '0x2ac78ee87a0199e4b64e589fd04cdfebf5c91034f2b53aa2274b7563671cb410'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-07-01 11:17:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56302 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:17:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56304 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:17:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56297 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:17:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56303 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:17:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56362 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:17:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56363 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:17:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56366 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-01 11:17:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56365 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:17:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56370 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-01 11:17:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56364 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:17:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56373 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-01 11:17:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56376 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:17:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56368 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:17:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56382 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:17:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56379 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:17:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56385 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:17:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56388 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:17:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56391 - "GET /api/v1/history/24 HTTP/1.1" 200
+2026-07-01 11:17:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56394 - "GET /api/v1/analysis/cycle-report?code=000007&report_type=full HTTP/1.1" 200
+2026-07-01 11:17:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56397 - "GET /api/v1/history/24/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:17:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56400 - "GET /api/v1/history/24/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:18:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56446 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:18:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56474 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:19:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56521 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:19:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56557 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:20:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56589 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:20:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56635 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:21:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56692 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:21:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56749 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:22:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56798 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:22:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56834 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:23:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56902 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:23:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56956 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:23:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56976 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:24:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57006 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:24:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57037 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:24:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57063 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:24:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57065 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:24:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57070 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-01 11:24:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57072 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-01 11:24:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57069 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:24:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57068 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:24:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57075 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-01 11:24:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57078 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:24:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57071 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:24:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57085 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:24:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57082 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:24:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57088 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:24:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57091 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:24:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57094 - "GET /api/v1/history/24 HTTP/1.1" 200
+2026-07-01 11:24:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57097 - "GET /api/v1/analysis/cycle-report?code=000007&report_type=full HTTP/1.1" 200
+2026-07-01 11:24:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57100 - "GET /api/v1/history/24/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:24:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57103 - "GET /api/v1/history/24/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:24:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57133 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:24:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57139 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:24:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57138 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:24:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57132 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:25:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57185 - "GET /api/v1/payment/deposit/config HTTP/1.1" 200
+2026-07-01 11:25:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57321 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:25:34 | ERROR    | api/middlewares/error_handler.py:116 | 未处理的异常: (psycopg.errors.UndefinedColumn) column onchain_deposits.contract_address does not exist
+LINE 1: ...token_address, onchain_deposits.receiver_address, onchain_de...
+                                                             ^
+[SQL: SELECT onchain_deposits.id, onchain_deposits.user_id, onchain_deposits.wallet_address, onchain_deposits.tx_hash, onchain_deposits.chain_id, onchain_deposits.token_address, onchain_deposits.receiver_address, onchain_deposits.contract_address, onchain_deposits.token_amount_raw, onchain_deposits.credit_amount, onchain_deposits.credit_transaction_id, onchain_deposits.status, onchain_deposits.error, onchain_deposits.created_at, onchain_deposits.confirmed_at 
+FROM onchain_deposits 
+WHERE onchain_deposits.tx_hash = %(tx_hash_1)s::VARCHAR]
+[parameters: {'tx_hash_1': '0xd01f1ca03826127f4ed37f901d3f3b2642caa5ad21690082dd63bb7ac750adcf'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+请求路径: /api/v1/payment/deposit
+堆栈: Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/opt/homebrew/lib/python3.11/site-packages/psycopg/cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedColumn: column onchain_deposits.contract_address does not exist
+LINE 1: ...token_address, onchain_deposits.receiver_address, onchain_de...
+                                                             ^
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/middlewares/auth.py", line 88, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1620, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1629, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1218, in handle
+    await app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 143, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 129, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 683, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 339, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2592, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/v1/endpoints/payment.py", line 200, in deposit_credits
+    result = deposit_service.submit_deposit(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/onchain_deposit_service.py", line 119, in submit_deposit
+    deposit = self._get_or_create_pending_deposit(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/onchain_deposit_service.py", line 226, in _get_or_create_pending_deposit
+    existing = session.execute(
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2373, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2271, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1421, in execute
+    return meth(
+           ^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1643, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1848, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1988, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2365, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/opt/homebrew/lib/python3.11/site-packages/psycopg/cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedColumn) column onchain_deposits.contract_address does not exist
+LINE 1: ...token_address, onchain_deposits.receiver_address, onchain_de...
+                                                             ^
+[SQL: SELECT onchain_deposits.id, onchain_deposits.user_id, onchain_deposits.wallet_address, onchain_deposits.tx_hash, onchain_deposits.chain_id, onchain_deposits.token_address, onchain_deposits.receiver_address, onchain_deposits.contract_address, onchain_deposits.token_amount_raw, onchain_deposits.credit_amount, onchain_deposits.credit_transaction_id, onchain_deposits.status, onchain_deposits.error, onchain_deposits.created_at, onchain_deposits.confirmed_at 
+FROM onchain_deposits 
+WHERE onchain_deposits.tx_hash = %(tx_hash_1)s::VARCHAR]
+[parameters: {'tx_hash_1': '0xd01f1ca03826127f4ed37f901d3f3b2642caa5ad21690082dd63bb7ac750adcf'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+
+2026-07-01 11:25:34 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57378 - "POST /api/v1/payment/deposit HTTP/1.1" 500
+2026-07-01 11:25:34 | ERROR    | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:426 | Exception in ASGI application
+Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/opt/homebrew/lib/python3.11/site-packages/psycopg/cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedColumn: column onchain_deposits.contract_address does not exist
+LINE 1: ...token_address, onchain_deposits.receiver_address, onchain_de...
+                                                             ^
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py", line 421, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/uvicorn/middleware/proxy_headers.py", line 62, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/applications.py", line 1162, in __call__
+    await super().__call__(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/middlewares/auth.py", line 88, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1620, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1629, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1218, in handle
+    await app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 143, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 129, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 683, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 339, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2592, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/v1/endpoints/payment.py", line 200, in deposit_credits
+    result = deposit_service.submit_deposit(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/onchain_deposit_service.py", line 119, in submit_deposit
+    deposit = self._get_or_create_pending_deposit(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/onchain_deposit_service.py", line 226, in _get_or_create_pending_deposit
+    existing = session.execute(
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2373, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2271, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1421, in execute
+    return meth(
+           ^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1643, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1848, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1988, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2365, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/homebrew/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/opt/homebrew/lib/python3.11/site-packages/psycopg/cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedColumn) column onchain_deposits.contract_address does not exist
+LINE 1: ...token_address, onchain_deposits.receiver_address, onchain_de...
+                                                             ^
+[SQL: SELECT onchain_deposits.id, onchain_deposits.user_id, onchain_deposits.wallet_address, onchain_deposits.tx_hash, onchain_deposits.chain_id, onchain_deposits.token_address, onchain_deposits.receiver_address, onchain_deposits.contract_address, onchain_deposits.token_amount_raw, onchain_deposits.credit_amount, onchain_deposits.credit_transaction_id, onchain_deposits.status, onchain_deposits.error, onchain_deposits.created_at, onchain_deposits.confirmed_at 
+FROM onchain_deposits 
+WHERE onchain_deposits.tx_hash = %(tx_hash_1)s::VARCHAR]
+[parameters: {'tx_hash_1': '0xd01f1ca03826127f4ed37f901d3f3b2642caa5ad21690082dd63bb7ac750adcf'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-07-01 11:25:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57470 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:26:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57665 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:26:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57828 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:27:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58085 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:27:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58239 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:28:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58388 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:29:24 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58734 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:30:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59040 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:31:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59394 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:32:27 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59740 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:33:28 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60072 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:34:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60479 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:35:30 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60936 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:36:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61320 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:37:32 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61627 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:38:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61937 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:39:34 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62230 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:40:02 | INFO     | main.py:805 | 
+用户中断，程序退出
+2026-07-01 11:40:09 | INFO     | src/logging_config.py:153 | 日志系统初始化完成，日志目录: .
+2026-07-01 11:40:09 | INFO     | src/logging_config.py:154 | 常规日志: stock_analysis_20260701.log
+2026-07-01 11:40:09 | INFO     | src/logging_config.py:155 | 调试日志: stock_analysis_debug_20260701.log
+2026-07-01 11:40:09 | INFO     | main.py:745 | ============================================================
+2026-07-01 11:40:09 | INFO     | main.py:746 | A股自选股智能分析系统 启动
+2026-07-01 11:40:09 | INFO     | main.py:747 | 运行时间: 2026-07-01 11:40:09
+2026-07-01 11:40:09 | INFO     | main.py:748 | ============================================================
+2026-07-01 11:40:09 | INFO     | src/webui_frontend.py:230 | 前端构建检查结果: needs_install=False, needs_build=True, artifact=/Users/taurus/developer/outlets/gp/static/index.html
+2026-07-01 11:40:09 | INFO     | src/webui_frontend.py:111 | 执行前端命令: /Users/taurus/.nvm/versions/node/v24.13.1/bin/npm run build
+2026-07-01 11:40:13 | ERROR    | src/webui_frontend.py:117 | 前端命令执行失败（exit_code=2）: /Users/taurus/.nvm/versions/node/v24.13.1/bin/npm run build
+2026-07-01 11:40:13 | WARNING  | main.py:784 | 前端静态资源未就绪，继续启动 FastAPI 服务（Web 页面可能不可用）
+2026-07-01 11:40:13 | INFO     | main.py:623 | FastAPI 服务已启动: http://0.0.0.0:8000
+2026-07-01 11:40:13 | INFO     | main.py:796 | 模式: 仅 Web 服务
+2026-07-01 11:40:13 | INFO     | main.py:797 | Web 服务运行中: http://0.0.0.0:8000
+2026-07-01 11:40:13 | INFO     | main.py:798 | 通过 /api/v1/analysis/analyze 接口触发分析
+2026-07-01 11:40:13 | INFO     | main.py:799 | API 文档: http://0.0.0.0:8000/docs
+2026-07-01 11:40:13 | INFO     | main.py:800 | 按 Ctrl+C 退出...
+2026-07-01 11:40:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:92 | Started server process [63506]
+2026-07-01 11:40:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:48 | Waiting for application startup.
+2026-07-01 11:40:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:62 | Application startup complete.
+2026-07-01 11:40:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:224 | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-07-01 11:40:17 | INFO     | src/storage.py:1143 | 数据库初始化完成: postgresql+psycopg://dsa:dsa123@localhost:5435/daily_stock_analysis
+2026-07-01 11:40:17 | INFO     | src/services/task_queue.py:181 | [TaskQueue] 初始化完成，最大并发: 3
+2026-07-01 11:40:17 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62456 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-01 11:40:20 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62476 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:40:20 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62479 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:40:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62550 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:40:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62553 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:40:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62558 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-01 11:40:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62555 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:40:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62560 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-01 11:40:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62554 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:40:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62563 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-01 11:40:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62566 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:40:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62559 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:40:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62572 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:40:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62569 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:40:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62577 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:40:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62578 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:40:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62581 - "GET /api/v1/history/24 HTTP/1.1" 200
+2026-07-01 11:40:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62584 - "GET /api/v1/analysis/cycle-report?code=000007&report_type=full HTTP/1.1" 200
+2026-07-01 11:40:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62587 - "GET /api/v1/history/24/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:40:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62590 - "GET /api/v1/history/24/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:40:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62594 - "GET /api/v1/payment/deposit/config HTTP/1.1" 200
+2026-07-01 11:40:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62675 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:40:55 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62680 - "POST /api/v1/payment/deposit HTTP/1.1" 503
+2026-07-01 11:41:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62745 - "POST /api/v1/payment/deposit HTTP/1.1" 503
+2026-07-01 11:41:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62764 - "POST /api/v1/auth/logout HTTP/1.1" 204
+2026-07-01 11:41:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62767 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:41:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62775 - "POST /api/v1/auth/login HTTP/1.1" 200
+2026-07-01 11:41:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62776 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:41:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62791 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-01 11:41:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62790 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:41:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62793 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-01 11:41:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62789 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:41:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62796 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-01 11:41:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62799 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:41:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62792 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:41:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62802 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:41:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62805 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:41:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62808 - "GET /api/v1/history/24 HTTP/1.1" 200
+2026-07-01 11:41:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62811 - "GET /api/v1/analysis/cycle-report?code=000007&report_type=full HTTP/1.1" 200
+2026-07-01 11:41:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62814 - "GET /api/v1/history/24/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:41:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62817 - "GET /api/v1/history/24/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:41:28 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62843 - "GET /api/v1/payment/deposit/config HTTP/1.1" 200
+2026-07-01 11:41:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63006 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:41:56 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63036 - "POST /api/v1/payment/deposit HTTP/1.1" 503
+2026-07-01 11:42:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63177 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:42:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63335 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:43:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63505 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:43:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63660 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:44:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63808 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:44:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63952 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:45:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64126 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:45:38 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64222 - "POST /api/v1/payment/deposit HTTP/1.1" 503
+2026-07-01 11:45:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64289 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:46:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64489 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:46:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64663 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:47:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64839 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:47:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65131 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:48:04 | INFO     | main.py:805 | 
+用户中断，程序退出
+2026-07-01 11:48:13 | INFO     | src/logging_config.py:153 | 日志系统初始化完成，日志目录: .
+2026-07-01 11:48:13 | INFO     | src/logging_config.py:154 | 常规日志: stock_analysis_20260701.log
+2026-07-01 11:48:13 | INFO     | src/logging_config.py:155 | 调试日志: stock_analysis_debug_20260701.log
+2026-07-01 11:48:13 | INFO     | main.py:745 | ============================================================
+2026-07-01 11:48:13 | INFO     | main.py:746 | A股自选股智能分析系统 启动
+2026-07-01 11:48:13 | INFO     | main.py:747 | 运行时间: 2026-07-01 11:48:13
+2026-07-01 11:48:13 | INFO     | main.py:748 | ============================================================
+2026-07-01 11:48:13 | INFO     | src/webui_frontend.py:230 | 前端构建检查结果: needs_install=False, needs_build=True, artifact=/Users/taurus/developer/outlets/gp/static/index.html
+2026-07-01 11:48:13 | INFO     | src/webui_frontend.py:111 | 执行前端命令: /Users/taurus/.nvm/versions/node/v24.13.1/bin/npm run build
+2026-07-01 11:48:16 | ERROR    | src/webui_frontend.py:117 | 前端命令执行失败（exit_code=2）: /Users/taurus/.nvm/versions/node/v24.13.1/bin/npm run build
+2026-07-01 11:48:16 | WARNING  | main.py:784 | 前端静态资源未就绪，继续启动 FastAPI 服务（Web 页面可能不可用）
+2026-07-01 11:48:16 | INFO     | main.py:623 | FastAPI 服务已启动: http://0.0.0.0:8000
+2026-07-01 11:48:16 | INFO     | main.py:796 | 模式: 仅 Web 服务
+2026-07-01 11:48:16 | INFO     | main.py:797 | Web 服务运行中: http://0.0.0.0:8000
+2026-07-01 11:48:16 | INFO     | main.py:798 | 通过 /api/v1/analysis/analyze 接口触发分析
+2026-07-01 11:48:16 | INFO     | main.py:799 | API 文档: http://0.0.0.0:8000/docs
+2026-07-01 11:48:16 | INFO     | main.py:800 | 按 Ctrl+C 退出...
+2026-07-01 11:48:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:92 | Started server process [73704]
+2026-07-01 11:48:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:48 | Waiting for application startup.
+2026-07-01 11:48:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:62 | Application startup complete.
+2026-07-01 11:48:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:224 | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-07-01 11:48:20 | INFO     | src/storage.py:1143 | 数据库初始化完成: postgresql+psycopg://dsa:dsa123@localhost:5435/daily_stock_analysis
+2026-07-01 11:48:20 | INFO     | src/services/task_queue.py:181 | [TaskQueue] 初始化完成，最大并发: 3
+2026-07-01 11:48:20 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65284 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-01 11:48:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65320 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:48:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65326 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:48:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65361 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:48:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65362 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:48:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65370 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-01 11:48:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65367 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:48:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65375 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:48:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65366 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:48:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65373 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:48:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65374 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:48:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65380 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-01 11:48:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65387 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-01 11:48:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65385 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:48:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65390 - "GET /api/v1/history/24 HTTP/1.1" 200
+2026-07-01 11:48:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65393 - "GET /api/v1/analysis/cycle-report?code=000007&report_type=full HTTP/1.1" 200
+2026-07-01 11:48:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65396 - "GET /api/v1/history/24/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:48:26 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65399 - "GET /api/v1/history/24/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:48:29 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65422 - "GET /api/v1/payment/deposit/config HTTP/1.1" 200
+2026-07-01 11:48:55 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49219 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:48:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49233 - "POST /api/v1/payment/deposit HTTP/1.1" 400
+2026-07-01 11:49:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49366 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:49:55 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49520 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:50:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49692 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:50:55 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49865 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:51:25 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50037 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:51:29 | INFO     | main.py:805 | 
+用户中断，程序退出
+2026-07-01 11:51:39 | INFO     | src/logging_config.py:153 | 日志系统初始化完成，日志目录: .
+2026-07-01 11:51:39 | INFO     | src/logging_config.py:154 | 常规日志: stock_analysis_20260701.log
+2026-07-01 11:51:39 | INFO     | src/logging_config.py:155 | 调试日志: stock_analysis_debug_20260701.log
+2026-07-01 11:51:39 | INFO     | main.py:745 | ============================================================
+2026-07-01 11:51:39 | INFO     | main.py:746 | A股自选股智能分析系统 启动
+2026-07-01 11:51:39 | INFO     | main.py:747 | 运行时间: 2026-07-01 11:51:39
+2026-07-01 11:51:39 | INFO     | main.py:748 | ============================================================
+2026-07-01 11:51:39 | INFO     | src/webui_frontend.py:230 | 前端构建检查结果: needs_install=False, needs_build=True, artifact=/Users/taurus/developer/outlets/gp/static/index.html
+2026-07-01 11:51:39 | INFO     | src/webui_frontend.py:111 | 执行前端命令: /Users/taurus/.nvm/versions/node/v24.13.1/bin/npm run build
+2026-07-01 11:51:42 | ERROR    | src/webui_frontend.py:117 | 前端命令执行失败（exit_code=2）: /Users/taurus/.nvm/versions/node/v24.13.1/bin/npm run build
+2026-07-01 11:51:42 | WARNING  | main.py:784 | 前端静态资源未就绪，继续启动 FastAPI 服务（Web 页面可能不可用）
+2026-07-01 11:51:42 | INFO     | main.py:623 | FastAPI 服务已启动: http://0.0.0.0:8000
+2026-07-01 11:51:42 | INFO     | main.py:796 | 模式: 仅 Web 服务
+2026-07-01 11:51:42 | INFO     | main.py:797 | Web 服务运行中: http://0.0.0.0:8000
+2026-07-01 11:51:42 | INFO     | main.py:798 | 通过 /api/v1/analysis/analyze 接口触发分析
+2026-07-01 11:51:42 | INFO     | main.py:799 | API 文档: http://0.0.0.0:8000/docs
+2026-07-01 11:51:42 | INFO     | main.py:800 | 按 Ctrl+C 退出...
+2026-07-01 11:51:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:92 | Started server process [78238]
+2026-07-01 11:51:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:48 | Waiting for application startup.
+2026-07-01 11:51:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:62 | Application startup complete.
+2026-07-01 11:51:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:224 | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-07-01 11:51:49 | INFO     | src/storage.py:1143 | 数据库初始化完成: postgresql+psycopg://dsa:dsa123@localhost:5435/daily_stock_analysis
+2026-07-01 11:51:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50205 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:51:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50207 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:51:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50211 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-01 11:51:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50210 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:51:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50218 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:51:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50209 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:51:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50217 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:51:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50216 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:51:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50227 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-01 11:51:49 | INFO     | src/services/task_queue.py:181 | [TaskQueue] 初始化完成，最大并发: 3
+2026-07-01 11:51:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50234 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-01 11:51:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50231 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:51:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50237 - "GET /api/v1/history/24 HTTP/1.1" 200
+2026-07-01 11:51:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50240 - "GET /api/v1/analysis/cycle-report?code=000007&report_type=full HTTP/1.1" 200
+2026-07-01 11:51:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50244 - "GET /api/v1/history/24/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:51:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50246 - "GET /api/v1/history/24/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:51:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50258 - "GET /api/v1/payment/deposit/config HTTP/1.1" 200
+2026-07-01 11:52:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50408 - "POST /api/v1/payment/deposit HTTP/1.1" 200
+2026-07-01 11:52:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50427 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:52:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50426 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:52:14 | INFO     | src/services/onchain_deposit_service.py:389 | On-chain deposit settled: user=2 wallet=0x7a5d8aca0f48862a44498dc44f57be5d39e2569c tx=0x62b4793eb8892f29f256ddf18d8b09777200731f7befdfb1c60fcec5d6066604 credits=1000
+2026-07-01 11:52:19 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50458 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:52:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50514 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:52:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50515 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-01 11:52:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50520 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-01 11:52:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50517 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:52:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50522 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-01 11:52:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50521 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:52:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50516 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:52:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50525 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-01 11:52:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50528 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:52:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50537 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-01 11:52:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50534 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:52:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50531 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:52:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50540 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-01 11:52:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50545 - "GET /api/v1/history/24 HTTP/1.1" 200
+2026-07-01 11:52:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50546 - "GET /api/v1/analysis/cycle-report?code=000007&report_type=full HTTP/1.1" 200
+2026-07-01 11:52:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50549 - "GET /api/v1/history/24/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:52:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50552 - "GET /api/v1/history/24/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:52:34 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50560 - "GET /api/v1/payment/history?page=1&page_size=8 HTTP/1.1" 200
+2026-07-01 11:52:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50567 - "GET /api/v1/payment/history?page=1&page_size=8 HTTP/1.1" 200
+2026-07-01 11:52:46 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50570 - "GET /api/v1/payment/history?page=7&page_size=8 HTTP/1.1" 200
+2026-07-01 11:52:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50574 - "GET /api/v1/payment/history?page=6&page_size=8 HTTP/1.1" 200
+2026-07-01 11:52:54 | INFO     | src/services/credit_service.py:126 | Credits added: user=2 amount=1000 operator=2 reason=daily_claim
+2026-07-01 11:52:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50582 - "POST /api/v1/payment/claim HTTP/1.1" 200
+2026-07-01 11:52:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50585 - "GET /api/v1/payment/history?page=1&page_size=8 HTTP/1.1" 200
+2026-07-01 11:52:54 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50588 - "GET /api/v1/payment/history?page=1&page_size=8 HTTP/1.1" 200
+2026-07-01 11:53:01 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50603 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:53:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50653 - "GET /api/v1/history/1 HTTP/1.1" 200
+2026-07-01 11:53:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50656 - "GET /api/v1/analysis/cycle-report?code=000001.SZ&report_type=full HTTP/1.1" 200
+2026-07-01 11:53:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50659 - "GET /api/v1/history/1/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:53:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50662 - "GET /api/v1/history/15 HTTP/1.1" 200
+2026-07-01 11:53:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50665 - "GET /api/v1/analysis/cycle-report?code=600000.SH&report_type=full HTTP/1.1" 200
+2026-07-01 11:53:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50668 - "GET /api/v1/history/15/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:53:11 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50674 - "GET /api/v1/history/21 HTTP/1.1" 200
+2026-07-01 11:53:11 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50679 - "GET /api/v1/analysis/cycle-report?code=601138&report_type=full HTTP/1.1" 200
+2026-07-01 11:53:11 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50682 - "GET /api/v1/history/21/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:53:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50685 - "GET /api/v1/history/22 HTTP/1.1" 200
+2026-07-01 11:53:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50688 - "GET /api/v1/analysis/cycle-report?code=000630&report_type=full HTTP/1.1" 200
+2026-07-01 11:53:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50691 - "GET /api/v1/history/22/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:53:14 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50695 - "GET /api/v1/history/23 HTTP/1.1" 200
+2026-07-01 11:53:14 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50698 - "GET /api/v1/analysis/cycle-report?code=002639&report_type=full HTTP/1.1" 200
+2026-07-01 11:53:14 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50701 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-07-01 11:53:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50736 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:54:01 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50806 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200
+2026-07-01 11:54:31 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50828 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-01&end_date=2026-07-01 HTTP/1.1" 200

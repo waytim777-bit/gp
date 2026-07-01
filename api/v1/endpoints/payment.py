@@ -41,6 +41,7 @@ class DepositConfigResponse(BaseModel):
     chain_id: int
     receiver_address: str
     token_address: str
+    contract_address: str
 
 
 class DepositRequest(BaseModel):

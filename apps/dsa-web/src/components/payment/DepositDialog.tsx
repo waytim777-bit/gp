@@ -18,6 +18,7 @@ import payCoinIcon from '../../assets/pay-coin.png';
 import payWechatIcon from '../../assets/pay-wechat.png';
 import { paymentApi, type DepositConfigResponse } from '../../api/payment';
 import { cn } from '../../utils/cn';
+import { depositAbi } from '../../utils/abi';
 
 type DepositDialogProps = {
   isOpen: boolean;
@@ -62,6 +63,8 @@ export const DepositDialog: React.FC<DepositDialogProps> = ({
   const [availableConnectors, setAvailableConnectors] = useState<Connector[]>([]);
   const [octAmount, setOctAmount] = useState('');
   const [submittedHash, setSubmittedHash] = useState<string | null>(null);
+  const [handledApprovalHash, setHandledApprovalHash] = useState<string | null>(null);
+  const [pendingApprovalAmount, setPendingApprovalAmount] = useState<bigint | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [depositConfig, setDepositConfig] = useState<DepositConfigResponse | null>(null);
   const [depositConfigError, setDepositConfigError] = useState<string | null>(null);
@@ -73,20 +76,37 @@ export const DepositDialog: React.FC<DepositDialogProps> = ({
   const { connect, isPending, variables, error, reset } = useConnect();
   const { switchChain, isPending: isSwitchingChain } = useSwitchChain();
   const {
-    data: txHash,
-    error: writeError,
-    isPending: isWriting,
-    reset: resetWrite,
-    writeContract,
+    data: approvalTxHash,
+    error: approvalWriteError,
+    isPending: isWritingApproval,
+    reset: resetApprovalWrite,
+    writeContract: writeApprovalContract,
+  } = useWriteContract();
+  const {
+    data: depositTxHash,
+    error: depositWriteError,
+    isPending: isWritingDeposit,
+    reset: resetDepositWrite,
+    writeContract: writeDepositContract,
   } = useWriteContract();
 
   const tokenAddress = depositConfig?.tokenAddress && isAddress(depositConfig.tokenAddress)
     ? depositConfig.tokenAddress
     : undefined;
-  const receiverAddress = depositConfig?.receiverAddress && isAddress(depositConfig.receiverAddress)
-    ? depositConfig.receiverAddress
+  const contractAddress = depositConfig?.contractAddress && isAddress(depositConfig.contractAddress)
+    ? depositConfig.contractAddress
     : undefined;
-  const hasDepositConfig = Boolean(tokenAddress && receiverAddress);
+  const hasDepositConfig = Boolean(tokenAddress && contractAddress);
+
+  const allowanceArgs = address && contractAddress ? [address, contractAddress] as const : undefined;
+  const { data: allowance, refetch: refetchAllowance } = useReadContract({
+    address: tokenAddress,
+    abi: erc20Abi,
+    functionName: 'allowance',
+    args: allowanceArgs,
+    chainId: sepolia.id,
+    query: { enabled: Boolean(tokenAddress && allowanceArgs) },
+  });
 
   const { data: tokenDecimals } = useReadContract({
     address: tokenAddress,
@@ -96,11 +116,26 @@ export const DepositDialog: React.FC<DepositDialogProps> = ({
     query: { enabled: Boolean(tokenAddress) },
   });
 
-  const { isLoading: isConfirming } = useWaitForTransactionReceipt({
-    hash: txHash,
+  const { isLoading: isConfirmingApproval, isSuccess: isApprovalConfirmed } = useWaitForTransactionReceipt({
+    hash: approvalTxHash,
     chainId: sepolia.id,
-    query: { enabled: Boolean(txHash) },
+    query: { enabled: Boolean(approvalTxHash) },
   });
+
+  const { isLoading: isConfirmingDeposit } = useWaitForTransactionReceipt({
+    hash: depositTxHash,
+    chainId: sepolia.id,
+    query: { enabled: Boolean(depositTxHash) },
+  });
+
+  const writeError = depositWriteError ?? approvalWriteError;
+  const isWriting = isWritingApproval || isWritingDeposit;
+  const isConfirming = isConfirmingApproval || isConfirmingDeposit;
+
+  const resetWrites = () => {
+    resetApprovalWrite();
+    resetDepositWrite();
+  };
 
   const visibleConnectors = useMemo(() => {
     const namedConnectors = availableConnectors.filter((connector) => connector.id !== 'injected');
@@ -164,16 +199,16 @@ export const DepositDialog: React.FC<DepositDialogProps> = ({
   }, [isOpen, selectedMethod]);
 
   useEffect(() => {
-    if (!txHash || !address || submittedHash === txHash) return;
+    if (!depositTxHash || !address || submittedHash === depositTxHash) return;
 
     let cancelled = false;
     setIsSubmittingHash(true);
     setSubmitError(null);
 
-    paymentApi.deposit(txHash, address)
+    paymentApi.deposit(depositTxHash, address)
       .then(() => {
         if (cancelled) return;
-        setSubmittedHash(txHash);
+        setSubmittedHash(depositTxHash);
         onClose(true);
       })
       .catch((err: unknown) => {
@@ -190,19 +225,21 @@ export const DepositDialog: React.FC<DepositDialogProps> = ({
     return () => {
       cancelled = true;
     };
-  }, [address, onClose, submittedHash, txHash]);
+  }, [address, depositTxHash, onClose, submittedHash]);
 
   useEffect(() => {
     if (isOpen) return;
     reset();
-    resetWrite();
+    resetWrites();
     setSelectedMethod('crypto');
     setOctAmount('');
     setSubmittedHash(null);
+    setHandledApprovalHash(null);
+    setPendingApprovalAmount(null);
     setSubmitError(null);
     setDepositConfigError(null);
     setIsSubmittingHash(false);
-  }, [isOpen, reset, resetWrite]);
+  }, [isOpen, reset, resetApprovalWrite, resetDepositWrite]);
 
   const handleOpenChange = (open: boolean) => {
     if (open) return;
@@ -212,7 +249,7 @@ export const DepositDialog: React.FC<DepositDialogProps> = ({
   const handleMethodSelect = (method: PaymentMethod) => {
     setSelectedMethod(method);
     reset();
-    resetWrite();
+    resetWrites();
     setSubmitError(null);
   };
 
@@ -228,24 +265,50 @@ export const DepositDialog: React.FC<DepositDialogProps> = ({
     ? parseUnits(octAmount, tokenDecimals ?? 18)
     : 0n;
   const isWrongChain = isConnected && chainId !== sepolia.id;
+  const hasEnoughAllowance = typeof allowance === 'bigint' && allowance >= parsedAmount;
   const actionDisabled =
     !hasDepositConfig || parsedAmount <= 0n || isWriting || isConfirming || isSubmittingHash || isSwitchingChain;
 
+  const submitDepositTransaction = (amount = parsedAmount) => {
+    if (!contractAddress || amount <= 0n) return;
+    writeDepositContract({
+      address: contractAddress,
+      abi: depositAbi,
+      functionName: 'deposit',
+      args: [amount],
+      chainId: sepolia.id,
+    });
+  };
+
   const handleDeposit = () => {
     setSubmitError(null);
-    if (!tokenAddress || !receiverAddress || parsedAmount <= 0n) return;
+    if (!tokenAddress || !contractAddress || parsedAmount <= 0n) return;
     if (isWrongChain) {
       switchChain({ chainId: sepolia.id });
       return;
     }
-    writeContract({
+    if (hasEnoughAllowance) {
+      submitDepositTransaction();
+      return;
+    }
+    setPendingApprovalAmount(parsedAmount);
+    writeApprovalContract({
       address: tokenAddress,
       abi: erc20Abi,
-      functionName: 'transfer',
-      args: [receiverAddress, parsedAmount],
+      functionName: 'approve',
+      args: [contractAddress, parsedAmount],
       chainId: sepolia.id,
     });
   };
+
+  useEffect(() => {
+    if (!isApprovalConfirmed || !approvalTxHash || handledApprovalHash === approvalTxHash || !pendingApprovalAmount) return;
+    setHandledApprovalHash(approvalTxHash);
+    void refetchAllowance();
+    submitDepositTransaction(pendingApprovalAmount);
+    setPendingApprovalAmount(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [approvalTxHash, handledApprovalHash, isApprovalConfirmed, pendingApprovalAmount]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -256,13 +319,19 @@ export const DepositDialog: React.FC<DepositDialogProps> = ({
 
   const actionText = isWrongChain
     ? '切换 Sepolia'
-    : isWriting
-      ? '确认钱包'
-      : isConfirming
-        ? '等待确认'
-        : isSubmittingHash
-          ? '入账中'
-          : '充值';
+    : isWritingApproval
+      ? '确认授权'
+      : isConfirmingApproval
+        ? '等待授权确认'
+        : isWritingDeposit
+          ? '确认充值'
+          : isConfirmingDeposit
+            ? '等待确认'
+            : isSubmittingHash
+              ? '入账中'
+              : hasEnoughAllowance
+                ? '充值'
+                : '授权 O 币';
 
   return (
     <Modal.Root isOpen={isOpen} onOpenChange={handleOpenChange}>
@@ -360,7 +429,7 @@ export const DepositDialog: React.FC<DepositDialogProps> = ({
 
                               {!hasDepositConfig ? (
                                 <div className="text-sm text-danger">
-                                  {depositConfigError ?? '未配置收款信息'}
+                                  {depositConfigError ?? '未配置充值合约信息'}
                                 </div>
                               ) : null}
                               {writeError ? <div className="text-sm text-danger">{writeError.message}</div> : null}

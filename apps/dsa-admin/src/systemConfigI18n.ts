@@ -150,7 +150,8 @@ const fieldTitleMap: Record<string, string> = {
 
   CREDITS_PER_DOLLAR: '每美元积分',
   CREDITS_PER_1K_TOKENS: '每千 Token 消耗积分',
-  DEPOSIT_RECEIVER_ADDRESS: '充值接收地址',
+  DEPOSIT_RECEIVER_ADDRESS: '充值接收地址（旧版）',
+  DEPOSIT_CONTRACT_ADDRESS: '充值合约地址',
   DEPOSIT_TOKEN_ADDRESS: '充值 Token 合约地址',
   DEPOSIT_RPC_URL: '充值 RPC 地址',
 }
