@@ -9,6 +9,7 @@ interface KeyLevelsSectionProps {
   keyLevelsAnalysis?: DimensionAnalysisReport;
   language?: ReportLanguage;
   compact?: boolean;
+  variant?: 'default' | 'fullReport';
 }
 
 const formatLevels = (values?: number[] | null): string => {
@@ -25,6 +26,7 @@ export const KeyLevelsSection: React.FC<KeyLevelsSectionProps> = ({
   keyLevels,
   language,
   compact = false,
+  variant = 'default',
 }) => {
   const reportLanguage = normalizeReportLanguage(language);
   const technical = keyLevels?.technical;
@@ -114,8 +116,52 @@ export const KeyLevelsSection: React.FC<KeyLevelsSectionProps> = ({
     </>
   );
 
+  if (variant === 'fullReport') {
+    const rows = [
+      { label: copy.support, value: formatLevels(supportLevels), highlight: true },
+      { label: copy.resistance, value: formatLevels(resistanceLevels) },
+      ...(chip ? [
+        { label: copy.chipCost, value: formatRatio(chip.avgCost ?? chip.avg_cost) },
+        {
+          label: copy.chipZone,
+          value: `${formatRatio(chip.cost90Low ?? chip.cost_90_low)} ~ ${formatRatio(chip.cost90High ?? chip.cost_90_high)}`,
+        },
+      ] : []),
+      ...(patternLabel ? [{ label: copy.pattern, value: patternLabel }] : []),
+    ];
+
+    return (
+      <Card className="rounded-xl border border-subtle text-left shadow-none">
+        <Card.Content className="space-y-5 py-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className="text-lg font-semibold leading-6 text-foreground">{copy.title}</h3>
+            {keyLevels?.source ? (
+              <span className="max-w-full truncate text-xs font-medium text-secondary-text">
+                {copy.source}: {keyLevels.source}
+              </span>
+            ) : null}
+          </div>
+
+          <div className="space-y-2 text-sm">
+            {rows.map((row) => (
+              <div
+                key={row.label}
+                className={`flex items-center justify-between gap-5 rounded px-3 py-3 ${
+                  row.highlight ? 'bg-default-100/70' : ''
+                }`}
+              >
+                <span className="shrink-0 text-muted-text">{row.label}</span>
+                <span className="min-w-0 break-words text-right font-semibold text-foreground">{row.value}</span>
+              </div>
+            ))}
+          </div>
+        </Card.Content>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="rounded-xl border-0 bg-surface text-left shadow-none">
+    <Card className="rounded-xl border-0 text-left shadow-none">
       <Card.Content className={compact ? 'space-y-4 py-4' : 'space-y-5 py-5'}>
         {content}
       </Card.Content>

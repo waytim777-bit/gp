@@ -31,7 +31,9 @@
   --popover: 0 0% 100%;
   --popover-foreground: 228 35% 12%;
   /* --primary: 193 100% 43%; */
-  --primary: 248 70% 43%;  
+  /* --primary: 248 70% 43%;   */
+  --primary: 190 100% 38%;
+  /* --primary-foreground: 228 35% 8%; */
   --primary-foreground: 216 33% 97%;
   --secondary: 214 32% 91%;
   --secondary-foreground: 228 35% 16%;
@@ -269,7 +271,7 @@
   /* Login Page Tokens (Light) */
   --login-bg-main: hsl(214 34% 96%);
   --login-bg-card: hsl(210 43% 92% / 0.78);
-  --login-border-card: hsl(221 28% 28% / 0.58);
+  --login-border-card: hsl(220 16% 90% / 0.85);
   --login-border-input: hsl(201 56% 46% / 0.7);
   --login-border-focus: hsl(var(--primary) / 0.48);
   --login-error-text: hsl(var(--destructive));
@@ -291,7 +293,17 @@
   --login-button-text: hsl(210 40% 98%);
   --login-label-text: hsl(223 36% 14%);
   --login-hint-text: hsl(220 14% 34% / 0.9);
-  --login-input-icon: hsl(205 66% 38% / 0.86);
+  --login-input-surface: hsl(0 0% 100% / 0.88);
+  --login-input-border: hsl(220 16% 90% / 0.72);
+  --login-input-border-hover: hsl(190 100% 38% / 0.28);
+  --login-input-border-focus: hsl(190 100% 38% / 0.52);
+  --login-input-focus-ring: 0 0 0 4px hsl(190 100% 38% / 0.12);
+  --login-input-text: hsl(223 36% 14%);
+  --login-input-placeholder: hsl(220 11% 52%);
+  --login-input-caret: hsl(190 100% 38%);
+  --login-input-fill: hsl(223 36% 14%);
+  --login-input-shadow: 0 12px 30px hsl(220 40% 20% / 0.08);
+  --login-input-icon: hsl(220 11% 52%);
   --login-input-toggle-bg: hsl(210 44% 96% / 0.92);
   --login-input-toggle-border: hsl(208 42% 46% / 0.32);
   --login-input-toggle-text: hsl(220 24% 22% / 0.82);
@@ -563,7 +575,17 @@
   --login-button-text: hsl(210 33% 98%);
   --login-label-text: hsl(0 0% 100%);
   --login-hint-text: hsl(215 20% 65%);
-  --login-input-icon: hsl(var(--primary) / 0.88);
+  --login-input-surface: hsl(230 14% 26% / 0.95);
+  --login-input-border: transparent;
+  --login-input-border-hover: transparent;
+  --login-input-border-focus: hsl(190 100% 38% / 0.58);
+  --login-input-focus-ring: 0 0 0 4px hsl(190 100% 38% / 0.14);
+  --login-input-text: hsl(0 0% 100%);
+  --login-input-placeholder: hsl(225 12% 54%);
+  --login-input-caret: hsl(190 100% 38%);
+  --login-input-fill: hsl(0 0% 100%);
+  --login-input-shadow: none;
+  --login-input-icon: hsl(225 12% 54%);
   --login-input-toggle-bg: hsl(223 28% 14% / 0.92);
   --login-input-toggle-border: hsl(0 0% 100% / 0.10);
   --login-input-toggle-text: hsl(var(--primary) / 0.82);

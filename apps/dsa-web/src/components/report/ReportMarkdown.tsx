@@ -1,13 +1,14 @@
 import type React from 'react';
 import { useEffect, useState, useCallback } from 'react';
+import { Drawer } from '@heroui/react';
 import { FileDown, Share2 } from 'lucide-react';
 import { historyApi } from '../../api/history';
 import { shareReportLink } from '../../api/publicReports';
-import { Drawer } from '../common/Drawer';
 import { Tooltip } from '../common/Tooltip';
 import { getReportText, normalizeReportLanguage } from '../../utils/reportLanguage';
 import type { ReportDetails, ReportLanguage } from '../../types/analysis';
 import { buildReportPdfFilename, downloadReportPdf } from '../../utils/downloadReportPdf';
+import reportFullIcon from '../../assets/reportfullicon.png';
 import { ReportFullContent } from './ReportFullContent';
 
 interface ReportMarkdownProps {
@@ -30,6 +31,7 @@ export const ReportMarkdown: React.FC<ReportMarkdownProps> = ({
   const normalizedLanguage = normalizeReportLanguage(reportLanguage);
   const text = getReportText(normalizedLanguage);
   const loadReportFailedText = text.loadReportFailed;
+  const downloadPdfLabel = normalizedLanguage === 'zh' ? '下载PDF' : text.downloadPdf;
   const [content, setContent] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -123,107 +125,112 @@ export const ReportMarkdown: React.FC<ReportMarkdownProps> = ({
   }, [recordId, loadReportFailedText]);
 
   return (
-    <Drawer
-      isOpen={isOpen}
-      onClose={handleClose}
-      width="max-w-3xl"
-      zIndex={100}
-      backdropClassName="bg-background/56 backdrop-blur-[2px]"
-    >
-      <div className="mb-4 flex items-center justify-between gap-3 print:hidden">
-        <div className="flex flex-1 items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--home-action-report-bg)] text-[var(--home-action-report-text)]">
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-          </div>
-          <div>
-            <h2 className="text-base font-semibold text-foreground">{stockName || stockCode}</h2>
-            <p className="text-xs text-muted-text">{text.fullReport}</p>
-          </div>
-        </div>
+    <Drawer.Root isOpen={isOpen} onOpenChange={(open) => { if (!open) handleClose(); }}>
+      <Drawer.Backdrop variant="blur" className="z-[100]">
+        <Drawer.Content placement="right">
+          <Drawer.Dialog className="ml-auto flex h-full w-full max-w-3xl flex-col bg-card text-left shadow-2xl outline-none">
+            <Drawer.Body className="flex-1 overflow-y-auto p-6">
+              <div className="mb-6 flex flex-col gap-2 print:hidden">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex min-w-0 flex-1 items-center gap-3">
+                    <img
+                      src={reportFullIcon}
+                      alt=""
+                      className="h-12 w-12 shrink-0 rounded-xl"
+                      aria-hidden="true"
+                    />
+                    <h2 className="truncate text-[32px] font-semibold leading-none text-foreground">
+                      {text.fullReport}
+                    </h2>
+                  </div>
 
-        <div className="flex items-center gap-2">
-          <Tooltip content={isSharing ? text.sharingReport : text.shareReport}>
-            <span className="inline-flex">
-              <button
-                type="button"
-                onClick={() => { void handleShare(); }}
-                disabled={isLoading || !content || isSharing}
-                className="home-surface-button flex h-10 w-10 items-center justify-center rounded-lg text-secondary-text hover:text-foreground disabled:opacity-50"
-                aria-label={isSharing ? text.sharingReport : text.shareReport}
-              >
-                {isSharing ? (
-                  <div className="home-spinner h-5 w-5 animate-spin border-2" />
-                ) : (
-                  <Share2 className="h-5 w-5" aria-hidden="true" />
-                )}
-              </button>
-            </span>
-          </Tooltip>
+                  <div className="flex shrink-0 items-center gap-4">
+                    <div className="flex flex-col items-center gap-1.5">
+                      <Tooltip content={isSharing ? text.sharingReport : text.shareReport}>
+                        <span className="inline-flex">
+                          <button
+                            type="button"
+                            onClick={() => { void handleShare(); }}
+                            disabled={isLoading || !content || isSharing}
+                            className="flex h-11 w-11 items-center justify-center rounded-xl border border-border/70 bg-transparent text-secondary-text transition-colors hover:border-border hover:text-foreground disabled:opacity-50"
+                            aria-label={isSharing ? text.sharingReport : text.shareReport}
+                          >
+                            {isSharing ? (
+                              <div className="home-spinner h-5 w-5 animate-spin border-2" />
+                            ) : (
+                              <Share2 className="h-6 w-6" aria-hidden="true" />
+                            )}
+                          </button>
+                        </span>
+                      </Tooltip>
+                      <span className="text-xs font-semibold leading-none text-secondary-text">
+                        {text.shareReport}
+                      </span>
+                    </div>
 
-          <Tooltip content={isDownloadingPdf ? text.downloadingPdf : text.downloadPdf}>
-            <span className="inline-flex">
-              <button
-                type="button"
-                onClick={() => { void handleDownloadPdf(); }}
-                disabled={isLoading || !content || isDownloadingPdf}
-                className="home-surface-button flex h-10 w-10 items-center justify-center rounded-lg text-secondary-text hover:text-foreground disabled:opacity-50"
-                aria-label={isDownloadingPdf ? text.downloadingPdf : text.downloadPdf}
-              >
-                {isDownloadingPdf ? (
-                  <div className="home-spinner h-5 w-5 animate-spin border-2" />
-                ) : (
-                  <FileDown className="h-5 w-5" aria-hidden="true" />
-                )}
-              </button>
-            </span>
-          </Tooltip>
-        </div>
-      </div>
+                    <div className="flex flex-col items-center gap-1.5">
+                      <Tooltip content={isDownloadingPdf ? text.downloadingPdf : text.downloadPdf}>
+                        <span className="inline-flex">
+                          <button
+                            type="button"
+                            onClick={() => { void handleDownloadPdf(); }}
+                            disabled={isLoading || !content || isDownloadingPdf}
+                            className="flex h-11 w-11 items-center justify-center rounded-xl border border-border/70 bg-transparent text-secondary-text transition-colors hover:border-border hover:text-foreground disabled:opacity-50"
+                            aria-label={isDownloadingPdf ? text.downloadingPdf : text.downloadPdf}
+                          >
+                            {isDownloadingPdf ? (
+                              <div className="home-spinner h-5 w-5 animate-spin border-2" />
+                            ) : (
+                              <FileDown className="h-6 w-6" aria-hidden="true" />
+                            )}
+                          </button>
+                        </span>
+                      </Tooltip>
+                      <span className="text-xs font-semibold leading-none text-secondary-text">
+                        {downloadPdfLabel}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="home-divider border-t" />
+              </div>
 
-      {shareMessage ? (
-        <p className="mb-3 whitespace-pre-wrap break-all text-sm text-success print:hidden">{shareMessage}</p>
-      ) : null}
-      {pdfError ? (
-        <p className="mb-3 text-sm text-danger print:hidden">{pdfError}</p>
-      ) : null}
+              {shareMessage ? (
+                <p className="mb-3 whitespace-pre-wrap break-all text-sm text-success print:hidden">{shareMessage}</p>
+              ) : null}
+              {pdfError ? (
+                <p className="mb-3 text-sm text-danger print:hidden">{pdfError}</p>
+              ) : null}
 
-      {isLoading ? (
-        <div className="flex h-64 flex-col items-center justify-center">
-          <div className="home-spinner h-10 w-10 animate-spin border-[3px]" />
-          <p className="mt-4 text-sm text-secondary-text">{text.loadingReport}</p>
-        </div>
-      ) : error ? (
-        <div className="flex h-64 flex-col items-center justify-center">
-          <p className="text-sm text-danger">{error}</p>
-          <button
-            type="button"
-            onClick={handleClose}
-            className="home-surface-button mt-4 rounded-lg px-4 py-2 text-sm text-secondary-text"
-          >
-            {text.dismiss}
-          </button>
-        </div>
-      ) : (
-        <ReportFullContent
-          stockName={stockName}
-          stockCode={stockCode}
-          markdown={content}
-          details={details}
-          language={normalizedLanguage}
-        />
-      )}
-
-      <div className="home-divider mt-6 flex justify-end border-t pt-4 print:hidden">
-        <button
-          type="button"
-          onClick={handleClose}
-          className="home-surface-button rounded-lg px-4 py-2 text-sm text-secondary-text hover:text-foreground"
-        >
-          {text.dismiss}
-        </button>
-      </div>
-    </Drawer>
+              {isLoading ? (
+                <div className="flex h-64 flex-col items-center justify-center">
+                  <div className="home-spinner h-10 w-10 animate-spin border-[3px]" />
+                  <p className="mt-4 text-sm text-secondary-text">{text.loadingReport}</p>
+                </div>
+              ) : error ? (
+                <div className="flex h-64 flex-col items-center justify-center">
+                  <p className="text-sm text-danger">{error}</p>
+                  <button
+                    type="button"
+                    onClick={handleClose}
+                    className="home-surface-button mt-4 rounded-lg px-4 py-2 text-sm text-secondary-text"
+                  >
+                    {text.dismiss}
+                  </button>
+                </div>
+              ) : (
+                <ReportFullContent
+                  stockName={stockName}
+                  stockCode={stockCode}
+                  markdown={content}
+                  details={details}
+                  language={normalizedLanguage}
+                />
+              )}
+            </Drawer.Body>
+          </Drawer.Dialog>
+        </Drawer.Content>
+      </Drawer.Backdrop>
+    </Drawer.Root>
   );
 };

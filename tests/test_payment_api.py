@@ -7,6 +7,7 @@ import os
 import sys
 import tempfile
 import unittest
+from datetime import datetime, timedelta
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -21,7 +22,7 @@ except ModuleNotFoundError:
 import src.auth as auth
 from api.app import create_app
 from src.config import Config
-from src.storage import DatabaseManager
+from src.storage import CreditDeduction, CreditTransaction, DatabaseManager
 
 
 def _reset_auth_globals() -> None:
@@ -100,7 +101,75 @@ class PaymentApiAuthTestCase(unittest.TestCase):
         history_response = self.client.get("/api/v1/payment/history")
 
         self.assertEqual(history_response.status_code, 200)
-        self.assertEqual(history_response.json(), {"deposits": [], "deductions": []})
+        self.assertEqual(
+            history_response.json(),
+            {
+                "deposits": [],
+                "deductions": [],
+                "items": [],
+                "total": 0,
+                "page": 1,
+                "page_size": 20,
+                "total_pages": 0,
+            },
+        )
+
+    def test_payment_history_paginates_combined_transactions(self) -> None:
+        register_response = self.client.post(
+            "/api/v1/auth/register",
+            json={
+                "username": "history-user",
+                "password": "password123",
+                "passwordConfirm": "password123",
+            },
+        )
+        self.assertEqual(register_response.status_code, 200)
+        status_response = self.client.get("/api/v1/auth/status")
+        user_id = status_response.json()["currentUser"]["id"]
+
+        now = datetime(2026, 1, 1, 12, 0, 0)
+        db = DatabaseManager.get_instance()
+        with db.session_scope() as session:
+            session.add(
+                CreditTransaction(
+                    user_id=user_id,
+                    credit_amount=100,
+                    reason="oldest-deposit",
+                    created_at=now,
+                )
+            )
+            session.add(
+                CreditDeduction(
+                    user_id=user_id,
+                    call_type="analysis",
+                    model="test-model",
+                    total_tokens=1000,
+                    credits_spent=10,
+                    balance_after=90,
+                    created_at=now + timedelta(minutes=1),
+                )
+            )
+            session.add(
+                CreditTransaction(
+                    user_id=user_id,
+                    credit_amount=200,
+                    reason="newer-deposit",
+                    created_at=now + timedelta(minutes=2),
+                )
+            )
+
+        response = self.client.get("/api/v1/payment/history?page=2&page_size=2")
+
+        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        self.assertEqual(body["total"], 3)
+        self.assertEqual(body["page"], 2)
+        self.assertEqual(body["page_size"], 2)
+        self.assertEqual(body["total_pages"], 2)
+        self.assertEqual(len(body["items"]), 1)
+        self.assertEqual(body["items"][0]["kind"], "deposit")
+        self.assertEqual(body["items"][0]["reason"], "oldest-deposit")
+        self.assertEqual(body["items"][0]["credit_amount"], 100)
 
 
 if __name__ == "__main__":

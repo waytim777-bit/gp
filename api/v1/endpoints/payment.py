@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from api.deps import get_current_user
@@ -17,7 +17,7 @@ from src.services.onchain_deposit_service import (
 )
 from src.storage import DatabaseManager, CreditTransaction, CreditDeduction, UserCreditBalance
 from src.user_context import CurrentUser
-from sqlalchemy import select, desc
+from sqlalchemy import func, literal, select, union_all
 
 router = APIRouter()
 
@@ -75,9 +75,30 @@ class DeductionHistoryItem(BaseModel):
     created_at: str
 
 
+class PaymentHistoryItem(BaseModel):
+    id: int
+    kind: str
+    detail: str
+    transaction_type: str
+    credit_amount: int
+    created_at: str
+    operator_user_id: int | None = None
+    reason: str | None = None
+    call_type: str | None = None
+    model: str | None = None
+    total_tokens: int | None = None
+    credits_spent: int | None = None
+    balance_after: int | None = None
+
+
 class HistoryResponse(BaseModel):
     deposits: list[DepositHistoryItem]
     deductions: list[DeductionHistoryItem]
+    items: list[PaymentHistoryItem] = Field(default_factory=list)
+    total: int = 0
+    page: int = 1
+    page_size: int = 20
+    total_pages: int = 0
 
 
 class ClaimResponse(BaseModel):
@@ -197,24 +218,88 @@ def deposit_credits(
 
 @router.get("/history", response_model=HistoryResponse)
 def get_history(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
     current_user: CurrentUser = Depends(get_current_user),
     db_manager: DatabaseManager = Depends(get_db_manager),
 ):
     """Return deposit and deduction history for the current user."""
+    offset = (page - 1) * page_size
+
     with db_manager.get_session() as session:
-        deposits = session.execute(
+        deposits_query = select(
+            CreditTransaction.id.label("id"),
+            literal("deposit").label("kind"),
+            CreditTransaction.reason.label("detail"),
+            literal("充值").label("transaction_type"),
+            CreditTransaction.credit_amount.label("credit_amount"),
+            CreditTransaction.created_at.label("created_at"),
+            CreditTransaction.operator_user_id.label("operator_user_id"),
+            CreditTransaction.reason.label("reason"),
+            literal(None).label("call_type"),
+            literal(None).label("model"),
+            literal(None).label("total_tokens"),
+            literal(None).label("credits_spent"),
+            literal(None).label("balance_after"),
+        ).where(CreditTransaction.user_id == current_user.id)
+
+        deductions_query = select(
+            CreditDeduction.id.label("id"),
+            literal("deduction").label("kind"),
+            CreditDeduction.call_type.label("detail"),
+            literal("消费").label("transaction_type"),
+            (-CreditDeduction.credits_spent).label("credit_amount"),
+            CreditDeduction.created_at.label("created_at"),
+            literal(None).label("operator_user_id"),
+            literal(None).label("reason"),
+            CreditDeduction.call_type.label("call_type"),
+            CreditDeduction.model.label("model"),
+            CreditDeduction.total_tokens.label("total_tokens"),
+            CreditDeduction.credits_spent.label("credits_spent"),
+            CreditDeduction.balance_after.label("balance_after"),
+        ).where(CreditDeduction.user_id == current_user.id)
+
+        history_rows = union_all(deposits_query, deductions_query).subquery()
+        total = int(session.execute(select(func.count()).select_from(history_rows)).scalar_one() or 0)
+        rows = session.execute(
+            select(history_rows)
+            .order_by(history_rows.c.created_at.desc(), history_rows.c.id.desc())
+            .offset(offset)
+            .limit(page_size)
+        ).mappings().all()
+
+        legacy_deposits = session.execute(
             select(CreditTransaction)
             .where(CreditTransaction.user_id == current_user.id)
-            .order_by(desc(CreditTransaction.created_at))
+            .order_by(CreditTransaction.created_at.desc())
             .limit(50)
         ).scalars().all()
 
-        deductions = session.execute(
+        legacy_deductions = session.execute(
             select(CreditDeduction)
             .where(CreditDeduction.user_id == current_user.id)
-            .order_by(desc(CreditDeduction.created_at))
+            .order_by(CreditDeduction.created_at.desc())
             .limit(50)
         ).scalars().all()
+
+    items = [
+        PaymentHistoryItem(
+            id=int(row["id"]),
+            kind=str(row["kind"]),
+            detail=str(row["detail"] or ("积分充值" if row["kind"] == "deposit" else "")),
+            transaction_type=str(row["transaction_type"]),
+            credit_amount=int(row["credit_amount"] or 0),
+            created_at=row["created_at"].isoformat() if row["created_at"] else "",
+            operator_user_id=row["operator_user_id"],
+            reason=row["reason"],
+            call_type=row["call_type"],
+            model=row["model"],
+            total_tokens=row["total_tokens"],
+            credits_spent=row["credits_spent"],
+            balance_after=row["balance_after"],
+        )
+        for row in rows
+    ]
 
     return HistoryResponse(
         deposits=[
@@ -225,7 +310,7 @@ def get_history(
                 reason=d.reason,
                 created_at=d.created_at.isoformat() if d.created_at else "",
             )
-            for d in deposits
+            for d in legacy_deposits
         ],
         deductions=[
             DeductionHistoryItem(
@@ -237,8 +322,13 @@ def get_history(
                 balance_after=d.balance_after,
                 created_at=d.created_at.isoformat() if d.created_at else "",
             )
-            for d in deductions
+            for d in legacy_deductions
         ],
+        items=items,
+        total=total,
+        page=page,
+        page_size=page_size,
+        total_pages=(total + page_size - 1) // page_size if total > 0 else 0,
     )
 
 

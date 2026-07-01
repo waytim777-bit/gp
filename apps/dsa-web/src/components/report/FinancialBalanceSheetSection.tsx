@@ -15,6 +15,7 @@ interface FinancialBalanceSheetSectionProps {
   financialFundamentalsAnalysis?: DimensionAnalysisReport;
   language?: ReportLanguage;
   compact?: boolean;
+  variant?: 'default' | 'fullReport';
 }
 
 type BalanceSheetRowPayload = BalanceSheetRow & {
@@ -73,6 +74,7 @@ export const FinancialBalanceSheetSection: React.FC<FinancialBalanceSheetSection
   financialReport,
   language,
   compact = false,
+  variant = 'default',
 }) => {
   const reportLanguage = normalizeReportLanguage(language);
   const rows = getRows(financialReport);
@@ -190,8 +192,83 @@ export const FinancialBalanceSheetSection: React.FC<FinancialBalanceSheetSection
     </>
   );
 
+  if (variant === 'fullReport') {
+    return (
+      <Card className="rounded-xl border border-subtle text-left shadow-none">
+        <Card.Content className="space-y-4 py-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className="text-lg font-semibold leading-6 text-foreground">{copy.title}</h3>
+            {report?.source ? (
+              <span className="max-w-full truncate text-xs font-medium text-secondary-text">
+                {copy.source}: {report.source}
+              </span>
+            ) : null}
+          </div>
+
+          {latestRatios ? (
+            <div className="space-y-1 text-xs font-semibold leading-5">
+              <p className="text-secondary-text">{copy.ratios}</p>
+              <div className="flex flex-wrap gap-x-7 gap-y-0.5 text-foreground">
+                {latestRatios.debtToAssets != null ? (
+                  <span>{copy.debtToAssets}:{formatRatio(latestRatios.debtToAssets, '%')}</span>
+                ) : null}
+                {latestRatios.currentRatio != null ? (
+                  <span>{copy.currentRatio}:{formatRatio(latestRatios.currentRatio)}</span>
+                ) : null}
+                {latestRatios.quickRatio != null ? (
+                  <span>{copy.quickRatio}:{formatRatio(latestRatios.quickRatio)}</span>
+                ) : null}
+                {latestRatios.invTurn != null ? (
+                  <span>{copy.invTurn}:{formatRatio(latestRatios.invTurn)}</span>
+                ) : null}
+                {latestRatios.arTurn != null ? (
+                  <span>{copy.arTurn}:{formatRatio(latestRatios.arTurn)}</span>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
+
+          {rows.length > 0 ? (
+            <div className="overflow-x-auto pb-0.5">
+              <table className="min-w-[560px] w-full table-fixed text-left">
+                <thead>
+                  <tr className="text-[10px] font-medium leading-none text-secondary-text">
+                    <th className="w-[18%] pb-3.5 pr-4">{copy.period}</th>
+                    <th className="w-[26%] pb-3.5 pr-4">{copy.assetsAndLiab}</th>
+                    <th className="w-[16%] pb-3.5 pr-4 text-center">{copy.debtRatio}</th>
+                    <th className="w-[25%] pb-3.5 pr-4">{copy.cashAndInventory}</th>
+                    <th className="w-[15%] pb-3.5 text-right">{copy.interestDebt}</th>
+                  </tr>
+                </thead>
+                <tbody className="text-xs font-semibold leading-none text-foreground">
+                  {rows.slice(0, 7).map((row, index) => (
+                    <tr key={`${row.period}-${index}`}>
+                      <td className="py-2.5 pr-4 font-mono">{row.period}</td>
+                      <td className="py-2.5 pr-4 font-mono">
+                        {formatAmountBillion(row.totalAssets)}/{formatAmountBillion(row.totalLiab)}
+                      </td>
+                      <td className="py-2.5 pr-4 text-center font-mono">
+                        {formatRatio(row.debtRatio, '%')}
+                      </td>
+                      <td className="py-2.5 pr-4 font-mono">
+                        {formatAmountBillion(row.moneyCap)}/{formatAmountBillion(row.inventories)}
+                      </td>
+                      <td className="py-2.5 text-right font-mono text-success">
+                        {formatAmountBillion(row.interestBearingDebt)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+        </Card.Content>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="h-full rounded-xl border-0 bg-surface text-left shadow-none">
+    <Card className="h-full rounded-xl border-0 text-left shadow-none">
       <Card.Content className={`space-y-5 ${compact ? 'py-4' : 'py-5'}`}>
         {content}
       </Card.Content>

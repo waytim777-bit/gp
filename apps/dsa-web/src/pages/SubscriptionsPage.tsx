@@ -269,7 +269,7 @@ const SubscriptionsPage: React.FC = () => {
                   <button
                     type="button"
                     key={item.id}
-                    className="grid w-full grid-cols-[minmax(0,1fr)_86px] gap-x-3 gap-y-3 rounded-[12px] bg-transparent px-3 py-3 text-left transition-colors hover:bg-[#262936] focus-visible:bg-[#262936] focus-visible:outline-none"
+                    className="grid w-full grid-cols-[minmax(0,1fr)_86px] gap-x-3 gap-y-3 rounded-[12px] bg-transparent px-3 py-3 text-left transition-colors hover:bg-[var(--bg-hover)] focus-visible:bg-[var(--bg-hover)] focus-visible:outline-none"
                     onClick={() => setSelectedSubscription(item)}
                   >
                     <p className="min-w-0 truncate text-[16px] font-semibold leading-none text-foreground">
@@ -432,7 +432,7 @@ const SubscriptionsPage: React.FC = () => {
                     value={notificationEmail}
                     onChange={(event) => setNotificationEmail(event.target.value)}
                     placeholder="your@email.com"
-                    className="mt-3 h-10 w-full rounded-[12px] border-0 bg-[#262936] px-3 text-[14px] font-medium text-foreground outline-none transition-colors placeholder:text-[#697087] focus:ring-2 focus:ring-[#00a1c2]/40"
+                    className="mt-3 h-10 w-full rounded-[12px] border-0 bg-[var(--bg-hover)] px-3 text-[14px] font-medium text-foreground outline-none transition-colors placeholder:text-[#697087] focus:ring-2 focus:ring-[#00a1c2]/40"
                   />
                 </label>
 
@@ -458,7 +458,7 @@ const SubscriptionsPage: React.FC = () => {
                     onChange={(event) => setWebhookUrls(event.target.value)}
                     placeholder="请输入第三方推送链接"
                     rows={2}
-                    className="mt-3 min-h-10 w-full resize-none rounded-[12px] border-0 bg-[#262936] px-3 py-3 text-[14px] font-medium text-foreground outline-none transition-colors placeholder:text-[#697087] focus:ring-2 focus:ring-[#00a1c2]/40"
+                    className="mt-3 min-h-10 w-full resize-none rounded-[12px] border-0 bg-[var(--bg-hover)] px-3 py-3 text-[14px] font-medium text-foreground outline-none transition-colors placeholder:text-[#697087] focus:ring-2 focus:ring-[#00a1c2]/40"
                   />
                 </label>
 
@@ -470,7 +470,7 @@ const SubscriptionsPage: React.FC = () => {
                       value={webhookBearerToken}
                       onChange={(event) => setWebhookBearerToken(event.target.value)}
                       placeholder={profile?.hasWebhookBearerToken ? '已保存，留空则不修改' : '请输入'}
-                      className="mt-3 h-10 w-full rounded-[12px] border-0 bg-[#262936] px-3 text-[14px] font-medium text-foreground outline-none transition-colors placeholder:text-[#697087] focus:ring-2 focus:ring-[#00a1c2]/40"
+                      className="mt-3 h-10 w-full rounded-[12px] border-0 bg-[var(--bg-hover)] px-3 text-[14px] font-medium text-foreground outline-none transition-colors placeholder:text-[#697087] focus:ring-2 focus:ring-[#00a1c2]/40"
                     />
                   </label>
                 ) : null}
@@ -554,8 +554,8 @@ const SubscriptionsPage: React.FC = () => {
                               key={option.days}
                               className={`flex h-10 items-center justify-center rounded-[12px] border px-2 text-[14px] font-medium leading-none ${
                                 selected
-                                  ? 'border-[#00a1c2] bg-[#262936] text-[#00c8f5]'
-                                  : 'border-transparent bg-[#262936] text-foreground'
+                                  ? 'border-[#00a1c2] bg-[var(--bg-hover)] text-[#00c8f5]'
+                                  : 'border-transparent bg-[var(--bg-hover)] text-foreground'
                               }`}
                             >
                               {option.label}

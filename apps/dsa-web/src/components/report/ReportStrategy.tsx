@@ -21,7 +21,7 @@ const StrategyItem: React.FC<StrategyItemProps> = ({
     <div className="flex min-w-0 flex-col gap-2">
       <span className="text-sm font-bold leading-5 text-[#5f6780]">{label}</span>
       <span
-        className="whitespace-pre-wrap break-words text-sm font-bold leading-5 text-white"
+        className="whitespace-pre-wrap break-words text-sm font-bold leading-5 text-foreground"
         style={!value ? { opacity: 0.4 } : undefined}
       >
         {value || '—'}
@@ -61,9 +61,9 @@ export const ReportStrategy: React.FC<ReportStrategyProps> = ({ strategy, langua
   ];
 
   return (
-    <Card className="rounded-xl border-0 bg-[#1c1f26] shadow-none">
+    <Card className="rounded-xl border-0 shadow-none">
       <Card.Content className="space-y-5">
-        <h3 className="text-xl font-bold leading-7 text-white">{text.sniperLevels}</h3>
+        <h3 className="text-xl font-bold leading-7 text-foreground">{text.sniperLevels}</h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {strategyItems.map((item) => (
             <StrategyItem key={item.label} {...item} />

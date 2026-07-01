@@ -160,7 +160,7 @@ export const CapitalFlowSection: React.FC<CapitalFlowSectionProps> = ({
   }
 
   return (
-    <Card className="border border-subtle bg-surface/50 p-4 shadow-none">
+    <Card className="border border-subtle p-4 shadow-none">
       <div className="space-y-4">{content}</div>
     </Card>
   );

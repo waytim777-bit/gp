@@ -50,9 +50,35 @@ export type DeductionHistoryItem = {
   createdAt: string;
 };
 
+export type PaymentHistoryItem = {
+  id: number;
+  kind: 'deposit' | 'deduction';
+  detail: string;
+  transactionType: string;
+  creditAmount: number;
+  createdAt: string;
+  operatorUserId?: number | null;
+  reason?: string | null;
+  callType?: string | null;
+  model?: string | null;
+  totalTokens?: number | null;
+  creditsSpent?: number | null;
+  balanceAfter?: number | null;
+};
+
 export type HistoryResponse = {
   deposits: DepositHistoryItem[];
   deductions: DeductionHistoryItem[];
+  items: PaymentHistoryItem[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+};
+
+export type HistoryQuery = {
+  page?: number;
+  pageSize?: number;
 };
 
 export const paymentApi = {
@@ -79,8 +105,13 @@ export const paymentApi = {
     return toCamelCase<DepositResponse>(data);
   },
 
-  async getHistory(): Promise<HistoryResponse> {
-    const { data } = await apiClient.get<Record<string, unknown>>('/api/v1/payment/history');
+  async getHistory(query: HistoryQuery = {}): Promise<HistoryResponse> {
+    const { data } = await apiClient.get<Record<string, unknown>>('/api/v1/payment/history', {
+      params: {
+        page: query.page,
+        page_size: query.pageSize,
+      },
+    });
     return toCamelCase<HistoryResponse>(data);
   },
 

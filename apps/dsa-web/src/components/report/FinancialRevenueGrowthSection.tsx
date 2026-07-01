@@ -188,8 +188,8 @@ export const FinancialRevenueGrowthSection: React.FC<FinancialRevenueGrowthSecti
 
   if (variant === 'fullReport') {
     return (
-      <Card className="rounded-xl border border-subtle bg-surface/50 text-left shadow-none">
-        <Card.Content className="space-y-5 p-5">
+      <Card className="rounded-xl border border-subtle text-left shadow-none">
+        <Card.Content className="space-y-5 py-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h3 className="text-lg font-semibold leading-6 text-foreground">{copy.title}</h3>
             {financialReport?.revenueGrowth?.source ? (
@@ -301,7 +301,7 @@ export const FinancialRevenueGrowthSection: React.FC<FinancialRevenueGrowthSecti
   }
 
   return (
-    <Card className="h-full rounded-xl border-0 bg-surface text-left shadow-none">
+    <Card className="h-full rounded-xl border-0 text-left shadow-none">
       <Card.Content className={`space-y-4 ${compact ? 'py-4' : 'py-5'}`}>
         {content}
       </Card.Content>

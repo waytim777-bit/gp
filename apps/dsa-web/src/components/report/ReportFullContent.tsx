@@ -138,10 +138,10 @@ export const ReportFullContent: React.FC<ReportFullContentProps> = ({
   const capitalFlow = details?.capitalFlow ?? details?.capital_flow;
   const capitalFlowAnalysis = details?.capitalFlowAnalysis ?? details?.capital_flow_analysis;
   const modelOpinions = details?.modelOpinions ?? details?.model_opinions;
-  const hasKlineContent = Boolean(klineSeries?.rows?.length || weeklyKlineSeries?.rows?.length);
+  const hasDailyKlineContent = Boolean(klineSeries?.rows?.length);
+  const hasWeeklyKlineContent = Boolean(weeklyKlineSeries?.rows?.length);
   const hasKeyLevelsContent = Boolean(keyLevels);
   const hasTechnicalIndicatorsContent = Boolean(technicalIndicators);
-  const hasTechnicalLayout = hasKlineContent || hasKeyLevelsContent || hasTechnicalIndicatorsContent;
   const { priorityMarkdown, remainingMarkdown } = splitImportantInfoMarkdown(markdown);
 
   return (
@@ -155,11 +155,16 @@ export const ReportFullContent: React.FC<ReportFullContentProps> = ({
       {priorityMarkdown ? (
         <MarkdownContent markdown={priorityMarkdown} />
       ) : null}
+      <ModelOpinionsPanel
+        modelOpinions={modelOpinions}
+        language={normalizedLanguage}
+        variant="fullReport"
+      />
       {hasCompanyProfileValue(details) ? (
         <CompanyProfileSection
           details={details}
           language={normalizedLanguage}
-          className="home-divider rounded-xl border border-subtle bg-surface/50 p-5"
+          className="home-divider rounded-xl border border-subtle p-5"
           variant="fullReport"
           stockName={stockName}
           stockCode={stockCode}
@@ -169,7 +174,7 @@ export const ReportFullContent: React.FC<ReportFullContentProps> = ({
         <BusinessModelSection
           details={details}
           language={normalizedLanguage}
-          className="home-divider rounded-xl border border-subtle bg-surface/50 p-4"
+          className="home-divider rounded-xl border border-subtle p-4"
         />
       ) : null}
       <FinancialRevenueGrowthSection
@@ -187,66 +192,80 @@ export const ReportFullContent: React.FC<ReportFullContentProps> = ({
         compact
         variant="fullReport"
       />
-      <div className="grid gap-4 xl:grid-cols-2">
-        <FinancialIncomePeriodsSection
-          financialReport={details?.financialReport}
-          financialFundamentalsAnalysis={financialFundamentalsAnalysis}
-          language={normalizedLanguage}
-          compact
-        />
-        <FinancialBalanceSheetSection
-          financialReport={details?.financialReport}
-          financialFundamentalsAnalysis={financialFundamentalsAnalysis}
-          language={normalizedLanguage}
-          compact
-        />
-      </div>
-      <div className="grid gap-4 xl:grid-cols-2 [&>*:only-child]:xl:col-span-2">
-        <FinancialCashFlowSection
-          financialReport={details?.financialReport}
-          financialFundamentalsAnalysis={financialFundamentalsAnalysis}
-          language={normalizedLanguage}
-          compact
-        />
-        <FinancialExpressSection
-          financialReport={details?.financialReport}
-          financialFundamentalsAnalysis={financialFundamentalsAnalysis}
-          language={normalizedLanguage}
-          compact
-        />
-      </div>
+      <FinancialIncomePeriodsSection
+        financialReport={details?.financialReport}
+        financialFundamentalsAnalysis={financialFundamentalsAnalysis}
+        language={normalizedLanguage}
+        compact
+        variant="fullReport"
+      />
+      <FinancialBalanceSheetSection
+        financialReport={details?.financialReport}
+        financialFundamentalsAnalysis={financialFundamentalsAnalysis}
+        language={normalizedLanguage}
+        compact
+        variant="fullReport"
+      />
+      <FinancialCashFlowSection
+        financialReport={details?.financialReport}
+        financialFundamentalsAnalysis={financialFundamentalsAnalysis}
+        language={normalizedLanguage}
+        compact
+        variant="fullReport"
+      />
+      <FinancialExpressSection
+        financialReport={details?.financialReport}
+        financialFundamentalsAnalysis={financialFundamentalsAnalysis}
+        language={normalizedLanguage}
+        compact
+        variant="fullReport"
+      />
       <PriceTrendAnalysisSection
         priceTrendAnalysis={priceTrendAnalysis}
         language={normalizedLanguage}
         compact
       />
-      {hasTechnicalLayout ? (
-        <div className="grid gap-4 xl:grid-cols-2 xl:items-stretch [&>*:only-child]:xl:col-span-2">
-          {hasKlineContent || hasKeyLevelsContent ? (
-            <div className="flex min-w-0 flex-col gap-4">
-              <KlineChartSection
-                klineSeries={klineSeries}
-                weeklyKlineSeries={weeklyKlineSeries}
-                language={normalizedLanguage}
-                compact
-              />
-              <KeyLevelsSection
-                keyLevels={keyLevels}
-                keyLevelsAnalysis={keyLevelsAnalysis}
-                language={normalizedLanguage}
-                compact
-              />
-            </div>
-          ) : null}
-          {hasTechnicalIndicatorsContent ? (
-            <TechnicalIndicatorsSection
-              technicalIndicators={technicalIndicators}
-              language={normalizedLanguage}
-              compact
-            />
-          ) : null}
-        </div>
+      {hasDailyKlineContent ? (
+        <KlineChartSection
+          klineSeries={klineSeries}
+          language={normalizedLanguage}
+          compact
+          variant="daily"
+          displayMode="single"
+        />
       ) : null}
+      {hasWeeklyKlineContent ? (
+        <KlineChartSection
+          weeklyKlineSeries={weeklyKlineSeries}
+          language={normalizedLanguage}
+          compact
+          variant="weekly"
+          displayMode="single"
+        />
+      ) : null}
+      {hasKeyLevelsContent ? (
+        <KeyLevelsSection
+          keyLevels={keyLevels}
+          keyLevelsAnalysis={keyLevelsAnalysis}
+          language={normalizedLanguage}
+          compact
+          variant="fullReport"
+        />
+      ) : null}
+      {hasTechnicalIndicatorsContent ? (
+        <TechnicalIndicatorsSection
+          technicalIndicators={technicalIndicators}
+          language={normalizedLanguage}
+          compact
+          variant="fullReport"
+        />
+      ) : null}
+      <ChipDistributionSection
+        chipDistribution={chipDistribution}
+        language={normalizedLanguage}
+        compact
+        variant="fullReport"
+      />
       <WeeklyTrendAnalysisSection
         weeklyTrendAnalysis={weeklyTrendAnalysis}
         language={normalizedLanguage}
@@ -257,21 +276,11 @@ export const ReportFullContent: React.FC<ReportFullContentProps> = ({
         language={normalizedLanguage}
         compact
       />
-      <ChipDistributionSection
-        chipDistribution={chipDistribution}
-        language={normalizedLanguage}
-        compact
-      />
       <CapitalFlowSection
         capitalFlow={capitalFlow}
         capitalFlowAnalysis={capitalFlowAnalysis}
         language={normalizedLanguage}
         compact
-      />
-      <ModelOpinionsPanel
-        modelOpinions={modelOpinions}
-        language={normalizedLanguage}
-        variant="fullReport"
       />
       <MarkdownContent markdown={remainingMarkdown} />
     </div>

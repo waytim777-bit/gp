@@ -1,11 +1,14 @@
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
-import { Lock, Loader2, User, UserPlus } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import loginBgDark from '../assets/login-bg-dark.png';
+import loginBg from '../assets/login-bg.png';
+import loginLogo from '../assets/login-logo.png';
 import type { ParsedApiError } from '../api/error';
 import { isParsedApiError } from '../api/error';
-import { Button, Input, ParticleBackground } from '../components/common';
+import { Button, Input } from '../components/common';
 import { SettingsAlert } from '../components/settings';
 import { useAuth } from '../hooks';
 
@@ -75,63 +78,70 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const title = isRegistering ? '注册新用户' : '用户登录';
+  const title = isRegistering ? '新用户注册' : '欢迎登录';
   const description = isRegistering
     ? '使用用户名注册独立账号，数据会与其他用户隔离。'
-    : '输入用户名和密码进入工作台。';
+    : '每日股票分析引擎';
+  const inputClassName =
+    'h-12 rounded-full pl-12 pr-12 text-sm font-medium shadow-none';
 
   return (
-    <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-[var(--login-bg-main)] px-4 py-12 font-sans selection:bg-[var(--login-accent-soft)] sm:px-6 lg:px-8">
-      <ParticleBackground />
-      <div className="absolute inset-0 z-0 bg-[linear-gradient(to_right,var(--login-grid-line)_1px,transparent_1px),linear-gradient(to_bottom,var(--login-grid-line)_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:var(--login-grid-mask)]" />
+    <div className="relative flex min-h-screen overflow-hidden bg-[var(--login-bg-main)] px-5 py-10 font-sans selection:bg-[var(--login-accent-soft)] sm:px-8 lg:px-12">
+      <div
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat dark:hidden"
+        style={{ backgroundImage: `url(${loginBg})` }}
+      />
+      <div
+        className="absolute inset-0 z-0 hidden bg-cover bg-center bg-no-repeat dark:block"
+        style={{ backgroundImage: `url(${loginBgDark})` }}
+      />
 
-      <div className="relative z-10 mx-auto w-full max-w-md">
-        <motion.div
-          initial={{ opacity: 0, y: -16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="mb-8 text-center"
-        >
-          <h2 className="text-4xl font-extrabold tracking-normal text-[var(--login-text-primary)] sm:text-5xl">
-            DAILY STOCK
-          </h2>
-          <p className="mt-2 text-sm uppercase tracking-[0.24em] text-[var(--login-text-muted)]">
-            Analysis Engine
-          </p>
-        </motion.div>
-
+      <div className="relative z-10 mx-auto flex w-full max-w-[1440px] items-center justify-center lg:justify-end lg:pr-[7vw] xl:pr-[9vw]">
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.35 }}
-          className="relative overflow-hidden rounded-2xl border border-[var(--login-border-card)] bg-[var(--login-bg-card)]/90 p-8 shadow-2xl backdrop-blur-xl"
+          className="relative w-full max-w-[460px] overflow-hidden rounded-2xl border border-[var(--login-border-card)] p-7 shadow-[0_24px_64px_rgba(0,0,0,0.22)] backdrop-blur-xl dark:shadow-[0_24px_64px_rgba(0,0,0,0.34)] sm:p-8"
         >
-          <div className="mb-8">
-            <h1 className="flex items-center gap-2 text-2xl font-bold tracking-normal text-[var(--login-text-primary)]">
-              {isRegistering ? (
-                <UserPlus className="h-5 w-5 text-[var(--login-accent-text)]" />
-              ) : (
-                <Lock className="h-5 w-5 text-[var(--login-accent-text)]" />
-              )}
-              <span>{title}</span>
-            </h1>
-            <p className="mt-2 text-sm text-[var(--login-text-secondary)]">{description}</p>
-          </div>
+          <div className="absolute inset-0 z-0 bg-white/50 dark:bg-[#161922]/50" />
+          <div className="relative z-10">
+            {isRegistering ? (
+              <div className="mb-7 space-y-2.5">
+                <h1 className="text-[28px] font-bold leading-none tracking-normal text-[var(--login-text-primary)]">
+                  {title}
+                </h1>
+                <p className="text-sm font-bold leading-normal text-[var(--login-text-muted)]">{description}</p>
+              </div>
+            ) : (
+              <div className="mb-7 space-y-3">
+                <div className="flex items-center gap-2.5">
+                  <img src={loginLogo} alt="" className="h-11 w-11 rounded-xl" />
+                  <span className="text-[28px] font-bold leading-none tracking-normal text-[var(--login-text-primary)]">DSA</span>
+                </div>
+                <div className="flex items-end justify-between gap-4">
+                  <h1 className="text-[28px] font-bold leading-none tracking-normal text-[var(--login-text-primary)]">
+                    {title}
+                  </h1>
+                  <p className="pb-0.5 text-sm font-bold leading-none text-[var(--login-text-muted)]">{description}</p>
+                </div>
+              </div>
+            )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-7">
+            <div className="space-y-3.5">
               <Input
                 id="username"
                 type="text"
                 appearance="login"
-                iconType="none"
-                label="用户名"
-                placeholder="用户名"
+                iconType="user"
+                aria-label="用户名"
+                placeholder="请输入用户名"
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
                 disabled={isSubmitting}
                 autoFocus
                 autoComplete="username"
+                className={inputClassName}
               />
 
               <Input
@@ -140,12 +150,13 @@ const LoginPage: React.FC = () => {
                 appearance="login"
                 allowTogglePassword
                 iconType="password"
-                label="密码"
+                aria-label="密码"
                 placeholder="请输入密码"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 disabled={isSubmitting}
                 autoComplete={isRegistering ? 'new-password' : 'current-password'}
+                className={inputClassName}
               />
 
               {isRegistering && (
@@ -155,13 +166,25 @@ const LoginPage: React.FC = () => {
                   appearance="login"
                   allowTogglePassword
                   iconType="password"
-                  label="确认密码"
+                  aria-label="确认密码"
                   placeholder="再次输入密码"
                   value={passwordConfirm}
                   onChange={(event) => setPasswordConfirm(event.target.value)}
                   disabled={isSubmitting}
                   autoComplete="new-password"
+                  className={inputClassName}
                 />
+              )}
+
+              {!isRegistering && (
+                <div className="flex justify-end py-1">
+                  <button
+                    type="button"
+                    className="text-sm font-bold leading-none text-[var(--login-text-muted)] transition-colors hover:text-[var(--login-text-primary)]"
+                  >
+                    忘记密码？
+                  </button>
+                </div>
               )}
             </div>
 
@@ -178,7 +201,7 @@ const LoginPage: React.FC = () => {
               type="submit"
               variant="primary"
               size="lg"
-              className="h-12 w-full rounded-xl border-0 bg-gradient-to-r from-[var(--login-brand-button-start)] to-[var(--login-brand-button-end)] font-medium text-[var(--login-button-text)] shadow-lg shadow-[0_18px_36px_hsl(214_100%_8%_/_0.24)] hover:from-[var(--login-brand-button-start-hover)] hover:to-[var(--login-brand-button-end-hover)]"
+              className="h-12 w-full rounded-full border-0 bg-[#00a1c2] text-base font-bold text-white shadow-[0_18px_26px_rgba(0,161,194,0.22)] transition-colors hover:bg-[#10b4d3]"
               disabled={isSubmitting}
             >
               <span className="flex items-center justify-center gap-2">
@@ -196,13 +219,19 @@ const LoginPage: React.FC = () => {
 
           <button
             type="button"
-            className="mt-4 inline-flex w-full items-center justify-center gap-2 text-sm text-[var(--login-accent-text)] hover:text-[var(--login-text-primary)]"
+            className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-full border-0 bg-transparent text-base font-bold text-primary outline-none ring-0 transition-colors hover:text-primary/80 focus:outline-none focus:ring-0"
             onClick={toggleRegisterMode}
             disabled={isSubmitting}
           >
-            {isRegistering ? <User className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}
-            <span>{isRegistering ? '返回登录' : '注册新用户'}</span>
+            {isRegistering ? (
+              <span className="text-[var(--login-text-muted)]">
+                已有账号？ <span className="text-primary">立即登录</span>
+              </span>
+            ) : (
+              '注册'
+            )}
           </button>
+          </div>
         </motion.div>
       </div>
     </div>

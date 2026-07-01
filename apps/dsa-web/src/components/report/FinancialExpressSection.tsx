@@ -15,6 +15,7 @@ interface FinancialExpressSectionProps {
   financialFundamentalsAnalysis?: DimensionAnalysisReport;
   language?: ReportLanguage;
   compact?: boolean;
+  variant?: 'default' | 'fullReport';
 }
 
 type ExpressRowPayload = ExpressReportRow & {
@@ -47,10 +48,18 @@ const getRows = (financialReport?: FinancialReport): ExpressReportRow[] => {
     .filter((row) => row.period && (row.revenue != null || row.netProfit != null));
 };
 
+const getFullReportGrowthClassName = (value?: number | null): string => {
+  if (value === undefined || value === null || !Number.isFinite(value)) {
+    return 'text-secondary-text';
+  }
+  return value < 0 ? 'text-danger' : 'text-success';
+};
+
 export const FinancialExpressSection: React.FC<FinancialExpressSectionProps> = ({
   financialReport,
   language,
   compact = false,
+  variant = 'default',
 }) => {
   const reportLanguage = normalizeReportLanguage(language);
   const rows = getRows(financialReport);
@@ -128,8 +137,59 @@ export const FinancialExpressSection: React.FC<FinancialExpressSectionProps> = (
     </>
   );
 
+  if (variant === 'fullReport') {
+    return (
+      <Card className="rounded-xl border border-subtle text-left shadow-none">
+        <Card.Content className="space-y-4 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className="text-lg font-semibold leading-6 text-foreground">{copy.title}</h3>
+            {report?.source ? (
+              <span className="max-w-full truncate text-xs font-medium text-secondary-text">
+                {copy.source}: {report.source}
+              </span>
+            ) : null}
+          </div>
+
+          <div className="overflow-x-auto pb-0.5">
+            <table className="min-w-[500px] w-full table-fixed text-left">
+              <thead>
+                <tr className="text-[10px] font-medium leading-none text-secondary-text">
+                  <th className="w-[25%] pb-3.5 pr-4">{copy.periodAndAnnounced}</th>
+                  <th className="w-[31%] pb-3.5 pr-4">{copy.revenueAndNetProfit}</th>
+                  <th className="w-[27%] pb-3.5 pr-4">{copy.roeAndEps}</th>
+                  <th className="w-[17%] pb-3.5 text-right">{copy.netProfitYoy}</th>
+                </tr>
+              </thead>
+              <tbody className="text-xs font-semibold leading-none text-foreground">
+                {rows.slice(0, 3).map((row, index) => (
+                  <tr key={`${row.period}-${row.announcementDate ?? index}`}>
+                    <td className="py-3.5 pr-4 font-mono leading-4">
+                      <span className="block">{row.period}</span>
+                      <span className="block">{row.announcementDate ?? '--'}</span>
+                    </td>
+                    <td className="py-3.5 pr-4 font-mono">
+                      {formatAmountBillion(row.revenue)}/{formatAmountBillion(row.netProfit)}
+                    </td>
+                    <td className="py-3.5 pr-4 font-mono">
+                      {formatRatio(row.dilutedRoe, '%')}/{formatRatio(row.dilutedEps)}
+                    </td>
+                    <td
+                      className={`py-3.5 text-right font-mono ${getFullReportGrowthClassName(row.netProfitYoy)}`}
+                    >
+                      {formatGrowthPct(row.netProfitYoy)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card.Content>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="h-full rounded-xl border-0 bg-surface text-left shadow-none">
+    <Card className="h-full rounded-xl border-0 text-left shadow-none">
       <Card.Content className={`space-y-5 ${compact ? 'p-4' : 'p-5'}`}>
         {content}
       </Card.Content>

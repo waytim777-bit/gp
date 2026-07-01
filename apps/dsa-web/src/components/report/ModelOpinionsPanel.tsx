@@ -140,7 +140,7 @@ const DivergenceBanner: React.FC<{
     ? 'border-warning/45 bg-warning/10 text-foreground'
     : divergence.alignment === 'moderate'
       ? 'border-[#00a1c2]/35 bg-[#00a1c2]/5 text-foreground'
-      : 'border-subtle bg-surface/40 text-foreground';
+      : 'border-subtle text-foreground';
 
   if (spread === 0 && divergence.alignment === 'insufficient') {
     return null;
@@ -210,12 +210,12 @@ const OpinionCard: React.FC<{
     ? 'border-transparent bg-[#00a1c2]/10'
     : highlight
       ? 'border-warning/50 bg-warning/5 ring-1 ring-warning/25'
-      : 'border-subtle bg-surface/35';
+      : 'border-subtle';
   const fullReportBorderClass = item.role === 'primary'
     ? 'border-transparent bg-[#00a1c2]/10'
     : highlight
       ? 'border-warning/45 bg-warning/5 ring-1 ring-warning/20'
-      : 'border-subtle bg-surface/30';
+      : 'border-subtle';
 
   if (variant === 'fullReport') {
     return (
@@ -383,7 +383,7 @@ export const ModelOpinionsPanel: React.FC<ModelOpinionsPanelProps> = ({
   const isFullReport = variant === 'fullReport';
 
   return (
-    <section className={`home-divider rounded-xl border border-subtle bg-surface/50 shadow-none ${isFullReport ? 'p-5' : 'p-4'}`}>
+    <section className={`home-divider rounded-xl bg-card shadow-none ${isFullReport ? 'p-5' : 'p-4'}`}>
       <div className={`${isFullReport ? 'mb-5' : 'mb-4'} flex flex-wrap items-center justify-between gap-2`}>
         <h3 className={`${isFullReport ? 'text-lg' : 'text-base md:text-lg'} font-semibold text-foreground`}>
           {isEn ? 'Multi-Model Consultation' : '多模型会诊'}

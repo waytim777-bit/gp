@@ -40,10 +40,8 @@ describe('LoginPage', () => {
 
     render(<LoginPage />);
 
-    expect(consoleError).toHaveBeenCalledWith(
-      'Admin password is not initialized. Please initialize it from dsa-admin.'
-    );
-    expect(screen.getByRole('heading', { name: '用户登录' })).toBeInTheDocument();
+    expect(consoleError).toHaveBeenCalledWith('Admin password is not initialized.');
+    expect(screen.getByRole('heading', { name: '欢迎登录' })).toBeInTheDocument();
     expect(screen.getByLabelText('用户名')).toBeInTheDocument();
     expect(screen.getByLabelText('密码')).toBeInTheDocument();
     expect(screen.queryByText('设置管理员密码')).not.toBeInTheDocument();

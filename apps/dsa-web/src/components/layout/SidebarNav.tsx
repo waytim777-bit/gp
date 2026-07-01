@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Modal } from '@heroui/react';
+import { Modal, Pagination } from '@heroui/react';
 import { motion } from 'motion/react';
 import { BarChart3, BellRing, ChevronRight, History, Home, LogOut, MessageSquareQuote, Share2, Unplug, UserRound } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useAccount, useDisconnect } from 'wagmi';
-import { paymentApi, type DeductionHistoryItem, type DepositHistoryItem } from '../../api/payment';
+import { paymentApi, type PaymentHistoryItem } from '../../api/payment';
 import creditIconSvg from '../../assets/creditIcon.svg?raw';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAgentChatStore } from '../../stores/agentChatStore';
@@ -50,6 +50,8 @@ const NAV_ITEMS: NavItem[] = [
   { key: 'prediction_reports', label: '预测报告', to: '/prediction-reports', icon: Share2, permission: 'prediction_reports' },
 ];
 
+const USAGE_HISTORY_PAGE_SIZE = 8;
+
 function formatAddress(address: string): string {
   return `${address.slice(0, 6)}****${address.slice(-4)}`;
 }
@@ -67,6 +69,33 @@ function getCallTypeLabel(callType: string): string {
   return labels[callType] ?? callType;
 }
 
+function getUsagePageNumbers(page: number, totalPages: number): Array<number | 'ellipsis'> {
+  if (totalPages <= 0) return [];
+  if (totalPages <= 5) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }
+
+  const pages: Array<number | 'ellipsis'> = [1];
+
+  if (page > 3) {
+    pages.push('ellipsis');
+  }
+
+  const start = Math.max(2, page - 1);
+  const end = Math.min(totalPages - 1, page + 1);
+
+  for (let pageNumber = start; pageNumber <= end; pageNumber += 1) {
+    pages.push(pageNumber);
+  }
+
+  if (page < totalPages - 2) {
+    pages.push('ellipsis');
+  }
+
+  pages.push(totalPages);
+  return pages;
+}
+
 export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNavigate }) => {
   const { currentUser, logout } = useAuth();
   const completionBadge = useAgentChatStore((state) => state.completionBadge);
@@ -80,26 +109,33 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
   const [showUsageDialog, setShowUsageDialog] = useState(false);
   const [usageHistoryLoading, setUsageHistoryLoading] = useState(false);
   const [usageHistoryError, setUsageHistoryError] = useState<string | null>(null);
-  const [usageDeposits, setUsageDeposits] = useState<DepositHistoryItem[]>([]);
-  const [usageDeductions, setUsageDeductions] = useState<DeductionHistoryItem[]>([]);
+  const [usageHistoryItems, setUsageHistoryItems] = useState<PaymentHistoryItem[]>([]);
+  const [usageHistoryPage, setUsageHistoryPage] = useState(1);
+  const [usageHistoryTotal, setUsageHistoryTotal] = useState(0);
+  const [usageHistoryTotalPages, setUsageHistoryTotalPages] = useState(0);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuCloseTimerRef = useRef<number | null>(null);
   const { address, chain, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
 
-  const loadUsageHistory = useCallback(async () => {
+  const loadUsageHistory = useCallback(async (page = usageHistoryPage) => {
     setUsageHistoryLoading(true);
     setUsageHistoryError(null);
     try {
-      const history = await paymentApi.getHistory();
-      setUsageDeposits(history.deposits);
-      setUsageDeductions(history.deductions);
+      const history = await paymentApi.getHistory({
+        page,
+        pageSize: USAGE_HISTORY_PAGE_SIZE,
+      });
+      setUsageHistoryItems(history.items || []);
+      setUsageHistoryPage(history.page || page);
+      setUsageHistoryTotal(history.total || 0);
+      setUsageHistoryTotalPages(history.totalPages || 0);
     } catch {
       setUsageHistoryError('交易记录加载失败，请稍后重试');
     } finally {
       setUsageHistoryLoading(false);
     }
-  }, []);
+  }, [usageHistoryPage]);
 
   useEffect(() => {
     if (currentUser) {
@@ -109,9 +145,9 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
 
   useEffect(() => {
     if (showUsageDialog) {
-      void loadUsageHistory();
+      void loadUsageHistory(usageHistoryPage);
     }
-  }, [loadUsageHistory, showUsageDialog]);
+  }, [loadUsageHistory, showUsageDialog, usageHistoryPage]);
 
   useEffect(() => {
     return () => {
@@ -145,27 +181,19 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
   const displayBalance = Math.max(balance, 0).toLocaleString();
   const displayLifetimeCredits = Math.max(lifetimeCredits ?? 0, 0).toLocaleString();
   const usageRows = useMemo<UsageHistoryRow[]>(() => {
-    const depositRows = usageDeposits.map((item) => ({
-      id: `deposit-${item.id}`,
-      detail: item.reason || '积分充值',
-      type: '充值',
+    return usageHistoryItems.map((item) => ({
+      id: `${item.kind}-${item.id}`,
+      detail: item.kind === 'deduction' ? getCallTypeLabel(item.callType || item.detail) : item.reason || item.detail || '积分充值',
+      type: item.transactionType,
       date: formatDate(item.createdAt),
       credits: item.creditAmount,
       createdAt: item.createdAt,
     }));
-    const deductionRows = usageDeductions.map((item) => ({
-      id: `deduction-${item.id}`,
-      detail: getCallTypeLabel(item.callType),
-      type: '消费',
-      date: formatDate(item.createdAt),
-      credits: -Math.abs(item.creditsSpent),
-      createdAt: item.createdAt,
-    }));
-
-    return [...depositRows, ...deductionRows]
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      .slice(0, 8);
-  }, [usageDeposits, usageDeductions]);
+  }, [usageHistoryItems]);
+  const usagePageNumbers = useMemo(
+    () => getUsagePageNumbers(usageHistoryPage, usageHistoryTotalPages),
+    [usageHistoryPage, usageHistoryTotalPages]
+  );
   const userAvatar = currentUser
     ? resolveUserAvatarUrl(currentUser.id, currentUser.username, currentUser.avatarUrl, 40)
     : null;
@@ -249,6 +277,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
           type="button"
           onClick={() => {
             onNavigate?.();
+            setUsageHistoryPage(1);
             setShowUsageDialog(true);
           }}
           className={cn(
@@ -402,6 +431,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
                           type="button"
                           onClick={() => {
                             setUserMenuOpen(false);
+                            setUsageHistoryPage(1);
                             setShowUsageDialog(true);
                           }}
                           className="flex h-6 w-full items-center justify-between text-sm font-bold leading-none text-foreground transition-colors hover:text-[hsl(var(--primary))]"
@@ -459,7 +489,8 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
           if (deposited) {
             void initialize();
             if (showUsageDialog) {
-              void loadUsageHistory();
+              setUsageHistoryPage(1);
+              void loadUsageHistory(1);
             }
           }
         }}
@@ -517,7 +548,8 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
                       onClick={() => {
                         void claimDailyCredits().then((success) => {
                           if (success) {
-                            void loadUsageHistory();
+                            setUsageHistoryPage(1);
+                            void loadUsageHistory(1);
                           }
                         });
                       }}
@@ -556,7 +588,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
                         <span>{usageHistoryError}</span>
                         <button
                           type="button"
-                          onClick={() => void loadUsageHistory()}
+                          onClick={() => void loadUsageHistory(usageHistoryPage)}
                           className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-[hsl(var(--primary)/0.45)] hover:text-[hsl(var(--primary))]"
                         >
                           重新加载
@@ -586,6 +618,53 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
                       </div>
                     )}
                   </div>
+                  {usageRows.length > 0 ? (
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-full max-w-full overflow-x-auto">
+                        <Pagination className="justify-center">
+                          <Pagination.Content>
+                            <Pagination.Item>
+                              <Pagination.Previous
+                                isDisabled={usageHistoryPage === 1}
+                                onPress={() => setUsageHistoryPage((page) => Math.max(1, page - 1))}
+                              >
+                                <Pagination.PreviousIcon />
+                                <span>上一页</span>
+                              </Pagination.Previous>
+                            </Pagination.Item>
+                            {usagePageNumbers.map((pageNumber, index) =>
+                              pageNumber === 'ellipsis' ? (
+                                <Pagination.Item key={`ellipsis-${index}`}>
+                                  <Pagination.Ellipsis />
+                                </Pagination.Item>
+                              ) : (
+                                <Pagination.Item key={pageNumber}>
+                                  <Pagination.Link
+                                    isActive={pageNumber === usageHistoryPage}
+                                    onPress={() => setUsageHistoryPage(pageNumber)}
+                                  >
+                                    {pageNumber}
+                                  </Pagination.Link>
+                                </Pagination.Item>
+                              )
+                            )}
+                            <Pagination.Item>
+                              <Pagination.Next
+                                isDisabled={usageHistoryPage === usageHistoryTotalPages}
+                                onPress={() => setUsageHistoryPage((page) => Math.min(usageHistoryTotalPages, page + 1))}
+                              >
+                                <span>下一页</span>
+                                <Pagination.NextIcon />
+                              </Pagination.Next>
+                            </Pagination.Item>
+                          </Pagination.Content>
+                        </Pagination>
+                      </div>
+                      <p className="text-xs text-muted-text">
+                        共 {usageHistoryTotal} 条记录 · 第 {usageHistoryPage}/{Math.max(usageHistoryTotalPages, 1)} 页
+                      </p>
+                    </div>
+                  ) : null}
                 </section>
               </Modal.Body>
             </Modal.Dialog>

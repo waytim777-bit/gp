@@ -9,6 +9,7 @@ interface ChipDistributionSectionProps {
   chipDistribution?: ChipDistributionReport;
   language?: ReportLanguage;
   compact?: boolean;
+  variant?: 'default' | 'fullReport';
 }
 
 const formatPct = (value?: number | null): string => {
@@ -26,6 +27,7 @@ export const ChipDistributionSection: React.FC<ChipDistributionSectionProps> = (
   chipDistribution,
   language,
   compact = false,
+  variant = 'default',
 }) => {
   const reportLanguage = normalizeReportLanguage(language);
   if (!chipDistribution) {
@@ -123,12 +125,43 @@ export const ChipDistributionSection: React.FC<ChipDistributionSectionProps> = (
     </>
   );
 
+  if (variant === 'fullReport') {
+    return (
+      <Card className="rounded-xl border border-subtle text-left shadow-none">
+        <Card.Content className="space-y-5 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className="text-lg font-semibold leading-6 text-foreground">{copy.title}</h3>
+            {chipDistribution.source ? (
+              <span className="max-w-full truncate text-xs font-medium text-secondary-text">
+                {copy.source}: {chipDistribution.source}
+              </span>
+            ) : null}
+          </div>
+
+          <div className="space-y-2 text-sm">
+            {rows.map((row) => (
+              <div
+                key={row.label}
+                className="flex items-start justify-between gap-5 rounded px-3 py-3"
+              >
+                <span className="shrink-0 text-muted-text">{row.label}</span>
+                <span className="min-w-0 max-w-[58%] break-words text-right font-semibold leading-5 text-foreground">
+                  {row.value}
+                </span>
+              </div>
+            ))}
+          </div>
+        </Card.Content>
+      </Card>
+    );
+  }
+
   if (compact) {
     return <div className="space-y-3">{content}</div>;
   }
 
   return (
-    <Card className="border border-subtle bg-surface/50 p-4 shadow-none">
+    <Card className="border border-subtle p-4 shadow-none">
       <div className="space-y-4">{content}</div>
     </Card>
   );

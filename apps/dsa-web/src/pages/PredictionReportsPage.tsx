@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Drawer } from '@heroui/react';
 import { Card } from '@heroui/react/card';
-import { ShoppingBag, ThumbsUp } from 'lucide-react';
+import { ShoppingBag, ThumbsUp, X } from 'lucide-react';
 import { predictionReportsApi } from '../api/predictionReports';
 import { historyApi } from '../api/history';
 import { getParsedApiError, type ParsedApiError } from '../api/error';
-import { ApiErrorAlert, Button, EmptyState, InlineAlert } from '../components/common';
+import { ApiErrorAlert, EmptyState, InlineAlert } from '../components/common';
 import { ReportSummary } from '../components/report';
 import { useCreditStore } from '../stores/creditStore';
 import { formatDateTime } from '../utils/format';
@@ -31,7 +31,6 @@ const formatCycleAnchorLabel = (item: PredictionReportListingItem): string => {
 };
 
 const PredictionReportsPage: React.FC = () => {
-  // const navigate = useNavigate();
   const { balance, refreshBalance } = useCreditStore();
   const [items, setItems] = useState<PredictionReportListingItem[]>([]);
   const [activeTab, setActiveTab] = useState<PredictionReportTab>('purchasable');
@@ -70,6 +69,10 @@ const PredictionReportsPage: React.FC = () => {
   );
 
   const activeTabMeta = TAB_OPTIONS.find((tab) => tab.key === activeTab) ?? TAB_OPTIONS[0];
+
+  const closeReportDrawer = useCallback(() => {
+    setSelectedReport(null);
+  }, []);
 
   const openReport = useCallback(async (item: PredictionReportListingItem) => {
     if (!item.canViewFull || !item.buyerHistoryId) {
@@ -272,17 +275,46 @@ const PredictionReportsPage: React.FC = () => {
         </div>
       )}
 
-      {selectedReport ? (
-        <Card className="border border-default-200 bg-surface p-4">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">完整报告</h2>
-            <Button size="sm" variant="ghost" onClick={() => setSelectedReport(null)}>
-              关闭
-            </Button>
-          </div>
-          <ReportSummary data={selectedReport} isHistory />
-        </Card>
-      ) : null}
+      <Drawer.Root
+        isOpen={Boolean(selectedReport)}
+        onOpenChange={(open) => {
+          if (!open) {
+            closeReportDrawer();
+          }
+        }}
+      >
+        <Drawer.Backdrop variant="blur" className="z-[100]">
+          <Drawer.Content placement="right">
+            <Drawer.Dialog className="ml-auto flex h-full w-full max-w-5xl flex-col bg-card text-left shadow-2xl outline-none">
+              <Drawer.Body className="flex-1 overflow-y-auto p-6">
+                <div className="mb-5 flex items-center justify-between gap-4">
+                  <div className="min-w-0">
+                    <h2 className="truncate text-xl font-bold leading-none text-foreground">完整报告</h2>
+                    {selectedReport ? (
+                      <p className="mt-2 truncate text-sm text-secondary-text">
+                        {selectedReport.meta.stockName || selectedReport.meta.stockCode}
+                        {selectedReport.meta.stockName ? `（${selectedReport.meta.stockCode}）` : ''}
+                      </p>
+                    ) : null}
+                  </div>
+                  <button
+                    type="button"
+                    aria-label="关闭完整报告"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border/70 bg-card/80 text-secondary-text transition-colors hover:bg-hover hover:text-foreground"
+                    onClick={closeReportDrawer}
+                  >
+                    <X className="h-5 w-5" aria-hidden="true" />
+                  </button>
+                </div>
+
+                {selectedReport ? (
+                  <ReportSummary data={selectedReport} isHistory />
+                ) : null}
+              </Drawer.Body>
+            </Drawer.Dialog>
+          </Drawer.Content>
+        </Drawer.Backdrop>
+      </Drawer.Root>
     </div>
   );
 };

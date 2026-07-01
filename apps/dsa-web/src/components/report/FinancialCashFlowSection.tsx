@@ -14,6 +14,7 @@ interface FinancialCashFlowSectionProps {
   financialFundamentalsAnalysis?: DimensionAnalysisReport;
   language?: ReportLanguage;
   compact?: boolean;
+  variant?: 'default' | 'fullReport';
 }
 
 type CashFlowRowPayload = CashFlowRow & {
@@ -47,10 +48,18 @@ const getRows = (financialReport?: FinancialReport): CashFlowRow[] => {
     ));
 };
 
+const getFullReportGrowthClassName = (value?: number | null): string => {
+  if (value === undefined || value === null || !Number.isFinite(value)) {
+    return 'text-secondary-text';
+  }
+  return value < 0 ? 'text-danger' : 'text-success';
+};
+
 export const FinancialCashFlowSection: React.FC<FinancialCashFlowSectionProps> = ({
   financialReport,
   language,
   compact = false,
+  variant = 'default',
 }) => {
   const reportLanguage = normalizeReportLanguage(language);
   const rows = getRows(financialReport);
@@ -125,8 +134,56 @@ export const FinancialCashFlowSection: React.FC<FinancialCashFlowSectionProps> =
     </>
   );
 
+  if (variant === 'fullReport') {
+    return (
+      <Card className="rounded-xl border border-subtle text-left shadow-none">
+        <Card.Content className="space-y-4 py-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className="text-lg font-semibold leading-6 text-foreground">{copy.title}</h3>
+            {report?.source ? (
+              <span className="max-w-full truncate text-xs font-medium text-secondary-text">
+                {copy.source}: {report.source}
+              </span>
+            ) : null}
+          </div>
+
+          <div className="overflow-x-auto pb-0.5">
+            <table className="min-w-[500px] w-full table-fixed text-left">
+              <thead>
+                <tr className="text-xs font-medium leading-none text-secondary-text">
+                  <th className="w-[22%] pb-3.5 pr-4">{copy.period}</th>
+                  <th className="w-[24%] pb-3.5 pr-4">{copy.operating}</th>
+                  <th className="w-[34%] pb-3.5 pr-4">{copy.investingAndFinancing}</th>
+                  <th className="w-[20%] pb-3.5 text-right">{copy.operatingYoy}</th>
+                </tr>
+              </thead>
+              <tbody className="text-sm font-semibold leading-none text-foreground">
+                {rows.slice(0, 5).map((row, index) => (
+                  <tr key={`${row.period}-${index}`}>
+                    <td className="py-2.5 pr-4 font-mono">{row.period}</td>
+                    <td className="py-2.5 pr-4 font-mono">
+                      {formatAmountBillion(row.operatingCashFlow)}
+                    </td>
+                    <td className="py-2.5 pr-4 font-mono">
+                      {formatAmountBillion(row.investingCashFlow)}/{formatAmountBillion(row.financingCashFlow)}
+                    </td>
+                    <td
+                      className={`py-2.5 text-right font-mono ${getFullReportGrowthClassName(row.operatingCashFlowYoy)}`}
+                    >
+                      {formatGrowthPct(row.operatingCashFlowYoy)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card.Content>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="h-full rounded-xl border-0 bg-surface text-left shadow-none">
+    <Card className="h-full rounded-xl border-0 text-left shadow-none">
       <Card.Content className={`space-y-5 ${compact ? 'py-4' : 'py-5'}`}>
         {content}
       </Card.Content>

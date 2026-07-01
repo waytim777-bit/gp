@@ -1,6 +1,6 @@
 import type React from 'react';
 import { useId, useState } from 'react';
-import { Lock, Key } from 'lucide-react';
+import { Lock, Key, User } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { EyeToggleIcon } from './EyeToggleIcon';
 
@@ -14,7 +14,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   /** Enables the built-in password visibility toggle. */
   allowTogglePassword?: boolean;
   /** Controls the leading icon style. */
-  iconType?: 'password' | 'key' | 'none';
+  iconType?: 'password' | 'key' | 'user' | 'none';
   /** Allows external visibility state control. */
   passwordVisible?: boolean;
   /** Notifies the parent when visibility changes in controlled mode. */
@@ -54,7 +54,7 @@ export const Input = ({
       return (
         <Lock
           className={cn(
-            'h-4 w-4',
+            isLoginAppearance ? 'h-[18px] w-[18px]' : 'h-4 w-4',
             isLoginAppearance ? 'text-[var(--login-input-icon)]' : 'text-muted-text/55'
           )}
         />
@@ -64,7 +64,17 @@ export const Input = ({
       return (
         <Key
           className={cn(
-            'h-4 w-4',
+            isLoginAppearance ? 'h-[18px] w-[18px]' : 'h-4 w-4',
+            isLoginAppearance ? 'text-[var(--login-input-icon)]' : 'text-muted-text/55'
+          )}
+        />
+      );
+    }
+    if (iconType === 'user') {
+      return (
+        <User
+          className={cn(
+            isLoginAppearance ? 'h-[18px] w-[18px]' : 'h-4 w-4',
             isLoginAppearance ? 'text-[var(--login-input-icon)]' : 'text-muted-text/55'
           )}
         />
@@ -89,8 +99,8 @@ export const Input = ({
         'inline-flex h-7 w-7 items-center justify-center rounded-lg transition-all duration-200 focus:outline-none focus:ring-2',
         isLoginAppearance
           ? visible
-            ? 'bg-[var(--login-input-toggle-active-bg)] text-[var(--login-input-toggle-active-text)] shadow-[0_0_14px_var(--login-accent-glow)] focus:ring-[var(--login-input-toggle-ring)]'
-            : 'bg-[var(--login-input-toggle-bg)] text-[var(--login-input-toggle-text)] hover:bg-[var(--login-input-toggle-bg-hover)] hover:text-[var(--login-input-toggle-text-hover)] focus:ring-[var(--login-input-toggle-ring)]'
+            ? 'bg-transparent text-[var(--login-input-toggle-active-text)] focus:ring-[var(--login-input-toggle-ring)]'
+            : 'bg-transparent text-[var(--login-input-toggle-text)] hover:text-[var(--login-input-toggle-text-hover)] focus:ring-[var(--login-input-toggle-ring)]'
           : visible
             ? 'bg-warning/15 text-warning shadow-[0_0_10px_hsla(var(--warning),0.15)]'
             : 'bg-muted/20 text-muted-text hover:text-warning hover:shadow-[0_0_10px_hsla(var(--warning),0.15)] focus:ring-primary/30'
@@ -126,7 +136,7 @@ export const Input = ({
       ) : null}
       <div className="relative flex items-center">
         {leadingIcon && (
-          <div className="absolute left-3.5 z-10 pointer-events-none">
+          <div className={cn('pointer-events-none absolute z-10', isLoginAppearance ? 'left-5' : 'left-3.5')}>
             {leadingIcon}
           </div>
         )}
@@ -150,7 +160,7 @@ export const Input = ({
           type={effectiveType}
         />
         {finalTrailingAction ? (
-          <div className="absolute inset-y-0 right-2 flex items-center">
+          <div className={cn('absolute inset-y-0 flex items-center', isLoginAppearance ? 'right-3.5' : 'right-2')}>
             {finalTrailingAction}
           </div>
         ) : null}

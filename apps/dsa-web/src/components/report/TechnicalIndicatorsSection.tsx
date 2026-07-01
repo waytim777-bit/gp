@@ -8,6 +8,7 @@ interface TechnicalIndicatorsSectionProps {
   technicalIndicators?: TechnicalIndicatorsReport;
   language?: ReportLanguage;
   compact?: boolean;
+  variant?: 'default' | 'fullReport';
 }
 
 const formatLevels = (values?: number[] | null): string => {
@@ -24,6 +25,7 @@ export const TechnicalIndicatorsSection: React.FC<TechnicalIndicatorsSectionProp
   technicalIndicators,
   language,
   compact = false,
+  variant = 'default',
 }) => {
   const reportLanguage = normalizeReportLanguage(language);
   if (!technicalIndicators) {
@@ -70,6 +72,8 @@ export const TechnicalIndicatorsSection: React.FC<TechnicalIndicatorsSectionProp
       bollSignal: 'BOLL %B / Status',
       volume: 'Volume / 5D Ratio',
       support: 'Support',
+      resistance: 'Resistance',
+      signalScore: 'System Score / Signal',
       source: 'Source',
     }
     : {
@@ -88,6 +92,8 @@ export const TechnicalIndicatorsSection: React.FC<TechnicalIndicatorsSectionProp
       bollSignal: 'BOLL %B / 状态',
       volume: '量能 / 5日量比',
       support: '支撑位',
+      resistance: '阻力位',
+      signalScore: '系统评分 / 信号',
       source: '数据源',
     };
 
@@ -134,6 +140,14 @@ export const TechnicalIndicatorsSection: React.FC<TechnicalIndicatorsSectionProp
       label: copy.support,
       value: formatLevels(levels?.supportLevels ?? levels?.support_levels),
     },
+    {
+      label: copy.resistance,
+      value: formatLevels(levels?.resistanceLevels ?? levels?.resistance_levels),
+    },
+    {
+      label: copy.signalScore,
+      value: `${formatRatio(technicalIndicators.signal?.score)} / ${technicalIndicators.signal?.buySignal ?? technicalIndicators.signal?.buy_signal ?? '--'}`,
+    },
   ];
 
   const content = (
@@ -165,8 +179,39 @@ export const TechnicalIndicatorsSection: React.FC<TechnicalIndicatorsSectionProp
     </>
   );
 
+  if (variant === 'fullReport') {
+    return (
+      <Card className="rounded-xl border border-subtle text-left shadow-none">
+        <Card.Content className="space-y-5 py-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className="text-lg font-semibold leading-6 text-foreground">{copy.title}</h3>
+            {technicalIndicators.source ? (
+              <span className="max-w-full truncate text-xs font-medium text-secondary-text">
+                {copy.source}: {technicalIndicators.source}
+              </span>
+            ) : null}
+          </div>
+
+          <div className="space-y-2 text-sm">
+            {rows.map((row, index) => (
+              <div
+                key={row.label}
+                className={`flex items-center justify-between gap-5 rounded px-3 py-3 ${
+                  index === 0 ? 'bg-default-100/70' : ''
+                }`}
+              >
+                <span className="shrink-0 text-muted-text">{row.label}</span>
+                <span className="min-w-0 break-words text-right font-semibold leading-5 text-foreground">{row.value}</span>
+              </div>
+            ))}
+          </div>
+        </Card.Content>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="h-full rounded-xl border-0 bg-surface text-left shadow-none">
+    <Card className="h-full rounded-xl border-0 text-left shadow-none">
       <Card.Content className={compact ? 'space-y-4 py-4' : 'space-y-5 py-5'}>
         {content}
       </Card.Content>

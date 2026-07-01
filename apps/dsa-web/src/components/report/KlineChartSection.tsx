@@ -20,6 +20,7 @@ interface KlineChartSectionProps {
   language?: ReportLanguage;
   compact?: boolean;
   variant?: 'daily' | 'weekly';
+  displayMode?: 'tabs' | 'single';
 }
 
 type ChartRow = {
@@ -68,6 +69,7 @@ export const KlineChartSection: React.FC<KlineChartSectionProps> = ({
   language,
   compact = false,
   variant = 'daily',
+  displayMode = 'tabs',
 }) => {
   const reportLanguage = normalizeReportLanguage(language);
   const dailyRows = useMemo(() => normalizeRows(klineSeries), [klineSeries]);
@@ -81,9 +83,11 @@ export const KlineChartSection: React.FC<KlineChartSectionProps> = ({
     return null;
   }
 
-  const selectedTab = activeTab === 'weekly' && hasWeekly
-    ? 'weekly'
-    : activeTab === 'daily' && hasDaily ? 'daily' : hasWeekly ? 'weekly' : 'daily';
+  const selectedTab = displayMode === 'single'
+    ? variant
+    : activeTab === 'weekly' && hasWeekly
+      ? 'weekly'
+      : activeTab === 'daily' && hasDaily ? 'daily' : hasWeekly ? 'weekly' : 'daily';
   const activeSeries = selectedTab === 'weekly' ? weeklyKlineSeries : klineSeries;
   const rows = selectedTab === 'weekly' ? weeklyRows : dailyRows;
   const snapshot = activeSeries?.snapshot;
@@ -154,7 +158,7 @@ export const KlineChartSection: React.FC<KlineChartSectionProps> = ({
         </div>
       ) : null}
 
-      {hasDaily && hasWeekly ? (
+      {displayMode === 'tabs' && hasDaily && hasWeekly ? (
         <div className="inline-grid h-7 w-32 grid-cols-2 overflow-hidden border border-primary">
           <button
             type="button"
@@ -175,6 +179,31 @@ export const KlineChartSection: React.FC<KlineChartSectionProps> = ({
                 : 'bg-transparent text-foreground hover:bg-primary/10'
             }`}
             onClick={() => setActiveTab('weekly')}
+          >
+            {copy.weekly}
+          </button>
+        </div>
+      ) : displayMode === 'single' ? (
+        <div className="inline-grid h-7 w-40 grid-cols-2 overflow-hidden border border-primary">
+          <button
+            type="button"
+            className={`text-sm font-semibold transition-colors ${
+              selectedTab === 'daily'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-transparent text-foreground'
+            }`}
+            disabled
+          >
+            {copy.daily}
+          </button>
+          <button
+            type="button"
+            className={`text-sm font-semibold transition-colors ${
+              selectedTab === 'weekly'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-transparent text-foreground'
+            }`}
+            disabled
           >
             {copy.weekly}
           </button>
@@ -227,8 +256,18 @@ export const KlineChartSection: React.FC<KlineChartSectionProps> = ({
   );
 
   return (
-    <Card className="rounded-xl border-0 bg-surface text-left shadow-none">
-      <Card.Content className={compact ? 'space-y-4 py-4' : 'space-y-4 py-5'}>
+    <Card className={`rounded-xl text-left shadow-none ${
+      displayMode === 'single'
+        ? 'border border-subtle'
+        : 'border-0'
+    }`}
+    >
+      <Card.Content className={
+        displayMode === 'single'
+          ? 'space-y-5 py-5'
+          : compact ? 'space-y-4 py-4' : 'space-y-4 py-5'
+      }
+      >
         {content}
       </Card.Content>
     </Card>
