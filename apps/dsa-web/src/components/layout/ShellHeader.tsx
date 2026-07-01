@@ -1,9 +1,9 @@
 import type React from 'react';
 import { Menu, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { CreditBalanceBadge } from '../payment/CreditBalanceBadge';
-import { resolveUserAvatarUrl } from '../../utils/userAvatar';
+import { useLocation } from 'react-router-dom';
+// import { useAuth } from '../../contexts/AuthContext';
+// import { CreditBalanceBadge } from '../payment/CreditBalanceBadge';
+// import { resolveUserAvatarUrl } from '../../utils/userAvatar';
 // import { ThemeToggle } from '../theme/ThemeToggle';
 
 type ShellHeaderProps = {
@@ -28,7 +28,7 @@ export const ShellHeader: React.FC<ShellHeaderProps> = ({
   onOpenMobileNav,
 }) => {
   const location = useLocation();
-  const { currentUser } = useAuth();
+  // const { currentUser } = useAuth();
   const pageTitle = TITLES[location.pathname] ?? '-';
 
   return (
