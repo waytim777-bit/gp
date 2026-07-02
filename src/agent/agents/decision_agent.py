@@ -115,6 +115,11 @@ The `dashboard.intelligence` object must include these keys (empty string allowe
 - `earnings_outlook`
 - `sentiment_summary`
 - `macro_focus_impact_3d` (Macro focus impact in next 3 days. If macro focus headlines exist in context, you MUST reference specific items; do not be generic.)
+
+Format rule: `risk_alerts` and `positive_catalysts` must be arrays of complete
+sentence strings. Each array element is one complete risk/catalyst item. Never
+split a sentence into characters, words, punctuation, or multi-line fragments.
+Wrong: ["[", "H", "i", "g", "h", "]"]. Right: ["[High severity] Valuation bubble: PE 74.7x"].
 """
         if report_language == "en":
             return prompt + """

@@ -10,6 +10,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import ChatPage from './pages/ChatPage';
 import PredictionReportsPage from './pages/PredictionReportsPage';
 import SharedReportPage from './pages/SharedReportPage';
+import ReportPrintPage from './pages/ReportPrintPage';
 import ProfilePage from './pages/ProfilePage';
 import { ApiErrorAlert, Shell } from './components/common';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -50,6 +51,13 @@ const AppContent: React.FC = () => {
   }
 
   if (!loggedIn) {
+    if (location.pathname.startsWith('/reports/') && location.pathname.endsWith('/print')) {
+      return (
+        <Routes>
+          <Route path="/reports/:recordId/print" element={<ReportPrintPage />} />
+        </Routes>
+      );
+    }
     if (location.pathname.startsWith('/r/')) {
       return (
         <Routes>
@@ -99,6 +107,7 @@ const AppContent: React.FC = () => {
   return (
     <Routes>
       <Route path="/r/:token" element={<SharedReportPage />} />
+      <Route path="/reports/:recordId/print" element={<ReportPrintPage />} />
       <Route element={<Shell />}>
         <Route path="/" element={protectedElement('home', <HomePage />)} />
         <Route path="/chat" element={protectedElement('chat', <ChatPage />)} />

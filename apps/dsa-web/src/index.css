@@ -3440,3 +3440,31 @@ textarea {
     text-align: left;
   }
 }
+
+@media print {
+  .report-print-page .terminal-card,
+  .report-print-page .gradient-border-card,
+  .report-print-page .glass-card {
+    overflow: visible;
+    box-shadow: none;
+  }
+
+  .report-print-page [data-report-print-root] > * {
+    break-inside: avoid-page;
+    page-break-inside: avoid;
+  }
+
+  .report-print-page tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .report-print-page .overflow-x-auto {
+    overflow: visible;
+  }
+
+  .report-print-page table {
+    width: 100%;
+    min-width: 0;
+  }
+}

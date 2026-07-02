@@ -637,3 +637,1341 @@ LiteLLM completion() model= qwen3-max-2026-01-23; provider = openai
 2026-07-02 14:59:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57316 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
 2026-07-02 14:59:45 | INFO     | main.py:805 | 
 用户中断，程序退出
+2026-07-02 15:28:27 | INFO     | src/logging_config.py:153 | 日志系统初始化完成，日志目录: .
+2026-07-02 15:28:27 | INFO     | src/logging_config.py:154 | 常规日志: stock_analysis_20260702.log
+2026-07-02 15:28:27 | INFO     | src/logging_config.py:155 | 调试日志: stock_analysis_debug_20260702.log
+2026-07-02 15:28:27 | INFO     | main.py:745 | ============================================================
+2026-07-02 15:28:27 | INFO     | main.py:746 | A股自选股智能分析系统 启动
+2026-07-02 15:28:27 | INFO     | main.py:747 | 运行时间: 2026-07-02 15:28:27
+2026-07-02 15:28:27 | INFO     | main.py:748 | ============================================================
+2026-07-02 15:28:27 | INFO     | src/webui_frontend.py:199 | 检测到可直接复用的前端静态产物，跳过运行时自动构建: /Users/taurus/developer/outlets/gp/static/index.html
+2026-07-02 15:28:27 | INFO     | main.py:623 | FastAPI 服务已启动: http://0.0.0.0:8000
+2026-07-02 15:28:27 | INFO     | main.py:796 | 模式: 仅 Web 服务
+2026-07-02 15:28:27 | INFO     | main.py:797 | Web 服务运行中: http://0.0.0.0:8000
+2026-07-02 15:28:27 | INFO     | main.py:798 | 通过 /api/v1/analysis/analyze 接口触发分析
+2026-07-02 15:28:27 | INFO     | main.py:799 | API 文档: http://0.0.0.0:8000/docs
+2026-07-02 15:28:27 | INFO     | main.py:800 | 按 Ctrl+C 退出...
+2026-07-02 15:28:32 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:92 | Started server process [12218]
+2026-07-02 15:28:32 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:48 | Waiting for application startup.
+2026-07-02 15:28:32 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:62 | Application startup complete.
+2026-07-02 15:28:32 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:224 | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-07-02 15:28:47 | INFO     | src/storage.py:1143 | 数据库初始化完成: postgresql+psycopg://dsa:dsa123@localhost:5435/daily_stock_analysis
+2026-07-02 15:28:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59972 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:29:13 | INFO     | src/services/task_queue.py:181 | [TaskQueue] 初始化完成，最大并发: 3
+2026-07-02 15:29:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60007 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-02 15:29:17 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60068 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-02 15:29:17 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60072 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-02 15:29:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60077 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-02 15:29:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60079 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-02 15:29:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60076 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-02 15:29:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60073 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-02 15:29:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60078 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:29:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60082 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-02 15:29:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60085 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-02 15:29:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60096 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-02 15:29:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60092 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-02 15:29:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60095 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:29:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60099 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-02 15:29:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60102 - "GET /api/v1/history/29 HTTP/1.1" 200
+2026-07-02 15:29:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60105 - "GET /api/v1/analysis/cycle-report?code=300502&report_type=full HTTP/1.1" 200
+2026-07-02 15:29:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60108 - "GET /api/v1/history/29/news?limit=8 HTTP/1.1" 200
+2026-07-02 15:29:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60111 - "GET /api/v1/history/29/news?limit=8 HTTP/1.1" 200
+2026-07-02 15:29:20 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60119 - "GET /api/v1/history/29/markdown HTTP/1.1" 200
+2026-07-02 15:29:20 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60122 - "GET /api/v1/history/29/markdown HTTP/1.1" 200
+2026-07-02 15:29:28 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60131 - "GET /api/v1/history/29/pdf HTTP/1.1" 200
+2026-07-02 15:29:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60159 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:29:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60163 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:29:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60173 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:30:17 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60198 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:30:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60242 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:30:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60246 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:31:17 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60286 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:31:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60385 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:31:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60389 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:32:17 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60533 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:32:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60727 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:32:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60731 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:33:17 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60829 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:33:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60874 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:33:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60878 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:33:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60905 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-02 15:34:17 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60930 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:34:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61081 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:34:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61089 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:35:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61240 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:35:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61391 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:36:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61487 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:36:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61747 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:37:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61869 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:37:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62096 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:37:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62175 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:37:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62178 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:38:08 | INFO     | main.py:805 | 
+用户中断，程序退出
+2026-07-02 15:38:11 | INFO     | src/logging_config.py:153 | 日志系统初始化完成，日志目录: .
+2026-07-02 15:38:11 | INFO     | src/logging_config.py:154 | 常规日志: stock_analysis_20260702.log
+2026-07-02 15:38:11 | INFO     | src/logging_config.py:155 | 调试日志: stock_analysis_debug_20260702.log
+2026-07-02 15:38:11 | INFO     | main.py:745 | ============================================================
+2026-07-02 15:38:11 | INFO     | main.py:746 | A股自选股智能分析系统 启动
+2026-07-02 15:38:11 | INFO     | main.py:747 | 运行时间: 2026-07-02 15:38:11
+2026-07-02 15:38:11 | INFO     | main.py:748 | ============================================================
+2026-07-02 15:38:11 | INFO     | src/webui_frontend.py:199 | 检测到可直接复用的前端静态产物，跳过运行时自动构建: /Users/taurus/developer/outlets/gp/static/index.html
+2026-07-02 15:38:11 | INFO     | main.py:623 | FastAPI 服务已启动: http://0.0.0.0:8000
+2026-07-02 15:38:11 | INFO     | main.py:796 | 模式: 仅 Web 服务
+2026-07-02 15:38:11 | INFO     | main.py:797 | Web 服务运行中: http://0.0.0.0:8000
+2026-07-02 15:38:11 | INFO     | main.py:798 | 通过 /api/v1/analysis/analyze 接口触发分析
+2026-07-02 15:38:11 | INFO     | main.py:799 | API 文档: http://0.0.0.0:8000/docs
+2026-07-02 15:38:11 | INFO     | main.py:800 | 按 Ctrl+C 退出...
+2026-07-02 15:38:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:92 | Started server process [33894]
+2026-07-02 15:38:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:48 | Waiting for application startup.
+2026-07-02 15:38:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:62 | Application startup complete.
+2026-07-02 15:38:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:224 | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-07-02 15:38:18 | INFO     | src/storage.py:1143 | 数据库初始化完成: postgresql+psycopg://dsa:dsa123@localhost:5435/daily_stock_analysis
+2026-07-02 15:38:18 | INFO     | src/services/task_queue.py:181 | [TaskQueue] 初始化完成，最大并发: 3
+2026-07-02 15:38:18 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62318 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-02 15:38:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62350 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-02 15:38:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62352 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-02 15:38:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62357 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-02 15:38:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62356 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-02 15:38:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62363 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-02 15:38:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62353 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-02 15:38:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62358 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:38:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62366 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-02 15:38:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62371 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-02 15:38:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62380 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-02 15:38:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62378 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-02 15:38:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62379 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:38:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62383 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-02 15:38:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62386 - "GET /api/v1/history/29 HTTP/1.1" 200
+2026-07-02 15:38:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62389 - "GET /api/v1/analysis/cycle-report?code=300502&report_type=full HTTP/1.1" 200
+2026-07-02 15:38:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62392 - "GET /api/v1/history/29/news?limit=8 HTTP/1.1" 200
+2026-07-02 15:38:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62410 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-02 15:38:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62411 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-02 15:38:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62416 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-02 15:38:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62418 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-02 15:38:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62415 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-02 15:38:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62412 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-02 15:38:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62417 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:38:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62421 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-02 15:38:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62425 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-02 15:38:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62431 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:38:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62432 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-02 15:38:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62435 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-02 15:38:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62440 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-02 15:38:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62441 - "GET /api/v1/history/29 HTTP/1.1" 200
+2026-07-02 15:38:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62444 - "GET /api/v1/analysis/cycle-report?code=300502&report_type=full HTTP/1.1" 200
+2026-07-02 15:38:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62447 - "GET /api/v1/history/29/news?limit=8 HTTP/1.1" 200
+2026-07-02 15:38:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62450 - "GET /api/v1/history/29/news?limit=8 HTTP/1.1" 200
+2026-07-02 15:38:32 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62497 - "GET /api/v1/history/29/markdown HTTP/1.1" 200
+2026-07-02 15:38:32 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62500 - "GET /api/v1/history/29/markdown HTTP/1.1" 200
+2026-07-02 15:38:38 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62538 - "GET /reports/29/print?token=eyJyaWQiOiIyOSIsInVpZCI6MiwiZXhwIjoxNzgyOTc4MDM3fQ.7b754d247fbb8fb5bc3edae98d64fd1fc08a0e66b641dd119ea7b47611a59290 HTTP/1.1" 200
+2026-07-02 15:38:38 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62539 - "GET /assets/index-BuIf0ZZa.css HTTP/1.1" 200
+2026-07-02 15:38:38 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62538 - "GET /assets/index-DCxKMekG.js HTTP/1.1" 200
+2026-07-02 15:38:38 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62538 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-02 15:38:38 | ERROR    | api/middlewares/error_handler.py:116 | 未处理的异常: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+请求路径: /api/v1/public/report-print/29
+堆栈: Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/middlewares/auth.py", line 60, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1620, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1629, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1218, in handle
+    await app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 143, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 129, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 683, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 339, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2592, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/v1/endpoints/public_reports.py", line 85, in get_report_print_data
+    "report": build_analysis_report(detail, db_manager).model_dump(by_alias=True),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/history_report_builder.py", line 118, in build_analysis_report
+    fallback_fundamental = db_manager.get_latest_fundamental_snapshot(
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 3693, in get_latest_fundamental_snapshot
+    owner_user_id = self._resolve_owner_id()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 1883, in _resolve_owner_id
+    raise RuntimeError(
+RuntimeError: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+
+2026-07-02 15:38:38 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62538 - "GET /api/v1/public/report-print/29?token=eyJyaWQiOiIyOSIsInVpZCI6MiwiZXhwIjoxNzgyOTc4MDM3fQ.7b754d247fbb8fb5bc3edae98d64fd1fc08a0e66b641dd119ea7b47611a59290 HTTP/1.1" 500
+2026-07-02 15:38:38 | ERROR    | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:426 | Exception in ASGI application
+Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py", line 421, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/uvicorn/middleware/proxy_headers.py", line 62, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/applications.py", line 1162, in __call__
+    await super().__call__(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/middlewares/auth.py", line 60, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1620, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1629, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1218, in handle
+    await app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 143, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 129, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 683, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 339, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2592, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/v1/endpoints/public_reports.py", line 85, in get_report_print_data
+    "report": build_analysis_report(detail, db_manager).model_dump(by_alias=True),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/history_report_builder.py", line 118, in build_analysis_report
+    fallback_fundamental = db_manager.get_latest_fundamental_snapshot(
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 3693, in get_latest_fundamental_snapshot
+    owner_user_id = self._resolve_owner_id()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 1883, in _resolve_owner_id
+    raise RuntimeError(
+RuntimeError: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+2026-07-02 15:38:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62531 - "GET /api/v1/history/29/pdf HTTP/1.1" 200
+2026-07-02 15:38:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62564 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:38:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62584 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:38:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62609 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:39:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62728 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:39:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62765 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:39:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62906 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:39:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62941 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:40:24 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63140 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:40:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63258 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:40:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63301 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:41:24 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63479 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:41:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63659 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:42:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63761 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:42:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63974 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:43:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64079 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:43:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64316 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:44:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64412 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:44:10 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64449 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:44:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64468 - "GET /reports/29/print?token=eyJyaWQiOiIyOSIsInVpZCI6MiwiZXhwIjoxNzgyOTc4MzcyfQ.82f94b8e44a5fdee5dc216864ed7e0da9172d7cccc36feb7d464b6ac206b03d0 HTTP/1.1" 200
+2026-07-02 15:44:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64469 - "GET /assets/index-BuIf0ZZa.css HTTP/1.1" 200
+2026-07-02 15:44:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64468 - "GET /assets/index-l1bv0mAY.js HTTP/1.1" 200
+2026-07-02 15:44:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64468 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-02 15:44:13 | ERROR    | api/middlewares/error_handler.py:116 | 未处理的异常: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+请求路径: /api/v1/public/report-print/29
+堆栈: Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/middlewares/auth.py", line 60, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1620, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1629, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1218, in handle
+    await app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 143, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 129, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 683, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 339, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2592, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/v1/endpoints/public_reports.py", line 85, in get_report_print_data
+    "report": build_analysis_report(detail, db_manager).model_dump(by_alias=True),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/history_report_builder.py", line 118, in build_analysis_report
+    fallback_fundamental = db_manager.get_latest_fundamental_snapshot(
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 3693, in get_latest_fundamental_snapshot
+    owner_user_id = self._resolve_owner_id()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 1883, in _resolve_owner_id
+    raise RuntimeError(
+RuntimeError: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+
+2026-07-02 15:44:13 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64468 - "GET /api/v1/public/report-print/29?token=eyJyaWQiOiIyOSIsInVpZCI6MiwiZXhwIjoxNzgyOTc4MzcyfQ.82f94b8e44a5fdee5dc216864ed7e0da9172d7cccc36feb7d464b6ac206b03d0 HTTP/1.1" 500
+2026-07-02 15:44:13 | ERROR    | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:426 | Exception in ASGI application
+Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py", line 421, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/uvicorn/middleware/proxy_headers.py", line 62, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/applications.py", line 1162, in __call__
+    await super().__call__(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/middlewares/auth.py", line 60, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1620, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1629, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1218, in handle
+    await app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 143, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 129, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 683, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 339, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2592, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/v1/endpoints/public_reports.py", line 85, in get_report_print_data
+    "report": build_analysis_report(detail, db_manager).model_dump(by_alias=True),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/history_report_builder.py", line 118, in build_analysis_report
+    fallback_fundamental = db_manager.get_latest_fundamental_snapshot(
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 3693, in get_latest_fundamental_snapshot
+    owner_user_id = self._resolve_owner_id()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 1883, in _resolve_owner_id
+    raise RuntimeError(
+RuntimeError: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+2026-07-02 15:44:14 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64461 - "GET /api/v1/history/29/pdf HTTP/1.1" 200
+2026-07-02 15:44:16 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64489 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:44:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64524 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:44:43 | INFO     | main.py:805 | 
+用户中断，程序退出
+2026-07-02 15:44:46 | INFO     | src/logging_config.py:153 | 日志系统初始化完成，日志目录: .
+2026-07-02 15:44:46 | INFO     | src/logging_config.py:154 | 常规日志: stock_analysis_20260702.log
+2026-07-02 15:44:46 | INFO     | src/logging_config.py:155 | 调试日志: stock_analysis_debug_20260702.log
+2026-07-02 15:44:46 | INFO     | main.py:745 | ============================================================
+2026-07-02 15:44:46 | INFO     | main.py:746 | A股自选股智能分析系统 启动
+2026-07-02 15:44:46 | INFO     | main.py:747 | 运行时间: 2026-07-02 15:44:46
+2026-07-02 15:44:46 | INFO     | main.py:748 | ============================================================
+2026-07-02 15:44:46 | INFO     | src/webui_frontend.py:230 | 前端构建检查结果: needs_install=False, needs_build=True, artifact=/Users/taurus/developer/outlets/gp/static/index.html
+2026-07-02 15:44:46 | INFO     | src/webui_frontend.py:111 | 执行前端命令: /Users/taurus/.nvm/versions/node/v24.13.1/bin/npm run build
+2026-07-02 15:44:57 | INFO     | src/webui_frontend.py:113 | 前端静态资源构建完成
+2026-07-02 15:44:57 | INFO     | main.py:623 | FastAPI 服务已启动: http://0.0.0.0:8000
+2026-07-02 15:44:57 | INFO     | main.py:796 | 模式: 仅 Web 服务
+2026-07-02 15:44:57 | INFO     | main.py:797 | Web 服务运行中: http://0.0.0.0:8000
+2026-07-02 15:44:57 | INFO     | main.py:798 | 通过 /api/v1/analysis/analyze 接口触发分析
+2026-07-02 15:44:57 | INFO     | main.py:799 | API 文档: http://0.0.0.0:8000/docs
+2026-07-02 15:44:57 | INFO     | main.py:800 | 按 Ctrl+C 退出...
+2026-07-02 15:44:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:92 | Started server process [45534]
+2026-07-02 15:44:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:48 | Waiting for application startup.
+2026-07-02 15:44:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:62 | Application startup complete.
+2026-07-02 15:44:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:224 | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-07-02 15:45:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64778 - "GET / HTTP/1.1" 200
+2026-07-02 15:45:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64778 - "GET /assets/index--Pqc01kP.js HTTP/1.1" 200
+2026-07-02 15:45:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64779 - "GET /assets/index-BuIf0ZZa.css HTTP/1.1" 200
+2026-07-02 15:45:03 | INFO     | src/storage.py:1143 | 数据库初始化完成: postgresql+psycopg://dsa:dsa123@localhost:5435/daily_stock_analysis
+2026-07-02 15:45:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64778 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-02 15:45:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64779 - "GET /vite.svg HTTP/1.1" 200
+2026-07-02 15:45:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64778 - "GET /vite.svg HTTP/1.1" 200
+2026-07-02 15:45:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64787 - "GET /stocks.index.json?_t=495271 HTTP/1.1" 200
+2026-07-02 15:45:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64788 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-02 15:45:03 | INFO     | src/services/task_queue.py:181 | [TaskQueue] 初始化完成，最大并发: 3
+2026-07-02 15:45:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64779 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-02 15:45:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64792 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-02 15:45:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64778 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-02 15:45:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64790 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:45:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64790 - "GET /api/v1/history/29 HTTP/1.1" 200
+2026-07-02 15:45:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64790 - "GET /api/v1/analysis/cycle-report?code=300502&report_type=full HTTP/1.1" 200
+2026-07-02 15:45:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64787 - "GET /api/v1/history/29/news?limit=8 HTTP/1.1" 200
+2026-07-02 15:45:09 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64827 - "GET /api/v1/history/29/markdown HTTP/1.1" 200
+2026-07-02 15:45:11 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64836 - "GET /reports/29/print?token=eyJyaWQiOiIyOSIsInVpZCI6MiwiZXhwIjoxNzgyOTc4NDMxfQ.6274c7792b43f8498cdc53aaec41177fc27bfb0024fb52c6912e18d6a7dc5e08 HTTP/1.1" 200
+2026-07-02 15:45:11 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64836 - "GET /assets/index--Pqc01kP.js HTTP/1.1" 200
+2026-07-02 15:45:11 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64837 - "GET /assets/index-BuIf0ZZa.css HTTP/1.1" 200
+2026-07-02 15:45:11 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64836 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-02 15:45:11 | ERROR    | api/middlewares/error_handler.py:116 | 未处理的异常: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+请求路径: /api/v1/public/report-print/29
+堆栈: Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/middlewares/auth.py", line 60, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1620, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1629, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1218, in handle
+    await app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 143, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 129, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 683, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 339, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2592, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/v1/endpoints/public_reports.py", line 85, in get_report_print_data
+    "report": build_analysis_report(detail, db_manager).model_dump(by_alias=True),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/history_report_builder.py", line 118, in build_analysis_report
+    fallback_fundamental = db_manager.get_latest_fundamental_snapshot(
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 3693, in get_latest_fundamental_snapshot
+    owner_user_id = self._resolve_owner_id()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 1883, in _resolve_owner_id
+    raise RuntimeError(
+RuntimeError: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+
+2026-07-02 15:45:11 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64836 - "GET /api/v1/public/report-print/29?token=eyJyaWQiOiIyOSIsInVpZCI6MiwiZXhwIjoxNzgyOTc4NDMxfQ.6274c7792b43f8498cdc53aaec41177fc27bfb0024fb52c6912e18d6a7dc5e08 HTTP/1.1" 500
+2026-07-02 15:45:11 | ERROR    | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:426 | Exception in ASGI application
+Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py", line 421, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/uvicorn/middleware/proxy_headers.py", line 62, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/applications.py", line 1162, in __call__
+    await super().__call__(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/middlewares/auth.py", line 60, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1620, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1629, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1218, in handle
+    await app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 143, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 129, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 683, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 339, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2592, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/v1/endpoints/public_reports.py", line 85, in get_report_print_data
+    "report": build_analysis_report(detail, db_manager).model_dump(by_alias=True),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/history_report_builder.py", line 118, in build_analysis_report
+    fallback_fundamental = db_manager.get_latest_fundamental_snapshot(
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 3693, in get_latest_fundamental_snapshot
+    owner_user_id = self._resolve_owner_id()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 1883, in _resolve_owner_id
+    raise RuntimeError(
+RuntimeError: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+2026-07-02 15:45:12 | ERROR    | api/v1/endpoints/history.py:525 | PDF generation failed for history 29: Report print page failed: 报告加载失败: Request failed with status code 500
+Traceback (most recent call last):
+  File "/Users/taurus/developer/outlets/gp/api/v1/endpoints/history.py", line 523, in download_history_pdf
+    pdf_bytes = report_url_to_pdf(print_url)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/report_pdf.py", line 16, in report_url_to_pdf
+    raise RuntimeError(f"Report print page failed: {error}")
+RuntimeError: Report print page failed: 报告加载失败: Request failed with status code 500
+2026-07-02 15:45:12 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64827 - "GET /api/v1/history/29/pdf HTTP/1.1" 500
+2026-07-02 15:45:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64827 - "GET /assets/index-BuIf0ZZa.css HTTP/1.1" 304
+2026-07-02 15:45:15 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64827 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 200
+2026-07-02 15:45:19 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64873 - "GET /reports/29/print?token=eyJyaWQiOiIyOSIsInVpZCI6MiwiZXhwIjoxNzgyOTc4NDM4fQ.f85349f5958325159ccd99b1178444a1cb71fc51d33f290a626f8ef5241ae652 HTTP/1.1" 200
+2026-07-02 15:45:19 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64874 - "GET /assets/index-BuIf0ZZa.css HTTP/1.1" 200
+2026-07-02 15:45:19 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64873 - "GET /assets/index--Pqc01kP.js HTTP/1.1" 200
+2026-07-02 15:45:19 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64873 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-02 15:45:19 | ERROR    | api/middlewares/error_handler.py:116 | 未处理的异常: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+请求路径: /api/v1/public/report-print/29
+堆栈: Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/middlewares/auth.py", line 60, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1620, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1629, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1218, in handle
+    await app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 143, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 129, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 683, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 339, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2592, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/v1/endpoints/public_reports.py", line 85, in get_report_print_data
+    "report": build_analysis_report(detail, db_manager).model_dump(by_alias=True),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/history_report_builder.py", line 118, in build_analysis_report
+    fallback_fundamental = db_manager.get_latest_fundamental_snapshot(
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 3693, in get_latest_fundamental_snapshot
+    owner_user_id = self._resolve_owner_id()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 1883, in _resolve_owner_id
+    raise RuntimeError(
+RuntimeError: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+
+2026-07-02 15:45:19 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64873 - "GET /api/v1/public/report-print/29?token=eyJyaWQiOiIyOSIsInVpZCI6MiwiZXhwIjoxNzgyOTc4NDM4fQ.f85349f5958325159ccd99b1178444a1cb71fc51d33f290a626f8ef5241ae652 HTTP/1.1" 500
+2026-07-02 15:45:19 | ERROR    | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:426 | Exception in ASGI application
+Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py", line 421, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/uvicorn/middleware/proxy_headers.py", line 62, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/applications.py", line 1162, in __call__
+    await super().__call__(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/middlewares/auth.py", line 60, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1620, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1629, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1218, in handle
+    await app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 143, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 129, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 683, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 339, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2592, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/v1/endpoints/public_reports.py", line 85, in get_report_print_data
+    "report": build_analysis_report(detail, db_manager).model_dump(by_alias=True),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/history_report_builder.py", line 118, in build_analysis_report
+    fallback_fundamental = db_manager.get_latest_fundamental_snapshot(
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 3693, in get_latest_fundamental_snapshot
+    owner_user_id = self._resolve_owner_id()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 1883, in _resolve_owner_id
+    raise RuntimeError(
+RuntimeError: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+2026-07-02 15:45:19 | ERROR    | api/v1/endpoints/history.py:525 | PDF generation failed for history 29: Report print page failed: 报告加载失败: Request failed with status code 500
+Traceback (most recent call last):
+  File "/Users/taurus/developer/outlets/gp/api/v1/endpoints/history.py", line 523, in download_history_pdf
+    pdf_bytes = report_url_to_pdf(print_url)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/report_pdf.py", line 16, in report_url_to_pdf
+    raise RuntimeError(f"Report print page failed: {error}")
+RuntimeError: Report print page failed: 报告加载失败: Request failed with status code 500
+2026-07-02 15:45:19 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64827 - "GET /api/v1/history/29/pdf HTTP/1.1" 500
+2026-07-02 15:45:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64950 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:45:46 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65017 - "GET /reports/29/print?token=eyJyaWQiOiIyOSIsInVpZCI6MiwiZXhwIjoxNzgyOTc4NDY2fQ.6e362461890c97d6607ec47ba06d6d5f787766b009d54d18f3fc9d76f9040f0d HTTP/1.1" 200
+2026-07-02 15:45:46 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65017 - "GET /assets/index--Pqc01kP.js HTTP/1.1" 200
+2026-07-02 15:45:46 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65018 - "GET /assets/index-BuIf0ZZa.css HTTP/1.1" 200
+2026-07-02 15:45:46 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65017 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-02 15:45:46 | ERROR    | api/middlewares/error_handler.py:116 | 未处理的异常: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+请求路径: /api/v1/public/report-print/29
+堆栈: Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/middlewares/auth.py", line 60, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1620, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1629, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1218, in handle
+    await app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 143, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 129, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 683, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 339, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2592, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/v1/endpoints/public_reports.py", line 85, in get_report_print_data
+    "report": build_analysis_report(detail, db_manager).model_dump(by_alias=True),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/history_report_builder.py", line 118, in build_analysis_report
+    fallback_fundamental = db_manager.get_latest_fundamental_snapshot(
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 3693, in get_latest_fundamental_snapshot
+    owner_user_id = self._resolve_owner_id()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 1883, in _resolve_owner_id
+    raise RuntimeError(
+RuntimeError: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+
+2026-07-02 15:45:46 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65017 - "GET /api/v1/public/report-print/29?token=eyJyaWQiOiIyOSIsInVpZCI6MiwiZXhwIjoxNzgyOTc4NDY2fQ.6e362461890c97d6607ec47ba06d6d5f787766b009d54d18f3fc9d76f9040f0d HTTP/1.1" 500
+2026-07-02 15:45:46 | ERROR    | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:426 | Exception in ASGI application
+Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py", line 421, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/uvicorn/middleware/proxy_headers.py", line 62, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/applications.py", line 1162, in __call__
+    await super().__call__(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/middlewares/auth.py", line 60, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1620, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1609, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 2047, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1629, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 1218, in handle
+    await app(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 143, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 129, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 683, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/fastapi/routing.py", line 339, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2592, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/api/v1/endpoints/public_reports.py", line 85, in get_report_print_data
+    "report": build_analysis_report(detail, db_manager).model_dump(by_alias=True),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/services/history_report_builder.py", line 118, in build_analysis_report
+    fallback_fundamental = db_manager.get_latest_fundamental_snapshot(
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 3693, in get_latest_fundamental_snapshot
+    owner_user_id = self._resolve_owner_id()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/storage.py", line 1883, in _resolve_owner_id
+    raise RuntimeError(
+RuntimeError: _resolve_owner_id() called without a user context. Ensure the calling code runs within an authenticated request or explicitly sets the ContextVar.
+2026-07-02 15:45:47 | ERROR    | api/v1/endpoints/history.py:525 | PDF generation failed for history 29: Report print page failed: 报告加载失败: Request failed with status code 500
+Traceback (most recent call last):
+  File "/Users/taurus/developer/outlets/gp/api/v1/endpoints/history.py", line 523, in download_history_pdf
+    pdf_bytes = report_url_to_pdf(print_url)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/taurus/developer/outlets/gp/src/report_pdf.py", line 16, in report_url_to_pdf
+    raise RuntimeError(f"Report print page failed: {error}")
+RuntimeError: Report print page failed: 报告加载失败: Request failed with status code 500
+2026-07-02 15:45:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65010 - "GET /api/v1/history/29/pdf HTTP/1.1" 500
+2026-07-02 15:46:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65099 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:46:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65267 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:47:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:65430 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:47:13 | INFO     | main.py:805 | 
+用户中断，程序退出
+2026-07-02 15:47:18 | INFO     | src/logging_config.py:153 | 日志系统初始化完成，日志目录: .
+2026-07-02 15:47:18 | INFO     | src/logging_config.py:154 | 常规日志: stock_analysis_20260702.log
+2026-07-02 15:47:18 | INFO     | src/logging_config.py:155 | 调试日志: stock_analysis_debug_20260702.log
+2026-07-02 15:47:18 | INFO     | main.py:745 | ============================================================
+2026-07-02 15:47:18 | INFO     | main.py:746 | A股自选股智能分析系统 启动
+2026-07-02 15:47:18 | INFO     | main.py:747 | 运行时间: 2026-07-02 15:47:18
+2026-07-02 15:47:18 | INFO     | main.py:748 | ============================================================
+2026-07-02 15:47:18 | INFO     | src/webui_frontend.py:199 | 检测到可直接复用的前端静态产物，跳过运行时自动构建: /Users/taurus/developer/outlets/gp/static/index.html
+2026-07-02 15:47:18 | INFO     | main.py:623 | FastAPI 服务已启动: http://0.0.0.0:8000
+2026-07-02 15:47:18 | INFO     | main.py:796 | 模式: 仅 Web 服务
+2026-07-02 15:47:18 | INFO     | main.py:797 | Web 服务运行中: http://0.0.0.0:8000
+2026-07-02 15:47:18 | INFO     | main.py:798 | 通过 /api/v1/analysis/analyze 接口触发分析
+2026-07-02 15:47:18 | INFO     | main.py:799 | API 文档: http://0.0.0.0:8000/docs
+2026-07-02 15:47:18 | INFO     | main.py:800 | 按 Ctrl+C 退出...
+2026-07-02 15:47:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:92 | Started server process [49573]
+2026-07-02 15:47:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:48 | Waiting for application startup.
+2026-07-02 15:47:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:62 | Application startup complete.
+2026-07-02 15:47:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:224 | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-07-02 15:47:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49157 - "GET / HTTP/1.1" 200
+2026-07-02 15:47:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49157 - "GET /assets/index-BxI5NRAW.js HTTP/1.1" 200
+2026-07-02 15:47:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49159 - "GET /assets/index-BuIf0ZZa.css HTTP/1.1" 200
+2026-07-02 15:47:21 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49157 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 200
+2026-07-02 15:47:22 | INFO     | src/storage.py:1143 | 数据库初始化完成: postgresql+psycopg://dsa:dsa123@localhost:5435/daily_stock_analysis
+2026-07-02 15:47:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49157 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-02 15:47:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49168 - "GET /stocks.index.json?_t=495271 HTTP/1.1" 200
+2026-07-02 15:47:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49169 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-02 15:47:22 | INFO     | src/services/task_queue.py:181 | [TaskQueue] 初始化完成，最大并发: 3
+2026-07-02 15:47:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49159 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-02 15:47:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49172 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-02 15:47:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49169 - "GET /vite.svg HTTP/1.1" 200
+2026-07-02 15:47:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49157 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-02 15:47:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49170 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:47:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49170 - "GET /api/v1/history/29 HTTP/1.1" 200
+2026-07-02 15:47:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49170 - "GET /api/v1/analysis/cycle-report?code=300502&report_type=full HTTP/1.1" 200
+2026-07-02 15:47:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49168 - "GET /api/v1/history/29/news?limit=8 HTTP/1.1" 200
+2026-07-02 15:47:33 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49224 - "GET /api/v1/history/29/markdown HTTP/1.1" 200
+2026-07-02 15:47:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49238 - "GET /reports/29/print?token=eyJyaWQiOiIyOSIsInVpZCI6MiwiZXhwIjoxNzgyOTc4NTc1fQ.e9e5d13df9a5d1d457734edd4178241d16c32cb43fc08ec92fa94cfd58711c78 HTTP/1.1" 200
+2026-07-02 15:47:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49238 - "GET /assets/index-BxI5NRAW.js HTTP/1.1" 200
+2026-07-02 15:47:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49239 - "GET /assets/index-BuIf0ZZa.css HTTP/1.1" 200
+2026-07-02 15:47:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49238 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-02 15:47:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49238 - "GET /api/v1/public/report-print/29?token=eyJyaWQiOiIyOSIsInVpZCI6MiwiZXhwIjoxNzgyOTc4NTc1fQ.e9e5d13df9a5d1d457734edd4178241d16c32cb43fc08ec92fa94cfd58711c78 HTTP/1.1" 200
+2026-07-02 15:47:36 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49224 - "GET /api/v1/history/29/pdf HTTP/1.1" 200
+2026-07-02 15:47:45 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49286 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:47:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49322 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:47:56 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49322 - "GET /api/v1/history/29/markdown HTTP/1.1" 200
+2026-07-02 15:47:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49364 - "GET /reports/29/print?token=eyJyaWQiOiIyOSIsInVpZCI6MiwiZXhwIjoxNzgyOTc4NTk4fQ.300a05cb3fb93a12803ccea2ba5f85090993138b881f96b63df5ed93b14ae678 HTTP/1.1" 200
+2026-07-02 15:47:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49364 - "GET /assets/index-BxI5NRAW.js HTTP/1.1" 200
+2026-07-02 15:47:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49365 - "GET /assets/index-BuIf0ZZa.css HTTP/1.1" 200
+2026-07-02 15:47:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49364 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-02 15:47:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49364 - "GET /api/v1/public/report-print/29?token=eyJyaWQiOiIyOSIsInVpZCI6MiwiZXhwIjoxNzgyOTc4NTk4fQ.300a05cb3fb93a12803ccea2ba5f85090993138b881f96b63df5ed93b14ae678 HTTP/1.1" 200
+2026-07-02 15:48:00 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49322 - "GET /api/v1/history/29/pdf HTTP/1.1" 200
+2026-07-02 15:48:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49477 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:48:38 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49547 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:48:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49612 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:49:17 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49749 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:49:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49779 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:49:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:49929 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:50:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50105 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:50:45 | INFO     | main.py:805 | 
+用户中断，程序退出
+2026-07-02 15:50:48 | INFO     | src/logging_config.py:153 | 日志系统初始化完成，日志目录: .
+2026-07-02 15:50:48 | INFO     | src/logging_config.py:154 | 常规日志: stock_analysis_20260702.log
+2026-07-02 15:50:48 | INFO     | src/logging_config.py:155 | 调试日志: stock_analysis_debug_20260702.log
+2026-07-02 15:50:48 | INFO     | main.py:745 | ============================================================
+2026-07-02 15:50:48 | INFO     | main.py:746 | A股自选股智能分析系统 启动
+2026-07-02 15:50:48 | INFO     | main.py:747 | 运行时间: 2026-07-02 15:50:48
+2026-07-02 15:50:48 | INFO     | main.py:748 | ============================================================
+2026-07-02 15:50:48 | INFO     | src/webui_frontend.py:199 | 检测到可直接复用的前端静态产物，跳过运行时自动构建: /Users/taurus/developer/outlets/gp/static/index.html
+2026-07-02 15:50:48 | INFO     | main.py:623 | FastAPI 服务已启动: http://0.0.0.0:8000
+2026-07-02 15:50:48 | INFO     | main.py:796 | 模式: 仅 Web 服务
+2026-07-02 15:50:48 | INFO     | main.py:797 | Web 服务运行中: http://0.0.0.0:8000
+2026-07-02 15:50:48 | INFO     | main.py:798 | 通过 /api/v1/analysis/analyze 接口触发分析
+2026-07-02 15:50:48 | INFO     | main.py:799 | API 文档: http://0.0.0.0:8000/docs
+2026-07-02 15:50:48 | INFO     | main.py:800 | 按 Ctrl+C 退出...
+2026-07-02 15:50:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:92 | Started server process [55435]
+2026-07-02 15:50:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:48 | Waiting for application startup.
+2026-07-02 15:50:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/lifespan/on.py:62 | Application startup complete.
+2026-07-02 15:50:50 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/server.py:224 | Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-07-02 15:50:51 | INFO     | src/storage.py:1143 | 数据库初始化完成: postgresql+psycopg://dsa:dsa123@localhost:5435/daily_stock_analysis
+2026-07-02 15:50:51 | INFO     | src/services/task_queue.py:181 | [TaskQueue] 初始化完成，最大并发: 3
+2026-07-02 15:50:51 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50269 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-02 15:50:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50276 - "GET / HTTP/1.1" 200
+2026-07-02 15:50:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50276 - "GET /assets/index-DiBrA8NJ.js HTTP/1.1" 200
+2026-07-02 15:50:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50278 - "GET /assets/index-BuIf0ZZa.css HTTP/1.1" 200
+2026-07-02 15:50:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50276 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-02 15:50:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50280 - "GET /stocks.index.json?_t=495271 HTTP/1.1" 200
+2026-07-02 15:50:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50283 - "GET /api/v1/subscriptions/profile HTTP/1.1" 200
+2026-07-02 15:50:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50278 - "GET /api/v1/payment/rate HTTP/1.1" 200
+2026-07-02 15:50:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50286 - "GET /api/v1/analysis/tasks/stream HTTP/1.1" 200
+2026-07-02 15:50:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50283 - "GET /vite.svg HTTP/1.1" 200
+2026-07-02 15:50:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50276 - "GET /api/v1/payment/balance HTTP/1.1" 200
+2026-07-02 15:50:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50284 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:50:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50284 - "GET /api/v1/history/29 HTTP/1.1" 200
+2026-07-02 15:50:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50284 - "GET /api/v1/analysis/cycle-report?code=300502&report_type=full HTTP/1.1" 200
+2026-07-02 15:50:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50280 - "GET /api/v1/history/29/news?limit=8 HTTP/1.1" 200
+2026-07-02 15:50:58 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50320 - "GET /api/v1/history/29/markdown HTTP/1.1" 200
+2026-07-02 15:51:04 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50355 - "GET /reports/29/print?token=eyJyaWQiOiIyOSIsInVpZCI6MiwiZXhwIjoxNzgyOTc4NzgzfQ.aea58449ad5b0a1e6bb30e8a3d7219930ec71069abf5a5186e383a48f994fb0f HTTP/1.1" 200
+2026-07-02 15:51:04 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50356 - "GET /assets/index-BuIf0ZZa.css HTTP/1.1" 200
+2026-07-02 15:51:04 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50355 - "GET /assets/index-DiBrA8NJ.js HTTP/1.1" 200
+2026-07-02 15:51:04 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50355 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-02 15:51:04 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50355 - "GET /api/v1/public/report-print/29?token=eyJyaWQiOiIyOSIsInVpZCI6MiwiZXhwIjoxNzgyOTc4NzgzfQ.aea58449ad5b0a1e6bb30e8a3d7219930ec71069abf5a5186e383a48f994fb0f HTTP/1.1" 200
+2026-07-02 15:51:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50350 - "GET /api/v1/history/29/pdf HTTP/1.1" 200
+2026-07-02 15:51:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50441 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:51:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50571 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:51:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50626 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:51:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50626 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:52:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50775 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:52:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:50925 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:53:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51066 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:53:43 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51162 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:53:47 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51162 - "GET /api/v1/history/29/markdown HTTP/1.1" 200
+2026-07-02 15:53:48 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51191 - "GET /reports/29/print?token=eyJyaWQiOiIyOSIsInVpZCI6MiwiZXhwIjoxNzgyOTc4OTQ4fQ.cabbb70c53690391f25d2e28b7db81b4c9f64f47482329d04b015639231453f4 HTTP/1.1" 200
+2026-07-02 15:53:48 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51191 - "GET /assets/index-DiBrA8NJ.js HTTP/1.1" 200
+2026-07-02 15:53:48 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51192 - "GET /assets/index-BuIf0ZZa.css HTTP/1.1" 200
+2026-07-02 15:53:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51191 - "GET /api/v1/auth/status HTTP/1.1" 200
+2026-07-02 15:53:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51191 - "GET /api/v1/public/report-print/29?token=eyJyaWQiOiIyOSIsInVpZCI6MiwiZXhwIjoxNzgyOTc4OTQ4fQ.cabbb70c53690391f25d2e28b7db81b4c9f64f47482329d04b015639231453f4 HTTP/1.1" 200
+2026-07-02 15:53:49 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51162 - "GET /api/v1/history/29/pdf HTTP/1.1" 200
+2026-07-02 15:53:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51162 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:53:59 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51242 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:54:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51382 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:54:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51549 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:55:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51702 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:55:44 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51823 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:55:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51868 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:55:55 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:51868 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:56:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52011 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:56:39 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52102 - "GET /api/v1/payment/history?page=1&page_size=8 HTTP/1.1" 200
+2026-07-02 15:56:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52162 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:57:01 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52206 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:57:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52309 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:57:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52452 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:58:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52595 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:58:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52735 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:59:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:52872 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 15:59:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53007 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:00:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53154 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:00:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53297 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:01:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53442 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:01:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53595 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:02:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53757 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:02:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:53891 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:03:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54019 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:03:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54156 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:04:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54288 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:04:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54414 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:05:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54551 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:05:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54675 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:06:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54810 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:06:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:54956 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:07:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55105 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:07:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55238 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:08:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55369 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:08:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55500 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:09:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55627 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:09:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55767 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:10:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:55908 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:10:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56046 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:11:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56196 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:11:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56372 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:12:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56519 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:12:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56578 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:12:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56676 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:13:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:56835 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:14:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57077 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:14:02 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57080 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:14:03 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57080 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:14:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57186 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:14:35 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57273 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:14:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57359 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:14:55 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57359 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:15:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57416 - "GET /api/v1/history/23 HTTP/1.1" 200
+2026-07-02 16:15:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57416 - "GET /api/v1/analysis/cycle-report?code=002639&report_type=full HTTP/1.1" 200
+2026-07-02 16:15:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57416 - "GET /api/v1/history/23/news?limit=8 HTTP/1.1" 200
+2026-07-02 16:15:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57416 - "GET /api/v1/history/24 HTTP/1.1" 200
+2026-07-02 16:15:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57416 - "GET /api/v1/analysis/cycle-report?code=000007&report_type=full HTTP/1.1" 200
+2026-07-02 16:15:06 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57423 - "GET /api/v1/history/24/news?limit=8 HTTP/1.1" 200
+2026-07-02 16:15:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57423 - "GET /api/v1/history/29 HTTP/1.1" 200
+2026-07-02 16:15:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57423 - "GET /api/v1/analysis/cycle-report?code=300502&report_type=full HTTP/1.1" 200
+2026-07-02 16:15:07 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57416 - "GET /api/v1/history/29/news?limit=8 HTTP/1.1" 200
+2026-07-02 16:15:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57524 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:15:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57707 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:16:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:57872 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:17:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58086 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:18:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58388 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:19:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:58898 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:20:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59233 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:21:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59526 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:21:27 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59655 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:21:27 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59655 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:21:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59657 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:22:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:59987 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:22:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60198 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:23:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60353 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:23:52 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60500 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:24:22 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60655 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:24:53 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:60856 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:25:23 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61012 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:26:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61222 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:27:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61592 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:28:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:61900 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:29:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62207 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:30:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62497 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:31:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:62800 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:32:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63129 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:33:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63452 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:34:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:63722 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:35:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64019 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:36:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64082 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200
+2026-07-02 16:37:05 | INFO     | /opt/homebrew/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py:484 | 127.0.0.1:64152 - "GET /api/v1/history?page=1&limit=20&start_date=2026-06-02&end_date=2026-07-02 HTTP/1.1" 200

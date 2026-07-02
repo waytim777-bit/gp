@@ -44,7 +44,7 @@ def _cookie_name_for_request(request: Request) -> str:
 def _path_exempt(path: str) -> bool:
     """Check if path is exempt from auth."""
     normalized = path.rstrip("/") or "/"
-    return normalized in EXEMPT_PATHS
+    return normalized in EXEMPT_PATHS or normalized.startswith("/api/v1/public/")
 
 
 class AuthMiddleware(BaseHTTPMiddleware):

@@ -23,15 +23,10 @@ WORKDIR /app
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# 安装系统依赖（wkhtmltopdf 含 wkhtmltoimage，用于 Markdown 转图片 Issue #289）
+# 安装基础系统依赖
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     curl \
-    wkhtmltopdf \
-    fontconfig \
-    libjpeg62-turbo \
-    libxrender1 \
-    libxext6 \
     && rm -rf /var/lib/apt/lists/*
 
 # 复制依赖文件
@@ -39,6 +34,7 @@ COPY requirements.txt .
 
 # 安装 Python 依赖
 RUN pip install --no-cache-dir -r requirements.txt
+RUN python -m playwright install --with-deps chromium
 
 # 复制应用代码
 COPY *.py ./

@@ -9,6 +9,11 @@ export interface PublicSharedReportPayload {
   markdown: string;
 }
 
+export interface ReportPrintPayload {
+  report: AnalysisReport;
+  markdown: string;
+}
+
 export interface ReportShareLinkPayload {
   historyId: number;
   shareToken: string;
@@ -23,6 +28,14 @@ export const publicReportsApi = {
       `/api/v1/public/reports/${encodeURIComponent(shareToken)}`,
     );
     return toCamelCase<PublicSharedReportPayload>(response.data);
+  },
+
+  getReportPrintData: async (recordId: string, token: string): Promise<ReportPrintPayload> => {
+    const response = await publicApiClient.get<Record<string, unknown>>(
+      `/api/v1/public/report-print/${encodeURIComponent(recordId)}`,
+      { params: { token } },
+    );
+    return toCamelCase<ReportPrintPayload>(response.data);
   },
 };
 

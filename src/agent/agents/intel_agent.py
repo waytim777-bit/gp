@@ -78,6 +78,10 @@ Return **only** a JSON object:
     {"title": "...", "impact": "positive|negative|neutral"}
   ]
 }
+
+`risk_alerts` and `positive_catalysts` must be arrays of complete sentence
+strings. Each element is one complete item; never split one item into
+characters, words, punctuation, or multi-line fragments.
 """
 
     def build_user_message(self, ctx: AgentContext) -> str:

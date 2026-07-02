@@ -10,7 +10,7 @@
 """
 
 import logging
-import subprocess
+import os
 from urllib.parse import quote
 from typing import Optional
 
@@ -32,7 +32,8 @@ from api.v1.schemas.history import (
 from api.v1.schemas.public_reports import ReportShareLinkResponse
 from api.v1.schemas.common import ErrorResponse
 from src.storage import AnalysisHistoryDeleteConflictError, DatabaseManager
-from src.formatters import markdown_to_html_document
+from src.report_pdf import report_url_to_pdf
+from src.report_print_token import create_report_print_token
 from src.services.history_service import HistoryService, MarkdownReportGenerationError
 from src.services.history_report_builder import build_analysis_report
 from src.services.report_public_share_service import ReportPublicShareError, ReportPublicShareService
@@ -40,6 +41,13 @@ from src.services.report_public_share_service import ReportPublicShareError, Rep
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
+
+def _report_pdf_base_url() -> str:
+    configured = (os.getenv("REPORT_PDF_BASE_URL") or "").strip().rstrip("/")
+    if configured:
+        return configured
+    return f"http://127.0.0.1:{os.getenv('API_PORT', '8000')}"
 
 
 def _owner_user_id_from_dependency(current_user) -> Optional[int]:
@@ -509,42 +517,12 @@ def download_history_pdf(
             detail={"error": "not_found", "message": f"未找到 id/query_id={record_id} 的分析记录"},
         )
 
-    html = markdown_to_html_document(markdown_content)
+    token = create_report_print_token(record_id, _owner_user_id_from_dependency(current_user))
+    print_url = f"{_report_pdf_base_url()}/reports/{quote(str(record_id))}/print?token={quote(token)}"
     try:
-        completed = subprocess.run(
-            [
-                "wkhtmltopdf",
-                "--quiet",
-                "--encoding",
-                "utf-8",
-                "--print-media-type",
-                "--margin-top",
-                "12mm",
-                "--margin-right",
-                "12mm",
-                "--margin-bottom",
-                "12mm",
-                "--margin-left",
-                "12mm",
-                "-",
-                "-",
-            ],
-            input=html.encode("utf-8"),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            timeout=60,
-            check=False,
-        )
-    except (OSError, subprocess.TimeoutExpired) as e:
-        logger.error("wkhtmltopdf failed for history %s: %s", record_id, e)
-        raise HTTPException(
-            status_code=500,
-            detail={"error": "pdf_generation_failed", "message": "PDF 生成失败"},
-        )
-
-    if completed.returncode != 0 or not completed.stdout:
-        stderr = completed.stderr.decode("utf-8", errors="replace")[:500]
-        logger.error("wkhtmltopdf failed for history %s: %s", record_id, stderr)
+        pdf_bytes = report_url_to_pdf(print_url)
+    except Exception as e:
+        logger.error("PDF generation failed for history %s: %s", record_id, e, exc_info=True)
         raise HTTPException(
             status_code=500,
             detail={"error": "pdf_generation_failed", "message": "PDF 生成失败"},
@@ -552,7 +530,7 @@ def download_history_pdf(
 
     filename = f"history_{record_id}.pdf"
     return Response(
-        content=completed.stdout,
+        content=pdf_bytes,
         media_type="application/pdf",
         headers={"Content-Disposition": f"attachment; filename*=UTF-8''{quote(filename)}"},
     )

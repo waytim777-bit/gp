@@ -30,9 +30,10 @@ interface ReportFullContentProps {
   details?: ReportDetails;
   language?: ReportLanguage;
   showPrintHeader?: boolean;
+  printMode?: boolean;
 }
 
-const MARKDOWN_PROSE_CLASS_NAME = `home-markdown-prose prose prose-invert prose-sm max-w-none
+const MARKDOWN_PROSE_CLASS_NAME = `home-markdown-prose prose prose-sm max-w-none
   prose-headings:text-foreground prose-headings:font-semibold prose-headings:mt-4 prose-headings:mb-2
   prose-h1:text-xl
   prose-h2:text-lg
@@ -48,6 +49,8 @@ const MARKDOWN_PROSE_CLASS_NAME = `home-markdown-prose prose prose-invert prose-
   prose-blockquote:text-secondary-text
   whitespace-pre-line break-words
 `;
+
+const MARKDOWN_PROSE_INVERT_CLASS_NAME = `${MARKDOWN_PROSE_CLASS_NAME} prose-invert`;
 
 const IMPORTANT_INFO_TITLES = ['重要信息速览', 'Key Updates'];
 
@@ -99,13 +102,13 @@ const splitImportantInfoMarkdown = (
   };
 };
 
-const MarkdownContent: React.FC<{ markdown: string }> = ({ markdown }) => {
+const MarkdownContent: React.FC<{ markdown: string; printMode?: boolean }> = ({ markdown, printMode = false }) => {
   if (!markdown.trim()) {
     return null;
   }
 
   return (
-    <div className={MARKDOWN_PROSE_CLASS_NAME}>
+    <div className={printMode ? MARKDOWN_PROSE_CLASS_NAME : MARKDOWN_PROSE_INVERT_CLASS_NAME}>
       <Markdown remarkPlugins={[remarkGfm]}>
         {markdown}
       </Markdown>
@@ -120,6 +123,7 @@ export const ReportFullContent: React.FC<ReportFullContentProps> = ({
   details,
   language = 'zh',
   showPrintHeader = true,
+  printMode = false,
 }) => {
   const normalizedLanguage = normalizeReportLanguage(language);
   const text = getReportText(normalizedLanguage);
@@ -153,7 +157,7 @@ export const ReportFullContent: React.FC<ReportFullContentProps> = ({
         </div>
       ) : null}
       {priorityMarkdown ? (
-        <MarkdownContent markdown={priorityMarkdown} />
+        <MarkdownContent markdown={priorityMarkdown} printMode={printMode} />
       ) : null}
       <ModelOpinionsPanel
         modelOpinions={modelOpinions}
@@ -282,7 +286,7 @@ export const ReportFullContent: React.FC<ReportFullContentProps> = ({
         language={normalizedLanguage}
         compact
       />
-      <MarkdownContent markdown={remainingMarkdown} />
+      <MarkdownContent markdown={remainingMarkdown} printMode={printMode} />
     </div>
   );
 };
