@@ -7,6 +7,7 @@ import { ReportMarkdown } from '../ReportMarkdown';
 vi.mock('../../../api/history', () => ({
   historyApi: {
     getMarkdown: vi.fn(),
+    downloadPdf: vi.fn(),
     enableShareLink: vi.fn().mockResolvedValue({
       historyId: 1,
       shareToken: 'abc123',
@@ -15,18 +16,6 @@ vi.mock('../../../api/history', () => ({
     }),
   },
 }));
-
-const downloadReportPdfMock = vi.fn().mockResolvedValue(undefined);
-
-vi.mock('../../../utils/downloadReportPdf', async () => {
-  const actual = await vi.importActual<typeof import('../../../utils/downloadReportPdf')>(
-    '../../../utils/downloadReportPdf',
-  );
-  return {
-    ...actual,
-    downloadReportPdf: (...args: unknown[]) => downloadReportPdfMock(...args),
-  };
-});
 
 vi.mock('recharts', () => ({
   ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
@@ -43,7 +32,12 @@ vi.mock('recharts', () => ({
 describe('ReportMarkdown', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    downloadReportPdfMock.mockResolvedValue(undefined);
+    vi.mocked(historyApi.downloadPdf).mockResolvedValue(new Blob(['pdf'], { type: 'application/pdf' }));
+    vi.stubGlobal('URL', {
+      ...URL,
+      createObjectURL: vi.fn(() => 'blob:report'),
+      revokeObjectURL: vi.fn(),
+    });
   });
 
   it('uses localized copy labels for English reports', async () => {
@@ -256,11 +250,14 @@ describe('ReportMarkdown', () => {
     );
 
     const downloadPdfButton = await screen.findByRole('button', { name: 'Download PDF' });
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
     fireEvent.click(downloadPdfButton);
 
     await waitFor(() => {
-      expect(downloadReportPdfMock).toHaveBeenCalledTimes(1);
+      expect(historyApi.downloadPdf).toHaveBeenCalledTimes(1);
     });
-    expect(downloadReportPdfMock.mock.calls[0]?.[1]).toBe('AAPL_Apple_analysis_report.pdf');
+    expect(historyApi.downloadPdf).toHaveBeenCalledWith(1);
+    expect(clickSpy).toHaveBeenCalledTimes(1);
+    clickSpy.mockRestore();
   });
 });
