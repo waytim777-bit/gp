@@ -120,9 +120,9 @@ export const HistoryList: React.FC<HistoryListProps> = ({
             {items.length > 0 && (
               isSelectionMode ? (
                 <div className="flex shrink-0 items-center gap-1.5">
-                  {/* <span className="history-selection-badge text-primary">
+                  <span className="history-selection-badge text-primary">
                     已选 {selectedCount}
-                  </span> */}
+                  </span>
                   <Button
                     variant="ghost"
                     size="xsm"
@@ -171,11 +171,11 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                 aria-label="全选当前已加载历史记录"
                 className="[&_[data-slot='checkbox-default-indicator--checkmark']]:size-4 [&_[data-slot='checkbox-default-indicator--indeterminate']]:size-4"
               >
-                <Checkbox.Control className="size-5 rounded-md before:rounded-md">
+                <Checkbox.Control className="size-6 rounded-full before:rounded-md">
                   <Checkbox.Indicator />
                 </Checkbox.Control>
                 <Checkbox.Content>
-                  <span className="text-md text-default-500 select-none">已选{selectedCount}</span>
+                  <span className="text-md text-default-500 select-none">全选</span>
                 </Checkbox.Content>
               </Checkbox>
             </div>

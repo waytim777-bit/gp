@@ -7,7 +7,7 @@ import { shareReportLink } from '../../api/publicReports';
 import { Tooltip } from '../common/Tooltip';
 import { getReportText, normalizeReportLanguage } from '../../utils/reportLanguage';
 import type { ReportDetails, ReportLanguage } from '../../types/analysis';
-import { buildReportPdfFilename } from '../../utils/downloadReportPdf';
+import { buildReportPdfFilename, downloadReportPdf } from '../../utils/downloadReportPdf';
 import reportFullIcon from '../../assets/reportfullicon.png';
 import { ReportFullContent } from './ReportFullContent';
 
@@ -50,18 +50,17 @@ export const ReportMarkdown: React.FC<ReportMarkdownProps> = ({
     if (!content || isDownloadingPdf) {
       return;
     }
+    const reportElement = document.querySelector<HTMLElement>('[data-report-print-root]');
+    if (!reportElement) {
+      setPdfError(text.downloadPdfFailed);
+      return;
+    }
 
     setPdfError(null);
     setIsDownloadingPdf(true);
     try {
       const filename = buildReportPdfFilename(stockCode, stockName, normalizedLanguage);
-      const blob = await historyApi.downloadPdf(recordId);
-      const url = window.URL.createObjectURL(blob);
-      const anchor = document.createElement('a');
-      anchor.href = url;
-      anchor.download = filename;
-      anchor.click();
-      window.URL.revokeObjectURL(url);
+      await downloadReportPdf(reportElement, filename);
     } catch (downloadError) {
       console.error('PDF download failed:', downloadError);
       setPdfError(text.downloadPdfFailed);
@@ -72,7 +71,6 @@ export const ReportMarkdown: React.FC<ReportMarkdownProps> = ({
     content,
     isDownloadingPdf,
     normalizedLanguage,
-    recordId,
     stockCode,
     stockName,
     text.downloadPdfFailed,

@@ -10,12 +10,9 @@
 """
 
 import logging
-import subprocess
-from urllib.parse import quote
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Query, Depends, Body
-from fastapi.responses import Response
 
 from api.deps import get_current_user, get_database_manager
 from src.user_context import CurrentUser
@@ -32,7 +29,6 @@ from api.v1.schemas.history import (
 from api.v1.schemas.public_reports import ReportShareLinkResponse
 from api.v1.schemas.common import ErrorResponse
 from src.storage import AnalysisHistoryDeleteConflictError, DatabaseManager
-from src.formatters import markdown_to_html_document
 from src.services.history_service import HistoryService, MarkdownReportGenerationError
 from src.services.history_report_builder import build_analysis_report
 from src.services.report_public_share_service import ReportPublicShareError, ReportPublicShareService
@@ -466,93 +462,3 @@ def get_history_markdown(
         )
 
     return MarkdownReportResponse(content=markdown_content)
-
-
-@router.get(
-    "/{record_id}/pdf",
-    responses={
-        200: {"content": {"application/pdf": {}}, "description": "PDF 格式报告"},
-        404: {"description": "报告不存在", "model": ErrorResponse},
-        500: {"description": "服务器错误", "model": ErrorResponse},
-    },
-    summary="下载历史报告 PDF",
-    description="根据分析历史记录 ID 下载 PDF 格式的完整分析报告",
-)
-def download_history_pdf(
-    record_id: str,
-    db_manager: DatabaseManager = Depends(get_database_manager),
-    current_user: CurrentUser = Depends(get_current_user),
-) -> Response:
-    service = HistoryService(db_manager)
-
-    try:
-        markdown_content = service.get_markdown_report(
-            record_id,
-            owner_user_id=_owner_user_id_from_dependency(current_user),
-        )
-    except MarkdownReportGenerationError as e:
-        logger.error(f"PDF report generation failed for {record_id}: {e.message}")
-        raise HTTPException(
-            status_code=500,
-            detail={"error": "generation_failed", "message": f"生成 PDF 报告失败: {e.message}"},
-        )
-    except Exception as e:
-        logger.error(f"获取 PDF 报告失败: {e}", exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail={"error": "internal_error", "message": f"获取 PDF 报告失败: {str(e)}"},
-        )
-
-    if markdown_content is None:
-        raise HTTPException(
-            status_code=404,
-            detail={"error": "not_found", "message": f"未找到 id/query_id={record_id} 的分析记录"},
-        )
-
-    html = markdown_to_html_document(markdown_content)
-    try:
-        completed = subprocess.run(
-            [
-                "wkhtmltopdf",
-                "--quiet",
-                "--encoding",
-                "utf-8",
-                "--print-media-type",
-                "--margin-top",
-                "12mm",
-                "--margin-right",
-                "12mm",
-                "--margin-bottom",
-                "12mm",
-                "--margin-left",
-                "12mm",
-                "-",
-                "-",
-            ],
-            input=html.encode("utf-8"),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            timeout=60,
-            check=False,
-        )
-    except (OSError, subprocess.TimeoutExpired) as e:
-        logger.error("wkhtmltopdf failed for history %s: %s", record_id, e)
-        raise HTTPException(
-            status_code=500,
-            detail={"error": "pdf_generation_failed", "message": "PDF 生成失败"},
-        )
-
-    if completed.returncode != 0 or not completed.stdout:
-        stderr = completed.stderr.decode("utf-8", errors="replace")[:500]
-        logger.error("wkhtmltopdf failed for history %s: %s", record_id, stderr)
-        raise HTTPException(
-            status_code=500,
-            detail={"error": "pdf_generation_failed", "message": "PDF 生成失败"},
-        )
-
-    filename = f"history_{record_id}.pdf"
-    return Response(
-        content=completed.stdout,
-        media_type="application/pdf",
-        headers={"Content-Disposition": f"attachment; filename*=UTF-8''{quote(filename)}"},
-    )

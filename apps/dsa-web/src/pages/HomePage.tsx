@@ -230,9 +230,9 @@ const HomePage: React.FC = () => {
   return (
     <div
       data-testid="home-dashboard"
-      className="flex h-[calc(100vh-5rem)] w-full flex-col overflow-hidden md:flex-row sm:h-[calc(100vh-5.5rem)] lg:h-[calc(100vh-2rem)] h-full!"
+      className="flex h-[calc(100vh-5rem)] w-full flex-col overflow-hidden md:flex-row sm:h-[calc(100vh-5.5rem)] lg:h-[calc(100vh-2rem)]"
     >
-      <div className="flex-1 flex flex-col min-h-0 min-w-0 max-w-full w-full overflow-hidden">
+      <div className="flex-1 flex flex-col min-h-0 min-w-0 max-w-full w-full">
         <header className="flex min-w-0 flex-shrink-0 items-center overflow-hidden px-3 py-3 pt-0! md:px-[20px] md:py-[16px]">
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5 md:flex-nowrap">
             <button
@@ -349,7 +349,7 @@ const HomePage: React.FC = () => {
                 <DashboardStateBlock title="加载报告中..." loading />
               </div>
             ) : selectedReport ? (
-              <div className={`space-y-4 pb-8${searchStockCode && marketListings.length > 0 ? ' mt-6' : ''}`}>
+              <div className={`max-w-4xl space-y-4 pb-8${searchStockCode && marketListings.length > 0 ? ' mt-6' : ''}`}>
                 <div className="flex flex-wrap items-center justify-end gap-2">
                   {canShowRefreshIntel && marketListings.length === 0 ? (
                     <Button

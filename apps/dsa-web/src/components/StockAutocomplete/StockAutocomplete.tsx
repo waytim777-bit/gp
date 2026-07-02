@@ -22,7 +22,7 @@ const HOME_AUTOCOMPLETE_INPUT_CLASS =
   'h-10 w-full border-0 bg-transparent px-0 text-sm font-medium leading-5 text-foreground shadow-none outline-none transition-colors placeholder:text-muted-text/70 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 md:text-[15px]';
 
 const HOME_AUTOCOMPLETE_FRAME_CLASS =
-  'stock-autocomplete flex min-h-[56px] min-w-0 flex-col justify-center gap-2 rounded-md border-2 border-solid border-transparent p-2 shadow-[0_8px_18px_hsl(220_22%_34%_/_0.08)] transition-colors sm:flex-row sm:items-center sm:gap-3 sm:px-3 sm:py-2';
+  'stock-autocomplete flex min-h-[56px] min-w-0 flex-col justify-center gap-2 rounded-md border border-solid border-transparent p-2 shadow-[0_8px_18px_hsl(220_22%_34%_/_0.08)] transition-colors sm:flex-row sm:items-center sm:gap-3 sm:px-3 sm:py-2';
 
 const HOME_AUTOCOMPLETE_FRAME_STYLE = {
   background:
